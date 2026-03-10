@@ -1,0 +1,19 @@
+# Tool versions used to build and check the ORBIT-AI demonstrator.
+# scripts/setup_tools.sh installs the first two; the rest are optional paths.
+
+# OSS CAD Suite (YosysHQ) nightly, linux-x64, extracted to /opt/eda/oss-cad-suite
+#   https://github.com/YosysHQ/oss-cad-suite-build/releases/tag/2026-09-28
+oss-cad-suite==2026-09-28
+#   yosys          0.69+154 (git 30d62572e)
+#   iverilog       14.0 (devel) s20260301-500-g2e81fcccb
+#   verilator      5.053 devel rev v5.052-233-gf5f9ddef9
+#   sby / yosys-smtbmc, yices-smt2, bitwuzla, boolector, z3, abc, eqy: bundled in the same release
+
+# OpenROAD-flow-scripts Docker image (OpenROAD, Yosys 0.68, KLayout 0.30.12, sky130hd platform)
+openroad/orfs@sha256:2e5bf6fe865e102ca2313aba1d849da50f5973bc91c4212a2f68e7d905a39c8f
+
+# Python (system) 3.11; model/ and the scripts use the standard library only.
+python==3.11
+
+# Optional: portable Yosys through YoWASP, as used by the concept brief.
+yowasp-yosys==0.69.0.0.post1233
