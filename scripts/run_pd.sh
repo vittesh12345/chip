@@ -15,6 +15,8 @@
 #   --cores N        NUM_CORES for OpenROAD and the container CPU limit (default 2)
 #   --timeout SEC    kill the flow after SEC seconds (default 3600)
 #   --image IMG      Docker image (default openroad/orfs:latest)
+#   --var NAME=VAL   extra ORFS make variable (repeatable), e.g. to override a
+#                    config.mk setting for an experiment
 #   --shell CMD      instead of ORFS, run CMD with bash in the same container
 #                    setup (used for KLayout rendering and copying platform files)
 # ORFS targets default to "all" (synth .. finish, including the GDS).
@@ -26,7 +28,7 @@
 
 set -euo pipefail
 
-usage() { sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
+usage() { sed -n '2,25p' "$0" | sed 's/^# \{0,1\}//'; exit 2; }
 
 REPO=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 PLATFORM=sky130hd
@@ -38,6 +40,7 @@ IMAGE=openroad/orfs:latest
 WORK=
 RTL=
 SHELL_CMD=
+declare -a EXTRA_VARS=()
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -50,6 +53,7 @@ while [[ $# -gt 0 ]]; do
         --timeout)  TIMEOUT=$2; shift 2 ;;
         --image)    IMAGE=$2; shift 2 ;;
         --shell)    SHELL_CMD=$2; shift 2 ;;
+        --var)      EXTRA_VARS+=("$2"); shift 2 ;;
         -h|--help)  usage ;;
         --)         shift; break ;;
         -*)         echo "run_pd.sh: unknown option $1" >&2; usage ;;
@@ -130,6 +134,7 @@ MAKE_CMD=(make -C /OpenROAD-flow-scripts/flow
     "NUM_CORES=$CORES"
     "PD_VERILOG_FILES=${RTL_ABS[*]}"
     "PD_SDC_FILE=$SDC"
+    ${EXTRA_VARS[@]+"${EXTRA_VARS[@]}"}
     "${TARGETS[@]}")
 
 set +e

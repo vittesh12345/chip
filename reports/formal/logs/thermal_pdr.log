@@ -1,0 +1,49 @@
+SBY 20:14:39 [thermal_pdr] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_thermal_pdr'.
+SBY 20:14:39 [thermal_pdr] engine_0: abc pdr
+SBY 20:14:39 [thermal_pdr] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_thermal_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 20:14:39 [thermal_pdr] base: finished (returncode=0)
+SBY 20:14:39 [thermal_pdr] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_thermal_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY 20:14:39 [thermal_pdr] prep: finished (returncode=0)
+SBY 20:14:39 [thermal_pdr] aig: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_thermal_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY 20:14:40 [thermal_pdr] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
+SBY 20:14:40 [thermal_pdr] aig: finished (returncode=0)
+SBY 20:14:40 [thermal_pdr] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_thermal_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY 20:14:40 [thermal_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY 20:14:40 [thermal_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY 20:14:40 [thermal_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 319. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY 20:14:40 [thermal_pdr] engine_0: Proved output 4 in frame 0 (trivial).
+SBY 20:14:40 [thermal_pdr] engine_0: Proved output 0 in frame 1.
+SBY 20:14:40 [thermal_pdr] engine_0: Proved output 2 in frame 2.
+SBY 20:14:40 [thermal_pdr] engine_0: Proved output 3 in frame 2.
+SBY 20:14:40 [thermal_pdr] engine_0: Proved output 5 in frame 2.
+SBY 20:14:40 [thermal_pdr] engine_0: Proved output 7 in frame 2.
+SBY 20:14:40 [thermal_pdr] engine_0: Proved output 9 in frame 2.
+SBY 20:14:40 [thermal_pdr] engine_0: Timing out on output  8 in frame 3 (retrying in next anytime pass).
+SBY 20:14:41 [thermal_pdr] engine_0: Proved output 1 in frame 3.
+SBY 20:14:41 [thermal_pdr] engine_0: Proved output 6 in frame 3.
+SBY 20:14:41 [thermal_pdr] engine_0: Proved output 10 in frame 4.
+SBY 20:14:41 [thermal_pdr] engine_0: Timing out on output  8 in frame 3 (retrying in next anytime pass).
+SBY 20:14:41 [thermal_pdr] engine_0: All outputs solved or timed out in frame 4.
+SBY 20:14:41 [thermal_pdr] engine_0: Timing out on output  8 in frame 3 (retrying in next anytime pass).
+SBY 20:14:41 [thermal_pdr] engine_0: All outputs solved or timed out in frame 4.
+SBY 20:14:42 [thermal_pdr] engine_0: Proved output 8 in frame 3.
+SBY 20:14:42 [thermal_pdr] engine_0: Block =   39  Oblig =  1144  Clause =   588  Call =  3543 (sat=58.4%)  Cex =   0  Start =   7
+SBY 20:14:42 [thermal_pdr] engine_0: SAT solving =     1.07 sec ( 60.28 %)
+SBY 20:14:42 [thermal_pdr] engine_0: unsat     =     0.39 sec ( 21.88 %)
+SBY 20:14:42 [thermal_pdr] engine_0: sat       =     0.68 sec ( 38.39 %)
+SBY 20:14:42 [thermal_pdr] engine_0: Generalize  =     1.06 sec ( 59.94 %)
+SBY 20:14:42 [thermal_pdr] engine_0: Push clause =     0.04 sec (  2.20 %)
+SBY 20:14:42 [thermal_pdr] engine_0: Ternary sim =     0.17 sec (  9.80 %)
+SBY 20:14:42 [thermal_pdr] engine_0: Containment =     0.00 sec (  0.25 %)
+SBY 20:14:42 [thermal_pdr] engine_0: CNF compute =     0.04 sec (  2.25 %)
+SBY 20:14:42 [thermal_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY 20:14:42 [thermal_pdr] engine_0: TOTAL       =     1.77 sec (100.00 %)
+SBY 20:14:42 [thermal_pdr] engine_0: Property proved.  Time =     1.77 sec
+SBY 20:14:42 [thermal_pdr] engine_0: Counter-example is not available.
+SBY 20:14:42 [thermal_pdr] engine_0: finished (returncode=0)
+SBY 20:14:42 [thermal_pdr] engine_0: Status returned by engine: PASS
+SBY 20:14:42 [thermal_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
+SBY 20:14:42 [thermal_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:02 (2)
+SBY 20:14:42 [thermal_pdr] summary: engine_0 (abc pdr) returned PASS
+SBY 20:14:42 [thermal_pdr] summary: engine_0 did not produce any traces
+SBY 20:14:42 [thermal_pdr] DONE (PASS, rc=0)

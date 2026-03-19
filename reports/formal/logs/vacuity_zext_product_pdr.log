@@ -1,0 +1,111 @@
+--- rtl/orbit_mac_lane.v	2026-09-29 18:50:18.002938138 +0000
++++ build/formal/vacuity/zext_product_pdr/rtl/orbit_mac_lane.v	2026-09-29 20:13:55.438499963 +0000
+@@ -23,7 +23,7 @@
+ 
+     // Shared signed 8x8 -> 16 bit product, sign-extended to 32 bits.
+     wire signed [15:0] prod   = $signed(a) * $signed(b);
+-    wire        [31:0] prod32 = {{16{prod[15]}}, prod};
++    wire        [31:0] prod32 = {16'd0, prod};
+ 
+     wire [31:0] acc_a, acc_b;
+     wire [31:0] res_a, res_b;
+
+[formal] datapath_pdr   FAIL    (expected FAIL, 18s)
+
+SBY 20:13:55 [datapath_pdr] Removing directory '/home/user/chip/build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr'.
+SBY 20:13:55 [datapath_pdr] engine_0: abc pdr
+SBY 20:13:55 [datapath_pdr] base: starting process "cd build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 20:13:55 [datapath_pdr] base: finished (returncode=0)
+SBY 20:13:55 [datapath_pdr] prep: starting process "cd build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY 20:13:55 [datapath_pdr] prep: finished (returncode=0)
+SBY 20:13:55 [datapath_pdr] aig: starting process "cd build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY 20:13:56 [datapath_pdr] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
+SBY 20:13:56 [datapath_pdr] aig: finished (returncode=0)
+SBY 20:13:56 [datapath_pdr] engine_0: starting process "cd build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY 20:13:56 [datapath_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY 20:13:56 [datapath_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY 20:13:56 [datapath_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 719. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY 20:13:57 [datapath_pdr] engine_0: Timing out on output  0 in frame 2 (retrying in next anytime pass).
+SBY 20:13:57 [datapath_pdr] engine_0: Timing out on output  1 in frame 2 (retrying in next anytime pass).
+SBY 20:13:57 [datapath_pdr] engine_0: Timing out on output  2 in frame 2 (retrying in next anytime pass).
+SBY 20:13:57 [datapath_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
+SBY 20:13:58 [datapath_pdr] engine_0: Timing out on output  4 in frame 2 (retrying in next anytime pass).
+SBY 20:13:58 [datapath_pdr] engine_0: Timing out on output  5 in frame 2 (retrying in next anytime pass).
+SBY 20:13:58 [datapath_pdr] engine_0: Timing out on output  6 in frame 2 (retrying in next anytime pass).
+SBY 20:13:58 [datapath_pdr] engine_0: Timing out on output  7 in frame 2 (retrying in next anytime pass).
+SBY 20:13:59 [datapath_pdr] engine_0: Timing out on output 26 in frame 2 (retrying in next anytime pass).
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 8 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 9 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 10 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 11 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 12 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 13 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 16 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 17 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 23 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 24 in frame 2.
+SBY 20:14:00 [datapath_pdr] engine_0: Proved output 25 in frame 2.
+SBY 20:14:01 [datapath_pdr] engine_0: Proved output 15 in frame 3.
+SBY 20:14:01 [datapath_pdr] engine_0: Timing out on output 27 in frame 4 (retrying in next anytime pass).
+SBY 20:14:01 [datapath_pdr] engine_0: Timing out on output 28 in frame 4 (retrying in next anytime pass).
+SBY 20:14:02 [datapath_pdr] engine_0: Timing out on output 29 in frame 4 (retrying in next anytime pass).
+SBY 20:14:02 [datapath_pdr] engine_0: Timing out on output 30 in frame 4 (retrying in next anytime pass).
+SBY 20:14:02 [datapath_pdr] engine_0: Proved output 20 in frame 4.
+SBY 20:14:02 [datapath_pdr] engine_0: Proved output 21 in frame 4.
+SBY 20:14:05 [datapath_pdr] engine_0: Proved output 14 in frame 11.
+SBY 20:14:08 [datapath_pdr] engine_0: Proved output 19 in frame 18.
+SBY 20:14:08 [datapath_pdr] engine_0: Proved output 18 in frame 19.
+SBY 20:14:08 [datapath_pdr] engine_0: Proved output 22 in frame 19.
+SBY 20:14:09 [datapath_pdr] engine_0: Timing out on output  0 in frame 2 (retrying in next anytime pass).
+SBY 20:14:09 [datapath_pdr] engine_0: Timing out on output  1 in frame 2 (retrying in next anytime pass).
+SBY 20:14:10 [datapath_pdr] engine_0: Timing out on output  2 in frame 2 (retrying in next anytime pass).
+SBY 20:14:10 [datapath_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
+SBY 20:14:10 [datapath_pdr] engine_0: Timing out on output  4 in frame 2 (retrying in next anytime pass).
+SBY 20:14:10 [datapath_pdr] engine_0: Timing out on output  5 in frame 2 (retrying in next anytime pass).
+SBY 20:14:10 [datapath_pdr] engine_0: Timing out on output  6 in frame 2 (retrying in next anytime pass).
+SBY 20:14:11 [datapath_pdr] engine_0: Timing out on output  7 in frame 2 (retrying in next anytime pass).
+SBY 20:14:12 [datapath_pdr] engine_0: Timing out on output 26 in frame 4 (retrying in next anytime pass).
+SBY 20:14:12 [datapath_pdr] engine_0: Timing out on output 27 in frame 4 (retrying in next anytime pass).
+SBY 20:14:12 [datapath_pdr] engine_0: Block =  656  Oblig =  2558  Clause =  1564  Call = 22618 (sat=82.6%)  Cex =   0  Start =  62
+SBY 20:14:12 [datapath_pdr] engine_0: SAT solving =     9.68 sec ( 61.68 %)
+SBY 20:14:12 [datapath_pdr] engine_0: unsat     =     0.39 sec (  2.52 %)
+SBY 20:14:12 [datapath_pdr] engine_0: sat       =     9.28 sec ( 59.16 %)
+SBY 20:14:12 [datapath_pdr] engine_0: Generalize  =     4.14 sec ( 26.41 %)
+SBY 20:14:12 [datapath_pdr] engine_0: Push clause =     6.61 sec ( 42.10 %)
+SBY 20:14:12 [datapath_pdr] engine_0: Ternary sim =     1.36 sec (  8.64 %)
+SBY 20:14:12 [datapath_pdr] engine_0: Containment =     0.12 sec (  0.77 %)
+SBY 20:14:12 [datapath_pdr] engine_0: CNF compute =     0.51 sec (  3.26 %)
+SBY 20:14:12 [datapath_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY 20:14:12 [datapath_pdr] engine_0: TOTAL       =    15.69 sec (100.00 %)
+SBY 20:14:12 [datapath_pdr] engine_0: Output 28 of miter "model/design_aiger" was asserted in frame 4.  Time =    15.70 sec
+SBY 20:14:12 [datapath_pdr] engine_0: finished (returncode=0)
+SBY 20:14:12 [datapath_pdr] engine_0: Status returned by engine: FAIL
+SBY 20:14:12 [datapath_pdr] smt2: starting process "cd build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY 20:14:12 [datapath_pdr] engine_0: starting process "cd build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr; yosys-witness aiw2yw engine_0/trace.aiw model/design_aiger.ywa engine_0/trace_aiw.yw"
+SBY 20:14:12 [datapath_pdr] smt2: finished (returncode=0)
+SBY 20:14:12 [datapath_pdr] engine_0: Converting AIGER witness trace 'engine_0/trace.aiw' to Yosys witness trace 'engine_0/trace_aiw.yw'...
+SBY 20:14:12 [datapath_pdr] engine_0: Using Yosys witness AIGER map file 'model/design_aiger.ywa'
+SBY 20:14:12 [datapath_pdr] engine_0: Converted 5 time steps.
+SBY 20:14:12 [datapath_pdr] engine_0: finished (returncode=0)
+SBY 20:14:12 [datapath_pdr] engine_0: starting process "cd build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr; yosys-smtbmc -s yices --noprogress --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc --yw engine_0/trace_aiw.yw model/design_smt2.smt2"
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Solver: yices
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Skipping step 0..
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Skipping step 1..
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Skipping step 2..
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Skipping step 3..
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  BMC failed!
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Assert failed in orbit_demo_fv: P1_out_valid_data_lane1
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Assert failed in orbit_demo_fv: P8_fresh_sum_from_zero_lane1
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY 20:14:12 [datapath_pdr] engine_0: ##   0:00:00  Status: FAILED
+SBY 20:14:13 [datapath_pdr] engine_0: finished (returncode=1)
+SBY 20:14:13 [datapath_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:17 (17)
+SBY 20:14:13 [datapath_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:17 (17)
+SBY 20:14:13 [datapath_pdr] summary: engine_0 (abc pdr) returned FAIL
+SBY 20:14:13 [datapath_pdr] summary: counterexample trace: build/formal/vacuity/zext_product_pdr/run/orbit_demo_datapath_pdr/engine_0/trace.vcd
+SBY 20:14:13 [datapath_pdr] summary:   failed assertion orbit_demo_fv.P1_out_valid_data_lane1 at orbit_demo_fv.sv:516.397-516.472 step 4
+SBY 20:14:13 [datapath_pdr] summary:   failed assertion orbit_demo_fv.P8_fresh_sum_from_zero_lane1 at orbit_demo_fv.sv:516.1168-516.1254 step 4
+SBY 20:14:13 [datapath_pdr] DONE (FAIL, rc=2)

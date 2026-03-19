@@ -1,0 +1,1179 @@
+<title>ORBIT-AI Die Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: full-height 3D stage with a 360px instrument panel on the right;
+   below 820px the panel stacks under a 60svh stage and the page scrolls.
+   Palette taken from the ORBIT-AI concept brief: deep navy ink, teal accent,
+   cool blue-grey neutrals. */
+:root {
+  --bg: #f6f9fa;
+  --panel: #ffffff;
+  --well: #edf3f5;
+  --line: #d5e0e5;
+  --ink: #183a4a;
+  --text: #2c4757;
+  --muted: #5e7684;
+  --accent: #1d8a7c;
+  --accent-ink: #13695e;
+  --accent-soft: #dcefeb;
+  --stage: #e4ecf0;
+  --stage-edge: #c9d6dd;
+  --die: #b9c6cd;
+  --ruler: #5e7684;
+  --copy-a: #2465c7;
+  --copy-b: #e0761c;
+  --tmr-0: #7c4fcb;
+  --tmr-1: #c2368c;
+  --tmr-2: #2f8f3a;
+  --unprot: #cf2f2f;
+  --pair-line: #183a4a;
+  --good: #1f7a4d;
+  --warn: #a4570f;
+  --shadow: 0 1px 2px rgba(24, 58, 74, .08), 0 4px 16px rgba(24, 58, 74, .08);
+  --font-ui: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --panel-w: 368px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1a21;
+    --panel: #11222b;
+    --well: #172d38;
+    --line: #25404d;
+    --ink: #e4eef2;
+    --text: #c3d3da;
+    --muted: #8ba2ad;
+    --accent: #3fb3a2;
+    --accent-ink: #7fd3c6;
+    --accent-soft: #173d3a;
+    --stage: #0a151b;
+    --stage-edge: #1d3440;
+    --die: #3a4f5a;
+    --ruler: #8ba2ad;
+    --copy-a: #5b95f0;
+    --copy-b: #f2994a;
+    --tmr-0: #a987ec;
+    --tmr-1: #ec6fb8;
+    --tmr-2: #5cc167;
+    --unprot: #f06060;
+    --pair-line: #e4eef2;
+    --good: #5cc18d;
+    --warn: #e5a15a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1a21;
+  --panel: #11222b;
+  --well: #172d38;
+  --line: #25404d;
+  --ink: #e4eef2;
+  --text: #c3d3da;
+  --muted: #8ba2ad;
+  --accent: #3fb3a2;
+  --accent-ink: #7fd3c6;
+  --accent-soft: #173d3a;
+  --stage: #0a151b;
+  --stage-edge: #1d3440;
+  --die: #3a4f5a;
+  --ruler: #8ba2ad;
+  --copy-a: #5b95f0;
+  --copy-b: #f2994a;
+  --tmr-0: #a987ec;
+  --tmr-1: #ec6fb8;
+  --tmr-2: #5cc167;
+  --unprot: #f06060;
+  --pair-line: #e4eef2;
+  --good: #5cc18d;
+  --warn: #e5a15a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.45 var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+*, *::before, *::after { box-sizing: border-box; }
+
+.app {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--panel-w);
+}
+
+/* ---------- stage ---------- */
+.stage {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: var(--stage);
+  overflow: hidden;
+}
+#gl {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+  touch-action: none;
+  outline: none;
+}
+.hud {
+  position: absolute;
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  pointer-events: none;
+  font-size: 12px;
+}
+.hud-top { top: 14px; left: 16px; right: 16px; }
+.hud-bottom { bottom: 12px; left: 16px; right: 16px; justify-content: space-between; }
+.chip {
+  background: color-mix(in srgb, var(--panel) 88%, transparent);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 4px 10px;
+  box-shadow: var(--shadow);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.chip b { font-weight: 600; }
+.chip.mono { font-family: var(--font-data); font-size: 11.5px; }
+.hint { color: var(--muted); background: none; border: 0; box-shadow: none; padding: 0; white-space: normal; }
+
+.overlay {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  padding: 24px 16px;
+  background: color-mix(in srgb, var(--stage) 80%, transparent);
+}
+.overlay-card {
+  max-width: 440px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+}
+.overlay-card h2 { margin: 0 0 6px; font-size: 15px; color: var(--ink); font-weight: 600; }
+.overlay-card p { margin: 0; color: var(--text); }
+.overlay-card .detail { margin-top: 10px; font-family: var(--font-data); font-size: 12px; color: var(--muted); word-break: break-word; }
+.progress { margin-top: 12px; height: 4px; border-radius: 2px; background: var(--well); overflow: hidden; }
+.progress > span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+.overlay.error .overlay-card { border-color: var(--unprot); }
+.overlay.error h2 { color: var(--unprot); }
+
+.tip {
+  position: absolute;
+  z-index: 3;
+  max-width: 300px;
+  pointer-events: none;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+}
+.tip .n { font-family: var(--font-data); font-size: 11.5px; color: var(--ink); word-break: break-all; }
+.tip .row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+
+/* ---------- panel ---------- */
+.panel {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--panel);
+  border-left: 1px solid var(--line);
+  padding: 22px 16px 28px;
+  display: flex; flex-direction: column; gap: 22px;
+}
+.panel > * { flex-shrink: 0; }
+.masthead { display: flex; flex-direction: column; gap: 6px; }
+.masthead::before {
+  content: ""; display: block; width: 36px; height: 4px; border-radius: 1px;
+  background: var(--accent); margin-bottom: 6px;
+}
+.eyebrow {
+  font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500;
+}
+h1 {
+  margin: 0; font-size: 22px; line-height: 1.2; font-weight: 600; color: var(--ink);
+  letter-spacing: -.01em; text-wrap: balance;
+}
+.sub { margin: 0; color: var(--muted); font-size: 13px; }
+
+.stats {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+  background: var(--line); gap: 1px;
+}
+.stat { background: var(--panel); padding: 8px 10px; min-width: 0; }
+.stat dt { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.stat dd { margin: 2px 0 0; font-family: var(--font-data); font-size: 13px; color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.stat dd small { display: block; color: var(--muted); font-size: 11px; }
+.pos { color: var(--good) !important; }
+.neg { color: var(--unprot) !important; }
+
+.notice {
+  margin: 0; padding: 10px 12px; border-radius: 8px;
+  background: var(--well); color: var(--text); font-size: 12.5px;
+}
+.notice strong { color: var(--ink); font-weight: 600; }
+
+section.block { display: flex; flex-direction: column; gap: 10px; }
+.block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+h2.block-title {
+  margin: 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); font-weight: 600;
+}
+.block-note { font-size: 12px; color: var(--muted); margin: 0; }
+
+.seg { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+button {
+  font: inherit; font-size: 12.5px; color: var(--ink);
+  background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+  padding: 6px 8px; cursor: pointer; min-width: 0;
+}
+button:hover { border-color: var(--accent); }
+button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
+button:focus-visible, input:focus-visible, select:focus-visible, label.layer:focus-within {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.linkish { border: 0; background: none; padding: 2px 4px; color: var(--accent-ink); font-size: 12px; }
+.linkish:hover { text-decoration: underline; }
+
+.slider { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; }
+.slider label { font-size: 13px; color: var(--ink); }
+.slider output { font-family: var(--font-data); font-size: 12.5px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.slider input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); margin: 4px 0 0; }
+.slider .help { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted); }
+
+/* layer list */
+.layers { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.layer-group { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--well); padding: 4px 10px; }
+label.layer {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) 64px;
+  grid-template-rows: auto auto;
+  gap: 0 10px;
+  align-items: center;
+  padding: 6px 10px;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+}
+.layer-group + label.layer { border-top: 0; }
+label.layer input {
+  appearance: none; -webkit-appearance: none;
+  grid-row: 1 / span 2;
+  width: 16px; height: 16px; margin: 0;
+  border-radius: 3px;
+  border: 2px solid var(--lc);
+  background: transparent;
+  cursor: pointer;
+}
+label.layer input:checked { background: var(--lc); }
+label.layer input:focus-visible { outline: none; }
+.lname { font-size: 13px; color: var(--ink); font-weight: 500; display: flex; gap: 6px; align-items: baseline; min-width: 0; }
+.lname .gds { font-family: var(--font-data); font-size: 10.5px; color: var(--muted); font-weight: 400; }
+.lcount { font-family: var(--font-data); font-size: 11.5px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.lz { font-family: var(--font-data); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ztrack { position: relative; height: 8px; border-radius: 2px; background: var(--well); grid-column: 3; grid-row: 2; }
+.ztrack span { position: absolute; top: 0; bottom: 0; border-radius: 1px; background: var(--lc); min-width: 2px; }
+label.layer.off .lname, label.layer.off .lz { opacity: .55; }
+label.layer.empty { cursor: default; }
+
+/* redundancy */
+.switch { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--ink); cursor: pointer; }
+.switch input { appearance: none; -webkit-appearance: none; width: 34px; height: 20px; border-radius: 10px; background: var(--line); position: relative; cursor: pointer; flex: none; margin: 0; transition: background .15s; }
+.switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--panel); transition: transform .15s; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.switch input:checked { background: var(--accent); }
+.switch input:checked::after { transform: translateX(14px); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--text); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex: none; }
+select {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; width: 100%;
+}
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 12px; font-variant-numeric: tabular-nums; }
+th, td { padding: 5px 6px; text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-weight: 500; color: var(--muted); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; background: var(--well); }
+tbody tr { border-top: 1px solid var(--line); cursor: pointer; }
+tbody tr:hover, tbody tr.sel { background: var(--accent-soft); }
+td.num { font-family: var(--font-data); font-size: 11.5px; color: var(--ink); }
+.finding { margin: 0; font-size: 12.5px; color: var(--text); }
+.finding strong { color: var(--ink); font-weight: 600; }
+
+.sources { font-size: 11.5px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--line); padding-top: 14px; }
+.sources p { margin: 0; }
+.sources code { font-family: var(--font-data); font-size: 11px; overflow-wrap: anywhere; }
+
+@media (max-width: 820px) {
+  html, body { height: auto; }
+  .app { display: block; height: auto; }
+  .stage { height: 60svh; min-height: 340px; max-height: 620px; }
+  .panel { border-left: 0; border-top: 1px solid var(--line); overflow: visible; padding: 20px 16px 32px; }
+  .hud-bottom .hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .progress > span, .switch input, .switch input::after { transition: none; }
+}
+</style>
+
+<div class="app" id="app">
+  <section class="stage" id="stage" aria-label="3D view of the routed die">
+    <canvas id="gl" tabindex="0" aria-label="Interactive 3D layout. Drag to orbit, right-drag or two fingers to pan, scroll or pinch to zoom."></canvas>
+    <div class="hud hud-top">
+      <span class="chip" id="hud-design"><b>orbit_demo</b> · sky130hd</span>
+      <span class="chip mono" id="hud-scale">vertical ×3</span>
+      <span class="chip mono" id="hud-cam" hidden></span>
+    </div>
+    <div class="hud hud-bottom">
+      <span class="chip hint" id="hud-hint">Drag to orbit · right-drag or Shift-drag to pan · scroll to zoom</span>
+    </div>
+    <div class="tip" id="tip" hidden></div>
+    <div class="overlay" id="overlay" role="status" aria-live="polite">
+      <div class="overlay-card">
+        <h2 id="ov-title">Loading the routed layout</h2>
+        <p id="ov-text">Fetching layer geometry from the GDS export.</p>
+        <div class="progress" id="ov-progress"><span id="ov-bar"></span></div>
+        <p class="detail" id="ov-detail"></p>
+      </div>
+    </div>
+  </section>
+
+  <aside class="panel" id="panel">
+    <header class="masthead">
+      <span class="eyebrow">ORBIT-AI · 4-lane INT8 demonstrator</span>
+      <h1>ORBIT-AI Die Explorer</h1>
+      <p class="sub" id="sub">Routed with OpenROAD on SkyWater sky130hd</p>
+    </header>
+
+    <dl class="stats" id="stats">
+      <div class="stat"><dt>Die</dt><dd id="st-die">–</dd></div>
+      <div class="stat"><dt>Logic cells</dt><dd id="st-cells">–</dd></div>
+      <div class="stat"><dt>Flip-flops</dt><dd id="st-ff">–</dd></div>
+      <div class="stat"><dt>Rectangles</dt><dd id="st-rects">–</dd></div>
+      <div class="stat"><dt>Clock</dt><dd id="st-clk">–</dd></div>
+      <div class="stat"><dt>Setup WNS</dt><dd id="st-wns">–</dd></div>
+    </dl>
+
+    <p class="notice">This is the <strong>sky130 open-PDK layout of the 4-lane demonstrator</strong>, not the 16-tile ORBIT-AI concept chip. Nothing here is radiation-qualified.</p>
+
+    <section class="block" aria-labelledby="h-view">
+      <div class="block-head"><h2 class="block-title" id="h-view">View</h2></div>
+      <div class="seg" role="group" aria-label="Camera presets">
+        <button type="button" id="v-iso" data-view="iso" aria-pressed="true">Isometric</button>
+        <button type="button" id="v-top" data-view="top" aria-pressed="false">Top</button>
+        <button type="button" id="v-low" data-view="low" aria-pressed="false">Low angle</button>
+        <button type="button" id="v-reset" data-view="reset">Reset</button>
+      </div>
+      <div class="slider">
+        <label for="s-exag">Vertical scale</label>
+        <output id="o-exag" for="s-exag">×3</output>
+        <input type="range" id="s-exag" min="1" max="20" step="0.5" value="3">
+        <span class="help" id="h-exag">The metal stack is only a few µm tall on a die hundreds of µm wide, so heights are stretched.</span>
+      </div>
+      <div class="slider">
+        <label for="s-gap">Layer spread</label>
+        <output id="o-gap" for="s-gap">0 µm</output>
+        <input type="range" id="s-gap" min="0" max="12" step="0.25" value="0">
+        <span class="help">Adds space between layers to pull the stack apart. Vias no longer touch their metals when spread.</span>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="h-layers">
+      <div class="block-head">
+        <h2 class="block-title" id="h-layers">Layers</h2>
+        <div>
+          <button type="button" class="linkish" id="l-all">All</button>
+          <button type="button" class="linkish" id="l-metal">Routing only</button>
+          <button type="button" class="linkish" id="l-cells">Cells only</button>
+        </div>
+      </div>
+      <div class="layers" id="layer-list"></div>
+      <p class="block-note" id="layer-note">z is the bottom of each layer above the substrate surface; bars show z and thickness on the 0–6.6 µm stack.</p>
+    </section>
+
+    <section class="block" aria-labelledby="h-red">
+      <div class="block-head"><h2 class="block-title" id="h-red">Redundant storage</h2></div>
+      <label class="switch" for="r-on">Highlight flip-flops by copy<input type="checkbox" id="r-on"></label>
+      <label class="switch" for="r-dim">Fade the layout while highlighting<input type="checkbox" id="r-dim" checked></label>
+      <div class="legend" id="r-legend">
+        <span data-k="A"><i class="sw" style="background:var(--copy-a)"></i>Copy A</span>
+        <span data-k="B"><i class="sw" style="background:var(--copy-b)"></i>Copy B</span>
+        <span data-k="0"><i class="sw" style="background:var(--tmr-0)"></i>Thermal 0</span>
+        <span data-k="1"><i class="sw" style="background:var(--tmr-1)"></i>Thermal 1</span>
+        <span data-k="2"><i class="sw" style="background:var(--tmr-2)"></i>Thermal 2</span>
+        <span data-k="single"><i class="sw" style="background:var(--unprot)"></i>Unprotected</span>
+        <span data-k="other"><i class="sw" style="background:var(--muted)"></i>Other flip-flops</span>
+      </div>
+      <select id="r-group" aria-label="Storage group to show"></select>
+      <div class="table-wrap">
+        <table id="r-table">
+          <thead><tr><th>Group</th><th title="Distance between the centroids of the copies, µm">Copies Δ</th><th title="Closest pair of the same bit in different copies, centre to centre, µm">Bit min</th><th title="Median same-bit distance over all bits, µm">Bit med</th><th title="Same-bit pairs whose cells touch">Touch</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="finding" id="r-finding"></p>
+    </section>
+
+    <footer class="sources" id="sources"></footer>
+  </aside>
+</div>
+
+<script>
+  // Shown only if the three.js module never starts (CDN blocked or offline).
+  setTimeout(function () {
+    if (window.__vizBoot) return;
+    var o = document.getElementById('overlay');
+    if (!o) return;
+    o.hidden = false;
+    o.classList.add('error');
+    document.getElementById('ov-title').textContent = 'The 3D engine did not load';
+    document.getElementById('ov-text').textContent = 'three.js is fetched from cdn.jsdelivr.net. Check the network connection or content blockers, then reload the page.';
+    document.getElementById('ov-progress').hidden = true;
+  }, 15000);
+</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+window.__vizBoot = true;
+window.__vizFrames = 0;
+
+const $ = (id) => document.getElementById(id);
+const fmt = (n) => (n == null ? 'n/a' : Number(n).toLocaleString('en-US'));
+const fx = (n, d = 1) => (n == null ? 'n/a' : Number(n).toFixed(d));
+const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+// ---------------------------------------------------------------- overlay
+function showStatus(title, text, frac, detail) {
+  const o = $('overlay');
+  o.hidden = false;
+  o.classList.remove('error');
+  $('ov-title').textContent = title;
+  $('ov-text').textContent = text;
+  $('ov-progress').hidden = frac == null;
+  if (frac != null) $('ov-bar').style.width = Math.round(frac * 100) + '%';
+  $('ov-detail').textContent = detail || '';
+}
+function showError(title, text, detail) {
+  showStatus(title, text, null, detail);
+  $('overlay').classList.add('error');
+  document.documentElement.dataset.vizState = 'error';
+}
+
+// ---------------------------------------------------------------- data
+async function fetchBinary(url, onProgress) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(url + ': HTTP ' + r.status + ' ' + r.statusText);
+  const total = Number(r.headers.get('content-length')) || 0;
+  if (!r.body || !r.body.getReader) return await r.arrayBuffer();
+  const reader = r.body.getReader();
+  const parts = [];
+  let got = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    parts.push(value);
+    got += value.length;
+    onProgress(got, total);
+  }
+  const out = new Uint8Array(got);
+  let o = 0;
+  for (const p of parts) { out.set(p, o); o += p.length; }
+  return out.buffer;
+}
+
+async function loadData() {
+  showStatus('Loading the routed layout', 'Reading layout metadata…', 0.02);
+  let meta;
+  try {
+    const r = await fetch('./layout.json');
+    if (!r.ok) throw new Error('layout.json: HTTP ' + r.status + ' ' + r.statusText);
+    meta = await r.json();
+  } catch (e) {
+    throw Object.assign(new Error('The layout metadata (layout.json) could not be loaded.'), { detail: String(e.message || e) });
+  }
+  const binName = (meta.format && meta.format.bin) || 'layout.bin';
+  let buf;
+  try {
+    buf = await fetchBinary('./' + binName, (got, total) => {
+      const mb = (got / 1e6).toFixed(1);
+      const tmb = total ? ' of ' + (total / 1e6).toFixed(1) : '';
+      showStatus('Loading the routed layout', 'Downloading layer geometry: ' + mb + tmb + ' MB', total ? 0.05 + 0.9 * got / total : null);
+    });
+  } catch (e) {
+    throw Object.assign(new Error('The layer geometry (' + binName + ') could not be loaded.'), { detail: String(e.message || e) });
+  }
+  const magic = new TextDecoder().decode(new Uint8Array(buf, 0, 8));
+  if (magic !== meta.format.magic) {
+    throw Object.assign(new Error('layout.bin does not match layout.json.'), { detail: 'Expected header ' + meta.format.magic + ', found ' + JSON.stringify(magic) + '. Regenerate both with make viz.' });
+  }
+  return { meta, buf };
+}
+
+// ---------------------------------------------------------------- scene
+const state = { exag: 3, gap: 0, highlight: false, dim: true, group: 'all', view: 'iso', solo: null };
+let meta, renderer, scene, camera, controls, layerObjs = [], dieSize, center, flopMesh, flopList = [], pairLines, rulers, slab, dieOutline, feWindow;
+let hemi, sun;
+
+function layerRank(layers) {
+  const zs = [...new Set(layers.map((l) => l.z_um.toFixed(4)))].sort((a, b) => a - b);
+  return (l) => zs.indexOf(l.z_um.toFixed(4));
+}
+
+function patchShader(shader) {
+  Object.assign(shader.uniforms, this.userData.uniforms);
+  shader.vertexShader = shader.vertexShader
+    .replace('#include <common>', '#include <common>\nattribute vec4 aRect;\nuniform float uGrid;\nuniform vec2 uCenter;\nuniform float uZ0;\nuniform float uThick;')
+    .replace('#include <begin_vertex>',
+      'vec3 transformed = vec3(mix(aRect.x, aRect.z, position.x + 0.5) * uGrid - uCenter.x,\n' +
+      '  mix(aRect.y, aRect.w, position.y + 0.5) * uGrid - uCenter.y,\n' +
+      '  uZ0 + (position.z + 0.5) * uThick);');
+}
+
+function buildScene(buf) {
+  const canvas = $('gl');
+  const gl2 = canvas.getContext('webgl2', { antialias: true, alpha: false, powerPreference: 'high-performance' });
+  if (!gl2) {
+    throw Object.assign(new Error('This browser cannot show the 3D view.'), { detail: 'WebGL 2 is not available (it may be disabled or blocked by the GPU driver).' });
+  }
+  renderer = new THREE.WebGLRenderer({ canvas, context: gl2, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  scene = new THREE.Scene();
+  const [, , dw, dh] = meta.die_um;
+  dieSize = Math.max(dw, dh);
+  center = new THREE.Vector2(dw / 2, dh / 2);
+
+  camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100000);
+  camera.up.set(0, 0, 1);
+  controls = new OrbitControls(camera, canvas);
+  controls.enableDamping = !reduceMotion.matches;
+  controls.dampingFactor = 0.12;
+  controls.screenSpacePanning = true;
+  controls.minDistance = 2;
+  controls.maxDistance = dieSize * 8;
+  controls.addEventListener('change', requestRender);
+  controls.listenToKeyEvents(canvas);
+  controls.keyPanSpeed = 20;
+
+  hemi = new THREE.HemisphereLight(0xffffff, 0x8899aa, 1.5);
+  hemi.position.set(0, 0, 1);
+  scene.add(hemi);
+  sun = new THREE.DirectionalLight(0xffffff, 1.9);
+  sun.position.set(-0.6, -1.0, 1.6).multiplyScalar(dieSize);
+  scene.add(sun);
+
+  // layers
+  const unit = new THREE.BoxGeometry(1, 1, 1);
+  const rank = layerRank(meta.layers);
+  const grid = meta.format.grid_um;
+  const Arr = meta.format.dtype === 'uint32' ? Uint32Array : Uint16Array;
+  for (const L of meta.layers) {
+    const g = new THREE.InstancedBufferGeometry();
+    g.index = unit.index;
+    g.setAttribute('position', unit.getAttribute('position'));
+    g.setAttribute('normal', unit.getAttribute('normal'));
+    const data = L.count ? new Arr(buf, L.offset, L.count * 4) : new Arr(4);
+    g.setAttribute('aRect', new THREE.InstancedBufferAttribute(data, 4));
+    g.instanceCount = L.count;
+    const mat = new THREE.MeshLambertMaterial({ color: new THREE.Color(L.color) });
+    mat.userData.uniforms = {
+      uGrid: { value: grid }, uCenter: { value: center.clone() }, uZ0: { value: 0 }, uThick: { value: 1 },
+    };
+    mat.onBeforeCompile = patchShader;
+    const mesh = new THREE.Mesh(g, mat);
+    mesh.frustumCulled = false;
+    mesh.renderOrder = rank(L);
+    mesh.visible = L.count > 0;
+    mesh.name = L.name;
+    scene.add(mesh);
+    layerObjs.push({ L, mesh, mat, rank: rank(L), on: L.count > 0 });
+  }
+
+  // substrate slab + die outline
+  slab = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, 1), new THREE.MeshLambertMaterial({ color: new THREE.Color(cssVar('--die')) }));
+  scene.add(slab);
+  const outline = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-dw / 2, -dh / 2, 0), new THREE.Vector3(dw / 2, -dh / 2, 0),
+    new THREE.Vector3(dw / 2, dh / 2, 0), new THREE.Vector3(-dw / 2, dh / 2, 0)]);
+  dieOutline = new THREE.LineLoop(outline, new THREE.LineBasicMaterial({ color: new THREE.Color(cssVar('--ruler')) }));
+  scene.add(dieOutline);
+
+  if (meta.fe_detail_window_um) {
+    const [x0, y0, x1, y1] = meta.fe_detail_window_um;
+    const pts = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]].map(([x, y]) => new THREE.Vector3(x - dw / 2, y - dh / 2, 0.02));
+    feWindow = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: new THREE.Color(cssVar('--accent')) }));
+    scene.add(feWindow);
+  }
+
+  buildRulers(dw, dh);
+  buildFlops();
+  applyZ();
+  applyTheme();
+  resize();
+  new ResizeObserver(resize).observe($('stage'));
+}
+
+// rulers along the front (y = 0) and left (x = 0) die edges
+function niceStep(span) {
+  const target = span / 5;
+  const p = Math.pow(10, Math.floor(Math.log10(target)));
+  for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= target) return m * p;
+  return 10 * p;
+}
+function textSprite(text, color, h) {
+  const c = document.createElement('canvas');
+  const px = 48;
+  const ctx = c.getContext('2d');
+  ctx.font = '500 ' + px + 'px "IBM Plex Mono", ui-monospace, Menlo, monospace';
+  const w = Math.ceil(ctx.measureText(text).width) + 12;
+  c.width = w; c.height = px + 16;
+  ctx.font = '500 ' + px + 'px "IBM Plex Mono", ui-monospace, Menlo, monospace';
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 6, c.height / 2);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthWrite: false, transparent: true }));
+  s.scale.set(h * c.width / c.height, h, 1);
+  s.renderOrder = 50;
+  return s;
+}
+function buildRulers(dw, dh) {
+  if (rulers) { scene.remove(rulers); rulers.traverse((o) => { if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } if (o.geometry) o.geometry.dispose(); }); }
+  rulers = new THREE.Group();
+  const color = cssVar('--ruler');
+  const step = niceStep(dieSize);
+  const tick = dieSize * 0.012;
+  const pts = [];
+  const lab = dieSize * 0.024;
+  const gap = dieSize * 0.03;
+  for (let v = 0; v <= dw + 1e-6; v += step) {
+    const x = v - dw / 2;
+    pts.push(new THREE.Vector3(x, -dh / 2, 0), new THREE.Vector3(x, -dh / 2 - tick, 0));
+    const s = textSprite(v === 0 ? '0' : String(+v.toFixed(2)), color, lab);
+    s.position.set(x, -dh / 2 - gap - lab * 0.3, 0);
+    rulers.add(s);
+  }
+  for (let v = step; v <= dh + 1e-6; v += step) {
+    const y = v - dh / 2;
+    pts.push(new THREE.Vector3(-dw / 2, y, 0), new THREE.Vector3(-dw / 2 - tick, y, 0));
+    const s = textSprite(String(+v.toFixed(2)), color, lab);
+    s.position.set(-dw / 2 - gap - s.scale.x / 2, y, 0);
+    rulers.add(s);
+  }
+  const unitLabel = textSprite('µm', color, lab);
+  unitLabel.position.set(dw / 2 + gap + unitLabel.scale.x / 2, -dh / 2 - gap - lab * 0.3, 0);
+  rulers.add(unitLabel);
+  const lines = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: new THREE.Color(color) }));
+  rulers.add(lines);
+  scene.add(rulers);
+}
+
+// ---------------------------------------------------------------- flip-flops
+const GROUP_KEYS = { A: '--copy-a', B: '--copy-b', '0': '--tmr-0', '1': '--tmr-1', '2': '--tmr-2' };
+function flopColorVar(f) {
+  if (f.g === 'other') return '--muted';
+  if (f.c == null) return '--unprot';
+  return GROUP_KEYS[f.c] || '--muted';
+}
+function buildFlops() {
+  const flops = (meta.redundancy && meta.redundancy.flops) || [];
+  const box = new THREE.BoxGeometry(1, 1, 1);
+  const mat = new THREE.MeshLambertMaterial({ transparent: true, opacity: 0.82, depthWrite: true });
+  flopMesh = new THREE.InstancedMesh(box, mat, Math.max(flops.length, 1));
+  flopMesh.count = 0;
+  flopMesh.renderOrder = 40;
+  flopMesh.visible = false;
+  scene.add(flopMesh);
+  pairLines = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color: new THREE.Color(cssVar('--pair-line')) }));
+  pairLines.renderOrder = 45;
+  pairLines.visible = false;
+  scene.add(pairLines);
+}
+function stackTopDisplay() {
+  let top = 0;
+  for (const o of layerObjs) top = Math.max(top, o.mat.userData.uniforms.uZ0.value + o.mat.userData.uniforms.uThick.value);
+  return top;
+}
+function updateFlops() {
+  const flops = (meta.redundancy && meta.redundancy.flops) || [];
+  const [, , dw, dh] = meta.die_um;
+  flopList = flops.filter((f) => state.group === 'all' || f.g === state.group);
+  const top = stackTopDisplay() * 1.06 + dieSize * 0.004;
+  const m = new THREE.Matrix4();
+  const c = new THREE.Color();
+  flopList.forEach((f, i) => {
+    const [x0, y0, x1, y1] = f.box;
+    const inset = 0.12;
+    m.makeScale(Math.max(x1 - x0 - 2 * inset, 0.1), Math.max(y1 - y0 - 2 * inset, 0.1), top);
+    m.setPosition((x0 + x1) / 2 - dw / 2, (y0 + y1) / 2 - dh / 2, top / 2);
+    flopMesh.setMatrixAt(i, m);
+    c.set(cssVar(flopColorVar(f)));
+    flopMesh.setColorAt(i, c);
+  });
+  flopMesh.count = flopList.length;
+  flopMesh.instanceMatrix.needsUpdate = true;
+  if (flopMesh.instanceColor) flopMesh.instanceColor.needsUpdate = true;
+  flopMesh.computeBoundingSphere();
+  flopMesh.visible = state.highlight && flopList.length > 0;
+
+  // same-bit pair lines for one selected group
+  const pts = [];
+  if (state.group !== 'all') {
+    const byCopy = {};
+    for (const f of flopList) if (f.c != null && f.b != null) (byCopy[f.c] = byCopy[f.c] || {})[f.b] = f;
+    const copies = Object.keys(byCopy).sort();
+    const zl = top + dieSize * 0.004;
+    for (let i = 0; i < copies.length; i++) for (let j = i + 1; j < copies.length; j++) {
+      for (const b of Object.keys(byCopy[copies[i]])) {
+        const fa = byCopy[copies[i]][b], fb = byCopy[copies[j]][b];
+        if (!fb) continue;
+        pts.push(new THREE.Vector3((fa.box[0] + fa.box[2]) / 2 - dw / 2, (fa.box[1] + fa.box[3]) / 2 - dh / 2, zl));
+        pts.push(new THREE.Vector3((fb.box[0] + fb.box[2]) / 2 - dw / 2, (fb.box[1] + fb.box[3]) / 2 - dh / 2, zl));
+      }
+    }
+  }
+  pairLines.geometry.dispose();
+  pairLines.geometry = new THREE.BufferGeometry().setFromPoints(pts);
+  pairLines.visible = state.highlight && pts.length > 0;
+  const hc = $('hud-cam');
+  hc.hidden = !state.highlight;
+  const gl = state.group === 'all' ? 'all flip-flops' : ((groupsById[state.group] || {}).label || state.group);
+  hc.textContent = gl + ' · ' + flopList.length + ' highlighted' + (pts.length ? ' · lines join same-bit copies' : '');
+}
+
+// ---------------------------------------------------------------- z / visibility / theme
+function applyZ() {
+  for (const o of layerObjs) {
+    const u = o.mat.userData.uniforms;
+    u.uZ0.value = o.L.z_um * state.exag + o.rank * state.gap;
+    u.uThick.value = Math.max(o.L.thickness_um * state.exag, 0.01);
+  }
+  const slabT = Math.max(dieSize * 0.012, 1);
+  slab.scale.set(1, 1, slabT);
+  slab.position.set(0, 0, -slabT / 2 - 0.001);
+  updateFlops();
+  const topTrue = meta.stack_top_um;
+  $('o-exag').textContent = '×' + state.exag;
+  $('h-exag').textContent = 'The stack is ' + fx(topTrue, 2) + ' µm tall on a ' + fx(dieSize, 0) + ' µm die; drawn ' + fx(topTrue * state.exag, 1) + ' µm tall at ×' + state.exag + '.';
+  $('o-gap').textContent = (state.gap ? '+' + state.gap : '0') + ' µm';
+  $('hud-scale').textContent = 'vertical ×' + state.exag + (state.gap ? ' · spread +' + state.gap + ' µm' : '');
+  requestRender();
+}
+function applyVisibility() {
+  const ghost = state.highlight && state.dim;
+  for (const o of layerObjs) {
+    o.mesh.visible = o.on && o.L.count > 0;
+    const m = o.mat;
+    const want = ghost;
+    if (m.transparent !== want) {
+      m.transparent = want;
+      m.opacity = want ? 0.1 : 1;
+      m.depthWrite = !want;
+      m.needsUpdate = true;
+    }
+  }
+  flopMesh.visible = state.highlight && flopList.length > 0;
+  pairLines.visible = state.highlight && pairLines.geometry.attributes.position && pairLines.geometry.attributes.position.count > 0;
+  document.querySelectorAll('label.layer').forEach((el) => {
+    const o = layerObjs.find((x) => x.L.name === el.dataset.layer);
+    el.classList.toggle('off', !o.on);
+  });
+  requestRender();
+}
+function applyTheme() {
+  renderer.setClearColor(new THREE.Color(cssVar('--stage')), 1);
+  slab.material.color.set(cssVar('--die'));
+  dieOutline.material.color.set(cssVar('--ruler'));
+  if (feWindow) feWindow.material.color.set(cssVar('--accent'));
+  pairLines.material.color.set(cssVar('--pair-line'));
+  const dark = (getComputedStyle(document.documentElement).colorScheme || '').includes('dark');
+  hemi.intensity = dark ? 1.25 : 1.5;
+  hemi.groundColor.set(dark ? 0x334455 : 0x8899aa);
+  buildRulers(meta.die_um[2], meta.die_um[3]);
+  updateFlops();
+  requestRender();
+}
+
+// ---------------------------------------------------------------- camera
+let tween = null;
+// Distance at which the die, its stack and the rulers fill `margin` of the view.
+function fitDistance(dir, target, margin, pad) {
+  const [, , dw, dh] = meta.die_um;
+  const S = dieSize;
+  const zt = stackTopDisplay();
+  const pts = [];
+  for (const x of [-dw / 2 - pad[0] * S, dw / 2 + pad[1] * S]) for (const y of [-dh / 2 - pad[2] * S, dh / 2 + pad[3] * S]) for (const z of [0, zt]) pts.push(new THREE.Vector3(x, y, z));
+  const cam = camera.clone();
+  let d = S * 2;
+  const v = new THREE.Vector3();
+  for (let i = 0; i < 8; i++) {
+    cam.position.copy(dir).multiplyScalar(d).add(target);
+    cam.up.set(0, 0, 1);
+    cam.lookAt(target);
+    cam.near = d / 1000; cam.far = d * 20;
+    cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+    let m = 0, behind = false;
+    for (const p of pts) {
+      v.copy(p).applyMatrix4(cam.matrixWorldInverse);
+      if (v.z > -cam.near) { behind = true; break; }
+      v.applyMatrix4(cam.projectionMatrix);
+      m = Math.max(m, Math.abs(v.x), Math.abs(v.y));
+    }
+    d = behind ? d * 2 : d * Math.max(0.5, Math.min(2, m / margin));
+  }
+  return d;
+}
+function viewPose(name) {
+  const [, , dw, dh] = meta.die_um;
+  const S = dieSize;
+  const zc = stackTopDisplay() * 0.5;
+  // pad: extra room for the rulers, as fractions of the die (left, right, front, back)
+  let az, el, margin, target, pad;
+  if (name === 'top') {
+    az = -90; el = 89.9; margin = 0.94; pad = [0.1, 0.06, 0.07, 0];
+    target = new THREE.Vector3(-0.02 * S, -0.035 * S, 0);
+  } else if (name === 'low') {
+    az = -90; el = 7; margin = 0.96; pad = [0.02, 0.02, 0.02, 0];
+    target = new THREE.Vector3(0, 0, zc);
+  } else {
+    az = -122; el = 36; margin = 0.97; pad = [0.03, 0.02, 0.03, 0];
+    target = new THREE.Vector3(0, -0.01 * S, zc);
+  }
+  const a = THREE.MathUtils.degToRad(az), e = THREE.MathUtils.degToRad(el);
+  const dir = new THREE.Vector3(Math.cos(e) * Math.cos(a), Math.cos(e) * Math.sin(a), Math.sin(e));
+  const dist = fitDistance(dir, target, margin, pad);
+  return { pos: dir.multiplyScalar(dist).add(target), target };
+}
+function setView(name, animate = true) {
+  state.view = name;
+  document.querySelectorAll('[data-view]').forEach((b) => { if (b.dataset.view !== 'reset') b.setAttribute('aria-pressed', String(b.dataset.view === name)); });
+  const { pos, target } = viewPose(name);
+  if (!animate || reduceMotion.matches) {
+    tween = null;
+    camera.position.copy(pos);
+    controls.target.copy(target);
+    controls.update();
+    requestRender();
+    return;
+  }
+  tween = { t0: performance.now(), dur: 650, p0: camera.position.clone(), q0: controls.target.clone(), p1: pos, q1: target };
+  requestRender();
+}
+function stepTween(now) {
+  if (!tween) return false;
+  let t = Math.min(1, (now - tween.t0) / tween.dur);
+  const k = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  camera.position.lerpVectors(tween.p0, tween.p1, k);
+  controls.target.lerpVectors(tween.q0, tween.q1, k);
+  if (t >= 1) tween = null;
+  return true;
+}
+
+// ---------------------------------------------------------------- render loop (on demand)
+let rafPending = false;
+function requestRender() {
+  if (rafPending || !renderer) return;
+  rafPending = true;
+  requestAnimationFrame(frame);
+}
+function frame(now) {
+  rafPending = false;
+  const tweening = stepTween(now);
+  const moved = controls.update();
+  const d = camera.position.distanceTo(controls.target);
+  camera.near = Math.max(d / 2000, 0.01);
+  camera.far = d * 20 + dieSize * 4;
+  camera.updateProjectionMatrix();
+  renderer.render(scene, camera);
+  window.__vizFrames++;
+  if (tweening || moved) requestRender();
+}
+function resize() {
+  const st = $('stage');
+  const w = st.clientWidth, h = st.clientHeight;
+  if (!w || !h) return;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  requestRender();
+}
+
+// ---------------------------------------------------------------- hover
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+let lastPointer = null, hoverPending = false;
+function onPointerMove(ev) {
+  if (!state.highlight || ev.pointerType === 'touch') { $('tip').hidden = true; return; }
+  lastPointer = ev;
+  if (hoverPending) return;
+  hoverPending = true;
+  requestAnimationFrame(() => {
+    hoverPending = false;
+    const e = lastPointer;
+    if (!e) return;
+    const rect = $('gl').getBoundingClientRect();
+    ndc.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hit = flopMesh.visible ? ray.intersectObject(flopMesh, false)[0] : null;
+    const tip = $('tip');
+    if (!hit || hit.instanceId == null) { tip.hidden = true; return; }
+    const f = flopList[hit.instanceId];
+    const g = groupsById[f.g];
+    const copy = f.c == null ? 'unprotected' : (g && g.kind === 'triple' ? 'thermal copy ' + f.c : 'copy ' + f.c);
+    tip.innerHTML = '';
+    const n = document.createElement('div'); n.className = 'n'; n.textContent = f.n; tip.appendChild(n);
+    const r = document.createElement('div'); r.className = 'row';
+    const sw = document.createElement('i'); sw.className = 'sw'; sw.style.background = 'var(' + flopColorVar(f) + ')';
+    r.appendChild(sw);
+    r.appendChild(document.createTextNode((g ? g.label : f.g) + ' · ' + copy + (f.b != null && g && g.kind !== 'single' ? ' · bit ' + f.b : '') + ' · ' + f.m));
+    tip.appendChild(r);
+    tip.hidden = false;
+    const sx = e.clientX - rect.left + 14, sy = e.clientY - rect.top + 14;
+    tip.style.left = Math.min(sx, rect.width - tip.offsetWidth - 8) + 'px';
+    tip.style.top = Math.min(sy, rect.height - tip.offsetHeight - 8) + 'px';
+  });
+}
+
+// ---------------------------------------------------------------- panel
+let groupsById = {};
+function fillPanel() {
+  const s = meta.stats || {};
+  const [, , dw, dh] = meta.die_um;
+  $('hud-design').innerHTML = '';
+  const b = document.createElement('b'); b.textContent = meta.design;
+  $('hud-design').append(b, document.createTextNode(' · sky130hd · ' + fx(dw, 1) + ' × ' + fx(dh, 1) + ' µm'));
+  const dd = (v) => fx(v, v >= 100 ? 0 : 1);
+  $('st-die').innerHTML = dd(dw) + ' × ' + dd(dh) + ' <small>µm</small>';
+  $('st-cells').innerHTML = fmt(s.cell_count) + (s.utilization ? ' <small>' + fx(100 * s.utilization, 0) + '% utilisation</small>' : '');
+  $('st-ff').innerHTML = fmt(s.flip_flops) + ' <small>' + fmt((meta.redundancy.summary || {}).groups || 0) + ' redundant groups</small>';
+  const nrect = meta.layers.reduce((a, l) => a + l.count, 0);
+  $('st-rects').innerHTML = fmt(nrect) + ' <small>' + meta.layers.filter((l) => l.count).length + ' layers</small>';
+  if (s.clock_period_ns) $('st-clk').innerHTML = fx(s.clock_period_ns, s.clock_period_ns < 10 ? 2 : 1) + ' ns <small>' + fx(1000 / s.clock_period_ns, 0) + ' MHz</small>';
+  else $('st-clk').textContent = 'n/a';
+  if (s.wns_ns != null) {
+    $('st-wns').innerHTML = (s.wns_ns >= 0 ? '+' : '') + fx(s.wns_ns, 2) + ' ns <small>' + (s.wns_ns >= 0 ? 'timing met' : 'violated') + '</small>';
+    $('st-wns').classList.add(s.wns_ns >= 0 ? 'pos' : 'neg');
+  } else $('st-wns').textContent = 'n/a';
+  const src = s.sources || {};
+  $('st-clk').title = 'Source: ' + (src.pd_summary || src.sdc || 'not available');
+  $('st-wns').title = 'Source: ' + (src.pd_summary || src.orfs_metrics || 'not available');
+  $('st-cells').title = 'Standard cells excluding fill/decap and tap cells; source: ' + (src.pd_summary || src.orfs_metrics || 'n/a') + '. DEF components incl. filler: ' + fmt(s.components_in_def);
+  $('sub').textContent = (meta.design === 'orbit_demo' ? 'Routed' : 'Development data: ' + meta.design + ', routed') + ' with OpenROAD on SkyWater sky130hd';
+
+  // layers, top of the stack first
+  const list = $('layer-list');
+  list.innerHTML = '';
+  const zmax = meta.stack_top_um;
+  const groups = [
+    ['Metal and vias', ['met5', 'via4', 'met4', 'via3', 'met3', 'via2', 'met2', 'via', 'met1']],
+    ['Local interconnect and contacts', ['mcon', 'li1', 'licon1']],
+    ['Transistor level', ['poly', 'diff', 'tap', 'nwell']],
+  ];
+  for (const [title, names] of groups) {
+    const h = document.createElement('div'); h.className = 'layer-group'; h.textContent = title; list.appendChild(h);
+    for (const nm of names) {
+      const o = layerObjs.find((x) => x.L.name === nm);
+      if (!o) continue;
+      const L = o.L;
+      const lab = document.createElement('label');
+      lab.className = 'layer' + (L.count ? '' : ' empty');
+      lab.dataset.layer = L.name;
+      lab.style.setProperty('--lc', L.color);
+      const inp = document.createElement('input');
+      inp.type = 'checkbox'; inp.id = 'layer-' + L.name; inp.checked = o.on; inp.disabled = !L.count;
+      inp.addEventListener('change', () => { o.on = inp.checked; applyVisibility(); });
+      const name = document.createElement('span'); name.className = 'lname';
+      name.textContent = L.name;
+      const gds = document.createElement('span'); gds.className = 'gds'; gds.textContent = L.gds.join('/');
+      name.appendChild(gds);
+      const count = document.createElement('span'); count.className = 'lcount'; count.textContent = fmt(L.count);
+      const z = document.createElement('span'); z.className = 'lz';
+      z.textContent = (L.approximate ? '≈ ' : '') + 'z ' + L.z_um.toFixed(3) + ' · t ' + L.thickness_um.toFixed(3) + ' µm';
+      z.title = 'z: ' + L.z_source + '\nthickness: ' + L.thickness_source + (L.clipped_to_detail_window ? '\nclipped to the front-end detail window' : '');
+      const track = document.createElement('span'); track.className = 'ztrack';
+      const bar = document.createElement('span');
+      bar.style.left = (100 * L.z_um / zmax) + '%';
+      bar.style.width = Math.max(100 * L.thickness_um / zmax, 1.5) + '%';
+      track.appendChild(bar);
+      lab.append(inp, name, count, z, track);
+      list.appendChild(lab);
+    }
+  }
+  const approx = meta.layers.filter((l) => l.approximate).map((l) => l.name);
+  let note = 'z is the bottom of each layer above the substrate surface; the bars place it on the 0–' + fx(zmax, 2) + ' µm stack.';
+  if (approx.length) note += ' ≈ marks approximate front-end heights (' + approx.join(', ') + ').';
+  if (meta.fe_detail_note) note += ' ' + meta.fe_detail_note + ' (teal outline on the die).';
+  $('layer-note').textContent = note;
+
+  // redundancy
+  const R = meta.redundancy || { groups: [], flops: [] };
+  groupsById = {};
+  for (const g of R.groups) groupsById[g.id] = g;
+  const sel = $('r-group');
+  sel.innerHTML = '';
+  const optAll = document.createElement('option'); optAll.value = 'all'; optAll.textContent = 'All flip-flops (' + fmt(R.flops.length) + ')'; sel.appendChild(optAll);
+  for (const g of R.groups) {
+    const o = document.createElement('option'); o.value = g.id;
+    o.textContent = g.label + (g.kind === 'pair' ? ' (A/B)' : g.kind === 'triple' ? ' (3 copies)' : g.kind === 'single' ? ' (unprotected)' : '') + ' · ' + g.flops;
+    sel.appendChild(o);
+  }
+  const present = new Set(R.flops.map((f) => (f.g === 'other' ? 'other' : f.c == null ? 'single' : f.c)));
+  document.querySelectorAll('#r-legend [data-k]').forEach((el) => { el.hidden = !present.has(el.dataset.k); });
+  const tb = $('r-table').querySelector('tbody');
+  tb.innerHTML = '';
+  const red = R.groups.filter((g) => g.kind === 'pair' || g.kind === 'triple');
+  for (const g of red) {
+    const tr = document.createElement('tr');
+    tr.dataset.group = g.id;
+    const sb = g.same_bit_center_um;
+    const cells = [
+      g.label.replace('Accumulator', 'Acc').replace('Result', 'Res').replace(' lane ', ' L'),
+      fx(g.centroid_distance_um_min, 1),
+      sb ? fx(sb.min, 1) : 'n/a',
+      sb ? fx(sb.median, 1) : 'n/a',
+      sb ? (g.same_bit_pairs_abutting || 0) + '/' + g.bit_pairs : 'n/a',
+    ];
+    cells.forEach((t, i) => { const td = document.createElement('td'); td.textContent = t; if (i) td.className = 'num'; tr.appendChild(td); });
+    tr.addEventListener('click', () => { sel.value = g.id; selectGroup(g.id, true); });
+    tb.appendChild(tr);
+  }
+  const sm = R.summary || {};
+  const fin = $('r-finding');
+  if (!red.length) {
+    fin.textContent = 'This DEF has no orbit_demo redundant storage groups (' + fmt(R.flops.length) + ' flip-flops, none duplicated by name). The section fills in when the viewer is regenerated from the orbit_demo layout.';
+    $('r-table').closest('.table-wrap').hidden = true;
+  } else {
+    fin.innerHTML = '';
+    const st = document.createElement('strong');
+    st.textContent = 'The placer did not keep copies apart. ';
+    fin.appendChild(st);
+    fin.appendChild(document.createTextNode(
+      'Copy centroids sit ' + fx(sm.centroid_distance_um_min, 1) + '–' + fx(sm.centroid_distance_um_max, 1) + ' µm apart, and the closest same-bit pair is ' +
+      fx(sm.same_bit_center_um_min, 1) + ' µm centre to centre. ' + fmt(sm.same_bit_pairs_abutting) + ' of ' + fmt(sm.same_bit_pairs) +
+      ' same-bit pairs are in touching cells, where one particle strike could upset both copies. ' +
+      (/sets no region/.test(R.placement_constraints_note || '') ? 'The flow set no constraint to separate them. ' : '') +
+      'These are distances between placed cell boxes, not an upset-rate estimate.'));
+  }
+
+  // sources
+  const srcs = $('sources');
+  srcs.innerHTML = '';
+  const add = (html) => { const p = document.createElement('p'); p.innerHTML = html; srcs.appendChild(p); };
+  const esc = (t) => String(t == null ? '' : t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  add('Geometry: <code>' + esc(meta.inputs.gds) + '</code> with placement from <code>' + esc(meta.inputs.def) + '</code>, generated ' + esc(meta.generated_utc) + '.');
+  add('Heights: routing thickness from the sky130hd tech LEF; layer z from the open_pdks Magic tech file (the tech LEF has no HEIGHT); vias span between their metals. Coordinates are rounded to a ' + esc(Math.round(meta.format.grid_um * 1000)) + ' nm grid.');
+  const dropped = (meta.dropped_layers || []).map((d) => (d.name !== '?' ? d.name : '') + ' ' + d.gds.join('/'));
+  if (dropped.length) {
+    add('Not drawn: ' + dropped.length + ' other GDS layer/purpose pairs: implants and markers (nsdm, psdm, npc, hvtp, areaid), pins, labels, text, boundaries and the router blockage layer.');
+    srcs.lastChild.title = dropped.join('\n');
+  }
+  add('Scale: 1 scene unit = 1 µm horizontally; heights are multiplied by the vertical scale.');
+}
+
+function selectGroup(id, focus) {
+  state.group = id;
+  document.querySelectorAll('#r-table tbody tr').forEach((tr) => tr.classList.toggle('sel', tr.dataset.group === id));
+  if (!state.highlight) { state.highlight = true; $('r-on').checked = true; }
+  updateFlops();
+  applyVisibility();
+}
+
+function wireControls() {
+  document.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => {
+    if (b.dataset.view === 'reset') {
+      state.exag = defaultExag; state.gap = 0; $('s-exag').value = defaultExag; $('s-gap').value = 0;
+      layerObjs.forEach((o) => { o.on = o.L.count > 0; const i = $('layer-' + o.L.name); if (i) i.checked = o.on; });
+      applyZ(); applyVisibility(); setView('iso');
+    } else setView(b.dataset.view);
+  }));
+  $('s-exag').addEventListener('input', (e) => { state.exag = Number(e.target.value); applyZ(); });
+  $('s-gap').addEventListener('input', (e) => { state.gap = Number(e.target.value); applyZ(); });
+  const setLayers = (pred) => {
+    layerObjs.forEach((o) => { o.on = o.L.count > 0 && pred(o.L); const i = $('layer-' + o.L.name); if (i) i.checked = o.on; });
+    applyVisibility();
+  };
+  $('l-all').addEventListener('click', () => setLayers(() => true));
+  $('l-metal').addEventListener('click', () => setLayers((L) => /^(met\d|via\d?)$/.test(L.name)));
+  $('l-cells').addEventListener('click', () => setLayers((L) => !/^(met[2-5]|via\d?)$/.test(L.name)));
+  $('r-on').addEventListener('change', (e) => { state.highlight = e.target.checked; if (!state.highlight) $('tip').hidden = true; updateFlops(); applyVisibility(); });
+  $('r-dim').addEventListener('change', (e) => { state.dim = e.target.checked; applyVisibility(); });
+  $('r-group').addEventListener('change', (e) => selectGroup(e.target.value));
+  $('gl').addEventListener('pointermove', onPointerMove);
+  $('gl').addEventListener('pointerleave', () => { $('tip').hidden = true; });
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  (mq.addEventListener ? mq.addEventListener('change', applyTheme) : mq.addListener(applyTheme));
+  new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  reduceMotion.addEventListener && reduceMotion.addEventListener('change', () => { controls.enableDamping = !reduceMotion.matches; });
+  if (window.matchMedia('(pointer: coarse)').matches) $('hud-hint').textContent = 'One finger to orbit · two to pan and zoom';
+}
+
+let defaultExag = 3;
+async function main() {
+  let data;
+  try {
+    data = await loadData();
+  } catch (e) {
+    showError(e.message || 'The layout could not be loaded.', 'Regenerate the data with make viz and serve the viz/ folder over HTTP (make viz-serve); opening index.html from disk blocks the data files.', e.detail || '');
+    return;
+  }
+  meta = data.meta;
+  showStatus('Building the 3D scene', fmt(meta.layers.reduce((a, l) => a + l.count, 0)) + ' rectangles on ' + meta.layers.length + ' layers', 0.97);
+  await new Promise((r) => setTimeout(r, 0));
+  try {
+    const span = Math.max(meta.die_um[2], meta.die_um[3]);
+    defaultExag = Math.min(6, Math.max(2, Math.round(span / 110)));
+    state.exag = defaultExag;
+    $('s-exag').value = defaultExag;
+    buildScene(data.buf);
+    fillPanel();
+    wireControls();
+    applyZ();
+    applyVisibility();
+    setView('iso', false);
+  } catch (e) {
+    console.error(e);
+    showError(e.message || 'The 3D view could not be built.', 'The data loaded, but the scene could not be created in this browser.', e.detail || String(e.stack || e).split('\n')[0]);
+    return;
+  }
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('overlay').hidden = true;
+    document.documentElement.dataset.vizState = 'ready';
+  }));
+  // Small hooks for the screenshot harness (scripts/viz_shots.py).
+  window.orbitViz = {
+    setView, selectGroup, state,
+    get frames() { return window.__vizFrames; },
+    screenOf(i) {
+      const f = flopList[i];
+      if (!f) return null;
+      const [, , dw, dh] = meta.die_um;
+      const v = new THREE.Vector3((f.box[0] + f.box[2]) / 2 - dw / 2, (f.box[1] + f.box[3]) / 2 - dh / 2, stackTopDisplay()).project(camera);
+      const r = $('gl').getBoundingClientRect();
+      return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height, name: f.n };
+    },
+  };
+}
+main();
+</script>
