@@ -20,7 +20,12 @@
 // Timing: inputs change at the falling edge, outputs are sampled SAMPLE_SKEW
 // before the rising edge, and the model advances at the rising edge.
 //
-// Plusargs: +seed=<n> seeds the pseudo-random operands (default 1).
+// Pseudo-random operands come from a xorshift32 generator in this file, not
+// from $random (its seeded sequence differs between simulators), so both
+// simulators get identical stimulus and must print identical summaries.
+//
+// Plusargs: +seed=<n> seeds the pseudo-random operands (default 1);
+//           +maxerr=<n> stops with FAIL after n errors (default: run to the end).
 // Ends with "TB_ORBIT_DEMO PASS" or "TB_ORBIT_DEMO FAIL" and $fatal on failure.
 
 `timescale 1ns/1ps
@@ -82,7 +87,18 @@ module tb_orbit_demo;
     // ------------------------------------------------------------------
     // Bookkeeping
     // ------------------------------------------------------------------
-    integer seed;
+    integer seed, maxerr;
+    reg [31:0] prng;                  // xorshift32 state, never zero
+    reg [31:0] ra, rb, rf, rl;        // drawn before use (argument order is unspecified)
+
+    function [31:0] rnd32(input dummy);
+        begin
+            prng  = prng ^ (prng << 13);
+            prng  = prng ^ (prng >> 17);
+            prng  = prng ^ (prng << 5);
+            rnd32 = prng;
+        end
+    endfunction
     reg [8*24-1:0] scen;              // current scenario name
     integer n_cycles, n_model_checks, n_model_err;
     integer n_scen_checks, n_scen_err, n_errors;
@@ -94,6 +110,10 @@ module tb_orbit_demo;
             n_errors = n_errors + 1;
             if (n_errors <= 40)
                 $display("ERROR t=%0t [%0s] %0s", $time, scen, msg);
+            if (maxerr > 0 && n_errors >= maxerr) begin
+                $display("TB_ORBIT_DEMO FAIL: stopped after %0d errors", n_errors);
+                $fatal(1, "tb_orbit_demo: %0d errors", n_errors);
+            end
         end
     endtask
 
@@ -120,8 +140,8 @@ module tb_orbit_demo;
     function [31:0] prod8(input [7:0] a, input [7:0] b);
         integer ia, ib;
         begin
-            ia = $signed(a);
-            ib = $signed(b);
+            ia = {{24{a[7]}}, a};          // explicit sign extension
+            ib = {{24{b[7]}}, b};
             prod8 = ia * ib;
         end
     endfunction
@@ -151,7 +171,7 @@ module tb_orbit_demo;
     function [1:0] therm_next(input [1:0] st, input tv, input [7:0] tc);
         integer t;
         begin
-            t = $signed(tc);
+            t = {{24{tc[7]}}, tc};         // signed degrees C
             if (!tv || t >= 95)       therm_next = STOP;
             else if (st == NORMAL)    therm_next = (t >= 80) ? THROTTLE : NORMAL;
             else if (st == THROTTLE)  therm_next = (t <= 70) ? NORMAL : THROTTLE;
@@ -223,6 +243,7 @@ module tb_orbit_demo;
     // One clock cycle: sample and check, then let the edge happen.
     // ------------------------------------------------------------------
     reg          s_in_ready, s_out_valid, s_shutdown, s_in_fire, s_out_fire;
+    reg          rnd_ready;            // tick() randomizes out_ready while set
     reg [1:0]    s_state;
     reg [W-1:0]  s_out_data;
 
@@ -316,6 +337,7 @@ module tb_orbit_demo;
             model_step;
             n_cycles = n_cycles + 1;
             @(negedge clk);
+            if (rnd_ready) out_ready = (rnd32(1'b0) & 32'd3) != 32'd0;   // ready 3 cycles in 4
         end
     endtask
 
@@ -358,6 +380,7 @@ module tb_orbit_demo;
         integer w;
         begin
             in_valid = 1'b0; in_first = 1'b0; in_last = 1'b0;
+            rnd_ready = 1'b0;
             out_ready = 1'b1;
             w = 0;
             tick;
@@ -384,13 +407,13 @@ module tb_orbit_demo;
             for (c = 0; c < 4; c = c + 1) st_cnt[c] = 0;
             out_ready = 1'b1;
             in_valid  = 1'b1; in_first = 1'b1; in_last = 1'b1;
-            in_a = $random(seed); in_b = $random(seed);
+            in_a = rnd32(1'b0); in_b = rnd32(1'b0);
             for (c = 0; c < n; c = c + 1) begin
                 tick;
                 if (s_in_fire === 1'b1) begin
                     adm_cnt = adm_cnt + 1;
-                    in_a = $random(seed);
-                    in_b = $random(seed);
+                    in_a = rnd32(1'b0);
+                    in_b = rnd32(1'b0);
                 end
                 st_cnt[s_state] = st_cnt[s_state] + 1;
                 if (c < LOGN) begin
@@ -434,14 +457,17 @@ module tb_orbit_demo;
     // ------------------------------------------------------------------
     // Test sequence
     // ------------------------------------------------------------------
-    integer i, k, r, n, cnt, good;
+    integer i, k, r, n, cnt;
+    reg     good;
     reg [W-1:0] held;
-    reg [8*LANES-1:0] wa, wb;
+    integer a0, b0, a1, b1;
     reg wl;
 
     initial begin
-        seed = 1;
-        if ($value$plusargs("seed=%d", seed)) ;
+        if (!$value$plusargs("seed=%d", seed)) seed = 1;
+        if (!$value$plusargs("maxerr=%d", maxerr)) maxerr = 0;
+        prng = seed ^ 32'h9E37_79B9;
+        if (prng == 32'd0) prng = 32'h1;
         scen = "init";
         n_cycles = 0; n_model_checks = 0; n_model_err = 0;
         n_scen_checks = 0; n_scen_err = 0; n_errors = 0;
@@ -450,7 +476,7 @@ module tb_orbit_demo;
         sb_wr = 0; sb_rd = 0;
         lit_mask = {LANES{1'b0}}; lit_value = {W{1'b0}};
         last_out = {W{1'b0}};
-        m_live = 1'b0; m_rdy = 1'b0;
+        m_live = 1'b0; m_rdy = 1'b0; rnd_ready = 1'b0;
         m_ovq = 1'b0; m_phase = 1'b0; m_state = STOP; m_res = {W{1'b0}};
         for (i = 0; i < LANES; i = i + 1) begin
             t_acc[i] = 32'd0;
@@ -530,16 +556,20 @@ module tb_orbit_demo;
         drain;
         // Pseudo-random sums of several lengths, back to back (scoreboard-checked).
         for (n = 2; n <= 128; n = n * 2) begin
-            for (k = 0; k < n; k = k + 1)
-                beat(k == 0, k == n - 1, $random(seed), $random(seed));
+            for (k = 0; k < n; k = k + 1) begin
+                ra = rnd32(1'b0); rb = rnd32(1'b0);
+                beat(k == 0, k == n - 1, ra, rb);
+            end
         end
         drain;
         // Same, with random out_ready and idle gaps.
+        rnd_ready = 1'b1;
         for (n = 1; n <= 40; n = n + 3) begin
             for (k = 0; k < n; k = k + 1) begin
-                out_ready = $random(seed);
-                beat(k == 0, k == n - 1, $random(seed), $random(seed));
-                if ($random(seed) % 4 == 0) idle(1);
+                ra = rnd32(1'b0); rb = rnd32(1'b0);
+                beat(k == 0, k == n - 1, ra, rb);
+                rf = rnd32(1'b0);
+                if (rf[1:0] == 2'd0) idle(1);
             end
         end
         drain;
@@ -562,11 +592,11 @@ module tb_orbit_demo;
         expect_lit(4'hF, pk32(32'd15, 32'hFFFF_FFF1, 32'd32768, 32'd1));
         beat(1'b0, 1'b1, pk8(5, -5, -128, 1), pk8(1, 1, -128, 1));
         beat(1'b0, 1'b0, pk8(1, 1, 1, 1), pk8(7, 7, 7, 7));
-        expect_lit(4'hF, pk32(32'hFFFF_FFF8, 32'hFFFF_FFE6, 32'd32745, 32'hFFFF_FFE8));
+        expect_lit(4'hF, pk32(32'hFFFF_FFF8, 32'hFFFF_FFE9, 32'd32745, 32'hFFFF_FFE8));
         beat(1'b0, 1'b1, pk8(-6, -3, -2, 16), pk8(5, 5, 15, -2));
         drain;
         // The same result is presented again only by a new in_last.
-        expect_lit(4'hF, pk32(32'hFFFF_FFF8, 32'hFFFF_FFE6, 32'd32745, 32'hFFFF_FFE8));
+        expect_lit(4'hF, pk32(32'hFFFF_FFF8, 32'hFFFF_FFE9, 32'd32745, 32'hFFFF_FFE8));
         beat(1'b0, 1'b1, 32'd0, 32'd0);
         drain;
 
@@ -584,9 +614,9 @@ module tb_orbit_demo;
         for (k = 0; k < 30; k = k + 1) begin
             tick;
             if (!(s_out_valid === 1'b1 && s_out_data === held && s_in_ready === 1'b0 && s_in_fire === 1'b0))
-                good = 0;
+                good = 1'b0;
         end
-        chk(good == 1, "31 stalled cycles: out_valid held, out_data stable, non-last beat blocked");
+        chk(good === 1'b1, "31 stalled cycles: out_valid held, out_data stable, non-last beat blocked");
         chk(held === pk32(32'd6, 32'd12, 32'd20, 32'd30), "held result is X");
         cnt = n_out_fire;
         out_ready = 1'b1;
@@ -600,16 +630,16 @@ module tb_orbit_demo;
         chk(s_in_fire === 1'b1, "last beat accepted into the empty buffer");
         // Offer a single-beat sum Z (last): blocked for 50 cycles while Y is held.
         in_first = 1'b1; in_last = 1'b1; in_a = pk8(-1, -1, -1, -1); in_b = pk8(9, 8, 7, 6);
-        good = 1;
+        good = 1'b1;
         tick;
         held = s_out_data;
         for (k = 0; k < 50; k = k + 1) begin
             // out_ready glitches low-high are not allowed here; keep it low
             tick;
             if (!(s_out_valid === 1'b1 && s_out_data === held && s_in_ready === 1'b0 && s_in_fire === 1'b0))
-                good = 0;
+                good = 1'b0;
         end
-        chk(good == 1, "51 stalled cycles: out_valid held, out_data stable, last beat blocked");
+        chk(good === 1'b1, "51 stalled cycles: out_valid held, out_data stable, last beat blocked");
         chk(held === pk32(32'd11, 32'd22, 32'd33, 32'd44), "held result is Y");
         expect_lit(4'hF, pk32(32'hFFFF_FFF7, 32'hFFFF_FFF8, 32'hFFFF_FFF9, 32'hFFFF_FFFA));
         out_ready = 1'b1;
@@ -620,10 +650,11 @@ module tb_orbit_demo;
         chk(s_out_fire === 1'b1 && s_out_data === pk32(32'hFFFF_FFF7, 32'hFFFF_FFF8, 32'hFFFF_FFF9, 32'hFFFF_FFFA),
             "Z transferred right after");
         chk(n_out_fire - cnt == 3, "exactly three results X, Y, Z: none lost or repeated");
-        // Random out_ready with a continuous stream.
+        // Random out_ready with a continuous stream of random first/last beats.
+        rnd_ready = 1'b1;
         for (k = 0; k < 300; k = k + 1) begin
-            out_ready = ($random(seed) % 3) != 0;
-            beat(($random(seed) % 3) == 0, ($random(seed) % 2) == 0, $random(seed), $random(seed));
+            rf = rnd32(1'b0); rl = rnd32(1'b0); ra = rnd32(1'b0); rb = rnd32(1'b0);
+            beat((rf % 32'd3) == 32'd0, rl[0], ra, rb);
         end
         drain;
 
@@ -631,8 +662,10 @@ module tb_orbit_demo;
         start("back_to_back");
         out_ready = 1'b1;
         cnt = n_b2b; k = n_cycles; i = n_out_fire;
-        for (r = 0; r < 32; r = r + 1)
-            beat(1'b1, 1'b1, $random(seed), $random(seed));
+        for (r = 0; r < 32; r = r + 1) begin
+            ra = rnd32(1'b0); rb = rnd32(1'b0);
+            beat(1'b1, 1'b1, ra, rb);
+        end
         chk(n_cycles - k == 32, "32 single-beat sums accepted in 32 consecutive cycles");
         chk(n_b2b - cnt == 31, "31 cycles with in_last accepted together with out_fire");
         tick;
@@ -640,8 +673,10 @@ module tb_orbit_demo;
         // Two-beat sums back to back: a result every other cycle, no stall.
         k = n_cycles;
         for (r = 0; r < 16; r = r + 1) begin
-            beat(1'b1, 1'b0, $random(seed), $random(seed));
-            beat(1'b0, 1'b1, $random(seed), $random(seed));
+            ra = rnd32(1'b0); rb = rnd32(1'b0);
+            beat(1'b1, 1'b0, ra, rb);
+            ra = rnd32(1'b0); rb = rnd32(1'b0);
+            beat(1'b0, 1'b1, ra, rb);
         end
         chk(n_cycles - k == 32, "16 two-beat sums accepted in 32 consecutive cycles");
         drain;
@@ -658,8 +693,8 @@ module tb_orbit_demo;
         stream(41);                        // cycle 0 still NORMAL, cycles 1..40 THROTTLE
         good = (lg_st[0] === NORMAL && lg_adm[0] === 1'b1);
         for (k = 1; k <= 40; k = k + 1)
-            if (lg_st[k] !== THROTTLE || lg_adm[k] !== (((k - 1) % 2) == 0)) good = 0;
-        chk(good == 1, "80 C: THROTTLE from the next cycle, admits exactly alternate cycles");
+            if (lg_st[k] !== THROTTLE || lg_adm[k] !== (((k - 1) % 2) == 0)) good = 1'b0;
+        chk(good === 1'b1, "80 C: THROTTLE from the next cycle, admits exactly alternate cycles");
         chk(lg_st[1] === THROTTLE && lg_adm[1] === 1'b1, "the first THROTTLE cycle admits");
         chk(adm_cnt == 21 && st_cnt[THROTTLE] == 40, "40 THROTTLE cycles admit exactly 20 beats");
         set_temp(1'b1, 94);
@@ -672,28 +707,33 @@ module tb_orbit_demo;
         stream(21);                        // cycle 0 THROTTLE, then NORMAL
         chk(lg_st[0] === THROTTLE && lg_st[1] === NORMAL && st_cnt[NORMAL] == 20,
             "70 C: THROTTLE -> NORMAL after one cycle");
-        good = 1;
-        for (k = 1; k <= 20; k = k + 1) if (lg_adm[k] !== 1'b1) good = 0;
-        chk(good == 1, "after recovery every cycle admits again");
-        // Leave THROTTLE in its blocking phase; the next THROTTLE again starts admitting.
+        good = 1'b1;
+        for (k = 1; k <= 20; k = k + 1) if (lg_adm[k] !== 1'b1) good = 1'b0;
+        chk(good === 1'b1, "after recovery every cycle admits again");
+        // One admitting THROTTLE cycle, one NORMAL cycle (the phase flip-flop
+        // toggled to 1 in it), THROTTLE again: the phase must have been forced
+        // to 0, so the first cycle of the new THROTTLE admits.
         set_temp(1'b1, 85);
-        stream(3);                         // NORMAL, THROTTLE(admit), THROTTLE(block)
-        chk(lg_st[1] === THROTTLE && lg_adm[1] === 1'b1 && lg_st[2] === THROTTLE && lg_adm[2] === 1'b0,
-            "85 C: throttled admit then block");
+        stream(1);                         // NORMAL, 85 C registered
+        chk(lg_st[0] === NORMAL, "85 C applied in NORMAL");
         set_temp(1'b1, 60);
-        stream(3);                         // THROTTLE(admit), NORMAL, NORMAL
-        chk(lg_st[0] === THROTTLE && lg_adm[0] === 1'b1 && lg_st[1] === NORMAL, "60 C: back to NORMAL");
+        stream(1);                         // THROTTLE (admits), 60 C registered
+        chk(lg_st[0] === THROTTLE && lg_adm[0] === 1'b1, "single THROTTLE cycle admits");
         set_temp(1'b1, 81);
-        stream(5);
-        chk(lg_st[1] === THROTTLE && lg_adm[1] === 1'b1 && lg_adm[2] === 1'b0 && lg_adm[3] === 1'b1,
-            "re-entered THROTTLE: first cycle admits again (phase reset)");
+        stream(5);                         // NORMAL, THROTTLE: admit, block, admit, block
+        chk(lg_st[0] === NORMAL && lg_st[1] === THROTTLE && lg_adm[1] === 1'b1 && lg_adm[2] === 1'b0 &&
+            lg_adm[3] === 1'b1 && lg_adm[4] === 1'b0,
+            "THROTTLE after one NORMAL cycle: first cycle admits (phase forced to 0)");
         set_temp(1'b1, 95);
-        stream(2);                         // THROTTLE, then STOP
+        stream(2);                         // THROTTLE (admits), then STOP
+        chk(lg_st[0] === THROTTLE && lg_adm[0] === 1'b1 && lg_st[1] === STOP && lg_adm[1] === 1'b0,
+            "95 C from THROTTLE: STOP next cycle");
         set_temp(1'b1, 70);
         stream(2);                         // STOP, then NORMAL
+        chk(lg_st[0] === STOP && lg_st[1] === NORMAL, "70 C: STOP -> NORMAL");
         set_temp(1'b1, 80);
         stream(4);
-        chk(lg_st[1] === THROTTLE && lg_adm[1] === 1'b1 && lg_adm[2] === 1'b0,
+        chk(lg_st[1] === THROTTLE && lg_adm[1] === 1'b1 && lg_adm[2] === 1'b0 && lg_adm[3] === 1'b1,
             "THROTTLE after STOP: first cycle admits");
         set_temp(1'b1, 25);
         stream(2);
@@ -728,9 +768,9 @@ module tb_orbit_demo;
         set_temp(1'b1, 100);
         stream(12);
         chk(lg_st[0] === NORMAL && st_cnt[STOP] == 11 && adm_cnt == 1, "100 C: STOP admits nothing");
-        good = 1;
-        for (k = 1; k < 12; k = k + 1) if (lg_adm[k] !== 1'b0) good = 0;
-        chk(good == 1 && shutdown_req === 1'b1, "STOP: in_ready low every cycle, shutdown_req high");
+        good = 1'b1;
+        for (k = 1; k < 12; k = k + 1) if (lg_adm[k] !== 1'b0) good = 1'b0;
+        chk(good === 1'b1 && shutdown_req === 1'b1, "STOP: in_ready low every cycle, shutdown_req high");
         set_temp(1'b0, 0);
         stream(5);
         chk(st_cnt[STOP] == 5 && adm_cnt == 0, "invalid sensor: STOP admits nothing");
@@ -746,12 +786,12 @@ module tb_orbit_demo;
         set_temp(1'b1, 110);
         in_valid = 1'b1; in_first = 1'b1; in_last = 1'b1; in_a = 32'h01010101; in_b = 32'h01010101;
         tick;                              // reading registered
-        good = 1;
+        good = 1'b1;
         for (k = 0; k < 10; k = k + 1) begin
             tick;
-            if (!(s_state === STOP && s_out_valid === 1'b1 && s_in_ready === 1'b0)) good = 0;
+            if (!(s_state === STOP && s_out_valid === 1'b1 && s_in_ready === 1'b0)) good = 1'b0;
         end
-        chk(good == 1, "STOP with a full buffer: result held, input blocked");
+        chk(good === 1'b1, "STOP with a full buffer: result held, input blocked");
         cnt = n_out_fire;
         out_ready = 1'b1;
         tick;
@@ -791,19 +831,17 @@ module tb_orbit_demo;
         for (k = 1; k <= 132106; k = k + 1) begin
             // lane 0: 131071 x 16384 = 0x7FFFC000, +16129 +254 = INT_MAX, +1 wraps to INT_MIN,
             //         zeros, then -1 wraps back to INT_MAX
-            if (k <= 131071)      begin wa[7:0] = -8'sd128; wb[7:0] = -8'sd128; end
-            else if (k == 131072) begin wa[7:0] =  8'sd127; wb[7:0] =  8'sd127; end
-            else if (k == 131073) begin wa[7:0] =  8'sd127; wb[7:0] =  8'sd2;   end
-            else if (k == 131074) begin wa[7:0] =  8'sd1;   wb[7:0] =  8'sd1;   end
-            else if (k <  132106) begin wa[7:0] =  8'sd0;   wb[7:0] =  8'sd0;   end
-            else                  begin wa[7:0] = -8'sd1;   wb[7:0] =  8'sd1;   end
+            if (k <= 131071)      begin a0 = -128; b0 = -128; end
+            else if (k == 131072) begin a0 =  127; b0 =  127; end
+            else if (k == 131073) begin a0 =  127; b0 =    2; end
+            else if (k == 131074) begin a0 =    1; b0 =    1; end
+            else if (k <  132106) begin a0 =    0; b0 =    0; end
+            else                  begin a0 =   -1; b0 =    1; end
             // lane 1: 132104 x -16256 = INT_MIN + 1024, -1024 = INT_MIN, -1 wraps to INT_MAX
-            if (k <= 132104)      begin wa[15:8] = -8'sd128; wb[15:8] = 8'sd127; end
-            else if (k == 132105) begin wa[15:8] = -8'sd32;  wb[15:8] = 8'sd32;  end
-            else                  begin wa[15:8] = -8'sd1;   wb[15:8] = 8'sd1;   end
+            if (k <= 132104)      begin a1 = -128; b1 =  127; end
+            else if (k == 132105) begin a1 =  -32; b1 =   32; end
+            else                  begin a1 =   -1; b1 =    1; end
             // lane 2: +16384 every beat (wraps upward); lane 3: -16256 every beat (wraps downward)
-            wa[23:16] = -8'sd128; wb[23:16] = -8'sd128;
-            wa[31:24] =  8'sd127; wb[31:24] = -8'sd128;
             wl = 1'b1;
             case (k)
                 131071: expect_lit(4'hF, pk32(32'h7FFF_C000, 32'h8100_3F80, 32'h7FFF_C000, 32'h8100_3F80));
@@ -814,7 +852,7 @@ module tb_orbit_demo;
                 132106: expect_lit(4'hF, pk32(32'h7FFF_FFFF, 32'h7FFF_FFFF, 32'h8102_8000, 32'h7FFF_8500));
                 default: wl = 1'b0;
             endcase
-            beat(k == 1, wl, wa, wb);
+            beat(k == 1, wl, pk8(a0, a1, -128, 127), pk8(b0, b1, -128, -128));
         end
         drain;
         chk(fault === 1'b0 && n_model_err == 0, "no fault and no model mismatch across both wraps");
@@ -833,14 +871,14 @@ module tb_orbit_demo;
         cnt = n_dropped;
         tick;
         chk(s_in_ready === 1'b0 && s_in_fire === 1'b0, "in_ready low in the first clear_fault cycle");
-        good = 1;
+        good = 1'b1;
         for (k = 0; k < 5; k = k + 1) begin
             out_ready = k[0];              // draining is irrelevant: the buffer is empty
             tick;
             if (!(s_in_ready === 1'b0 && s_in_fire === 1'b0 && s_out_valid === 1'b0 &&
-                  s_out_data === {W{1'b0}} && fault === 1'b0)) good = 0;
+                  s_out_data === {W{1'b0}} && fault === 1'b0)) good = 1'b0;
         end
-        chk(good == 1, "while clear_fault: in_ready low, buffer empty, out_data zero, no fault");
+        chk(good === 1'b1, "while clear_fault: in_ready low, buffer empty, out_data zero, no fault");
         chk(n_dropped - cnt == 1, "the pending result was discarded by clear_fault");
         clear_fault = 1'b0;
         out_ready = 1'b1;
