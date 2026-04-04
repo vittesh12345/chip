@@ -125,10 +125,10 @@ sim-report: sim sim-mutants
 	@if [ -z "$(SIM_PUBLISH)" ]; then \
 	    echo "sim-report: RTL_DIR=$(RTL_DIR) is not the production rtl/; nothing copied to reports/"; \
 	else \
-	    python3 tb/sim_report.py --build $(SIM_OUT) --out $(SIM_PUBLISH) \
+	    python3 tb/sim_report.py --build $(SIM_OUT) --out $(SIM_PUBLISH) --rtl "$(RTL)" \
 	        --seed $(SIM_SEED) --seeds "$(SIM_SEEDS)" --cycles $(SIM_CYCLES) \
-	        --soak-seeds "$(SIM_SOAK_SEEDS)" --vl-seeds "$(SIM_VL_SEEDS)" \
-	        --mut-cycles $(SIM_MUT_CYCLES) \
+	        --soak-seeds "$(SIM_SOAK_SEEDS)" --soak-max $(SIM_SOAK_MAX) --vl-seeds "$(SIM_VL_SEEDS)" \
+	        --mut-cycles $(SIM_MUT_CYCLES) --vl-opt "$(SIM_VL_OPT)" --jobs $(SIM_JOBS) \
 	    && echo "sim-report: wrote $(SIM_PUBLISH)/summary.md"; \
 	fi
 
