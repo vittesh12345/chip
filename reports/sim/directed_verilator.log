@@ -26,5 +26,5 @@ tb_orbit_demo summary (seed 1)
 TB_ORBIT_DEMO PASS
 - tb/tb_orbit_demo.v:936: Verilog $finish
 - S i m u l a t i o n   R e p o r t: Verilator 5.053 devel
-- Verilator: $finish at 1ms; walltime 0.930 s; speed 1.436 ms/s
-- Verilator: cpu 0.896 s on 1 threads; allocated 8 MB
+- Verilator: $finish at 1ms; walltime 0.951 s; speed 1.405 ms/s
+- Verilator: cpu 0.946 s on 1 threads; allocated 8 MB

@@ -4,12 +4,12 @@ cocotb 2.1.0.dev0+41564633, simulator icarus, Python 3.11.6 (/opt/eda/oss-cad-su
 
 | test | seed | cycles | results checked | errors | missing coverage | wall s | result |
 |---|---|---|---|---|---|---|---|
-| random_workload | 1 | 20000 | 866 | 0 | - | 2.8 | PASS |
+| random_workload | 1 | 20000 | 866 | 0 | - | 2.5 | PASS |
 | random_workload | 2 | 20000 | 978 | 0 | - | 2.7 | PASS |
-| random_workload | 3 | 20000 | 976 | 0 | - | 2.5 | PASS |
+| random_workload | 3 | 20000 | 976 | 0 | - | 2.6 | PASS |
 | random_workload | 4 | 20000 | 825 | 0 | - | 2.6 | PASS |
 | random_workload | 5 | 20000 | 877 | 0 | - | 2.6 | PASS |
-| wrap_soak | 1 | 149226 | 3022 | 0 | - | 18.4 | PASS |
+| wrap_soak | 1 | 149226 | 3022 | 0 | - | 19.0 | PASS |
 
 Functional coverage (event counts; * = required > 0 in the test that lists it)
 

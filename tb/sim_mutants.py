@@ -21,7 +21,6 @@ Writes <out>/summary.md and per-mutant logs.
 import argparse
 import concurrent.futures
 import json
-import os
 import shutil
 import subprocess
 import sys
