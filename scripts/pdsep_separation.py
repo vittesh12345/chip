@@ -116,7 +116,16 @@ def read_def(path, sizes):
                 members.append(toks[i].replace('\\', ''))
                 i += 1
             groups[name] = {"region": region, "members": members}
-    return {"units": units, "die": die, "cells": cells, "regions": regions, "groups": groups,
+    core = None
+    rows = re.findall(r'\nROW\s+\S+\s+(\S+)\s+(-?\d+)\s+(-?\d+)\s+\S+\s+DO\s+(\d+)\s+BY\s+(\d+)\s+STEP\s+(\d+)\s+(\d+)', text)
+    if rows:
+        xs0 = min(int(r[1]) for r in rows)
+        ys0 = min(int(r[2]) for r in rows)
+        xs1 = max(int(r[1]) + int(r[3]) * int(r[5]) for r in rows)
+        rh = sizes.get("__site_height__", 2.72)
+        ys1 = max(int(r[2]) for r in rows) + int(round(rh * units))
+        core = (xs0 / units, ys0 / units, xs1 / units, ys1 / units)
+    return {"units": units, "die": die, "core": core, "cells": cells, "regions": regions, "groups": groups,
             "missing_masters": sorted(missing)}
 
 
@@ -435,6 +444,83 @@ def write_md(results, out, check_label, fails):
     open(out, "w").write("\n".join(L) + "\n")
 
 
+ROLE_LABEL = {
+    "copyA": "Copy A of every accumulator/result pair (u_acc_a + u_res_a, lanes 0-3)",
+    "copyB": "Copy B of every accumulator/result pair (u_acc_b + u_res_b, lanes 0-3)",
+    "th0": "Thermal state copy 0 (u_thermal.u_copy0)",
+    "th1": "Thermal state copy 1 (u_thermal.u_copy1)",
+    "th2": "Thermal state copy 2 (u_thermal.u_copy2)",
+}
+
+
+def role_of(region_name):
+    m = re.search(r'(copyA|copyB|th[012])$', region_name or "")
+    return m.group(1) if m else None
+
+
+def regions_json(d, m, path, def_path):
+    """Machine-readable region boxes and group assignment (for the 3D viewer)."""
+    cells = d["cells"]
+    ffs, _allc, _dup = classify(cells)
+    regs = []
+    grp_of_region = {g["region"]: gn for gn, g in d["groups"].items()}
+    for rn, r in sorted(d["regions"].items()):
+        role = role_of(rn)
+        gname = grp_of_region.get(rn)
+        members = d["groups"].get(gname, {}).get("members", [])
+        nff = sum(1 for x in members if x in cells and "__df" in cells[x]["master"])
+        regs.append({"name": rn, "group": gname, "role": role, "label": ROLE_LABEL.get(role, rn),
+                     "type": r["type"], "box": list(r["boxes"][0]) if r["boxes"] else None,
+                     "boxes": [list(b) for b in r["boxes"]], "members": len(members), "flip_flops": nff})
+    role_region = {x["role"]: x["name"] for x in regs}
+    flops = []
+    for grp in group_order():
+        for cp, bits in sorted(ffs.get(grp, {}).items()):
+            for bit, box in sorted(bits.items()):
+                if grp == "thermal":
+                    inst, role = f"u_thermal.u_copy{cp}", f"th{cp}"
+                else:
+                    kind, lane = grp.split("_lane")
+                    inst, role = f"g_lane[{lane}].u_lane.u_{kind}_{cp.lower()}", f"copy{cp}"
+                flops.append({"inst": inst, "bit": bit, "group": grp, "copy": cp, "box": [round(v, 3) for v in box],
+                              "region": role_region.get(role), "region_role": role})
+    groups = {}
+    for grp in group_order():
+        if grp == "thermal":
+            groups[grp] = {"label": "Thermal state TMR triple (2 bits x 3 copies)",
+                           "copies": {c: role_region.get(f"th{c}") for c in "012"}}
+        else:
+            kind, lane = grp.split("_lane")
+            groups[grp] = {"label": f"{'Accumulator' if kind == 'acc' else 'Result'} pair, lane {lane} (32 bits x 2 copies)",
+                           "copies": {"A": role_region.get("copyA"), "B": role_region.get("copyB")}}
+    acc = [p for g, gg in m["groups"].items() if g != "thermal" for p in gg["pairs"].values()]
+    th = list(m["groups"]["thermal"]["pairs"].values())
+    sep = {
+        "accres_same_bit_centre_min_um": min(p["same_bit_centre_min_um"] for p in acc),
+        "accres_same_bit_centre_median_um": statistics.median(p["same_bit_centre_median_um"] for p in acc),
+        "accres_min_edge_gap_um": min(p["min_edge_gap_any_ff_um"] for p in acc),
+        "copyA_vs_copyB_min_edge_gap_um": m["copyA_vs_copyB_min_edge_gap_um"],
+        "thermal_same_bit_centre_min_um": min(p["same_bit_centre_min_um"] for p in th),
+        "thermal_min_edge_gap_um": min(p["min_edge_gap_any_ff_um"] for p in th),
+        "same_bit_touching": sum(p["same_bit_touching"] for p in acc + th),
+        "region_gaps_um": m["region_gaps_um"],
+    }
+    out = {
+        "design": "orbit_demo", "platform": "sky130hd", "units": "um",
+        "source_def": def_path,
+        "generator": "scripts/pdsep_separation.py",
+        "mechanism": "odb dbRegion + dbGroup placement fences created at the end of the ORFS floorplan step "
+                     "(pd/sky130hd_sep/regions.tcl); honoured by global_placement and every detailed_placement",
+        "die_um": list(d["die"]), "core_um": list(d["core"]) if d["core"] else None,
+        "regions": regs, "groups": groups, "flip_flops": flops, "separation": sep,
+        "unconstrained_common_mode": ["clock tree", "reset (rst_n) tree", "shared 8x8 multipliers (one per lane)",
+                                      "A/B comparators and mismatch OR tree", "thermal voter and next-state logic",
+                                      "input/output pins and port buffers", "unprotected phase, out_valid_q, fault_q"],
+    }
+    with open(path, "w") as fh:
+        json.dump(out, fh, indent=1)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--def", dest="defs", action="append", required=True, help="LABEL=PATH (repeatable)")
@@ -442,6 +528,7 @@ def main():
     ap.add_argument("--md", help="Markdown report")
     ap.add_argument("--json", help="JSON with every number")
     ap.add_argument("--check", help="label whose DEF must meet the acceptance targets")
+    ap.add_argument("--regions-json", help="write region boxes + group assignment of the --check DEF (3D viewer)")
     a = ap.parse_args()
     sizes = read_lef_sizes(a.lef)
     results = {}
@@ -452,7 +539,9 @@ def main():
         d = read_def(path, sizes)
         if d["missing_masters"]:
             print(f"pdsep_separation: {lab}: no LEF size for {d['missing_masters'][:5]}", file=sys.stderr)
-        results[lab] = {"def": path, "measure": measure(d), "die_um": d["die"]}
+        results[lab] = {"def": path, "measure": measure(d), "die_um": d["die"], "core_um": d["core"]}
+        if a.regions_json and lab == a.check:
+            regions_json(d, results[lab]["measure"], a.regions_json, path)
     fails = check(results[a.check]["measure"]) if a.check else []
     if a.md:
         write_md(results, a.md, a.check, fails)
