@@ -1,0 +1,21 @@
+Physical separation of redundant copies (centre-to-centre, um), from 6_final.def
+Placement was NOT constrained to separate copies; these are the placer's choices.
+
+group     bits      min   median      max   <5um  <10um  <20um
+acc        128     3.81    51.98   134.55      1      9     25
+res        128     8.13    59.22   241.90      0      3     22
+thermal      2    12.12    13.50    14.88      0      0      2
+
+(for thermal: the closest two of the three copies of each bit)
+
+Closest copies:
+  lane0.acc bit 11: 3.81 um
+  lane0.acc bit 0: 7.70 um
+  lane0.acc bit 2: 7.70 um
+  lane3.acc bit 21: 7.80 um
+  lane2.acc bit 0: 7.93 um
+  lane0.acc bit 3: 7.93 um
+  lane2.acc bit 11: 7.93 um
+  lane2.res bit 12: 8.13 um
+  thermal bit 1 copies at copy0 (488.4, 372.3), copy1 (499.9, 376.1), copy2 (514.8, 376.1)
+  thermal bit 0 copies at copy0 (507.6, 357.2), copy1 (500.4, 342.1), copy2 (492.7, 357.2)

@@ -65,11 +65,16 @@ PD_LYP_sky130hd       := platforms/sky130hd/sky130hd.lyp
 PD_LEF_sky130hd       := platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef
 PD_STATE_sky130hd     := IQ
 PD_CORNER_sky130hd    := sky130_fd_sc_hd__tt_025C_1v80.lib (TT, 25 C, 1.80 V), the only liberty ORFS uses for sky130hd
+PD_IMGW_sky130hd      := 1200
+PD_PUBGDS_sky130hd    := yes
 PD_LIB_ihp-sg13g2     := platforms/ihp-sg13g2/lib/sg13g2_stdcell_typ_1p20V_25C.lib
 PD_LYP_ihp-sg13g2     := platforms/ihp-sg13g2/sg13g2.lyp
 PD_LEF_ihp-sg13g2     := platforms/ihp-sg13g2/lef/sg13g2_stdcell.lef
 PD_STATE_ihp-sg13g2   := IQ
 PD_CORNER_ihp-sg13g2  := sg13g2_stdcell_typ_1p20V_25C.lib (typical, 25 C, 1.20 V), the ORFS default for ihp-sg13g2
+# The IHP run is a secondary data point: smaller images, GDS not committed.
+PD_IMGW_ihp-sg13g2    := 800
+PD_PUBGDS_ihp-sg13g2  := no
 
 # Extra sky130_fd_sc_hd corners for pd-corners (not shipped in the ORFS image).
 PD_CORNER_URL  ?= https://raw.githubusercontent.com/efabless/skywater-pdk-libs-sky130_fd_sc_hd/master/timing
@@ -115,7 +120,7 @@ pd-report: $(PD_PLAT_DIR)/cells.lib $(PD_PLAT_DIR)/cells.lef
 	      -rd lyp=$(PD_ORFS_FLOW)/$(PD_LYP_$(PD_PLATFORM)) \
 	      -rd highlight=$(abspath $(PD_OUT))/thermal_cells.json \
 	      -rd out=$(abspath $(PD_OUT))/$(TOP)_$(PD_PLATFORM).png \
-	      -rd detail_out=$(abspath $(PD_OUT))/$(TOP)_$(PD_PLATFORM)_detail.png -rd detail_frac=0.12 -rd width=1200' \
+	      -rd detail_out=$(abspath $(PD_OUT))/$(TOP)_$(PD_PLATFORM)_detail.png -rd detail_frac=0.12 -rd width=$(PD_IMGW_$(PD_PLATFORM))' \
 	    | tee $(PD_OUT)/render.log
 	gzip -9 -n -c $(PD_RESULTS)/6_final.gds > $(PD_OUT)/$(TOP)_$(PD_PLATFORM).gds.gz
 	@rc=0; python3 pd/collect_pd.py --work $(PD_WORK) --platform $(PD_PLATFORM) --variant $(PD_VARIANT) \
@@ -129,7 +134,8 @@ pd-report: $(PD_PLAT_DIR)/cells.lib $(PD_PLAT_DIR)/cells.lef
 	    done; \
 	    cp $(PD_OUT)/$(TOP)_$(PD_PLATFORM).png $(PD_OUT)/$(TOP)_$(PD_PLATFORM)_detail.png $(PD_PUBLISH)/; \
 	    gz=$(PD_OUT)/$(TOP)_$(PD_PLATFORM).gds.gz; \
-	    if [ $$(stat -c %s $$gz) -lt 5000000 ]; then cp $$gz $(PD_PUBLISH)/; \
+	    if [ "$(PD_PUBGDS_$(PD_PLATFORM))" != yes ]; then echo "pd-report: GDS not published for $(PD_PLATFORM)"; \
+	    elif [ $$(stat -c %s $$gz) -lt 5000000 ]; then cp $$gz $(PD_PUBLISH)/; \
 	    else echo "pd-report: $$gz is over 5 MB, not published"; fi; \
 	    echo "pd-report: published to $(PD_PUBLISH)/"; \
 	else echo "pd-report: PD_PUBLISH is empty (RTL_DIR=$(RTL_DIR)); nothing copied to reports/"; fi; \
@@ -140,7 +146,7 @@ pd-report: $(PD_PLAT_DIR)/cells.lib $(PD_PLAT_DIR)/cells.lef
 pd-gls: $(PD_PLAT_DIR)/cells.lib
 	@test -f $(PD_RESULTS)/6_final.v || { echo "pd-gls: no $(PD_RESULTS)/6_final.v; run make pd"; exit 1; }
 	python3 pd/gls/gen_gls.py --netlist $(PD_RESULTS)/6_final.v --out-dir $(PD_GLS_DIR) \
-	    --state $(PD_STATE_$(PD_PLATFORM))
+	    --state $(PD_STATE_$(PD_PLATFORM)) --liberty $(PD_PLAT_DIR)/cells.lib
 	yosys -q -p "read_liberty -ignore_miss_func -ignore_miss_dir -ignore_miss_data_latch $(PD_PLAT_DIR)/cells.lib; \
 	    write_verilog -noattr $(PD_GLS_DIR)/cells.v"
 	iverilog -g2005 -o $(PD_GLS_DIR)/tb_gls.vvp -I $(PD_GLS_DIR) pd/gls/tb_gls.v $(RTL) \
@@ -168,10 +174,15 @@ pd-negctl: $(PD_PLAT_DIR)/cells.lib
 	@echo "pd-negctl: keep_hierarchy attribute lines: original $$(cat $(RTL) | grep -c '^(\* keep_hierarchy \*)$$'), copy $$(cat $(PD_NEG_RTL) | grep -c '^(\* keep_hierarchy \*)$$')"
 	$(PD_NEG_RUN) --variant cfgkeep -- synth > $(PD_NEG_WORK)/run_cfgkeep.log 2>&1 || { tail -20 $(PD_NEG_WORK)/run_cfgkeep.log; exit 1; }
 	$(PD_NEG_RUN) --variant nokeep --var SYNTH_KEEP_MODULES= -- synth > $(PD_NEG_WORK)/run_nokeep.log 2>&1 || { tail -20 $(PD_NEG_WORK)/run_nokeep.log; exit 1; }
+	for v in cfgkeep nokeep; do \
+	    scripts/run_pd.sh --work $(PD_NEG_WORK) --platform $(PD_PLATFORM) --image $(PD_IMAGE) \
+	        --shell "PD_ODB=$(abspath $(PD_NEG_NET))/$$v/1_synth.odb PD_NETLIST=$(abspath $(PD_NEG_NET))/$$v/1_synth_flat.v \
+	            openroad -no_init -threads 1 -exit $(CURDIR)/pd/write_netlist.tcl" > /dev/null || exit 1; \
+	done
 	@rc1=0; rc2=0; \
-	python3 pd/audit_storage.py --netlist $(PD_NEG_NET)/cfgkeep/1_synth_lec.v --liberty $(PD_PLAT_DIR)/cells.lib \
+	python3 pd/audit_storage.py --netlist $(PD_NEG_NET)/cfgkeep/1_synth_flat.v --liberty $(PD_PLAT_DIR)/cells.lib \
 	    --report $(PD_OUT)/negctl_cfgkeep_audit.txt > /dev/null || rc1=$$?; \
-	python3 pd/audit_storage.py --netlist $(PD_NEG_NET)/nokeep/1_synth_lec.v --liberty $(PD_PLAT_DIR)/cells.lib \
+	python3 pd/audit_storage.py --netlist $(PD_NEG_NET)/nokeep/1_synth_flat.v --liberty $(PD_PLAT_DIR)/cells.lib \
 	    --report $(PD_OUT)/negctl_nokeep_audit.txt > /dev/null || rc2=$$?; \
 	echo "cfgkeep (no RTL attribute, SYNTH_KEEP_MODULES set):"; grep -E "flip-flop count|RESULT" $(PD_OUT)/negctl_cfgkeep_audit.txt; \
 	echo "nokeep (no RTL attribute, SYNTH_KEEP_MODULES cleared):"; grep -E "group thermal|flip-flop count|RESULT" $(PD_OUT)/negctl_nokeep_audit.txt; \

@@ -1,6 +1,6 @@
-Storage audit of build/pd/negctl/results/sky130hd/orbit_demo/nokeep/1_synth_flat.v
-liberty: build/pd/platform/sky130hd/cells.lib
-leaf cells in netlist: 5239
+Storage audit of build/pd/results/ihp-sg13g2/orbit_demo/base/6_final.v
+liberty: build/pd/platform/ihp-sg13g2/cells.lib
+leaf cells in netlist: 8688
 
 Redundant groups (SPEC section 7):
   lane0.acc    u_acc_a / u_acc_b             64 cells (2 x 32 bits)  OK
@@ -11,11 +11,11 @@ Redundant groups (SPEC section 7):
   lane2.res    u_res_a / u_res_b             64 cells (2 x 32 bits)  OK
   lane3.acc    u_acc_a / u_acc_b             64 cells (2 x 32 bits)  OK
   lane3.res    u_res_a / u_res_b             64 cells (2 x 32 bits)  OK
-  thermal      u_copy0 / u_copy1 / u_copy2    2 cells (3 x 2 bits)  FAIL: u_copy1: bits []... (0 cells); u_copy2: bits []... (0 cells)
+  thermal      u_copy0 / u_copy1 / u_copy2    6 cells (3 x 2 bits)  OK
 
 Checks:
   PASS  latches: 0 latch cells
-  FAIL  flip-flop count: 517 flip-flop cells (expected 521); types: sky130_fd_sc_hd__dfxtp_1 x517
+  PASS  flip-flop count: 521 flip-flop cells (expected 521); types: sg13g2_dfrbpq_1 x521
   PASS  no unexpected flip-flops: 0 unclassified
   PASS  group lane0.acc: 64 cells, 2 distinct copies x 32 bits
   PASS  group lane0.res: 64 cells, 2 distinct copies x 32 bits
@@ -25,12 +25,12 @@ Checks:
   PASS  group lane2.res: 64 cells, 2 distinct copies x 32 bits
   PASS  group lane3.acc: 64 cells, 2 distinct copies x 32 bits
   PASS  group lane3.res: 64 cells, 2 distinct copies x 32 bits
-  FAIL  group thermal: 2 cells, 3 distinct copies x 2 bits -- u_copy1: bits []... (0 cells); u_copy2: bits []... (0 cells)
+  PASS  group thermal: 6 cells, 3 distinct copies x 2 bits
   PASS  single u_thermal.phase: 1 cells
   PASS  single out_valid_q: 1 cells
   PASS  single fault_q: 1 cells
-  PASS  distinct Q nets: 517 distinct Q nets for 517 flip-flops
+  PASS  distinct Q nets: 521 distinct Q nets for 521 flip-flops
   PASS  every Q net has a load: 0 unloaded
-  PASS  clock pins connected: 0 flip-flops with tied/missing clock; 1 distinct clock-leaf nets
+  PASS  clock pins connected: 0 flip-flops with tied/missing clock; 66 distinct clock-leaf nets
 
-RESULT: FAIL (16/18 checks passed)
+RESULT: PASS (18/18 checks passed)

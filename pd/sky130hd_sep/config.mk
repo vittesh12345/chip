@@ -48,14 +48,23 @@ export TNS_END_PERCENT = 100
 # placement region (odb dbRegion + dbGroup) per copy: copy A of every
 # accumulator/result pair, copy B, and each of the three thermal copies.
 # Global placement, detailed placement and every later re-legalisation (CTS,
-# repair) keep the members inside and everything else outside.
+# repair) keep the members inside; non-members are kept from being placed in
+# a fence (a few straddle a fence edge; measured in the report).
 #
 # PDSEP_FLOORPLAN selects the region arrangement defined in regions.tcl.
-# ENABLE_DPO=0: improve_placement ignores the regions (it moved group members
-# out of their fence in a measured test), so it is switched off; detailed
-# placement itself is unchanged.
+# ENABLE_DPO=0: improve_placement does not keep the placement legal with the
+# fences (measured in scripts/pdsep_mechanism_test.tcl: check_placement fails
+# after it), so it is switched off; detailed placement itself is unchanged.
+#
+# SLEW_MARGIN/CAP_MARGIN (percent): repair_design over-fixes max slew and
+# capacitance by this margin. The fences stretch the A/B comparator and
+# mismatch OR-tree nets across the core; without a margin the first edges run
+# at 7.0 ns ended with 6 max-slew and 3 max-cap violations on those nets after
+# detailed routing (the baseline, without margins, had none).
 # ---------------------------------------------------------------------------
 export POST_FLOORPLAN_TCL = $(dir $(DESIGN_CONFIG))regions.tcl
 export PDSEP_FLOORPLAN   ?= edges
 export PDSEP_REGION_TYPE ?= EXCLUSIVE
 export ENABLE_DPO         = 0
+export SLEW_MARGIN        = 20
+export CAP_MARGIN         = 20

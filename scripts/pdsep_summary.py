@@ -50,7 +50,7 @@ def variant_info(work, variant):
     sdc = read(f"{work}/sdc/sky130hd/{variant}.sdc") or ""
     m = re.search(r'^set clk_period ([0-9.]+)', sdc, re.M)
     reg = read(f"{work}/reports/sky130hd/orbit_demo/{variant}/pdsep_regions.txt") or ""
-    fp = re.search(r'floorplan variant (\S+)', reg)
+    fp = re.search(r'floorplan variant ([^\s,]+)', reg)
     route = load(f"{work}/logs/sky130hd/orbit_demo/{variant}/5_2_route.json") or {}
     grt = load(f"{work}/logs/sky130hd/orbit_demo/{variant}/5_1_grt.json") or {}
     return {
@@ -146,8 +146,9 @@ def main():
              f"hold WNS {f(N.get('hold WNS (ns)'), 3)} ns (baseline {f(BN.get('clock period (ns)'), 2)} ns, WNS "
              f"{f(BN.get('setup WNS (ns)'), 3)} ns).")
     bad = [n for n, c in checks.items() if c.get("result") == "FAIL"]
-    L.append(f"- Flow checks (pd/collect_pd.py, read-only): " + ", ".join(
-        f"{n} {c['result']}" for n, c in checks.items()) + ".")
+    L.append("- Flow checks (pd/collect_pd.py, read-only): " + ", ".join(
+        f"{n} {c['result']}" for n, c in checks.items()) + "."
+        + (f" **Failing: {', '.join(bad)}.**" if bad else " None failing."))
     gls = read(a.gls) if a.gls else None
     if gls:
         gm = re.search(r'^GLS (PASS|FAIL).*$', gls, re.M)
@@ -169,11 +170,14 @@ def main():
           "- `global_placement` (both the `-skip_io` pass and the timing/routability-driven pass) builds one Nesterov "
           "region per group and places the members inside their box; the region areas are blocked for top-level cells.",
           "- `detailed_placement` (placement, the CTS re-legalisations and the global-route repair legalisation) keeps "
-          "every member inside its box and every non-member outside, and `check_placement` flags a cell in the wrong "
-          "region.",
-          "- `improve_placement` (ORFS `ENABLE_DPO`) does **not**: in the mechanism test it moved group members out of "
-          "their fence and non-members in, after which `check_placement` failed. The separated flow therefore sets "
-          "`ENABLE_DPO=0` (the only other flow change against the baseline).", ""]
+          "every member fully inside its box and pulls a member that was moved out back in. Non-members are kept from "
+          "being placed inside a fence, but a cell whose origin is outside may straddle the fence edge with part of its "
+          "width (clock-tree and repair buffers next to the copy fences do; see the counts below). None of them is a "
+          "redundant flip-flop.",
+          "- `improve_placement` (ORFS `ENABLE_DPO`, detailed-placement optimisation) does **not** keep the placement "
+          "legal with the fences: in the mechanism test `check_placement` fails after it (overlapping and off-site "
+          "cells), and in an exploratory run with INCLUSIVE regions it moved 47 of 1560 members out of their region. "
+          "The separated flow therefore sets `ENABLE_DPO=0`.", ""]
     mech = read(a.mechanism)
     if mech:
         L += ["Mechanism test (`scripts/pdsep_mechanism_test.tcl` on the baseline's pin-placed database, "
@@ -210,10 +214,11 @@ def main():
           "|  0-3   |            [TMR 2]               |  0-3   |",
           "+--------+----------------------------------+--------+",
           "```", "",
-          f"![layout with the fences outlined](orbit_demo_sky130hd_sep.png)", "",
+          "![layout with the fences outlined](orbit_demo_sky130hd_sep.png)", "",
           "Each copy group holds the complete kept copy: its flip-flops and the per-copy load-enable/reset gates "
-          "(`mux2i`/`nor2b`) that `orbit_keep_reg` synthesises to. Buffers the resizer adds later are not group "
-          "members and are kept outside the fences.", ""]
+          "(`mux2i`/`nor2b`) that `orbit_keep_reg` synthesises to (the synthesis buffers that ORFS removes before "
+          "global placement leave 768 cells per acc/res copy group). Buffers added later by the resizer and CTS are not "
+          "group members.", ""]
 
     # ------------------------------------------------------------ separation
     L += ["## Separation before / after", "",
@@ -235,8 +240,10 @@ def main():
                      f"{f(q and q['min_edge_gap_any_ff_um'])} / **{f(p['min_edge_gap_any_ff_um'])}** |")
     L += ["", f"All copy-A flip-flops vs all copy-B flip-flops (any lane): min edge gap "
           f"{f(B and B['copyA_vs_copyB_min_edge_gap_um'])} um before, {f(S['copyA_vs_copyB_min_edge_gap_um'])} um after. "
-          f"Group members outside their fence: {len(S['group_member_violations'])}; non-member logic cells overlapping "
-          f"a fence: {S['nonmember_logic_cells_in_regions']}.", ""]
+          f"Group members outside their fence: {len(S['group_member_violations'])}. Non-member cells (excluding fill and "
+          f"tap cells) fully inside a fence: {S['nonmember_cells_fully_inside_regions']}; straddling a fence edge: "
+          f"{S['nonmember_cells_straddling_region_edge']} ("
+          + ", ".join(f"{k} {v}" for k, v in list(S['nonmember_straddling_kinds'].items())[:8]) + ").", ""]
     L.append("Acceptance check on the routed DEF: " + ("**PASS** (every target met)." if not fails else "**FAIL**:"))
     L += [f"- {x}" for x in fails]
     L.append("")

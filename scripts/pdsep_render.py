@@ -80,42 +80,31 @@ def main():
     W = a.width
     H = int(round(W * tgt.height() / tgt.width()))
 
-    keep = []
-    # flip-flops of each copy: filled boxes in the copy colour
-    for ff in rj["flip_flops"]:
-        col = ROLE_STYLE[ff["region_role"]][0] if ff.get("region_role") in ROLE_STYLE else 0xffffff
-        mk = klay.Marker(view)
-        mk.set(kdb.DBox(*ff["box"]))
-        mk.color = col
-        mk.frame_color = col
-        mk.line_width = 1
-        mk.vertex_size = 0
-        mk.dither_pattern = 0
-        keep.append(mk)
-    # region outlines
-    for r in rj["regions"]:
-        col = ROLE_STYLE.get(r["role"], (0xffffff, ""))[0]
-        mk = klay.Marker(view)
-        mk.set(kdb.DBox(*r["box"]))
-        mk.color = col
-        mk.frame_color = col
-        mk.line_width = 3
-        mk.line_style = 0
-        mk.vertex_size = 0
-        mk.dither_pattern = 1
-        keep.append(mk)
     view.zoom_box(tgt)
     tmp = a.out + ".tmp.png"
     view.save_image_with_options(tmp, W, H, 0, 2, 0, tgt, False)
 
+    # dim the layout so the copies stand out, then draw flip-flops and fences on top
     img = Image.open(tmp).convert("RGB")
-    panel_w = 470
+    img = Image.eval(img, lambda v: int(v * 0.42))
+    panel_w = 570
     canvas = Image.new("RGB", (W + panel_w, max(H, 760)), (12, 14, 18))
     canvas.paste(img, (0, 0))
     d = ImageDraw.Draw(canvas)
 
     def px(x, y):
         return ((x - tgt.left) / tgt.width() * W, (tgt.top - y) / tgt.height() * H)
+
+    for ff in rj["flip_flops"]:
+        col = hexrgb(ROLE_STYLE.get(ff.get("region_role"), (0xffffff, ""))[0])
+        bx0, by0, bx1, by1 = ff["box"]
+        p0, p1 = px(bx0, by1), px(bx1, by0)
+        d.rectangle((p0[0], p0[1], p1[0], p1[1]), fill=col, outline=(0, 0, 0))
+    for r in rj["regions"]:
+        col = hexrgb(ROLE_STYLE.get(r["role"], (0xffffff, ""))[0])
+        bx0, by0, bx1, by1 = r["box"]
+        p0, p1 = px(bx0, by1), px(bx1, by0)
+        d.rectangle((p0[0], p0[1], p1[0], p1[1]), outline=col, width=3)
 
     f_lab, f_title, f_txt, f_small = font(22), font(24), font(17), font(15)
     for r in rj["regions"]:
@@ -151,7 +140,9 @@ def main():
 
     X = W + 20
     y = 18
-    d.text((X, y), "orbit_demo, sky130hd, separated copies", fill=(235, 235, 235), font=f_title)
+    d.text((X, y), "orbit_demo on sky130hd:", fill=(235, 235, 235), font=f_title)
+    y += 30
+    d.text((X, y), "redundant copies in separate fences", fill=(235, 235, 235), font=f_title)
     y += 38
     d.text((X, y), f"final routed GDS; die {die.width():.1f} x {die.height():.1f} um", fill=(190, 190, 190), font=f_small)
     y += 30
@@ -187,6 +178,7 @@ def main():
     y += 12
     for ln in ["Filled boxes: the flip-flops of each copy.",
                "Frames: placement fences (dbRegion/dbGroup).",
+               "Layout (dimmed): final routed GDS, KLayout.",
                "Shared logic, clock and reset trees,",
                "voter and comparators are unconstrained",
                "and remain common-mode.",

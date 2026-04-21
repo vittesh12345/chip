@@ -1,0 +1,95 @@
+{
+  "platform": "ihp-sg13g2",
+  "variant": "base",
+  "checks": [
+    {
+      "name": "setup timing",
+      "result": "PASS",
+      "detail": "period 10.000 ns: setup WNS 3.108 ns, TNS 0 ns"
+    },
+    {
+      "name": "hold timing",
+      "result": "PASS",
+      "detail": "hold WNS 0.257 ns, TNS 0 ns"
+    },
+    {
+      "name": "max slew/cap/fanout",
+      "result": "PASS",
+      "detail": "violations: slew 0, cap 0, fanout 0"
+    },
+    {
+      "name": "detailed-route DRC",
+      "result": "PASS",
+      "detail": "TritonRoute DRC errors after the last iteration: 0"
+    },
+    {
+      "name": "antenna",
+      "result": "PASS",
+      "detail": "violating nets 0, pins 0, repair diodes 0"
+    },
+    {
+      "name": "KLayout DRC",
+      "result": "FAIL",
+      "detail": "5 markers (6_drc.lyrdb, ORFS deck sg13g2_minimal.lydrc); M2.j/k: 1, M2Fil.h/k: 1, M3.j/k: 1, M3Fil.h/k: 1, M4.j/k: 1"
+    },
+    {
+      "name": "KLayout LVS",
+      "result": "NOT_RUN",
+      "detail": "6_lvs.log not produced (run the ORFS 'lvs' target)"
+    },
+    {
+      "name": "LEC synth vs post-CTS repair",
+      "result": "NOT_RUN",
+      "detail": "kepler-formal compared 0 outputs (vacuous miter); not a real equivalence check"
+    },
+    {
+      "name": "LEC synth vs final",
+      "result": "NOT_RUN",
+      "detail": "kepler-formal compared 0 outputs (vacuous miter); not a real equivalence check"
+    },
+    {
+      "name": "storage audit (6_final.v)",
+      "result": "PASS",
+      "detail": "521 flip-flop cells; RESULT: PASS (18/18 checks passed)"
+    },
+    {
+      "name": "final GDS written",
+      "result": "PASS",
+      "detail": "build/pd/results/ihp-sg13g2/orbit_demo/base/6_final.gds (11.3 MB)"
+    }
+  ],
+  "numbers": {
+    "clock period (ns)": 10.0,
+    "fmax from final STA (MHz)": 145.106,
+    "setup WNS (ns)": 3.10847,
+    "setup TNS (ns)": 0,
+    "hold WNS (ns)": 0.257399,
+    "hold TNS (ns)": 0,
+    "clock skew (ns)": 0.0191082,
+    "die size (um)": "552.245 x 552.245",
+    "core size (um)": "516.960 x 514.080",
+    "die area (um^2)": 304975,
+    "core area (um^2)": 265759,
+    "cell area excl. fill, incl. tap cells (um^2)": 110833,
+    "cell area excl. fill and tap cells (um^2)": 110833.0,
+    "utilization (cell area excl. fill / core area)": 0.417042,
+    "instances, all (incl. fill/decap and tap)": 25520,
+    "instances excl. fill and tap": 8688,
+    "fill/decap cells": 16832,
+    "tap cells": 0,
+    "flip-flop cells (ORFS class sequential_cell)": 521,
+    "synthesis: cell count": 8228,
+    "synthesis: cell area (um^2)": 107017,
+    "IO pins (incl. VDD/VSS)": 217,
+    "power total (mW, default-activity estimate)": 12.206399999999999,
+    "power internal (mW)": 7.4666500000000005,
+    "power switching (mW)": 4.72964,
+    "power leakage (uW)": 10.1334,
+    "routed wirelength (um)": 276665,
+    "vias": 55309,
+    "detailed-route DRC errors": 0,
+    "antenna violating nets": 0,
+    "IR drop VDD worst (mV, same activity)": 3.8394000000000004,
+    "IR drop VSS worst (mV, same activity)": 3.88101
+  }
+}
