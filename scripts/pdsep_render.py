@@ -121,6 +121,22 @@ def main():
         d.rectangle((tb[0] - 4, tb[1] - 3, tb[2] + 4, tb[3] + 3), fill=(0, 0, 0))
         d.text((cx, cy), short, fill=col, font=f_lab, anchor=anchor)
 
+    # per-lane labels: centroid of each lane's 64 flip-flops (acc + res) in each copy fence
+    f_anc = font(14)
+    lanes = {}
+    for ff in rj["flip_flops"]:
+        if ff["group"] == "thermal":
+            continue
+        lane = ff["group"].split("_lane")[1]
+        b = ff["box"]
+        lanes.setdefault((lane, ff["copy"]), []).append(((b[0] + b[2]) / 2, (b[1] + b[3]) / 2))
+    for (lane, cp), pts in sorted(lanes.items()):
+        cx, cy = px(sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts))
+        t = f"lane {lane}"
+        tb = d.textbbox((cx, cy), t, font=f_anc, anchor="mm")
+        d.rectangle((tb[0] - 3, tb[1] - 2, tb[2] + 3, tb[3] + 2), fill=(0, 0, 0), outline=(255, 255, 255))
+        d.text((cx, cy), t, fill=(255, 255, 255), font=f_anc, anchor="mm")
+
     # gap annotation between copy A and copy B
     ra = next((r for r in rj["regions"] if r["role"] == "copyA"), None)
     rb = next((r for r in rj["regions"] if r["role"] == "copyB"), None)
@@ -176,7 +192,8 @@ def main():
         d.text((X, y), ln, fill=(200, 200, 200), font=f_small)
         y += 21
     y += 12
-    for ln in ["Filled boxes: the flip-flops of each copy.",
+    for ln in ["Filled boxes: the flip-flops of each copy;",
+               "'lane x': centroid of lane x's 64 flip-flops (acc + res).",
                "Frames: placement fences (dbRegion/dbGroup).",
                "Layout (dimmed): final routed GDS, KLayout.",
                "Shared logic, clock and reset trees,",

@@ -499,6 +499,24 @@ def regions_json(d, m, path, def_path):
                     inst, role = f"g_lane[{lane}].u_lane.u_{kind}_{cp.lower()}", f"copy{cp}"
                 flops.append({"inst": inst, "bit": bit, "group": grp, "copy": cp, "box": [round(v, 3) for v in box],
                               "region": role_region.get(role), "region_role": role})
+    # label anchors: centroid and bounding box of each copy's flip-flops (for viewer labels)
+    anchors = []
+    for grp in group_order():
+        for cp, bits in sorted(ffs.get(grp, {}).items()):
+            bs = list(bits.values())
+            if not bs:
+                continue
+            cx = statistics.fmean((b[0] + b[2]) / 2 for b in bs)
+            cy = statistics.fmean((b[1] + b[3]) / 2 for b in bs)
+            if grp == "thermal":
+                text = f"thermal copy {cp}"
+            else:
+                kind, lane = grp.split("_lane")
+                text = f"lane {lane} {'accumulator' if kind == 'acc' else 'result'} copy {cp}"
+            anchors.append({"text": text, "group": grp, "copy": cp, "centroid": [round(cx, 3), round(cy, 3)],
+                            "bbox": [round(min(b[0] for b in bs), 3), round(min(b[1] for b in bs), 3),
+                                     round(max(b[2] for b in bs), 3), round(max(b[3] for b in bs), 3)],
+                            "flip_flops": len(bs)})
     groups = {}
     for grp in group_order():
         if grp == "thermal":
@@ -527,7 +545,7 @@ def regions_json(d, m, path, def_path):
         "mechanism": "odb dbRegion + dbGroup placement fences created at the end of the ORFS floorplan step "
                      "(pd/sky130hd_sep/regions.tcl); honoured by global_placement and every detailed_placement",
         "die_um": list(d["die"]), "core_um": list(d["core"]) if d["core"] else None,
-        "regions": regs, "groups": groups, "flip_flops": flops, "separation": sep,
+        "regions": regs, "groups": groups, "copy_labels": anchors, "flip_flops": flops, "separation": sep,
         "unconstrained_common_mode": ["clock tree", "reset (rst_n) tree", "shared 8x8 multipliers (one per lane)",
                                       "A/B comparators and mismatch OR tree", "thermal voter and next-state logic",
                                       "input/output pins and port buffers", "unprotected phase, out_valid_q, fault_q"],
