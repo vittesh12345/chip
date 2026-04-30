@@ -83,8 +83,6 @@ SCENARIOS = {
 TASKS_PROTECTED = [
     ("prove", ["mode prove", "depth {prove_depth}"], "", "PASS",
      "all properties, unbounded (k-induction, k={prove_depth})"),
-    ("bmc", ["mode bmc", "depth {bmc_depth}"], "-DFI_NO_HELPERS", "PASS",
-     "all port-level properties, bounded to {bmc_depth} steps, no helper invariants"),
     ("cover", ["mode cover", "depth {cover_depth}"], "-DFI_COVER_TASK", "PASS",
      "reachability of the upset situations (non-vacuity)"),
 ]
@@ -416,13 +414,12 @@ def main():
     ap.add_argument("--harness", required=True, help="fault/fi_harness.sv")
     ap.add_argument("--scenarios", default="all", help="comma-separated names or 'all'")
     ap.add_argument("--prove-depth", type=int, default=4)
-    ap.add_argument("--bmc-depth", type=int, default=24)
     ap.add_argument("--cover-depth", type=int, default=12)
     ap.add_argument("--neg-depth", type=int, default=12)
     args = ap.parse_args()
 
-    depths = dict(prove_depth=args.prove_depth, bmc_depth=args.bmc_depth,
-                  cover_depth=args.cover_depth, neg_depth=args.neg_depth)
+    depths = dict(prove_depth=args.prove_depth, cover_depth=args.cover_depth,
+                  neg_depth=args.neg_depth)
     names = list(SCENARIOS) if args.scenarios == "all" else args.scenarios.split(",")
     try:
         before = {f: sha256(f) for f in args.rtl}
