@@ -1,0 +1,43 @@
+# Generic (technology-independent) Yosys synthesis of orbit_demo. Area: synth.
+#
+# Run from the output directory, with the RTL files on the command line; Yosys
+# reads command-line files before it runs this script:
+#     cd $(BUILD)/synth && yosys -l synth.log -s <abs>/synth_generic.ys <abs RTL files>
+# The same script is used for the production RTL, for the negative-control
+# variants in $(BUILD)/synth/<variant>/ and for the YoWASP Yosys comparison.
+#
+# Outputs (in the current directory):
+#   synth_stat.txt / synth_stat.json   cell and flip-flop statistics
+#   orbit_demo_synth.json              netlist as synthesized (orbit_keep_reg kept as modules)
+#   orbit_demo_synth.v                 the same netlist, one instance per cell (-noexpr),
+#                                      simulated with Yosys simcells.v / simlib.v
+#   orbit_demo_synth_flat.json         the same cells flattened into one module,
+#                                      without any re-optimization (audit view)
+#   synth_ltp.txt                      longest combinational path in generic cells
+
+hierarchy -check -top orbit_demo
+
+# Generic synthesis. -flatten inlines every module except those carrying the
+# keep_hierarchy attribute: each orbit_keep_reg copy stays a separate instance,
+# so optimization cannot merge the thermal copies, whose D inputs are identical.
+synth -flatten -top orbit_demo
+
+# Structural checks: fail on any problem found by check (combinational loops,
+# multiple drivers, undriven inputs used), on latches, and on anything that is
+# not a Yosys internal gate, a kept orbit_keep_reg instance or scope info.
+check -assert
+select -assert-none t:$_DLATCH_* t:$_DLATCHSR_* t:$_SR_* t:$dlatch t:$adlatch t:$dlatchsr t:$sr
+select -assert-none t:$* t:$_* %d t:$paramod*orbit_keep_reg* %d t:$scopeinfo %d
+
+tee -o synth_stat.txt stat -top orbit_demo
+tee -q -o synth_stat.json stat -json -top orbit_demo
+write_json orbit_demo_synth.json
+write_verilog -noexpr -noattr orbit_demo_synth.v
+
+# Flat view for the storage audit and the logic-depth estimate. Only the
+# hierarchy is dissolved here; no optimization pass runs after it, so every
+# cell and net is the one written above.
+setattr -mod -unset keep_hierarchy
+flatten
+write_json orbit_demo_synth_flat.json
+tee -o synth_ltp.txt ltp -noff

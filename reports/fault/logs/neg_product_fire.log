@@ -1,0 +1,16 @@
+SBY 22:15:08 [fault_fire] engine_0: smtbmc yices
+SBY 22:15:09 [fault_fire] engine_0: ##   0:00:00  Solver: yices
+SBY 22:15:09 [fault_fire] engine_0: ##   0:00:00  BMC failed!
+SBY 22:15:09 [fault_fire] engine_0: ##   0:00:00  Value for anyconst in fi_harness (orbit_mac_lane_fi.v:32.31-32.40): 0
+SBY 22:15:09 [fault_fire] engine_0: ##   0:00:00  Value for anyconst in fi_harness (orbit_mac_lane_fi.v:32.31-32.40): 0
+SBY 22:15:09 [fault_fire] engine_0: ##   0:00:00  Value for anyconst in fi_harness (orbit_mac_lane_fi.v:32.31-32.40): 0
+SBY 22:15:09 [fault_fire] engine_0: ##   0:00:00  Value for anyconst in fi_harness (orbit_mac_lane_fi.v:32.31-32.40): 3
+SBY 22:15:09 [fault_fire] engine_0: ##   0:00:00  Assert failed in fi_harness: D_out_fire_matches_ref
+SBY 22:15:09 [fault_fire] engine_0: ##   0:00:00  Status: failed
+SBY 22:15:09 [fault_fire] engine_0: Status returned by engine: FAIL
+SBY 22:15:09 [fault_fire] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 22:15:09 [fault_fire] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 22:15:09 [fault_fire] summary: engine_0 (smtbmc yices) returned FAIL
+SBY 22:15:09 [fault_fire] summary: counterexample trace: fault_fire/engine_0/trace.vcd
+SBY 22:15:09 [fault_fire] summary:   failed assertion fi_harness.D_out_fire_matches_ref at fi_harness.sv:247.17-247.88 step 3
+SBY 22:15:09 [fault_fire] DONE (FAIL, rc=2)

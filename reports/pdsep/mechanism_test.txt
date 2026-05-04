@@ -4,14 +4,20 @@ pdsep: region pdsep_th0    box_um   161.920   272.000   184.920   288.320  membe
 pdsep: region pdsep_th1    box_um   161.920   165.920   184.920   182.240  members    8  flip-flops    2 (expected 2)
 pdsep: region pdsep_th2    box_um   161.920    57.120   184.920    73.440  members    8  flip-flops    2 (expected 2)
 MECH regions: 5 (pdsep_copyA, pdsep_copyB, pdsep_th0, pdsep_th1, pdsep_th2)
-MECH after global_placement             members inside their fence 1560, outside   0; movable non-members overlapping a fence  90
-MECH after detailed_placement           members inside their fence 1560, outside   0; movable non-members overlapping a fence  80
+MECH after global_placement                 members inside their fence 1560, outside   0; non-members fully inside a fence  44, straddling a fence edge  46
+MECH after detailed_placement               members inside their fence 1560, outside   0; non-members fully inside a fence   0, straddling a fence edge  80
 MECH after detailed_placement: check_placement passed
-MECH after improve_placement (DPO)      members inside their fence 1560, outside   0; movable non-members overlapping a fence  15
+[WARNING DPL-0200] Unexpected displacement during legalization.
+[WARNING DPL-0201] Placement check failure during legalization.
+MECH after improve_placement (DPO)          members inside their fence 1560, outside   0; non-members fully inside a fence   0, straddling a fence edge  15
+[WARNING DPL-0005] Overlap check failed (2).
+[WARNING DPL-0011] Padding check failed (2).
+[WARNING DPL-0006] Site aligned check failed (28).
+[ERROR DPL-0033] detailed placement checks failed during check placement.
 MECH after improve_placement (DPO): check_placement FAILED (DPL-0033)
-MECH after restoring the legal placement members inside their fence 1560, outside   0; movable non-members overlapping a fence  80
+MECH after restoring the legal placement    members inside their fence 1560, outside   0; non-members fully inside a fence   0, straddling a fence edge  80
 MECH forced g_lane[0].u_lane.u_acc_a/q[0]$_SDFFE_PN0P_ to 318780 171360 (inside the copy-B fence)
-MECH after the forced move              members inside their fence 1559, outside   1; movable non-members overlapping a fence  80
-MECH after re-legalisation              members inside their fence 1560, outside   0; movable non-members overlapping a fence  80
+MECH after the forced move                  members inside their fence 1559, outside   1; non-members fully inside a fence   0, straddling a fence edge  80
+MECH after re-legalisation                  members inside their fence 1560, outside   0; non-members fully inside a fence   0, straddling a fence edge  80
 MECH moved flip-flop now at (37.26, 174.08) um
 MECH after re-legalisation: check_placement passed

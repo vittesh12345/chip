@@ -6,14 +6,18 @@
 #
 #   global_placement -skip_io, global_placement (timing/routability driven):
 #       gpl builds one Nesterov region per dbGroup and places the group's
-#       instances inside its dbRegion box; the region areas are blocked for
-#       the top-level cells with dummy instances.
+#       instances inside its dbRegion box; top-level cells are only
+#       discouraged from the region areas (measured: 44 non-members still
+#       fully inside a fence after global placement, 0 after detailed
+#       placement).
 #   detailed_placement (place, CTS, CTS repair, global-route repair):
 #       dpl legalises every group member fully inside its region (a member
-#       pushed out is pulled back in) and keeps non-members from being placed
-#       inside it; a non-member may still straddle a fence edge with part of
-#       its width (measured: clock-tree and repair buffers next to the copy
-#       fences). check_placement reports a member in the wrong region.
+#       pushed out is pulled back in) and keeps non-members from lying fully
+#       inside it; a non-member may still overlap a fence, often by most of
+#       its width (measured on the routed DEF: clock-tree leaf buffers, CTS
+#       dummy loads and port buffers along the copy fences, a few gates and
+#       buffers at the thermal fences). check_placement reports a member in
+#       the wrong region.
 #   improve_placement (DPO) does NOT keep the placement legal with regions
 #       (measured: with these fences it leaves overlapping and off-site cells
 #       and check_placement fails; with INCLUSIVE regions it moved 47 of 1560

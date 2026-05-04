@@ -20,6 +20,10 @@ Checks:
     classifier is able to see one.
 The phase, out_valid_q and fault_q escapes are reported, not failed: they are
 the known unprotected elements of SPEC section 8.
+
+With --expect-escape acc,res (used on an RTL copy whose copy comparator is
+disabled) the no-escape checks of those groups are replaced by the opposite
+check: the campaign must see wrong or lost results there.
 """
 
 import argparse
@@ -84,7 +88,9 @@ def main():
     ap.add_argument("--out", required=True, help="output prefix for .md / .json")
     ap.add_argument("--min-tpb", type=int, default=10)
     ap.add_argument("--min-total", type=int, default=5001)
+    ap.add_argument("--expect-escape", default="", help="groups that must show escapes (negative control)")
     args = ap.parse_args()
+    expect_escape = [g for g in args.expect_escape.split(",") if g]
 
     trials, header, footer = load(args.trials)
     checks = []
@@ -119,13 +125,28 @@ def main():
         rows.append([title, prot, len(ids), len(g)] + [c[o] for o in OUTCOMES] +
                     ["%d (%.1f %%)" % (esc, 100.0 * esc / len(g)) if g else "-"])
 
-    # Duplicated storage: detected (latency 1, stop in the upset cycle) or masked.
+    # Duplicated storage: detected (latency 1, stop in the upset cycle). The
+    # only other acceptable outcome is the overwritten case: clear_fault (or
+    # reset) in the upset cycle zeroes both copies before the fault latch
+    # samples the mismatch (SPEC section 5; formal L_overwritten_no_fault).
+    # It is MASKED, or TIMING when a result that the fault-free run
+    # transferred in that clear cycle was withheld and then discarded.
+    def overwritten(t):
+        return t["outcome"] in ("MASKED", "TIMING") and t["clr_in_upset"] == 1
+
+    for key in expect_escape:
+        g = by_group[key]
+        check("%s: escapes observed (negative control, protection disabled)" % key, g["escapes"] > 0,
+              "%d of %d trials escaped (SDC %d, LOST %d, EXTRA %d)" % (
+                  g["escapes"], g["trials"], g["counts"]["SDC"], g["counts"]["LOST"], g["counts"]["EXTRA"]))
     for key in ("acc", "res"):
+        if key in expect_escape:
+            continue
         ids = dict((k, i) for k, _, i, _ in GROUPS)[key]
         g = [t for t in inj if t["id"] in ids]
-        bad = [t for t in g if t["outcome"] not in ("DETECTED", "MASKED")]
+        bad = [t for t in g if t["outcome"] != "DETECTED" and not overwritten(t)]
         lat_bad = [t for t in g if t["outcome"] == "DETECTED" and (t["latency"] != 1 or t["stop_same_cycle"] != 1)]
-        check("%s: no escape (only DETECTED or MASKED)" % key, g and not bad,
+        check("%s: no escape (DETECTED, or overwritten by clear_fault in the upset cycle)" % key, g and not bad,
               "%d trials; %s" % (len(g), "; ".join("trial %d %s %s" % (t["trial"], bit_name(t["id"]), t["outcome"])
                                                   for t in bad[:5]) or "none escaped"))
         check("%s: fault one cycle after the upset, handshakes blocked in the upset cycle" % key, g and not lat_bad,
@@ -135,9 +156,10 @@ def main():
                          for t in lat_bad[:5]) or "none"))
     g = [t for t in inj if 512 <= t["id"] < 518]
     bad = [t for t in g if t["outcome"] != "REPAIRED"]
-    check("therm: every upset REPAIRED, nothing else visible", g and not bad,
-          "%d trials; %s" % (len(g), "; ".join("trial %d %s %s" % (t["trial"], bit_name(t["id"]), t["outcome"])
-                                              for t in bad[:5]) or "all REPAIRED"))
+    if "therm" not in expect_escape:
+        check("therm: every upset REPAIRED, nothing else visible", g and not bad,
+              "%d trials; %s" % (len(g), "; ".join("trial %d %s %s" % (t["trial"], bit_name(t["id"]), t["outcome"])
+                                                  for t in bad[:5]) or "all REPAIRED"))
     check("negative control: out_valid_q upsets escape", by_group["ovq"]["escapes"] > 0,
           "%d of %d out_valid_q trials escaped" % (by_group["ovq"]["escapes"], by_group["ovq"]["trials"]))
 
@@ -146,7 +168,7 @@ def main():
     ph = collections.Counter((t["therm_at_inj"], t["outcome"]) for t in inj if t["id"] == 518)
     fq = collections.Counter(t["outcome"] for t in inj if t["id"] == 520)
     lat = collections.Counter(t["latency"] for t in inj if t["id"] < 512 and t["outcome"] == "DETECTED")
-    masked_dup = [t for t in inj if t["id"] < 512 and t["outcome"] == "MASKED"]
+    over = [t for t in inj if t["id"] < 512 and overwritten(t)]
 
     md = []
     md.append("Bench: `fault/tb_seu_campaign.v` (Icarus Verilog), %s." % header)
@@ -157,11 +179,20 @@ def main():
               "at least %d times." % (len(controls), len(controls) - len(ctl_bad), len(inj), min_tpb))
     md.append("")
     md.append("Detection latency of the accumulator / result upsets (cycles from the upset cycle to the "
-              "first cycle with `fault` = 1): %s. MASKED accumulator / result trials: %d%s." % (
-                  ", ".join("%d: %d trials" % (k, v) for k, v in sorted(lat.items())) or "none",
-                  len(masked_dup),
-                  (" (%s)" % ", ".join("trial %d %s" % (t["trial"], bit_name(t["id"])) for t in masked_dup[:6]))
-                  if masked_dup else ""))
+              "first cycle with `fault` = 1): %s. In every detected trial `in_ready` and `out_valid` were "
+              "already 0 at the end of the upset cycle." % (
+                  ", ".join("%d: %d trials" % (k, v) for k, v in sorted(lat.items())) or "none"))
+    md.append("")
+    md.append("Accumulator / result upsets not DETECTED: %d, all with `clear_fault` asserted in the upset "
+              "cycle (the workload of 1 trial in 8 schedules rare clear_fault pulses), which zeroes both copies "
+              "before the fault latch samples the mismatch: %s." % (
+                  len(over),
+                  "; ".join("trial %d %s %s" % (t["trial"], bit_name(t["id"]), t["outcome"]) for t in over)
+                  or "none"))
+    if any(t["outcome"] == "TIMING" for t in over):
+        md.append("A TIMING trial here is one where the fault-free run transferred its pending result in "
+                  "that clear_fault cycle while the upset copy held `out_valid` low (mismatch); the clear then "
+                  "discarded the result, as SPEC section 5 says clear_fault does. No fault, no wrong data.")
     md.append("")
     md.append("Unprotected flip-flops by the state at the moment of the upset:")
     md.append("")
@@ -171,6 +202,8 @@ def main():
         n = sum(c.values())
         if n:
             r2.append(["out_valid_q = %d (flips to %d)" % (v, 1 - v), n] + [c[o] for o in OUTCOMES])
+    ext = [t for t in inj if t["id"] == 519 and t["outcome"] == "EXTRA"]
+    n_dup = sum(1 for t in ext if t["n_extra_dup"] > 0)
     for s in (0, 1, 2, 3):
         c = {o: ph[(s, o)] for o in OUTCOMES}
         n = sum(c.values())
@@ -180,6 +213,17 @@ def main():
     if n:
         r2.append(["fault_q (always 0 before a single upset, flips to 1)", n] + [fq[o] for o in OUTCOMES])
     md.append(table(r2, ["Element / condition", "Trials"] + OUTCOMES))
+    md.append("")
+    if ext:
+        md.append("out_valid_q EXTRA trials: %d re-presented the last delivered result (duplicate), %d a stale "
+                  "buffer content that had not been delivered before (zero after reset / clear_fault)."
+                  % (n_dup, len(ext) - n_dup))
+        md.append("")
+    md.append("Reading the unprotected rows: an `out_valid_q` upset always escapes (a result lost when it "
+              "flips 1 -> 0, an extra one when it flips 0 -> 1); a `phase` upset only matters in THROTTLE, "
+              "where it shifts the alternating admission (TIMING: every result still correct); a `fault_q` "
+              "upset is counted as DETECTED although no data was corrupted: it is a false fault stop "
+              "(availability, not integrity).")
     md.append("")
     md.append("Checks:")
     md.append("")

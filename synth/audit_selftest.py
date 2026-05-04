@@ -183,7 +183,7 @@ def main():
     top_of(base)
 
     failures = 0
-    ok, _ = run_audit(src)
+    ok, _, _ = run_audit(src)
     print("%-32s %s" % ("baseline (unmodified)", "PASS as expected" if ok else "UNEXPECTED FAIL"))
     failures += 0 if ok else 1
 
@@ -193,7 +193,7 @@ def main():
         path = os.path.join(work, "defect_%02d.json" % i)
         with open(path, "w") as fh:
             json.dump(data, fh)
-        ok, text = run_audit(path)
+        ok, text, _ = run_audit(path)
         detected = (not ok) and (expect in text)
         with open(os.path.join(work, "defect_%02d.txt" % i), "w") as fh:
             fh.write(text)

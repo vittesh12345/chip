@@ -78,6 +78,51 @@ def worst_path_geometry(rpt_path, def_path):
             "start_xy": pts[0] if pts else None, "end_xy": pts[-1] if pts else None}
 
 
+COPY_CELL = re.compile(r'^g_lane\[\d+\]\.u_lane\.u_(acc|res)_[ab]/')
+
+
+def wirelength_by_role(def_path):
+    """Routed wirelength (um) of a DEF's signal nets, split by what the net connects to:
+    the Q output of an accumulator/result copy flip-flop, the data inputs (A0/A1) of a copy's
+    load mux (the adder sums), another pin of a copy-group cell (enable/reset), clock nets,
+    and everything else. Lengths are summed from the ROUTED/NEW wire segments."""
+    d = read(def_path)
+    if not d:
+        return None
+    m = re.search(r'\nNETS \d+ ;(.*?)\nEND NETS', d, re.S)
+    if not m:
+        return None
+    out = {"copy flip-flop outputs": 0.0, "adder sums into the copy load muxes": 0.0,
+           "copy enable/reset pins": 0.0, "clock": 0.0, "other signal nets": 0.0}
+    for stmt in m.group(1).split(';\n'):
+        s = stmt.strip()
+        if not s.startswith('- '):
+            continue
+        name = s.split()[1].replace('\\', '')
+        pins = [(i.replace('\\', ''), p) for i, p in re.findall(r'\( (\S+) (\S+) \)', s.split('+')[0])]
+        length = 0
+        for seg in re.findall(r'(?:ROUTED|NEW) \w+ ((?:\( [^)]*\) ?)+)', s):
+            px = py = None
+            for x, y in re.findall(r'\( (\S+) (\S+)(?: \S+)? \)', seg):
+                x = px if x == '*' else int(x)
+                y = py if y == '*' else int(y)
+                if px is not None:
+                    length += abs(x - px) + abs(y - py)
+                px, py = x, y
+        if name == 'clk' or name.startswith('clknet'):
+            k = "clock"
+        elif any(COPY_CELL.match(i) and p == 'Q' for i, p in pins):
+            k = "copy flip-flop outputs"
+        elif any(COPY_CELL.match(i) and p in ('A0', 'A1') for i, p in pins):
+            k = "adder sums into the copy load muxes"
+        elif any(COPY_CELL.match(i) for i, p in pins):
+            k = "copy enable/reset pins"
+        else:
+            k = "other signal nets"
+        out[k] += length / 1000.0
+    return out
+
+
 def variant_info(work, variant):
     """Period, floorplan and final metrics of one ORFS variant."""
     rep = load(f"{work}/logs/sky130hd/orbit_demo/{variant}/6_report.json")
@@ -200,12 +245,20 @@ def main():
     gls = read(a.gls) if a.gls else None
     if gls:
         gm = re.search(r'^GLS (PASS|FAIL).*$', gls, re.M)
-        L.append(f"- Post-route gate-level simulation (pd/gls harness): {gm.group(0) if gm else 'no result line'}.")
+        L.append(f"- Post-route gate-level simulation (pd/gls harness, zero-delay: checks function and the "
+                 f"per-copy fault injection, not timing): {gm.group(0) if gm else 'no result line'}.")
     else:
         L.append("- Post-route gate-level simulation: not run (make pd-sep-gls).")
     L.append("")
 
     # ---------------------------------------------------------------- method
+    mech = read(a.mechanism)
+    gp_in = re.search(r'after global_placement\s.*?non-members fully inside a fence\s+(\d+)', mech or "")
+    dp_in = re.search(r'after detailed_placement\s.*?non-members fully inside a fence\s+(\d+)', mech or "")
+    gp_text = ("the fence areas are only discouraged for top-level cells, not forbidden: in the mechanism test "
+               f"{gp_in.group(1)} non-member cells were still fully inside a fence after global placement"
+               + (f" ({dp_in.group(1)} after detailed placement)" if dp_in else "") + "."
+               if gp_in else "whether top-level cells are kept out of the fence areas is left to detailed placement.")
     L += ["## Method", "",
           "**Mechanism: OpenDB placement fences (`dbRegion` + `dbGroup`).** `pd/sky130hd_sep/regions.tcl` runs as the "
           "ORFS `POST_FLOORPLAN_TCL` hook, i.e. at the end of the floorplan step, after the core rows exist and before "
@@ -216,21 +269,22 @@ def main():
           "(256/256/2/2/2) and stops the flow otherwise.", "",
           "What honours the fences (measured, not assumed):", "",
           "- `global_placement` (both the `-skip_io` pass and the timing/routability-driven pass) builds one Nesterov "
-          "region per group and places the members inside their box; the region areas are blocked for top-level cells.",
+          "region per group and places the members inside their box; " + gp_text,
           "- `detailed_placement` (placement, the CTS re-legalisations and the global-route repair legalisation) keeps "
           "every member fully inside its box and pulls a member that was moved out back in. Non-members are kept from "
-          "being placed inside a fence, but a cell whose origin is outside may straddle the fence edge with part of its "
-          "width (clock-tree and repair buffers next to the copy fences do; see the counts below). None of them is a "
-          "redundant flip-flop.",
+          "being placed fully inside a fence, but they may still overlap a fence edge with part of their width, from "
+          "either side of the edge (clock-tree, port and repair buffers and a few logic cells next to the fences do; "
+          "see the counts under Separation). None of them is a redundant flip-flop.",
           "- `improve_placement` (ORFS `ENABLE_DPO`, detailed-placement optimisation) does **not** keep the placement "
-          "legal with the fences: in the mechanism test `check_placement` fails after it (overlapping and off-site "
-          "cells), and in an exploratory run with INCLUSIVE regions it moved 47 of 1560 members out of their region. "
+          "legal with the fences: in the mechanism test its own row-segment model already needs 163 um of X movement "
+          "to fit the fenced rows (DPL-0200/0201 below), and `check_placement` fails after it (overlapping and "
+          "off-site cells); in an exploratory run with INCLUSIVE regions it moved 47 of 1560 members out of their region. "
           "The separated flow therefore sets `ENABLE_DPO=0`.", ""]
-    mech = read(a.mechanism)
     if mech:
-        L += ["Mechanism test (`scripts/pdsep_mechanism_test.tcl` on the baseline's pin-placed database, "
-              f"output `{a.mechanism}`):", "", "```"]
-        L += [ln for ln in mech.splitlines() if ln.startswith("MECH")]
+        L += ["Mechanism test (`make pd-sep-mechanism`: `scripts/pdsep_mechanism_test.tcl` adds the fences to the "
+              "unconstrained baseline's pin-placed database and runs the ORFS placement steps; published as "
+              "`mechanism_test.txt`):", "", "```"]
+        L += [ln for ln in mech.splitlines() if ln.startswith("MECH") or "DPL-" in ln]
         L += ["```", ""]
     L += ["Differences from the baseline flow (pd/sky130hd), all in `pd/sky130hd_sep/`:", "",
           "| Setting | Baseline | Separated | Why |", "|---|---|---|---|",
@@ -280,7 +334,8 @@ def main():
     L += ["## Separation before / after", "",
           "Measured on the final routed DEFs by `scripts/pdsep_separation.py` (independent of the pd area's "
           "`pd/copy_separation.py`, which was also run read-only on the separated DEF: "
-          "`copy_separation_pd_script.txt`). Centre = centre to centre; gap = edge to edge between cell boxes.", "",
+          "`copy_separation_pd_script.txt`, which agrees; its line 'Placement was NOT constrained' is fixed text of "
+          "that script, written for the baseline). Centre = centre to centre; gap = edge to edge between cell boxes.", "",
           "| Group | Pair | Centroid dist. before / after | Same-bit centre min before / after | Same-bit centre median before / after | "
           "Same-bit touching before / after | Min gap any FF of one copy to any FF of the other, before / after |",
           "|---|---|---|---|---|---|---|"]
@@ -297,9 +352,27 @@ def main():
     L += ["", f"All copy-A flip-flops vs all copy-B flip-flops (any lane): min edge gap "
           f"{f(B and B['copyA_vs_copyB_min_edge_gap_um'])} um before, {f(S['copyA_vs_copyB_min_edge_gap_um'])} um after. "
           f"Group members outside their fence: {len(S['group_member_violations'])}. Non-member cells (excluding fill and "
-          f"tap cells) fully inside a fence: {S['nonmember_cells_fully_inside_regions']}; straddling a fence edge: "
+          f"tap cells) fully inside a fence: {S['nonmember_cells_fully_inside_regions']}"
+          + (" (" + ", ".join(f"{k} {v}" for k, v in S.get('nonmember_inside_kinds', {}).items()) + ")"
+             if S.get('nonmember_inside_kinds') else "")
+          + ("; these are antenna-repair diodes, which the router's antenna repair inserts after placement without "
+             "looking at the fences" if S.get('nonmember_inside_kinds') and
+             all(k.startswith("diode") for k in S['nonmember_inside_kinds']) else "")
+          + f"; straddling a fence edge: "
           f"{S['nonmember_cells_straddling_region_edge']} ("
-          + ", ".join(f"{k} {v}" for k, v in list(S['nonmember_straddling_kinds'].items())[:8]) + ").", ""]
+          + ", ".join(f"{k} {v}" for k, v in list(S['nonmember_straddling_kinds'].items())[:8]) + ")."]
+    ovr = S.get("nonmember_overlaps_by_region") or {}
+    if ovr:
+        parts = []
+        for rn, lst in ovr.items():
+            txt = (f"{rn} {len(lst)} (origin inside the fence {sum(e['origin_inside'] for e in lst)}, "
+                   f"largest overlap {lst[0]['overlap_um2']:.1f} um^2 = {100 * lst[0]['overlap_fraction']:.0f} % of "
+                   f"`{lst[0]['inst']}` ({lst[0]['master']}))")
+            if not rn.endswith(("copyA", "copyB")):
+                txt += ": " + ", ".join(f"`{e['inst']}` ({e['master']})" for e in lst)
+            parts.append(txt)
+        L += ["", "Non-member cells overlapping each fence (fill and tap cells excluded): " + "; ".join(parts) + "."]
+    L.append("")
     L.append("Acceptance check on the routed DEF: " + ("**PASS** (every target met)." if not fails else "**FAIL**:"))
     L += [f"- {x}" for x in fails]
     L.append("")
@@ -312,7 +385,9 @@ def main():
              f"{f(N.get('fmax from final STA (MHz)'), 1)} MHz, clock skew {f(N.get('clock skew (ns)'), 3)} ns. "
              f"Baseline: {f(BN.get('clock period (ns)'), 2)} ns, WNS {f(BN.get('setup WNS (ns)'), 3)} ns, STA fmax "
              f"{f(BN.get('fmax from final STA (MHz)'), 1)} MHz.")
-    L += ["", "Runs (from `period_exploration.md`):", ""] + P[4:] + [""]
+    L += ["", "Runs (from `period_exploration.md`; `sep` is the production run of `make pd-sep` with the committed "
+          "constraint, the others are exploration runs with `scripts/run_pd_sep.sh --variant ... --floorplan ... "
+          "--period ...`; runs without a margin predate the `SLEW_MARGIN`/`CAP_MARGIN` setting):", ""] + P[4:] + [""]
     wp = read(f"{out}/worst_setup_path.txt") or ""
     sp = re.search(r'Startpoint: (.*)', wp)
     ep = re.search(r'Endpoint: (.*)', wp)
@@ -374,16 +449,36 @@ def main():
              "wire load add delay to what was already the critical path of the baseline.")
     if len(at7) >= 2:
         L.append("")
-        L.append("Moving the fences closer does not buy the period back: at 7.0 ns "
+        a7 = sorted(at7, key=lambda r: -(r['ab_gap'] or 0))
+        L.append("Moving the fences closer helps a little but does not buy the period back: at 7.0 ns (both runs "
+                 "without the slew/cap margin) "
                  + "; ".join(f"floorplan `{r['floorplan']}` (copy fences {f(r['ab_gap'], 0)} um apart, run {r['variant']}) "
-                             f"setup WNS {r['setup_ws']:.3f} ns" for r in sorted(at7, key=lambda r: r['variant']))
+                             f"setup WNS {r['setup_ws']:.3f} ns" for r in a7)
+                 + (f", i.e. {a7[-1]['setup_ws'] - a7[0]['setup_ws']:.3f} ns better for a "
+                    f"{(a7[0]['ab_gap'] or 0) - (a7[-1]['ab_gap'] or 0):.0f} um smaller gap, against a "
+                    f"{(BN.get('setup WNS (ns)') or 0) - a7[0]['setup_ws']:.3f} ns loss relative to the baseline"
+                    if BN.get('setup WNS (ns)') is not None and a7[0]['ab_gap'] and a7[-1]['ab_gap'] else "")
                  + ". The cost comes from splitting each lane's datapath around a shared multiplier more than from "
-                   "the exact gap, so the wider arrangement was kept.")
+                   "the exact gap, so the wider arrangement was kept. The `mid` arrangement was not tried at 7.1 ns "
+                   "with the margin.")
     L.append("")
-    L.append("Other effects of the separation: routed wirelength and switching power go up (table below), mainly "
-             "from the 256 comparator input nets (bit k of copy A and bit k of copy B meet in one XOR) and the "
-             "product nets that now cross the gap between the fences; the mismatch OR tree also spans the core "
-             "height, which is why the flow repairs max slew/capacitance with a 20 % margin.")
+    wb = wirelength_by_role(a.base_def)
+    ws = wirelength_by_role(f"{a.work}/results/sky130hd/orbit_demo/{a.variant}/6_final.def")
+    if wb and ws:
+        tot = sum(ws.values()) - sum(wb.values())
+        L.append("Other effects of the separation: routed wirelength and switching power go up (table below). "
+                 "Routed wirelength by what the net connects to (summed from the DEF wire segments), baseline -> "
+                 "separated: " + "; ".join(
+                     f"{k} {wb[k] / 1000:.1f} -> {ws[k] / 1000:.1f} mm ({ws[k] - wb[k]:+.0f} um"
+                     + (f", {100 * (ws[k] - wb[k]) / tot:.0f} % of the increase" if tot > 0 and ws[k] > wb[k] else "")
+                     + ")" for k in wb)
+                 + ". Most of the increase is on the copy flip-flop outputs, which have to reach the shared A/B "
+                   "comparators (bit k of copy A and bit k of copy B meet in one XOR), the accumulate adders and the "
+                   "output buffers across the gap. The mismatch OR tree also stretches across the core; in run e7 "
+                   "(no margin) its long nor4 -> nand4 nets were the ones left with max-slew/capacitance violations, "
+                   "which is why the flow repairs max slew/capacitance with a 20 % margin.")
+    else:
+        L.append("Other effects of the separation: routed wirelength and switching power go up (table below).")
     L.append("")
 
     # ------------------------------------------------------ area/power/route
@@ -406,7 +501,7 @@ def main():
     if gls:
         gm = re.search(r'^GLS (PASS|FAIL).*$', gls, re.M)
         inj = re.search(r'^injections: .*$', gls, re.M)
-        L.append(f"| post-route GLS (pd/gls harness) | {gm.group(1) if gm else 'n/a'} | "
+        L.append(f"| post-route GLS (pd/gls harness, zero-delay) | {gm.group(1) if gm else 'n/a'} | "
                  f"{gm.group(0) if gm else ''}{'; ' + inj.group(0) if inj else ''} |")
     L.append("")
 
@@ -426,7 +521,20 @@ def main():
           "- sky130 is not radiation-characterised; nothing here is a radiation-hardness claim.",
           "- Timing is at the single ORFS sky130hd corner (TT 25C 1.80V). Power is a default-activity estimate.",
           "- `improve_placement` (detailed-placement optimisation) is off in the separated flow because it does not "
-          "honour the fences.", ""]
+          "honour the fences."]
+    ovr = S.get("nonmember_overlaps_by_region") or {}
+    if ovr:
+        n_ov = sum(len(v) for v in ovr.values())
+        n_big = sum(1 for v in ovr.values() for e in v if e["overlap_fraction"] >= 0.5)
+        L.append(f"- The fences bind the group members only. In this flow OpenROAD's detailed placer kept other cells "
+                 f"from lying fully inside a fence but not from overlapping one: {n_ov} non-member cells overlap a "
+                 f"fence in the routed DEF, {n_big} of them "
+                 f"with at least half of their area (mostly clock-tree leaf buffers and CTS dummy loads next to the "
+                 f"flip-flops they clock, and port buffers; at the thermal fences a few logic gates, repair buffers "
+                 f"and, in this run, the clock-tree root buffer; listed under Separation), and the router's antenna "
+                 f"repair can put diodes inside. "
+                 f"These are shared, unprotected cells either way; none is a redundant flip-flop.")
+    L.append("")
     L += ["## Reproduce", "", "```",
           "make pd-sep            # full run: ORFS with the fences, DRC, LVS, GLS, reports",
           "make pd-sep-report     # re-extract the reports of an existing run",

@@ -1,0 +1,15 @@
+OpenSTA report_power on the routed design with RCX parasitics and the
+tool's DEFAULT switching activity (no simulation activity annotated).
+This is an estimate, not a measurement.
+
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             3.69e-03   2.27e-03   4.25e-09   5.96e-03  11.4%
+Combinational          2.10e-02   2.22e-02   2.28e-08   4.32e-02  83.0%
+Clock                  1.67e-03   1.23e-03   8.79e-10   2.90e-03   5.6%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  2.64e-02   2.57e-02   2.79e-08   5.21e-02 100.0%
+                          50.6%      49.4%       0.0%

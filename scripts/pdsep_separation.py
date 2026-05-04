@@ -269,6 +269,8 @@ def measure(d):
     member_set = {m for g in d["groups"].values() for m in g["members"]}
     inside_n, straddle_n = 0, 0
     straddle_kinds = defaultdict(int)
+    inside_kinds = defaultdict(int)
+    by_region = defaultdict(list)
     if regs:
         for n, c in cells.items():
             if n in member_set:
@@ -282,13 +284,23 @@ def measure(d):
                     if b[0] < x1 - 1e-6 and b[2] > x0 + 1e-6 and b[1] < y1 - 1e-6 and b[3] > y0 + 1e-6:
                         if b[0] >= x0 - 1e-6 and b[2] <= x1 + 1e-6 and b[1] >= y0 - 1e-6 and b[3] <= y1 + 1e-6:
                             inside_n += 1
+                            inside_kinds[c["master"].replace("sky130_fd_sc_hd__", "")] += 1
                         else:
                             straddle_n += 1
                             straddle_kinds[c["master"].replace("sky130_fd_sc_hd__", "")] += 1
+                        ov = (min(b[2], x1) - max(b[0], x0)) * (min(b[3], y1) - max(b[1], y0))
+                        by_region[rn].append({"inst": n, "master": c["master"].replace("sky130_fd_sc_hd__", ""),
+                                              "origin_inside": bool(x0 <= b[0] < x1 and y0 <= b[1] < y1),
+                                              "overlap_um2": round(ov, 3),
+                                              "overlap_fraction": round(ov / ((b[2] - b[0]) * (b[3] - b[1])), 3)})
     intr = inside_n + straddle_n
     res["nonmember_cells_fully_inside_regions"] = inside_n
     res["nonmember_cells_straddling_region_edge"] = straddle_n
     res["nonmember_straddling_kinds"] = dict(sorted(straddle_kinds.items(), key=lambda kv: -kv[1]))
+    res["nonmember_inside_kinds"] = dict(sorted(inside_kinds.items(), key=lambda kv: -kv[1]))
+    # every non-member cell that overlaps a fence, per region (largest overlap first)
+    res["nonmember_overlaps_by_region"] = {rn: sorted(v, key=lambda e: -e["overlap_um2"])
+                                           for rn, v in sorted(by_region.items())}
     res["group_members_placed"] = members
     res["group_member_ffs"] = member_ffs
     res["group_member_violations"] = viol

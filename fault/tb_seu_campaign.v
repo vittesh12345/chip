@@ -26,7 +26,8 @@
 //             never delivered)
 //   EXTRA     a result was transferred when none was pending (duplicate or
 //             stale re-presentation)
-//   HANG      no fault, but no beat accepted under favourable conditions
+//   HANG      not stopped, but no beat accepted under favourable conditions
+//             (second half of drain A)
 //   OTHER     a stop that did not block the handshakes (structural check)
 //   DETECTED  fault rose (the host then clears it); no wrong data transferred
 //   TIMING    no fault, all data correct, but the port trace differs from the
@@ -189,6 +190,9 @@ module seu_host (
     integer n_ok;          // results delivered and correct
     integer n_sdc;         // results delivered with wrong data
     integer n_extra;       // out_fire with nothing pending
+    integer n_extra_dup;   // ... carrying the last delivered result again (duplicate)
+    reg     [127:0] m_last;          // last result delivered correctly
+    reg             m_last_valid;
     integer n_lost;        // pending result overwritten by a new one
     integer n_discard;     // pending result discarded by clear_fault / reset
     integer n_fault_cyc;   // cycles with fault = 1
@@ -207,7 +211,8 @@ module seu_host (
             m_pend      <= 1'b0;
             auto_clear  <= 1'b0;
             clr_wait    <= 2'd0;
-            n_ok = 0; n_sdc = 0; n_extra = 0; n_lost = 0; n_discard = 0;
+            n_ok = 0; n_sdc = 0; n_extra = 0; n_extra_dup = 0; n_lost = 0; n_discard = 0;
+            m_last_valid = 1'b0;
             n_fault_cyc = 0; n_stop_viol = 0; n_in_fire = 0; n_clears = 0;
             saw_fault   <= 1'b0;
         end else begin
@@ -219,43 +224,47 @@ module seu_host (
                     n_stop_viol = n_stop_viol + 1;
             end
 
-            if (!rst_n) begin
-                m_acc  <= 128'd0;
-                m_pend <= 1'b0;
-            end else if (clear_fault) begin
-                // clear_fault zeroes the sums and discards a waiting result.
+            // A transfer is checked in every cycle, also in a clear_fault or
+            // reset cycle (neither gates out_valid in that cycle).
+            if (out_fire) begin
+                if (!m_pend) begin
+                    n_extra = n_extra + 1;
+                    if (m_last_valid && out_data === m_last)
+                        n_extra_dup = n_extra_dup + 1;
+                end else if (out_data !== m_pend_data) begin
+                    n_sdc = n_sdc + 1;
+                end else begin
+                    n_ok = n_ok + 1;
+                    m_last       = out_data;
+                    m_last_valid = 1'b1;
+                end
+            end
+
+            if (!rst_n || clear_fault) begin
+                // Reset / clear_fault zero the sums and discard a result that
+                // was not transferred in this cycle (in_ready is 0 here).
                 m_acc <= 128'd0;
-                if (m_pend)
+                if (m_pend && !out_fire)
                     n_discard = n_discard + 1;
                 m_pend <= 1'b0;
-            end else begin
-                if (out_fire) begin
-                    if (!m_pend)
-                        n_extra = n_extra + 1;
-                    else if (out_data !== m_pend_data)
-                        n_sdc = n_sdc + 1;
-                    else
-                        n_ok = n_ok + 1;
-                end
-                if (in_fire) begin
-                    n_in_fire = n_in_fire + 1;
-                    for (j = 0; j < 4; j = j + 1)
-                        nxt[32*j +: 32] = (in_first ? 32'd0 : m_acc[32*j +: 32]) +
-                                          prod(in_a[8*j +: 8], in_b[8*j +: 8]);
-                    m_acc <= nxt;
-                    if (in_last) begin
-                        // A result still pending here was not delivered in
-                        // this cycle and is now overwritten: lost.
-                        if (m_pend && !out_fire)
-                            n_lost = n_lost + 1;
-                        m_pend      <= 1'b1;
-                        m_pend_data <= nxt;
-                    end else if (out_fire) begin
-                        m_pend <= 1'b0;
-                    end
+            end else if (in_fire) begin
+                n_in_fire = n_in_fire + 1;
+                for (j = 0; j < 4; j = j + 1)
+                    nxt[32*j +: 32] = (in_first ? 32'd0 : m_acc[32*j +: 32]) +
+                                      prod(in_a[8*j +: 8], in_b[8*j +: 8]);
+                m_acc <= nxt;
+                if (in_last) begin
+                    // A result still pending here was not delivered in this
+                    // cycle and is now overwritten: lost.
+                    if (m_pend && !out_fire)
+                        n_lost = n_lost + 1;
+                    m_pend      <= 1'b1;
+                    m_pend_data <= nxt;
                 end else if (out_fire) begin
                     m_pend <= 1'b0;
                 end
+            end else if (out_fire) begin
+                m_pend <= 1'b0;
             end
 
             if (in_fire)
@@ -323,7 +332,9 @@ module tb_seu_campaign;
     integer inj_at;              // injection cycle (-1: none)
     integer fault_at;            // first cycle whose sample shows fault = 1
     reg     stop_same_cycle;     // in the upset cycle: in_ready = out_valid = 0
+    reg     clr_in_upset;        // clear_fault (or reset) asserted in the upset cycle
     integer drain_fire;          // u_dut beats accepted in the late part of drain A
+    integer drain_fire_gold;     // the same for u_gold
     reg     in_drain_a_late;
 
     wire [127:0] od_dut  = u_dut.out_valid  ? u_dut.out_data  : 128'd0;
@@ -339,10 +350,14 @@ module tb_seu_campaign;
                 diff_repair <= 1'b1;
             if (u_dut.fault && fault_at < 0)
                 fault_at <= cyc;
-            if (inj_at >= 0 && cyc == inj_at)
+            if (inj_at >= 0 && cyc == inj_at) begin
                 stop_same_cycle <= !u_dut.in_ready && !u_dut.out_valid;
+                clr_in_upset    <= u_dut.clear_fault || !rst_n;
+            end
             if (in_drain_a_late && u_dut.in_fire)
                 drain_fire <= drain_fire + 1;
+            if (in_drain_a_late && u_gold.in_fire)
+                drain_fire_gold <= drain_fire_gold + 1;
         end
     end
 
@@ -435,7 +450,9 @@ module tb_seu_campaign;
             diff_repair     <= 1'b0;
             fault_at        <= -1;
             stop_same_cycle <= 1'b0;
+            clr_in_upset    <= 1'b0;
             drain_fire      <= 0;
+            drain_fire_gold <= 0;
             in_drain_a_late <= 1'b0;
             inj_at           = (fid >= 0) ? finj : -1;
             cmp_on          <= 1'b1;
@@ -492,16 +509,17 @@ module tb_seu_campaign;
 
             // Fault-free reference run: must be perfect.
             if (u_gold.n_sdc || u_gold.n_extra || u_gold.n_lost || u_gold.saw_fault ||
-                u_gold.m_pend || u_gold.n_stop_viol) begin
-                $display("ERROR: trial %0d: fault-free run failed (sdc %0d extra %0d lost %0d fault %0d pend %0d)",
-                         tr, u_gold.n_sdc, u_gold.n_extra, u_gold.n_lost, u_gold.saw_fault, u_gold.m_pend);
+                u_gold.m_pend || u_gold.n_stop_viol || drain_fire_gold == 0) begin
+                $display("ERROR: trial %0d: fault-free run failed (sdc %0d extra %0d lost %0d fault %0d pend %0d drain %0d)",
+                         tr, u_gold.n_sdc, u_gold.n_extra, u_gold.n_lost, u_gold.saw_fault, u_gold.m_pend,
+                         drain_fire_gold);
                 errors = errors + 1;
             end
 
             if (u_dut.n_sdc)                                   outcome = "SDC";
             else if (u_dut.n_lost)                             outcome = "LOST";
             else if (u_dut.n_extra)                            outcome = "EXTRA";
-            else if (!u_dut.saw_fault && drain_fire == 0)      outcome = "HANG";
+            else if (!u_dut.fault && drain_fire == 0)          outcome = "HANG";
             else if (u_dut.n_stop_viol)                        outcome = "OTHER";
             else if (u_dut.saw_fault)                          outcome = "DETECTED";
             else if (diff_ports)                               outcome = "TIMING";
@@ -509,9 +527,9 @@ module tb_seu_campaign;
             else                                               outcome = "MASKED";
 
             latency = (fid >= 0 && fault_at >= 0) ? fault_at - finj : -1;
-            $fdisplay(fd, "%0d\t%0d\t%0d\t%0d\t%0d\t%0d\t%0s\t%0d\t%0d\t%0d\t%0d\t%0d",
-                      tr, fid, finj, old_bit, therm_at_inj, ovq_at_inj, outcome, latency,
-                      stop_same_cycle, u_dut.n_ok, u_dut.n_discard, u_dut.n_clears);
+            $fdisplay(fd, "%0d\t%0d\t%0d\t%0d\t%0d\t%0d\t%0d\t%0s\t%0d\t%0d\t%0d\t%0d\t%0d\t%0d",
+                      tr, fid, finj, old_bit, therm_at_inj, ovq_at_inj, clr_in_upset, outcome, latency,
+                      stop_same_cycle, u_dut.n_ok, u_dut.n_discard, u_dut.n_clears, u_dut.n_extra_dup);
             n_trials = n_trials + 1;
         end
     endtask
@@ -548,31 +566,30 @@ module tb_seu_campaign;
         end
         $fdisplay(fd, "# seed=%0d tpb=%0d tpb_unprot=%0d controls=%0d prefix=%0d..%0d post=%0d drain=%0d+%0d",
                   seed, tpb, tpb_unprot, controls, PREFIX0, PREFIX0 + SPAN - 1, POST, DRAIN_A, DRAIN_B);
-        $fdisplay(fd, "trial\tid\tinj_cycle\told_bit\ttherm_at_inj\tovq_at_inj\toutcome\tlatency\tstop_same_cycle\tn_ok\tn_discard\tn_clears");
+        $fdisplay(fd, "trial\tid\tinj_cycle\told_bit\ttherm_at_inj\tovq_at_inj\tclr_in_upset\toutcome\tlatency\tstop_same_cycle\tn_ok\tn_discard\tn_clears\tn_extra_dup");
         errors   = 0;
         n_trials = 0;
-        trial    = 0;
-        iseed    = seed;
 
         // Fault-free controls: the classifier must report MASKED.
-        for (t = 0; t < controls; t = t + 1) begin
-            run_trial(trial, -1, PREFIX0 + SPAN / 2, seed * 1000003 + trial * 7919 + 17);
-            trial = trial + 1;
-        end
+        for (t = 0; t < controls; t = t + 1)
+            run_trial(t, -1, PREFIX0 + SPAN / 2, seed * 1000003 + t * 7919 + 17);
 
         // Every bit at several injection times, stratified over the prefix
-        // window (one stratum per trial of that bit, random within it).
+        // window (one stratum per trial of that bit, random within it). The
+        // trial number, and with it the workload and the injection time,
+        // depends only on (seed, id, t), so +first/+last reproduce any trial.
         for (id = first_id; id <= last_id; id = id + 1) begin
             n = (id >= 518) ? tpb_unprot : tpb;
             for (t = 0; t < n; t = t + 1) begin
+                trial   = controls + ((id >= 518) ? 518 * tpb + (id - 518) * tpb_unprot : id * tpb) + t;
                 stratum = (SPAN + n - 1) / n;
-                r   = $random(iseed);
-                r   = (r < 0) ? -r : r;
-                inj = PREFIX0 + (t * SPAN) / n + (r % stratum);
+                iseed   = seed * 7777 + trial * 104729 + 3;
+                r       = $random(iseed);
+                r       = (r < 0) ? -r : r;
+                inj     = PREFIX0 + (t * SPAN) / n + (r % stratum);
                 if (inj >= PREFIX0 + SPAN)
                     inj = PREFIX0 + SPAN - 1;
                 run_trial(trial, id, inj, seed * 1000003 + trial * 7919 + 17);
-                trial = trial + 1;
             end
         end
 
