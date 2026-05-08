@@ -164,7 +164,7 @@ synth-report:
 	    cp $(SYNTH_YOWASP_DIR)/storage_audit.txt $(SYNTH_PUBLISH)/storage_audit_yowasp.txt 2>/dev/null || rm -f $(SYNTH_PUBLISH)/storage_audit_yowasp.txt; \
 	    $(SYNTH_PY) synth/synth_report.py trim-log $(SYNTH_OUT)/synth.log > $(SYNTH_PUBLISH)/synth_log_trimmed.txt; \
 	    $(SYNTH_PY) synth/synth_report.py summary --build $(SYNTH_OUT) --out $(SYNTH_PUBLISH)/summary.md \
-	        --rtl "$(RTL)" --notes synth/summary_notes.md; \
+	        --rtl "$(RTL)"; \
 	fi
 
 TEST_TARGETS += synth

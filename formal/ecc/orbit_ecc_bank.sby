@@ -1,0 +1,90 @@
+# SymbiYosys jobs for the ECC bank.
+#
+# mk/ecc.mk copies this file into $(BUILD)/ecc/formal/ and replaces @CODEC@,
+# @BANK@, @DECABS@, @HARNESS@ and @E2E@ by the source paths
+# (rtl/ecc/orbit_secded72.v, rtl/ecc/orbit_ecc_bank.v,
+# formal/ecc/orbit_secded72_dec_abs.v, formal/ecc/orbit_ecc_bank_fv.sv,
+# formal/ecc/orbit_ecc_bank_e2e_fv.sv). The bank is always read with
+# -DORBIT_ECC_UPSET (the upset hook the harnesses drive).
+#
+# Unbounded (k-induction), decoder abstracted to its proven contract, harness
+# orbit_ecc_bank_fv.sv, DEPTH 16, INTERLEAVE 2 unless noted:
+#   clean     A1-A4, U2, C3: fault-free
+#   sec       A1-A4, U2, U4: any number of 1-bit / adjacent 2-bit upsets, none
+#             landing on a codeword that already holds an error
+#   ded       A1-A4, U4: additionally a second upset in a codeword (UE)
+#   il1_neg   `sec` with INTERLEAVE 1: must FAIL (an adjacent 2-bit upset is a
+#             double error without interleaving) - negative control
+# Covers (smtbmc, from reset):
+#   cover     U4 bound reached, CE read of half an adjacent upset, scrub repair,
+#             counter saturation
+#   cover_ded a UE read under the ded model
+# Bounded end-to-end with the REAL decoder (harness orbit_ecc_bank_e2e_fv.sv,
+# BMC from reset at DEPTH 2; the parity arithmetic makes each extra step
+# several times slower, so the depths are small):
+#   e2e_clean 5 steps: write/read round trips, no flags, empty log
+#   e2e_upset 4 steps: one 1-bit or adjacent 2-bit upset, then reads are
+#             corrected, never UE, exact CE flag, CE logged. Too short to reach
+#             the scrub bound (U4 needs 5 steps at DEPTH 2; step 4 did not
+#             finish in 9 minutes); U4 is proven by `sec`/`ded`.
+
+[tasks]
+clean     prv
+sec       prv
+ded       prv
+il1_neg   prv
+cover     cov
+cover_ded cov
+e2e_clean e2e
+e2e_upset e2e
+
+[options]
+prv: mode prove
+clean: depth 2
+sec: depth 2
+ded: depth 2
+# deeper, so that the base case (not only the induction step) reaches the
+# counterexample: reset, upset, double error visible two steps later
+il1_neg: depth 4
+cov: mode cover
+cov: depth 24
+e2e: mode bmc
+e2e_clean: depth 5
+e2e_upset: depth 4
+
+[engines]
+prv: smtbmc bitwuzla
+cov: smtbmc yices
+e2e: smtbmc bitwuzla
+
+[script]
+read_verilog -formal orbit_secded72.v
+~e2e: read_verilog -formal -overwrite orbit_secded72_dec_abs.v
+read_verilog -formal -DORBIT_ECC_UPSET orbit_ecc_bank.v
+clean:     read_verilog -formal -sv -DFV_CLEAN orbit_ecc_bank_fv.sv
+sec:       read_verilog -formal -sv -DFV_SEC orbit_ecc_bank_fv.sv
+ded:       read_verilog -formal -sv -DFV_DED orbit_ecc_bank_fv.sv
+il1_neg:   read_verilog -formal -sv -DFV_SEC orbit_ecc_bank_fv.sv
+cover:     read_verilog -formal -sv -DFV_SEC -DFV_COVER orbit_ecc_bank_fv.sv
+cover_ded: read_verilog -formal -sv -DFV_DED -DFV_COVER orbit_ecc_bank_fv.sv
+e2e_clean: read_verilog -formal -sv -DFV_CLEAN -DFV_NO_HELPERS orbit_ecc_bank_e2e_fv.sv
+e2e_upset: read_verilog -formal -sv -DFV_UPSET -DFV_NO_HELPERS orbit_ecc_bank_e2e_fv.sv
+il1_neg:   chparam -set INTERLEAVE 1 orbit_ecc_bank_fv
+e2e:       chparam -set DEPTH 2 orbit_ecc_bank_e2e_fv
+# Hierarchical references: flatten right after proc so that the (* hierconn *)
+# wires of the harness are connected to the bank's internal nets.
+~e2e: hierarchy -top orbit_ecc_bank_fv
+e2e:  hierarchy -top orbit_ecc_bank_e2e_fv
+proc
+flatten
+# Fail if a hierconn path is mistyped (it would be left undriven).
+check -assert
+~e2e: prep -top orbit_ecc_bank_fv
+e2e:  prep -top orbit_ecc_bank_e2e_fv
+
+[files]
+@CODEC@
+@BANK@
+@DECABS@
+@HARNESS@
+@E2E@

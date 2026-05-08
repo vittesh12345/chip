@@ -1,0 +1,33 @@
+test_check_detects_wrong_figure (__main__.TestBriefConsistency.test_check_detects_wrong_figure) ... ok
+test_no_brief_figure_disagrees (__main__.TestBriefConsistency.test_no_brief_figure_disagrees) ... ok
+test_report_states_agreement (__main__.TestBriefConsistency.test_report_states_agreement) ... ok
+test_mac_count (__main__.TestCompute.test_mac_count) ... ok
+test_peak_200mhz (__main__.TestCompute.test_peak_200mhz) ... ok
+test_peak_800mhz (__main__.TestCompute.test_peak_800mhz) ... ok
+test_protected_peak_is_half (__main__.TestCompute.test_protected_peak_is_half) ... ok
+test_throttled_peak_is_half (__main__.TestCompute.test_throttled_peak_is_half) ... ok
+test_tops_per_watt_allocation (__main__.TestCompute.test_tops_per_watt_allocation) ... ok
+test_demo_peak (__main__.TestDemonstrator.test_demo_peak) ... ok
+test_pd_clock_parsing (__main__.TestDemonstrator.test_pd_clock_parsing) ... ok
+test_rtl_parameters_match_model (__main__.TestDemonstrator.test_rtl_parameters_match_model) ... ok
+test_local_bw_per_tile (__main__.TestMemory.test_local_bw_per_tile) ... ok
+test_local_bw_total (__main__.TestMemory.test_local_bw_total) ... ok
+test_matvec_ceiling (__main__.TestMemory.test_matvec_ceiling) ... ok
+test_ops_per_byte_for_peak (__main__.TestMemory.test_ops_per_byte_for_peak) ... ok
+test_raw_sram_36mib (__main__.TestMemory.test_raw_sram_36mib) ... ok
+test_ridge_needs_decimal_gbs (__main__.TestMemory.test_ridge_needs_decimal_gbs) ... ok
+test_roofline (__main__.TestMemory.test_roofline) ... ok
+test_usable_sram_from_tiles (__main__.TestMemory.test_usable_sram_from_tiles) ... ok
+test_junction_320k (__main__.TestThermal.test_junction_320k) ... ok
+test_junction_350k_above_stop (__main__.TestThermal.test_junction_350k_above_stop) ... ok
+test_junction_rise (__main__.TestThermal.test_junction_rise) ... ok
+test_junction_states (__main__.TestThermal.test_junction_states) ... ok
+test_max_radiator (__main__.TestThermal.test_max_radiator) ... ok
+test_radiator_area_per_100kw (__main__.TestThermal.test_radiator_area_per_100kw) ... ok
+test_radiator_area_per_kw (__main__.TestThermal.test_radiator_area_per_kw) ... ok
+test_radiator_law (__main__.TestThermal.test_radiator_law) ... ok
+
+----------------------------------------------------------------------
+Ran 28 tests in 0.005s
+
+OK

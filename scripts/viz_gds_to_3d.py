@@ -19,6 +19,7 @@ Needs the klayout and numpy Python modules (see viz/requirements.txt).
 """
 
 import argparse
+import collections
 import datetime as _dt
 import json
 import math
@@ -30,13 +31,16 @@ import sys
 
 import numpy as np
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import viz_parts  # noqa: E402  (scripts/viz_parts.py: part attribution)
+
 try:
     import klayout.db as kdb
 except ImportError:  # pragma: no cover
     sys.exit("viz_gds_to_3d.py: the 'klayout' Python module is missing "
              "(pip install -r viz/requirements.txt)")
 
-MAGIC = b"ORBITVZ1"
+MAGIC = b"ORBITVZ2"
 HEADER_BYTES = 16
 
 # ---------------------------------------------------------------------------
@@ -563,7 +567,7 @@ def hex_rgb(h):
 
 
 # ---------------------------------------------------------------------------
-# glTF 2.0 binary writer (core spec only; flat normals computed by viewers)
+# glTF 2.0 binary writer (flat normals computed by viewers)
 # ---------------------------------------------------------------------------
 BOX_TRIS = np.array([
     0, 2, 1, 0, 3, 2,        # bottom (z0), facing -z
@@ -576,12 +580,12 @@ BOX_TRIS = np.array([
 
 
 def box_corners(rects, z0, z1):
-    """rects [n,4] (x0,y0,x1,y1) in any unit -> corners [n,8,3] in glTF
-    Y-up axes: (x, z, -y)."""
+    """rects [n,4] (x0,y0,x1,y1) + per-box z0/z1 ([n] arrays or scalars) ->
+    corners [n,8,3] in glTF Y-up axes: (x, z, -y)."""
     n = rects.shape[0]
     x0, y0, x1, y1 = (rects[:, i] for i in range(4))
-    zb = np.full(n, z0, dtype=rects.dtype)
-    zt = np.full(n, z1, dtype=rects.dtype)
+    zb = np.broadcast_to(np.asarray(z0, dtype=rects.dtype), (n,))
+    zt = np.broadcast_to(np.asarray(z1, dtype=rects.dtype), (n,))
     corners = [(x0, y0, zb), (x1, y0, zb), (x1, y1, zb), (x0, y1, zb),
                (x0, y0, zt), (x1, y0, zt), (x1, y1, zt), (x0, y1, zt)]
     pos = np.empty((n, 8, 3), dtype=rects.dtype)
@@ -592,22 +596,27 @@ def box_corners(rects, z0, z1):
     return pos
 
 
-def write_glb(path, meshes, extras, quantize_um=None):
-    """Write a binary glTF 2.0 file.
+def glb_node(name, children=None, mesh=None, extras=None):
+    """Scene-tree node for write_glb. mesh = dict(material, rgba, metallic,
+    rects [n,4] um (die-centre origin), z0, z1 (scalars or [n] um))."""
+    return {"name": name, "children": children or [], "mesh": mesh, "extras": extras}
 
-    meshes: list of (name, rgba_linear, rects_um [n,4] relative to the die
-    centre, z0_um, z1_um, metallic). Each rectangle becomes a closed box (8
-    corners, 12 triangles, no normals: viewers compute flat normals). Boxes are
-    split into primitives of <= 8191 boxes that all share one uint16 index
-    buffer.
 
-    quantize_um: None -> core glTF (float32 positions, no extensions);
-    a step in um -> KHR_mesh_quantization (int16 positions, 8-byte stride) with
-    the step as node scale, which is about 2/3 of the size.
-    """
+def write_glb(path, root, asset_extras, quantize_um=None, z_scale=1.0):
+    """Write a binary glTF 2.0 file from a glb_node tree.
+
+    Every rectangle becomes a closed box (8 corners, 12 triangles, no
+    normals). quantize_um=None: core glTF, float32 positions and one uint32
+    index buffer per mesh (the input for Draco compression); a step in um:
+    KHR_mesh_quantization (int16 positions, 8-byte stride, node scale = step)
+    with primitives of <= 8191 boxes sharing one uint16 index buffer.
+    Returns (bytes written, list of node names, box count)."""
     bin_chunks = []
     offset = 0
     buffer_views, accessors, gl_meshes, materials, nodes = [], [], [], [], []
+    mat_index = {}
+    names = []
+    total_boxes = 0
 
     def add_view(data, target, stride=None):
         nonlocal offset
@@ -626,38 +635,58 @@ def write_glb(path, meshes, extras, quantize_um=None):
         return len(buffer_views) - 1
 
     max_boxes = 65536 // 8 - 1
-    idx_all = (BOX_TRIS[None, :].astype(np.uint32) +
-               (np.arange(max_boxes, dtype=np.uint32) * 8)[:, None]).astype(np.uint16).reshape(-1)
-    idx_view = add_view(idx_all.tobytes(), 34963)
+    idx16_view = None
     idx_acc = {}
 
-    def index_accessor(nb):
+    def index16(nb):
+        nonlocal idx16_view
+        if idx16_view is None:
+            idx_all = (BOX_TRIS[None, :].astype(np.uint32) +
+                       (np.arange(max_boxes, dtype=np.uint32) * 8)[:, None]).astype(np.uint16).reshape(-1)
+            idx16_view = add_view(idx_all.tobytes(), 34963)
         if nb not in idx_acc:
-            accessors.append({"bufferView": idx_view, "componentType": 5123,
+            accessors.append({"bufferView": idx16_view, "componentType": 5123,
                               "count": int(nb * 36), "type": "SCALAR"})
             idx_acc[nb] = len(accessors) - 1
         return idx_acc[nb]
 
-    zscale = extras.get("z_scale", 1.0)
-    for name, rgba, rects, z0, z1, metallic in meshes:
-        if quantize_um and rects.shape[0]:
-            # boxes that collapse to zero width/height on the quantization step
+    def material(m):
+        key = m["material"]
+        if key not in mat_index:
+            rgba = m["rgba"]
+            mat = {"name": key, "pbrMetallicRoughness": {
+                "baseColorFactor": [round(v, 5) for v in rgba],
+                "metallicFactor": m.get("metallic", 0.0), "roughnessFactor": 0.55}}
+            if rgba[3] < 1.0:
+                mat["alphaMode"] = "BLEND"
+            if m.get("double_sided"):
+                mat["doubleSided"] = True
+            materials.append(mat)
+            mat_index[key] = len(materials) - 1
+        return mat_index[key]
+
+    def add_mesh(name, m):
+        nonlocal total_boxes
+        rects = np.asarray(m["rects"], dtype=np.float64).reshape(-1, 4)
+        n = rects.shape[0]
+        z0 = np.broadcast_to(np.asarray(m["z0"], dtype=np.float64), (n,)) * z_scale
+        z1 = np.broadcast_to(np.asarray(m["z1"], dtype=np.float64), (n,)) * z_scale
+        if quantize_um and n:
             qa = np.rint(rects / quantize_um)
-            rects = rects[(qa[:, 2] > qa[:, 0]) & (qa[:, 3] > qa[:, 1])]
-        mat = {"name": name, "pbrMetallicRoughness": {
-            "baseColorFactor": [round(v, 5) for v in rgba],
-            "metallicFactor": metallic, "roughnessFactor": 0.55}}
-        if rgba[3] < 1.0:
-            mat["alphaMode"] = "BLEND"
-        materials.append(mat)
+            keep = (qa[:, 2] > qa[:, 0]) & (qa[:, 3] > qa[:, 1])
+            rects, z0, z1 = rects[keep], z0[keep], z1[keep]
+            n = rects.shape[0]
+        if n == 0:
+            return None
+        total_boxes += n
+        mi = material(m)
         prims = []
-        for s0 in range(0, rects.shape[0], max_boxes):
-            chunk = rects[s0:s0 + max_boxes]
-            nb = chunk.shape[0]
-            if quantize_um:
-                q = np.rint(chunk / quantize_um).astype(np.int32)
-                pos = box_corners(q, int(round(z0 * zscale / quantize_um)),
-                                  int(round(z1 * zscale / quantize_um))).reshape(-1, 3)
+        if quantize_um:
+            for s0 in range(0, n, max_boxes):
+                sl = slice(s0, s0 + max_boxes)
+                q = np.rint(rects[sl] / quantize_um).astype(np.int32)
+                pos = box_corners(q, np.rint(z0[sl] / quantize_um).astype(np.int32),
+                                  np.rint(z1[sl] / quantize_um).astype(np.int32)).reshape(-1, 3)
                 if np.abs(pos).max() > 32767:
                     raise SystemExit("GLB quantization overflow: use a coarser --glb-quant-um")
                 packed = np.zeros((pos.shape[0], 4), dtype="<i2")
@@ -666,27 +695,47 @@ def write_glb(path, meshes, extras, quantize_um=None):
                 accessors.append({"bufferView": pv, "componentType": 5122, "count": int(pos.shape[0]),
                                   "type": "VEC3", "min": [int(v) for v in pos.min(axis=0)],
                                   "max": [int(v) for v in pos.max(axis=0)]})
-            else:
-                pos = box_corners(chunk.astype(np.float32), np.float32(z0 * zscale),
-                                  np.float32(z1 * zscale)).reshape(-1, 3)
-                pv = add_view(pos.astype("<f4").tobytes(), 34962)
-                accessors.append({"bufferView": pv, "componentType": 5126, "count": int(pos.shape[0]),
-                                  "type": "VEC3", "min": [float(v) for v in pos.min(axis=0)],
-                                  "max": [float(v) for v in pos.max(axis=0)]})
-            prims.append({"attributes": {"POSITION": len(accessors) - 1},
-                          "indices": index_accessor(nb), "material": len(materials) - 1, "mode": 4})
+                prims.append({"attributes": {"POSITION": len(accessors) - 1},
+                              "indices": index16(q.shape[0]), "material": mi, "mode": 4})
+        else:
+            pos = box_corners(rects.astype(np.float32), z0.astype(np.float32), z1.astype(np.float32)).reshape(-1, 3)
+            pv = add_view(pos.astype("<f4").tobytes(), 34962)
+            accessors.append({"bufferView": pv, "componentType": 5126, "count": int(pos.shape[0]),
+                              "type": "VEC3", "min": [float(v) for v in pos.min(axis=0)],
+                              "max": [float(v) for v in pos.max(axis=0)]})
+            pa = len(accessors) - 1
+            idx = (BOX_TRIS[None, :].astype(np.uint32) + (np.arange(n, dtype=np.uint32) * 8)[:, None]).reshape(-1)
+            iv = add_view(idx.astype("<u4").tobytes(), 34963)
+            accessors.append({"bufferView": iv, "componentType": 5125, "count": int(idx.shape[0]), "type": "SCALAR"})
+            prims.append({"attributes": {"POSITION": pa}, "indices": len(accessors) - 1, "material": mi, "mode": 4})
         gl_meshes.append({"name": name, "primitives": prims})
-        node = {"name": name, "mesh": len(gl_meshes) - 1}
-        if quantize_um:
-            node["scale"] = [quantize_um, quantize_um, quantize_um]
-        nodes.append(node)
-    root = {"name": extras["root_name"], "children": list(range(len(nodes)))}
-    nodes.append(root)
+        return len(gl_meshes) - 1
+
+    def visit(nd):
+        entry = {"name": nd["name"]}
+        names.append(nd["name"])
+        if nd.get("extras"):
+            entry["extras"] = nd["extras"]
+        idx = len(nodes)
+        nodes.append(entry)
+        if nd.get("mesh") is not None:
+            mi = add_mesh(nd["name"], nd["mesh"])
+            if mi is not None:
+                entry["mesh"] = mi
+                if quantize_um:
+                    entry["scale"] = [quantize_um, quantize_um, quantize_um]
+        kids = [visit(c) for c in nd.get("children", [])]
+        if kids:
+            entry["children"] = kids
+        return idx
+
+    if len({n for n in _walk_names(root)}) != len(list(_walk_names(root))):
+        raise SystemExit("GLB node names must be unique")
+    visit(root)
     gltf = {
-        "asset": {"version": "2.0", "generator": "ORBIT-AI scripts/viz_gds_to_3d.py",
-                  "extras": extras},
+        "asset": {"version": "2.0", "generator": "ORBIT-AI scripts/viz_gds_to_3d.py", "extras": asset_extras},
         "scene": 0,
-        "scenes": [{"name": extras["root_name"], "nodes": [len(nodes) - 1]}],
+        "scenes": [{"name": root["name"], "nodes": [0]}],
         "nodes": nodes, "meshes": gl_meshes, "materials": materials,
         "accessors": accessors, "bufferViews": buffer_views,
         "buffers": [{"byteLength": offset}],
@@ -705,11 +754,354 @@ def write_glb(path, meshes, extras, quantize_um=None):
         f.write(js)
         f.write(struct.pack("<I4s", len(binary), b"BIN\x00"))
         f.write(binary)
-    return total
+    return total, names, total_boxes
+
+
+def _walk_names(nd):
+    yield nd["name"]
+    for c in nd.get("children", []):
+        yield from _walk_names(c)
 
 
 def glb_box_bytes(n, quantized):
     return n * (8 * (8 if quantized else 12))
+
+
+
+# ---------------------------------------------------------------------------
+# Cells / parts / pins / power grid blocks
+# ---------------------------------------------------------------------------
+PIN_BUSES = [  # (bus id, label, family)
+    ("in_a", "in_a[31:0]", "data in"), ("in_b", "in_b[31:0]", "data in"),
+    ("out_data", "out_data[127:0]", "data out"), ("temp_c", "temp_c[7:0]", "thermal"),
+]
+PIN_FAMILY = {"clk": ("clk", "clock"), "rst_n": ("rst_n", "reset"),
+              "in_valid": ("handshake", "handshake"), "in_ready": ("handshake", "handshake"),
+              "in_first": ("handshake", "handshake"), "in_last": ("handshake", "handshake"),
+              "out_valid": ("handshake", "handshake"), "out_ready": ("handshake", "handshake"),
+              "temp_valid": ("temp_c", "thermal"), "therm_state": ("thermal status", "thermal"),
+              "therm_repair": ("thermal status", "thermal"), "shutdown_req": ("thermal status", "thermal"),
+              "clear_fault": ("fault", "fault"), "fault": ("fault", "fault"),
+              "VDD": ("power", "power"), "VSS": ("power", "power")}
+
+
+def pin_bus(name):
+    base = re.sub(r"\[\d+\]$", "", name)
+    for bid, _lab, fam in PIN_BUSES:
+        if base == bid:
+            return bid, fam
+    return PIN_FAMILY.get(base, (base, "other"))
+
+
+def build_cell_blocks(full, macros, part_of, serves, die, grid_um, off, regions_json_path):
+    """Binary blocks for cells and the power grid (appended after the layer
+    blocks, 4-byte aligned) plus their JSON descriptions."""
+    ox, oy = die[0], die[1]
+    die_w, die_h = die[2] - die[0], die[3] - die[1]
+    catalogue = viz_parts.part_catalogue(range(4))
+    pidx = {p["id"]: i for i, p in enumerate(catalogue)}
+    comps = full["components"]
+    masters = sorted({c[1] for c in comps})
+    midx = {m: i for i, m in enumerate(masters)}
+    if len(masters) > 255 or len(catalogue) > 254:
+        raise SystemExit("too many masters/parts for uint8 indices")
+    boxes = np.array([viz_parts.cell_box(c, macros) for c in comps], dtype=np.float64)
+    rel = boxes.copy()
+    rel[:, [0, 2]] -= ox
+    rel[:, [1, 3]] -= oy
+    q = np.clip(np.rint(rel / grid_um), 0, 65535).astype("<u2")
+    m_arr = np.array([midx[c[1]] for c in comps], dtype=np.uint8)
+    p_arr = np.array([pidx[part_of[c[0]]] for c in comps], dtype=np.uint8)
+    s_arr = np.array([pidx[serves[c[0]]] if c[0] in serves else 255 for c in comps], dtype=np.uint8)
+    flop = np.array([1 if viz_parts.FLOP_RE.search(c[1]) else 0 for c in comps], dtype=np.uint8)
+
+    chunks = []
+
+    def put(data):
+        nonlocal off
+        pad = (-off) % 4
+        if pad:
+            chunks.append(b"\x00" * pad)
+            off += pad
+        at = off
+        chunks.append(data)
+        off += len(data)
+        return at
+
+    cells = {"count": len(comps), "rect_offset": put(q.tobytes()), "master_offset": put(m_arr.tobytes()),
+             "part_offset": put(p_arr.tobytes()), "serves_offset": put(s_arr.tobytes()),
+             "rect": "uint16 x0,y0,x1,y1 per cell on the layer grid (DEF PLACED origin + LEF SIZE)",
+             "master": "uint8 index into masters", "part": "uint8 index into parts",
+             "serves": "uint8 part index the buffer's net cone belongs to (255 = none)",
+             "names": [c[0] for c in comps], "orient": None,
+             "masters": [m.replace("sky130_fd_sc_hd__", "") for m in masters]}
+    info = {}
+    for m in masters:
+        d = viz_parts.describe_master(m, (macros.get(m) or {}).get("pins", {}))
+        mac = macros.get(m) or {"w": 0, "h": 0}
+        d.update(w=mac["w"], h=mac["h"])
+        info[m.replace("sky130_fd_sc_hd__", "")] = d
+    cells["master_info"] = info
+    orients = sorted({c[4] for c in comps})
+    cells["orient_values"] = orients
+    cells["orient"] = "".join("0123456789"[orients.index(c[4])] for c in comps)
+
+    # parts table
+    boxes_by_part = collections.defaultdict(list)
+    ffs_by_part = collections.Counter()
+    for c, b in zip(comps, boxes):
+        pid = part_of[c[0]]
+        boxes_by_part[pid].append(tuple(float(v) for v in b))
+        if viz_parts.FLOP_RE.search(c[1]):
+            ffs_by_part[pid] += 1
+    parts = viz_parts.part_stats(catalogue, boxes_by_part, ffs_by_part, die)
+    for i, p in enumerate(parts):
+        p["index"] = i
+        p["color"] = viz_parts.KIND[p["kind"]][3]
+        p["color_dark"] = viz_parts.KIND[p["kind"]][4]
+        p["kind_name"] = viz_parts.KIND[p["kind"]][1]
+    logic = [c for c in comps if part_of[c[0]] not in ("fill", "tap", "decap", "ant")]
+    parts_meta = {
+        "list": parts,
+        "kinds": [{"id": k[0], "name": k[1], "category": k[2], "color": k[3], "color_dark": k[4]}
+                  for k in viz_parts.KINDS],
+        "counts": {"components": len(comps), "logic_cells": len(logic),
+                   "unattributed": sum(1 for c in comps if part_of[c[0]] == "other"),
+                   "by_source": dict(collections.Counter(p["source"] for p in parts for _ in range(p["cells"])))},
+        "method": ("Step 1 instance names (kept orbit_keep_reg copies, CTS/resizer/physical-cell prefixes and masters); "
+                   "step 2 netlist cones from the DEF NETS section for the anonymous synthesis cells: forward sinks "
+                   "(flip-flop groups via D, output ports) and backward sources (flip-flop groups via Q, input ports) "
+                   "through combinational cells, then first-match rules (adder A/B, multiplier, comparator, OR tree, "
+                   "thermal voter/next-state, reset, control, other). See viz/README.md."),
+        "total_cell_area_um2": round(float(sum((b[2] - b[0]) * (b[3] - b[1]) for b in boxes)), 2),
+    }
+
+    # pins
+    pins = []
+    for pn in full["pins"]:
+        if "rect" not in pn:
+            continue
+        r = pn["rect"]
+        x0, y0, x1, y1 = pn["x"] + r[0] - ox, pn["y"] + r[1] - oy, pn["x"] + r[2] - ox, pn["y"] + r[3] - oy
+        cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+        side = min((("W", cx), ("E", die_w - cx), ("S", cy), ("N", die_h - cy)), key=lambda t: t[1])[0]
+        bus, fam = pin_bus(pn["name"])
+        pins.append({"n": pn["name"], "dir": pn["dir"][0] if pn["dir"] else "?", "layer": pn.get("layer"),
+                     "box": [round(v, 3) for v in (x0, y0, x1, y1)], "side": side, "bus": bus, "fam": fam})
+    pin_groups = {}
+    for pn in pins:
+        key = pn["bus"] + "|" + pn["side"]
+        g = pin_groups.setdefault(key, {"bus": pn["bus"], "side": pn["side"], "fam": pn["fam"], "pins": [],
+                                        "layer": pn["layer"]})
+        g["pins"].append(pn["n"])
+    for g in pin_groups.values():
+        mem = [p for p in pins if p["bus"] == g["bus"] and p["side"] == g["side"]]
+        g["count"] = len(mem)
+        g["center_um"] = [round(sum((p["box"][0] + p["box"][2]) / 2 for p in mem) / len(mem), 2),
+                          round(sum((p["box"][1] + p["box"][3]) / 2 for p in mem) / len(mem), 2)]
+        g["label"] = bus_label(g["bus"], g["pins"])
+    sides = {}
+    for pn in pins:
+        sd = sides.setdefault(pn["side"], {"count": 0, "layers": collections.Counter(), "buses": collections.Counter()})
+        sd["count"] += 1
+        sd["layers"][pn["layer"]] += 1
+        sd["buses"][pn["bus"]] += 1
+    pins_meta = {"list": pins, "groups": sorted(pin_groups.values(), key=lambda g: (g["side"], g["center_um"])),
+                 "sides": {k: {"count": v["count"], "layers": dict(v["layers"]), "buses": dict(v["buses"])}
+                           for k, v in sides.items()},
+                 "note": "DEF PINS: pin shapes at the die edge; VDD/VSS pins are the met5/met4 straps"}
+
+    # power grid (SPECIALNETS wires with width)
+    pw_layers = sorted({w[1] for w in full["power"]}, key=lambda n: (n != "li1", n))
+    pr = np.array([[w[3] - ox, w[4] - oy, w[5] - ox, w[6] - oy] for w in full["power"]], dtype=np.float64).reshape(-1, 4)
+    pq = np.clip(np.rint(pr / grid_um), 0, 65535).astype("<u2")
+    pa = np.array([pw_layers.index(w[1]) + (16 if w[0] == "VSS" else 0) for w in full["power"]], dtype=np.uint8)
+    shape_counts = collections.Counter((w[0], w[1], w[2]) for w in full["power"])
+    power = {"count": int(pq.shape[0]), "rect_offset": put(pq.tobytes()), "attr_offset": put(pa.tobytes()),
+             "layers": pw_layers, "attr": "uint8: layer index (low 4 bits) + 16 for VSS",
+             "shapes": [{"net": k[0], "layer": k[1], "shape": k[2], "count": v} for k, v in sorted(shape_counts.items())],
+             "source": "DEF SPECIALNETS wires (stripes, follow-pin rails, DRC fill); vias not listed"}
+
+    # rows
+    rows = []
+    for r in full["rows"]:
+        site_w = 0.46 if r["site"].startswith("unithd") else r["step"]
+        rows.append([round(r["x"] - ox, 3), round(r["y"] - oy, 3),
+                     round(r["x"] - ox + (r["n"] - 1) * r["step"] + site_w, 3), r["orient"]])
+    rows_meta = {"list": rows, "height_um": 2.72, "site": full["rows"][0]["site"] if full["rows"] else None,
+                 "count": len(rows)}
+
+    # placement regions (DEF REGIONS / GROUPS), labelled from pdsep regions.json
+    rj = {}
+    if regions_json_path and os.path.exists(regions_json_path):
+        try:
+            rj = json.load(open(regions_json_path))
+        except Exception:
+            rj = {}
+    by_name = {r["name"]: r for r in rj.get("regions", [])}
+    nice = {"copyA": "Copy A region", "copyB": "Copy B region", "th0": "Thermal copy 0 region",
+            "th1": "Thermal copy 1 region", "th2": "Thermal copy 2 region"}
+    group_of_region = {g["region"]: (gn, g) for gn, g in full["groups"].items() if g.get("region")}
+    regions = []
+    for r in full["regions"]:
+        info_r = by_name.get(r["name"], {})
+        role = info_r.get("role") or re.sub(r"^pdsep_", "", r["name"])
+        gn, g = group_of_region.get(r["name"], (None, {"members": []}))
+        if gn is None:
+            gm = [v for k, v in full["groups"].items() if k.endswith(role)]
+            members = gm[0]["members"] if gm else []
+        else:
+            members = g["members"]
+        regions.append({"name": r["name"], "type": r["type"], "role": role,
+                        "label": nice.get(role, r["name"]), "long_label": info_r.get("label"),
+                        "boxes": [[round(v - (ox if i % 2 == 0 else oy), 3) for i, v in enumerate(b)] for b in r["boxes"]],
+                        "members": len(members),
+                        "flip_flops": info_r.get("flip_flops")})
+    regions_meta = {"list": regions, "source": ("DEF REGIONS (TYPE FENCE) + GROUPS of the routed run; labels from "
+                                                 + (os.path.relpath(regions_json_path) if rj else "the region names")),
+                    "separation": rj.get("separation"), "unconstrained_common_mode": rj.get("unconstrained_common_mode"),
+                    "mechanism": rj.get("mechanism")}
+    return cells, parts_meta, power, pins_meta, rows_meta, regions_meta, chunks, off
+
+
+def bus_label(bus, names):
+    """Compact label for the pins of one bus (or pin family) on one edge."""
+    bases = collections.OrderedDict()
+    for n in sorted(names, key=lambda t: (re.sub(r"\[\d+\]$", "", t), int((re.search(r"\[(\d+)\]$", t) or [0, 0])[1]))):
+        m = re.search(r"\[(\d+)\]$", n)
+        bases.setdefault(re.sub(r"\[\d+\]$", "", n), []).append(int(m.group(1)) if m else None)
+    parts = []
+    for base, idx in bases.items():
+        idx = sorted(i for i in idx if i is not None)
+        if not idx:
+            parts.append(base)
+            continue
+        runs = []
+        s0 = p = idx[0]
+        for v in idx[1:]:
+            if v == p + 1:
+                p = v
+                continue
+            runs.append((s0, p))
+            s0 = p = v
+        runs.append((s0, p))
+        txt = ",".join(f"{b}" if a == b else f"{b}:{a}" for a, b in reversed(runs))
+        parts.append(f"{base}[{txt}]" if len(txt) <= 14 else f"{base} ×{len(idx)}")
+    return ", ".join(parts)
+
+
+# ---------------------------------------------------------------------------
+# GLB scene tree
+# ---------------------------------------------------------------------------
+def gl_name(text):
+    """glTF node name safe for Blender and three.js GLTFLoader (which strips
+    [ ] . : / and turns spaces into _): [A-Za-z0-9_], at most 63 bytes."""
+    t = re.sub(r"[^A-Za-z0-9]+", "_", text).strip("_")
+    return t[:63]
+
+
+def lin_rgba(hexcol, a=1.0):
+    return tuple(srgb_to_linear(v) for v in hex_rgb(hexcol)) + (a,)
+
+
+def build_glb_tree(c, layer_names, variant):
+    die_w, die_h, ox, oy = c["die_w"], c["die_h"], c["ox"], c["oy"]
+    cx, cy = die_w / 2.0, die_h / 2.0
+    stack, top = c["stack"], c["stack_top"]
+    root = glb_node(gl_name(c["design"] + "_sky130hd"), extras={
+        "variant": variant, "units": "um", "up": "+Y", "layout_x": "+X", "layout_y": "-Z",
+        "origin": "die centre, z = 0 at the substrate surface", "z_scale": c["z_scale"],
+        "die_um": [die_w, die_h], "source_gds": c["source_gds"], "gds_sha256": c["gds_sha256"],
+        "note": "Layer heights: tech LEF thickness + open_pdks Magic z (approximate below li1). Part tiles "
+                "and the die slab are display aids below z = 0. Not radiation-qualified; sky130 open PDK."})
+    root["children"].append(glb_node("Die_Substrate", mesh={
+        "material": "die_substrate", "rgba": lin_rgba("#a9b4bb"), "rects": [[-cx, -cy, cx, cy]],
+        "z0": -1.2, "z1": -0.2}, extras={"display_name": "Die substrate (display slab)"}))
+    # layers
+    lay = glb_node("Layers", extras={"display_name": "Drawn GDS layers", "order": "bottom to top"})
+    for name, gds_ld, kind, color, below, above in LAYERS:
+        if name not in layer_names:
+            continue
+        a = c["layer_rects"][name].astype(np.float64) * c["dbu"]
+        a[:, [0, 2]] -= ox + cx
+        a[:, [1, 3]] -= oy + cy
+        st = stack[name]
+        lay["children"].append(glb_node(gl_name(name), mesh={
+            "material": "layer_" + name, "rgba": lin_rgba(color), "rects": a, "z0": st["z"], "z1": st["z"] + st["t"],
+            "metallic": 0.3 if kind in ("metal", "cut") else 0.0},
+            extras={"display_name": name, "gds": list(gds_ld), "z_um": round(st["z"], 4),
+                    "thickness_um": round(st["t"], 4), "boxes": int(a.shape[0]), "approximate_z": st["approx"]}))
+    root["children"].append(lay)
+    # parts
+    comps = c["full"]["components"]
+    by_part = collections.defaultdict(list)
+    for comp in comps:
+        b = viz_parts.cell_box(comp, c["macros"])
+        by_part[c["part_of"][comp[0]]].append((b[0] - ox - cx, b[1] - oy - cy, b[2] - ox - cx, b[3] - oy - cy))
+    parts_node = glb_node("Parts", extras={"display_name": "Cells by part (footprint tiles below the devices)"})
+    groups = collections.OrderedDict()
+    for p in c["parts"]:
+        if not p["cells"]:
+            continue
+        g = groups.get(p["group"])
+        if g is None:
+            g = glb_node(gl_name(p["group"]), extras={"display_name": p["group"]})
+            groups[p["group"]] = g
+            parts_node["children"].append(g)
+        short = p["name"].split(" / ", 1)[-1] if p["group"].startswith(("Lane", "Thermal")) else p["name"]
+        prefix = p["group"].replace(" ", "") if p["group"].startswith("Lane") else "Thermal" if p["group"].startswith("Thermal") else ""
+        nm = gl_name((prefix + "_" if prefix else "") + short)
+        rects = np.array(by_part[p["id"]], dtype=np.float64)
+        an = p.get("anchor_um")
+        g["children"].append(glb_node(nm, mesh={
+            "material": "part_" + p["kind"], "rgba": lin_rgba(p["color"]), "rects": rects, "z0": -0.2, "z1": 0.0},
+            extras={"display_name": p["name"], "part_id": p["id"], "kind": p["kind_name"], "category": p["category"],
+                    "cells": p["cells"], "flip_flops": p["ffs"], "area_um2": p["area_um2"], "source": p["source"],
+                    "note": p.get("note"),
+                    "label_anchor": [round(an[0] - cx, 3), 0.0, round(-(an[1] - cy), 3)] if an else None}))
+    root["children"].append(parts_node)
+    # pins
+    pins_node = glb_node("Pins", extras={"display_name": "IO pins (DEF PINS), grouped by bus"})
+    by_bus = collections.OrderedDict()
+    for pn in sorted(c["pins"], key=lambda q: (q["bus"], q["n"])):
+        if pn["bus"] == "power":
+            continue
+        by_bus.setdefault(pn["bus"], []).append(pn)
+    fam_col = {"data in": "#2465c7", "data out": "#e0761c", "thermal": "#7c4fcb", "clock": "#e0a800",
+               "reset": "#a8233a", "handshake": "#2f8f3a", "fault": "#c2368c"}
+    for bus, pl in by_bus.items():
+        rects, z0s, z1s = [], [], []
+        for pn in pl:
+            x0, y0, x1, y1 = pn["box"]
+            ex = max(0.0, 1.0 - (x1 - x0)) / 2
+            ey = max(0.0, 1.0 - (y1 - y0)) / 2
+            rects.append([x0 - ex - cx, y0 - ey - cy, x1 + ex - cx, y1 + ey - cy])
+            z0s.append(stack.get(pn["layer"], {"z": 0})["z"])
+            z1s.append(top + 1.0)
+        pins_node["children"].append(glb_node(gl_name("Pins_" + bus), mesh={
+            "material": "pin_" + gl_name(pl[0]["fam"]), "rgba": lin_rgba(fam_col.get(pl[0]["fam"], "#5e7684")),
+            "rects": rects, "z0": z0s, "z1": z1s},
+            extras={"display_name": bus, "pins": [q["n"] for q in pl], "family": pl[0]["fam"],
+                    "marker": "pin shape widened to >= 1 um, drawn from its layer up to 1 um above the stack"}))
+    root["children"].append(pins_node)
+    # regions
+    if c["regions"]:
+        reg_node = glb_node("Regions", extras={"display_name": "Placement fences (DEF REGIONS)"})
+        rcol = {"copyA": "#2465c7", "copyB": "#e0761c", "th0": "#7c4fcb", "th1": "#c2368c", "th2": "#2f8f3a"}
+        for r in c["regions"]:
+            walls = []
+            w = 0.8
+            for (x0, y0, x1, y1) in r["boxes"]:
+                x0, y0, x1, y1 = x0 - cx, y0 - cy, x1 - cx, y1 - cy
+                walls += [[x0, y0, x1, y0 + w], [x0, y1 - w, x1, y1], [x0, y0, x0 + w, y1], [x1 - w, y0, x1, y1]]
+            reg_node["children"].append(glb_node(gl_name("Region_" + r["label"].replace(" region", "")), mesh={
+                "material": "region_" + gl_name(r["role"]), "rgba": lin_rgba(rcol.get(r["role"], "#183a4a")),
+                "rects": walls, "z0": 0.0, "z1": top + 0.5},
+                extras={"display_name": r["label"], "def_region": r["name"], "type": r["type"],
+                        "box_um": r["boxes"], "members": r["members"], "flip_flops": r.get("flip_flops"),
+                        "drawn_as": "0.8 um wide outline walls, z 0 to 0.5 um above the stack"}))
+        root["children"].append(reg_node)
+    return root
 
 
 # ---------------------------------------------------------------------------
@@ -725,9 +1117,21 @@ def main():
     ap.add_argument("--pd-summary", default="reports/pd/summary.md,reports/pd/sky130hd/results.md",
                     help="comma-separated candidates; the first existing file supplies clock/WNS/area/cells")
     ap.add_argument("--out-dir", required=True)
-    ap.add_argument("--glb", default=None)
+    ap.add_argument("--glb", default=None,
+                    help="portable GLB: metals + vias (uncompressed, KHR_mesh_quantization) + parts, pins, regions, die")
+    ap.add_argument("--glb-full", default=None,
+                    help="detailed GLB: ALL drawn layers + parts, pins, regions, die; Draco-compressed with "
+                         "gltf-transform when --gltf-transform is given and the raw file exceeds --glb-full-raw-mb")
+    ap.add_argument("--gltf-transform", default=None, help="path to the @gltf-transform/cli executable")
+    ap.add_argument("--glb-full-raw-mb", type=float, default=40.0)
     ap.add_argument("--glb-budget-mb", type=float, default=9.5,
-                    help="optional GLB layers (li1, mcon, poly, ...) are added only while under this size")
+                    help="(portable GLB) optional layers (li1, mcon, poly, ...) are added only while under this size")
+    ap.add_argument("--regions-json", default=None,
+                    help="pdsep regions.json: labels/colours of the placement fences (optional)")
+    ap.add_argument("--baseline-def", default=None,
+                    help="DEF of the unconstrained baseline run: its copy-distance numbers are kept as 'before'")
+    ap.add_argument("--write-bin", action="store_true",
+                    help="also write the raw layout.bin next to layout.b64.txt (local use; not committed)")
     ap.add_argument("--glb-quant-um", type=float, default=0.01,
                     help="KHR_mesh_quantization step (um); int16 must cover half the die")
     ap.add_argument("--glb-core", action="store_true",
@@ -735,7 +1139,7 @@ def main():
     ap.add_argument("--glb-z-scale", type=float, default=1.0,
                     help="vertical scale baked into the GLB (1.0 = true stack)")
     ap.add_argument("--redundancy-report", default=None)
-    ap.add_argument("--bin-budget-mb", type=float, default=7.0,
+    ap.add_argument("--bin-budget-mb", type=float, default=8.0,
                     help="total layout.bin budget; front-end layers are cut to a detail window above it")
     ap.add_argument("--fe-window", default=None, help="x0,y0,x1,y1 um: explicit front-end detail window")
     ap.add_argument("--label", default=None, help="data label shown in the page")
@@ -772,6 +1176,10 @@ def main():
     core = core_from_rows(defd["rows"], defd["units"], macros)
     design = defd["design"] or "design"
     log(f"design {design}: die {die}, core {core}, {len(defd['components'])} components, {len(flop_names)} flip-flops")
+    full = viz_parts.read_def_full(args.def_path)
+    part_of, serves, clock_nets, _sig, _names = viz_parts.attribute(full, macros)
+    log(f"parts: {len(set(part_of.values()))} parts over {len(part_of)} components, "
+        f"{sum(1 for v in part_of.values() if v == 'other')} unattributed")
 
     # --- GDS -------------------------------------------------------------
     ly = kdb.Layout()
@@ -932,12 +1340,21 @@ def main():
         })
         chunks.append(data)
         off += len(data)
-    bin_path = os.path.join(args.out_dir, "layout.bin")
-    with open(bin_path, "wb") as f:
-        for c in chunks:
-            f.write(c)
-    bin_size = os.path.getsize(bin_path)
-    log(f"wrote {bin_path}: {bin_size} bytes, {sum(l['count'] for l in layers_json)} rects")
+    # --- cells, parts, power grid: extra blocks after the layers ----------
+    cells_json, parts_json, power_json, pins_json, rows_json, regions_json_out, extra_chunks, off = build_cell_blocks(
+        full, macros, part_of, serves, die, grid_um, off, args.regions_json)
+    chunks.extend(extra_chunks)
+    blob = b"".join(chunks)
+    import base64
+    b64_path = os.path.join(args.out_dir, "layout.b64.txt")
+    with open(b64_path, "wb") as f:
+        f.write(base64.b64encode(blob))
+    bin_size = len(blob)
+    if args.write_bin:
+        with open(os.path.join(args.out_dir, "layout.bin"), "wb") as f:
+            f.write(blob)
+    log(f"wrote {b64_path}: {os.path.getsize(b64_path)} bytes (base64 of {bin_size} bytes), "
+        f"{sum(l['count'] for l in layers_json)} rects, {cells_json['count']} cells")
 
     # --- redundancy ------------------------------------------------------
     recs = build_flop_records(defd, macros)
@@ -978,7 +1395,8 @@ def main():
 
     meta = {
         "format": {
-            "name": "orbit-viz-layout", "version": 1, "bin": "layout.bin", "magic": MAGIC.decode(),
+            "name": "orbit-viz-layout", "version": 2, "bin": "layout.b64.txt", "encoding": "base64",
+            "bin_bytes": bin_size, "magic": MAGIC.decode(),
             "header_bytes": HEADER_BYTES, "byte_order": "little", "dtype": dname,
             "grid_um": grid_um, "origin_um": [ox, oy],
             "rect": "x0,y0,x1,y1 per rectangle, grid units relative to the die lower-left corner",
@@ -1025,14 +1443,40 @@ def main():
         },
     }
     meta["redundancy"]["summary"] = summarize_redundancy(groups)
-    meta["redundancy"]["placement_constraints_note"] = placement_constraint_note(args.pd_config)
+    meta["redundancy"]["placement_constraints_note"] = placement_constraint_note(
+        args.pd_config, [r for r in full["regions"] if r["type"] == "FENCE"])
+    meta["cells"] = cells_json
+    meta["parts"] = parts_json
+    meta["pins"] = pins_json
+    meta["power"] = power_json
+    meta["rows"] = rows_json
+    meta["regions"] = regions_json_out
+    if args.baseline_def and os.path.exists(args.baseline_def):
+        bdef = read_def(args.baseline_def)
+        bwant = set()
+        for n, (m, *_r) in bdef["components"].items():
+            if FLOP_MASTER_RE.search(m):
+                bwant.add((n, "Q"))
+        bdef = read_def(args.baseline_def, want_nets_for=bwant)
+        bgroups = group_stats(build_flop_records(bdef, macros))
+        meta["redundancy"]["baseline"] = {
+            "def": rel(args.baseline_def), "def_sha256": _sha256(args.baseline_def),
+            "groups": [{k: v for k, v in g.items() if k != "centroids_um"} for g in bgroups
+                       if g["kind"] in ("pair", "triple")],
+            "summary": summarize_redundancy(bgroups),
+            "note": "unconstrained baseline run (no placement fences), same RTL and die"}
+        log("baseline redundancy: " + json.dumps(meta["redundancy"]["baseline"]["summary"]))
 
     # --- GLB -------------------------------------------------------------
+    meta["glb"] = {}
+    glb_ctx = dict(die_w=die_w, die_h=die_h, ox=ox, oy=oy, dbu=dbu, stack=stack, stack_top=stack_top,
+                   layer_rects=layer_rects, full=full, macros=macros, part_of=part_of, parts=parts_json["list"],
+                   pins=pins_json["list"], regions=regions_json_out["list"], design=design,
+                   gds_sha256=meta["inputs"]["gds_sha256"], source_gds=rel(args.gds), z_scale=args.glb_z_scale)
     if args.glb:
         quant = None if args.glb_core else args.glb_quant_um
         glb_budget = args.glb_budget_mb * 1e6
-        cx, cy = die_w / 2.0, die_h / 2.0
-        used_bytes = 8191 * 36 * 2 + 64 * 1024  # shared index buffer + JSON
+        used_bytes = 8191 * 36 * 2 + 256 * 1024 + glb_box_bytes(len(full["components"]) + 400, quant is not None)
         included, excluded = [], []
         for name in GLB_ORDER:
             n = layer_rects[name].shape[0]
@@ -1044,39 +1488,44 @@ def main():
                 continue
             used_bytes += nbytes
             included.append(name)
-        meshes = [("die_substrate", tuple(srgb_to_linear(v) for v in hex_rgb("#a9b4bb")) + (1.0,),
-                   np.array([[-cx, -cy, cx, cy]]), -1.0, 0.0, 0.0)]
-        for name, gds_ld, kind, color, below, above in LAYERS:
-            if name not in included:
-                continue
-            a = layer_rects[name].astype(np.float64) * dbu
-            a[:, [0, 2]] -= ox + cx
-            a[:, [1, 3]] -= oy + cy
-            st = stack[name]
-            rgb = tuple(srgb_to_linear(v) for v in hex_rgb(color))
-            meshes.append((name, rgb + (1.0,), a, st["z"], st["z"] + st["t"],
-                           0.3 if kind in ("metal", "cut") else 0.0))
-        fe_note = None
-        if meta["fe_detail_window_um"] and any(n in FE_LAYERS for n in included):
-            fe_note = "front-end layers only inside the detail window"
-        extras = {"root_name": f"{design}_sky130hd",
-                  "units": "1 unit = 1 micrometre (node scale applies the quantization step)" if quant
-                           else "1 unit = 1 micrometre",
-                  "z_scale": args.glb_z_scale,
-                  "axes": "+X = layout x, +Y = up (layout z), -Z = layout y; origin at the die centre, "
-                          "z = 0 at the substrate surface",
-                  "position_encoding": (f"KHR_mesh_quantization int16, step {quant} um" if quant
-                                        else "float32 (core glTF, no extensions)"),
-                  "layers_included": included, "layers_excluded": excluded, "front_end_note": fe_note,
-                  "die_um": [die_w, die_h], "source_gds": rel(args.gds)}
+        root = build_glb_tree(glb_ctx, included, "portable: metals and vias")
         os.makedirs(os.path.dirname(os.path.abspath(args.glb)), exist_ok=True)
-        size = write_glb(args.glb, meshes, extras, quantize_um=quant)
-        meta["glb"] = {"path": rel(args.glb), "bytes": size, "layers_included": included,
-                       "layers_excluded": excluded, "z_scale": args.glb_z_scale,
-                       "position_encoding": extras["position_encoding"],
-                       "units": "1 unit = 1 um, Y up, origin at die centre",
-                       "die_slab": "die_substrate: 1 um thick box below z = 0 (display only)"}
-        log(f"wrote {args.glb}: {size} bytes ({extras['position_encoding']}), layers {included}, excluded {excluded}")
+        size, node_names, nboxes = write_glb(args.glb, root, root["extras"], quantize_um=quant, z_scale=args.glb_z_scale)
+        meta["glb"]["portable"] = {
+            "path": rel(args.glb), "bytes": size, "boxes": nboxes, "layers_included": included,
+            "layers_excluded": excluded, "z_scale": args.glb_z_scale,
+            "position_encoding": (f"KHR_mesh_quantization int16, step {quant} um" if quant else "float32"),
+            "nodes": node_names}
+        log(f"wrote {args.glb}: {size} bytes, {nboxes} boxes, layers {included}, excluded {excluded}")
+    if args.glb_full:
+        all_layers = [n for n in GLB_ORDER + ["nwell"] if layer_rects[n].shape[0]]
+        root = build_glb_tree(glb_ctx, all_layers, "detailed: every drawn layer")
+        raw = args.glb_full + ".raw.glb" if args.gltf_transform else args.glb_full
+        os.makedirs(os.path.dirname(os.path.abspath(args.glb_full)), exist_ok=True)
+        size, node_names, nboxes = write_glb(raw, root, root["extras"], quantize_um=None, z_scale=args.glb_z_scale)
+        log(f"wrote {raw}: {size} bytes (float32), {nboxes} boxes")
+        enc = "float32 (core glTF, no extensions)"
+        if args.gltf_transform and size > args.glb_full_raw_mb * 1e6:
+            import subprocess
+            cmd = [args.gltf_transform, "draco", raw, args.glb_full, "--method", "edgebreaker",
+                   "--quantize-position", "16"]
+            log("running " + " ".join(cmd))
+            r = subprocess.run(cmd, capture_output=True, text=True)
+            if r.returncode != 0:
+                raise SystemExit("gltf-transform draco failed:\n" + r.stdout + r.stderr)
+            os.remove(raw)
+            size = os.path.getsize(args.glb_full)
+            enc = "KHR_draco_mesh_compression (edgebreaker, 16-bit positions) via @gltf-transform/cli"
+        elif raw != args.glb_full:
+            os.replace(raw, args.glb_full)
+        meta["glb"]["full"] = {"path": rel(args.glb_full), "bytes": size, "boxes": nboxes, "layers_included": all_layers,
+                               "z_scale": args.glb_z_scale, "position_encoding": enc, "nodes": node_names}
+        log(f"wrote {args.glb_full}: {size} bytes ({enc})")
+    if meta["glb"]:
+        meta["glb"].update({"units": "1 unit = 1 um; +X = layout x, +Y = up, -Z = layout y; origin at the die centre, "
+                                     "z = 0 at the substrate surface",
+                            "die_slab": "Die_Substrate: 1 um thick box from z -1.2 to -0.2 um (display only)",
+                            "part_tiles": "Parts: one box per placed cell footprint from z -0.2 to 0 um (display only)"})
 
     json_path = os.path.join(args.out_dir, "layout.json")
     with open(json_path, "w") as f:
@@ -1089,8 +1538,13 @@ def main():
     return 0
 
 
-def placement_constraint_note(path):
-    """Say whether the pd configuration asks the placer to separate anything."""
+def placement_constraint_note(path, regions=None):
+    """Say whether anything asked the placer to separate the copies."""
+    if regions:
+        names = ", ".join(r["name"] for r in regions)
+        src = f" ({os.path.relpath(path)})" if path and os.path.exists(path) else ""
+        return (f"The routed DEF carries {len(regions)} placement fences (DEF REGIONS, TYPE FENCE: {names}) with "
+                f"their GROUPS; the pd flow{src} created them to keep the redundant copies apart.")
     if not path or not os.path.exists(path):
         return "The pd configuration was not available to check for placement constraints."
     txt = open(path).read()
@@ -1139,71 +1593,133 @@ def summarize_redundancy(groups):
     abut = sum(g.get("same_bit_pairs_abutting", 0) for g in red)
     pairs = sum(g.get("bit_pairs", 0) for g in red)
     s = {"groups": len(red), "centroid_distance_um_min": min(cents), "centroid_distance_um_max": max(cents)}
+    anyg = [g["any_bit_gap_um_min"] for g in red if g.get("any_bit_gap_um_min") is not None]
+    if anyg:
+        s["any_copy_gap_um_min"] = min(anyg)
+    pairs_c = [g for g in red if g["kind"] == "pair"]
+    trip = [g for g in red if g["kind"] == "triple"]
+    if pairs_c and all(g.get("same_bit_center_um") for g in pairs_c):
+        s["pair_same_bit_center_um_min"] = min(g["same_bit_center_um"]["min"] for g in pairs_c)
+        s["pair_centroid_um_min"] = min(g["centroid_distance_um_min"] for g in pairs_c)
+        s["pair_centroid_um_max"] = max(g["centroid_distance_um_min"] for g in pairs_c)
+        s["pair_any_gap_um_min"] = min(g["any_bit_gap_um_min"] for g in pairs_c)
+        s["pair_same_bit_center_um_median_of_medians"] = statistics.median(
+            g["same_bit_center_um"]["median"] for g in pairs_c)
+    if trip and all(g.get("same_bit_center_um") for g in trip):
+        s["thermal_same_bit_center_um_min"] = min(g["same_bit_center_um"]["min"] for g in trip)
+        s["thermal_centroid_um_min"] = min(g["centroid_distance_um_min"] for g in trip)
+        s["thermal_any_gap_um_min"] = min(g["any_bit_gap_um_min"] for g in trip)
     if mins:
         s.update({"same_bit_center_um_min": min(mins), "same_bit_center_um_median_of_medians": statistics.median(meds),
                   "same_bit_gap_um_min": min(gaps), "same_bit_pairs": pairs, "same_bit_pairs_abutting": abut})
     return s
 
 
+def _grp_row(g):
+    cd = ", ".join(f"{k} {v:.2f}" for k, v in g["centroid_distance_um"].items())
+    sc = g.get("same_bit_center_um")
+    sg = g.get("same_bit_gap_um")
+    sc_t = f"{sc['min']:.2f} / {sc['median']:.2f} / {sc['max']:.2f}" if sc else "n/a"
+    sg_t = f"{sg['min']:.2f} / {sg['median']:.2f}" if sg else "n/a"
+    ab = f"{g.get('same_bit_pairs_abutting', 0)} of {g.get('bit_pairs', 0)}" if sc else "n/a"
+    return cd, sc_t, sg_t, ab, g.get("any_bit_gap_um_min")
+
+
 def write_redundancy_md(path, meta, groups):
     red = [g for g in groups if g["kind"] in ("pair", "triple")]
     singles = [g for g in groups if g["kind"] not in ("pair", "triple")]
+    base = meta["redundancy"].get("baseline")
     L = []
     L.append(f"# Redundant storage placement: {meta['design']} on sky130hd")
     L.append("")
     L.append(f"Generated by `scripts/viz_gds_to_3d.py` on {meta['generated_utc']} from "
-             f"`{meta['inputs']['def']}` (placement) and `{meta['inputs']['gds']}`.")
+             f"`{meta['inputs']['def']}` (placement) and `{meta['inputs']['gds']}`"
+             + (f"; the baseline column comes from `{base['def']}`." if base else "."))
     L.append("Distances are between placed standard-cell boxes (DEF `PLACED` origin + LEF `SIZE`), in µm. "
              "*Centre* is centre-to-centre; *gap* is the edge-to-edge distance (0 = the cells touch). "
              "A sky130_fd_sc_hd row is 2.72 µm tall; a dfxtp_1 flip-flop is 7.36 µm wide.")
     L.append("")
     if not red:
         L.append("No redundant storage groups were found: the DEF has no instances named like "
-                 "`g_lane[i].u_lane.u_acc_a` / `u_res_b` / `u_thermal.u_copyK` (docs/SPEC.md section 7). "
-                 "This is expected for development data from another design.")
+                 "`g_lane[i].u_lane.u_acc_a` / `u_res_b` / `u_thermal.u_copyK` (docs/SPEC.md section 7).")
         L.append("")
         L.append(f"Flip-flops in the DEF: {meta['stats']['flip_flops']}.")
     else:
+        s = meta["redundancy"]["summary"]
+        if base:
+            b = base["summary"]
+            L.append("## Before and after")
+            L.append("")
+            L.append("| Measure | Baseline (unconstrained) | This layout |")
+            L.append("|---|---|---|")
+            rows = [
+                ("Closest same-bit pair, acc/res copies A vs B (centre)", "pair_same_bit_center_um_min", "{:.2f} µm"),
+                ("Closest same-bit pair, thermal copies (centre)", "thermal_same_bit_center_um_min", "{:.2f} µm"),
+                ("Median of the group medians, same-bit centre (acc/res)", "pair_same_bit_center_um_median_of_medians", "{:.1f} µm"),
+                ("Same-bit pairs in touching cells", None, None),
+                ("Smallest gap, any copy-A vs any copy-B flip-flop of a group", "pair_any_gap_um_min", "{:.2f} µm"),
+                ("Smallest gap between flip-flops of different thermal copies", "thermal_any_gap_um_min", "{:.2f} µm"),
+                ("Copy centroid distance, acc/res (min to max)", None, None),
+                ("Copy centroid distance, thermal (min)", "thermal_centroid_um_min", "{:.1f} µm"),
+            ]
+            for label, key, f in rows:
+                if key:
+                    bv, sv = b.get(key), s.get(key)
+                    L.append(f"| {label} | {f.format(bv) if bv is not None else 'n/a'} | {f.format(sv) if sv is not None else 'n/a'} |")
+                elif "touching" in label:
+                    L.append(f"| {label} | {b.get('same_bit_pairs_abutting')} of {b.get('same_bit_pairs')} | "
+                             f"{s.get('same_bit_pairs_abutting')} of {s.get('same_bit_pairs')} |")
+                else:
+                    L.append(f"| {label} | {b.get('pair_centroid_um_min', 0):.1f}-{b.get('pair_centroid_um_max', 0):.1f} µm | "
+                             f"{s.get('pair_centroid_um_min', 0):.1f}-{s.get('pair_centroid_um_max', 0):.1f} µm |")
+            L.append("")
+        L.append("## Per group (this layout)")
+        L.append("")
         L.append("| Group | Copies (flops) | Centroid distance | Same-bit centre min / median / max | Same-bit gap min / median | Same-bit pairs abutting | Closest cells of different copies (gap) |")
         L.append("|---|---|---|---|---|---|---|")
         for g in red:
             cp = ", ".join(f"{k}: {v}" for k, v in g["copies"].items())
-            cd = ", ".join(f"{k} {v:.2f}" for k, v in g["centroid_distance_um"].items())
-            sc = g.get("same_bit_center_um")
-            sg = g.get("same_bit_gap_um")
-            sc_t = f"{sc['min']:.2f} / {sc['median']:.2f} / {sc['max']:.2f}" if sc else "n/a (bit index unknown)"
-            sg_t = f"{sg['min']:.2f} / {sg['median']:.2f}" if sg else "n/a"
-            ab = f"{g.get('same_bit_pairs_abutting', 0)} of {g.get('bit_pairs', 0)}" if sc else "n/a"
-            L.append(f"| {g['label']} | {cp} | {cd} | {sc_t} | {sg_t} | {ab} | {g.get('any_bit_gap_um_min')} |")
+            cd, sc_t, sg_t, ab, anyg = _grp_row(g)
+            L.append(f"| {g['label']} | {cp} | {cd} | {sc_t} | {sg_t} | {ab} | {anyg} |")
         L.append("")
+        if base:
+            L.append("## Per group (baseline)")
+            L.append("")
+            L.append("| Group | Centroid distance | Same-bit centre min / median / max | Same-bit gap min / median | Same-bit pairs abutting | Closest cells of different copies (gap) |")
+            L.append("|---|---|---|---|---|---|")
+            for g in base["groups"]:
+                cd, sc_t, sg_t, ab, anyg = _grp_row(g)
+                L.append(f"| {g['label']} | {cd} | {sc_t} | {sg_t} | {ab} | {anyg} |")
+            L.append("")
         if singles:
             L.append("Unprotected single flip-flops: " + ", ".join(
                 f"{g['label']} ({g['flops']})" for g in singles) + ".")
             L.append("")
-        s = meta["redundancy"]["summary"]
         L.append("## What this shows")
+        L.append("")
+        L.append(meta["redundancy"].get("placement_constraints_note", ""))
         L.append("")
         txt = (f"Across the {s['groups']} redundant groups the copies' centroids are "
                f"{s['centroid_distance_um_min']:.1f}-{s['centroid_distance_um_max']:.1f} µm apart.")
         if "same_bit_center_um_min" in s:
-            txt += (f" Corresponding bits of different copies are as close as {s['same_bit_center_um_min']:.2f} µm "
-                    f"centre-to-centre (median of the group medians {s['same_bit_center_um_median_of_medians']:.1f} µm); "
-                    f"{s['same_bit_pairs_abutting']} of {s['same_bit_pairs']} same-bit pairs sit in cells that touch "
-                    f"(minimum gap {s['same_bit_gap_um_min']:.2f} µm).")
+            txt += (f" Corresponding bits of different copies are at least {s['same_bit_center_um_min']:.2f} µm "
+                    f"apart centre-to-centre (median of the group medians {s['same_bit_center_um_median_of_medians']:.1f} µm); "
+                    f"{s['same_bit_pairs_abutting']} of {s['same_bit_pairs']} same-bit pairs sit in cells that touch.")
         L.append(txt)
         L.append("")
-        L.append(meta["redundancy"].get("placement_constraints_note", "") + " "
-                 "The copies are therefore where wirelength and timing put them. Bit i of copy A and bit i of "
-                 "copy B feed the same comparator and are fed from the same shared product, which likely pulls "
-                 "them towards each other. "
-                 "The concept brief asks for redundant state to be separated physically; this layout does not do that. "
-                 "Where same-bit copies abut, one particle track or a charge-sharing event could upset both copies of "
-                 "a bit, which the duplicate-and-compare scheme would not detect if both flip the same way "
-                 "(and TMR could be outvoted if two of three copies flip). "
-                 "No radiation model was applied: these are geometric distances only, not an upset-probability estimate.")
-        L.append("")
-        L.append("Fix direction (not implemented): per-copy placement regions/fences or a minimum-spacing "
-                 "constraint between copies in the pd flow, then re-run `make viz` to re-measure.")
+        if base:
+            b = base["summary"]
+            L.append(f"In the unconstrained baseline the closest same-bit pair was {b.get('same_bit_center_um_min', 0):.2f} µm "
+                     f"centre to centre and {b.get('same_bit_pairs_abutting')} of {b.get('same_bit_pairs')} same-bit pairs "
+                     "touched, so one particle track or charge-sharing event could upset both copies of a bit. "
+                     "With the fences no copy pair touches and the copies are hundreds of µm (acc/res) or about "
+                     "100 µm (thermal) apart.")
+            L.append("")
+        L.append("What the fences do not separate: the clock tree, the reset tree, the shared per-lane multipliers, "
+                 "the A/B comparators and mismatch OR tree, the thermal voter and next-state logic, the enable/clear "
+                 "distribution, the ports, and the unprotected phase, out_valid_q and fault_q flip-flops (common-mode "
+                 "elements). These are geometric distances only, not an upset-rate model; sky130 is not "
+                 "radiation-characterised.")
     L.append("")
     L.append("Regenerate: `make viz` (see viz/README.md).")
     with open(path, "w") as f:

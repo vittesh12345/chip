@@ -1,0 +1,19 @@
+Storage-retention negative control (synth/negative_control.py)
+
+baseline (production RTL, keep_hierarchy): 521 flip-flop bits, 4899 cells
+
+variant   FF bits   cells thermal copies   audit       groups
+nokeep        517    4865 MERGED           FAIL        8/9 pass
+regkeep       517    4865 MERGED           FAIL        8/9 pass
+
+nokeep change to orbit_keep_reg.v:
+    -(* keep_hierarchy *)
+regkeep change to orbit_keep_reg.v:
+    -(* keep_hierarchy *)
+    -    output reg  [W-1:0] q
+    +    (* keep *) output reg  [W-1:0] q
+
+nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)
+regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)
+
+NEGATIVE_CONTROL PASS

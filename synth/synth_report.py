@@ -8,7 +8,7 @@
       exit 1 if the flip-flop counts differ
   synth_report.py trim-log <synth.log>
       pass headings, check results, statistics and warnings of a Yosys log
-  synth_report.py summary --build <$(BUILD)/synth> --out <summary.md> --rtl "<files>"
+  synth_report.py summary --build <$(BUILD)/synth> --out <summary.md> --rtl "<files>" [--notes <md>]
       reports/synth/summary.md from the result files of every synth target
 """
 
@@ -21,6 +21,66 @@ import sys
 FF_TYPE = re.compile(r"^\$_(DFF|DFFE|SDFF|SDFFE|SDFFCE|DFFSR|DFFSRE|ALDFF|ALDFFE)_[NP01]+_$|^\$_FF_$")
 BRIEF_LOGIC_CELLS = 4356          # brief page 4: "4,356 generic logic cells"
 BRIEF_FF_BITS = 521               # brief page 4 and SPEC section 7
+
+# Interpretation appended to reports/synth/summary.md after the result table.
+# The {fields} are filled in from the current run. The other numbers (the
+# 521 -> 517 negative control, the 4,340 / 4,373 probe) describe the production
+# RTL as of 2026-09-29; the table above the notes is always from the current run.
+NOTES = """## Notes
+
+**Brief page 4 claims.** The brief reports "4,356 generic logic cells and 521
+flip-flop bits" (Yosys 0.69 through YoWASP) and a nine-group storage audit.
+
+* Flip-flop bits: reproduced exactly (521) with native Yosys and with YoWASP
+  Yosys 0.69. 518 of them are in the nine redundant groups; the other three
+  are `fault_q`, `out_valid_q` and `u_thermal.phase` (SPEC section 8).
+* Generic logic cells: **not reproduced exactly**. With this RTL and
+  `synth/synth_generic.ys`, native Yosys gives {native_logic} and YoWASP Yosys 0.69
+  gives {yowasp_logic}, against 4,356 in the brief. "Logic cells" here means every
+  generic gate cell other than flip-flops and `$scopeinfo`. The brief does not
+  give its script. As an informational probe (not a make target),
+  `synth -top orbit_demo` without `-flatten` gave 4,340 and plain
+  `synth -flatten` gave 4,373 with native Yosys, so no variant tried matched
+  4,356. The difference is in the ABC gate mapping only; flip-flop counts are
+  the same in every run. It is small, but it is a difference, so the table
+  reports it as DIFFERS rather than PASS.
+* Storage retention: every bit of every copy in the nine groups is its own
+  flip-flop, with distinct per-copy D logic for the accumulator/result pairs.
+  The thermal copies share one D net per bit by design: the voted next state
+  is written into all three copies (SPEC section 6).
+
+**Why keep_hierarchy matters (negative control).** When the `keep_hierarchy`
+attribute is removed from `orbit_keep_reg`, Yosys merges the three thermal
+copies. They have identical D, clock, reset and enable, so the flip-flop
+count drops from 521 to 517 (6 thermal bits become 2) and the audit fails.
+Putting `(* keep *)` on the `q` register alone does **not** prevent this (same
+517 bits, audit fails). This matches the brief's remark that "signal attributes
+alone initially allowed copies to merge". The accumulator and result pairs
+are not merged in either variant because their D logic comes from each copy's
+own stored value.
+
+**Equivalence method and limits.** Both designs are flattened. Every flip-flop
+is cut into a free Q input and a D (next-state) output, matched by register
+name, and every output and next-state function is proven equal by SymbiYosys
+(smtbmc with bitwuzla) in five partitions. By induction this shows that the
+netlist and the RTL are cycle-equivalent from any common state. The check
+depends on register names being preserved, which they are here. Two mutated
+RTL copies (a threshold change and a zero-extended product) are reported as
+different. That shows the partitions are not vacuous.
+
+**Gate-level simulation.** The sim area's directed bench `tb/tb_orbit_demo.v`
+(top-level ports only) runs on the `-noexpr` netlist with Yosys `simcells.v`
+and `simlib.v` under Icarus. It must pass, and its summary (cycles, checks,
+results) must be identical to the RTL run of the same seed. This is zero-delay
+functional simulation only: no timing and no technology library.
+
+**Logic depth.** `ltp -noff` on the flat generic netlist gives {depth} two-input
+gate levels ({path}), through the 8x8 multiplier and a 32-bit adder. This is a
+unit-delay topological estimate, not a timing analysis.
+
+**Scope.** This is generic synthesis only: no PDK mapping, area, timing, power
+or placement. Those belong to the pd area.
+"""
 
 
 def counts(stat_json):
@@ -209,8 +269,15 @@ def cmd_summary(args):
     for name, res, ev in rows:
         out.append("| %s | %s | %s |" % (name, res, ev.replace("|", "/")))
     out.append("")
-    with open(args.notes) as fh:
-        out.append(fh.read().rstrip())
+    if args.notes:
+        with open(args.notes) as fh:
+            out.append(fh.read().rstrip())
+    else:
+        yl = counts(os.path.join(b, "yowasp", "synth_stat.json"))["logic"] \
+            if os.path.exists(os.path.join(b, "yowasp", "synth_stat.json")) else None
+        out.append(NOTES.format(native_logic="{:,}".format(c["logic"]) if c else "(not run)",
+                                yowasp_logic="{:,}".format(yl) if yl is not None else "(not run)",
+                                depth=depth if depth is not None else "?", path=path or "?").rstrip())
     out.append("")
     with open(args.out, "w") as fh:
         fh.write("\n".join(out))
@@ -237,7 +304,7 @@ def main():
     p.add_argument("--build", required=True)
     p.add_argument("--out", required=True)
     p.add_argument("--rtl", default="")
-    p.add_argument("--notes", required=True, help="markdown appended after the table")
+    p.add_argument("--notes", default=None, help="markdown appended after the table (default: NOTES)")
     p.set_defaults(func=cmd_summary)
     args = ap.parse_args()
     return args.func(args)

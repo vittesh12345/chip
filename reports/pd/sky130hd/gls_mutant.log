@@ -1,0 +1,8 @@
+mutate_netlist: instance _4098_: sky130_fd_sc_hd__and2_1 -> sky130_fd_sc_hd__or2_1 (#0 of 189)
+GLS: 3000 cycles, seed 1, 518 redundant bits, injection every 32 cycles
+MISMATCH cycle 7: rtl ir=1 ov=1 f=0 st=0 rep=0 sd=0 data=000007f8ffffc08000000e6000001595
+MISMATCH cycle 8: rtl ir=1 ov=0 f=0 st=0 rep=0 sd=0 data=000007f8ffffc08000000e6000001595
+MISMATCH cycle 9: rtl ir=0 ov=1 f=0 st=0 rep=0 sd=0 data=000047f8ffffaeb00000052e0000053d
+MISMATCH cycle 10: rtl ir=1 ov=1 f=0 st=0 rep=0 sd=0 data=000047f8ffffaeb00000052e0000053d
+MISMATCH cycle 11: rtl ir=1 ov=0 f=0 st=0 rep=0 sd=0 data=000047f8ffffaeb00000052e0000053d
+MISMATCH cycle 12: rtl ir=1 ov=0 f=0 st=0 rep=0 sd=0 data=000047f8ffffaeb00000052e0000053d

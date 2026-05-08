@@ -1,0 +1,13 @@
+tb_orbit_demo summary (seed 1)
+  scenarios            13
+  cycles               133589
+  model cycle checks   133588 (mismatches 0)
+  scenario checks      101 (failed 0)
+  beats accepted       133206
+  results transferred  400 (all compared with the scoreboard)
+  literal lane checks  148
+  back-to-back results 220
+  results dropped by clear_fault/reset 1
+  errors               0
+TB_ORBIT_DEMO PASS
+SYNTH_GLS PASS: TB_ORBIT_DEMO PASS on the netlist, summary identical to the RTL run
