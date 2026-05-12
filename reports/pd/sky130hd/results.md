@@ -21,7 +21,7 @@ power figure is a default-activity tool estimate, not a measurement.
 | KLayout LVS | PASS | netlists match |
 | LEC synth vs post-CTS repair | PASS | kepler-formal: Circuits are IDENTICAL, 1177 compared outputs |
 | LEC synth vs final | PASS | kepler-formal: Circuits are IDENTICAL, 1177 compared outputs |
-| storage audit (6_final.v) | PASS | 521 flip-flop cells; RESULT: PASS (18/18 checks passed) |
+| storage audit (6_final.v) | PASS | 521 flip-flop cells; RESULT: PASS (19/19 checks passed) |
 | final GDS written | PASS | build/pd/results/sky130hd/orbit_demo/base/6_final.gds (7.3 MB) |
 
 ## Numbers

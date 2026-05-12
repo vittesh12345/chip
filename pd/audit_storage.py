@@ -14,7 +14,9 @@ were not merged by synthesis or physical optimisation:
   * all 521 flip-flops are distinct cell instances with distinct Q nets, every
     Q net has at least one load, and the copies of one bit do not share a D
     net (they are written through separate cells);
-  * every flip-flop clock pin is on the clock tree (not tied off).
+  * every flip-flop clock pin is on the clock tree: its net traces back
+    through single-input cells (clock buffers/inverters) to the top-level
+    clock port (not tied off, not driven from a data net).
 
 Flip-flops are identified from the Liberty file (cells with an ff group), not
 from cell names. Group membership comes from the instance paths that OpenROAD
@@ -65,6 +67,19 @@ def liberty_sequential_cells(path):
             "d": set(re.findall(r'[A-Za-z_][A-Za-z0-9_]*', nxt.group(1))) if nxt else set(),
         }
     return ffs, latches
+
+
+def liberty_output_pins(path):
+    """Return {cell: set(output pin names)} for every cell of the Liberty file
+    (used to find the driver of a net when tracing the clock tree)."""
+    text = open(path, encoding="utf-8", errors="replace").read()
+    parts = re.split(r'\n\s*cell\s*\(\s*"?([^")\s]+)"?\s*\)\s*\{', text)
+    outs = {}
+    for name, body in zip(parts[1::2], parts[2::2]):
+        outs[name] = {pm.group(1) for pm in
+                      re.finditer(r'\bpin\s*\(\s*"?([^")\s]+)"?\s*\)\s*\{(.*?)\n\s*\}', body, re.S)
+                      if re.search(r'direction\s*:\s*"?output', pm.group(2))}
+    return outs
 
 
 # --------------------------------------------------------------------------
@@ -194,8 +209,9 @@ def classify(path):
     return None
 
 
-def audit(netlist, liberty, top):
+def audit(netlist, liberty, top, clock="clk"):
     ffs, latches = liberty_sequential_cells(liberty)
+    lib_outs = liberty_output_pins(liberty)
     modules = parse_netlist(netlist)
     if top not in modules:
         raise SystemExit(f"top module {top} not found in {netlist}")
@@ -318,6 +334,37 @@ def audit(netlist, liberty, top):
     check("clock pins connected", not const,
           f"{len(const)} flip-flops with tied/missing clock; {len(ck_nets)} distinct clock-leaf nets")
 
+    # Clock tree: from each clock-leaf net walk back through the driving
+    # cells; every driver must be a single-input cell (clock buffer or
+    # inverter) and the walk must end at the top-level clock port. A flip-flop
+    # clocked from a data net or a constant fails here.
+    driver = {}
+    for p, t, pins in cells:
+        for o in lib_outs.get(t, ()):
+            if pins.get(o):
+                driver[pins[o]] = (p, t, pins)
+    bad_leaf = []
+    for net in sorted(n for n in ck_nets if n):
+        cur, ok = net, False
+        for _ in range(64):
+            if cur == clock:
+                ok = True
+                break
+            drv = driver.get(cur)
+            if drv is None:
+                break
+            _p, t, pins = drv
+            ins = [n for pin, n in pins.items() if pin not in lib_outs.get(t, ()) and n]
+            if len(ins) != 1:
+                break
+            cur = ins[0]
+        if not ok:
+            bad_leaf.append(net)
+    off_tree = [p for p, _t, _pins in seq if cknet[p] in bad_leaf]
+    check("clock pins on the clock tree", not off_tree and not const,
+          f"{len(off_tree)} flip-flops whose clock net does not trace back to port '{clock}' "
+          f"through buffers/inverters" + (": " + ", ".join(off_tree[:5]) if off_tree else ""))
+
     return checks, group_lines, len(cells), celltypes
 
 
@@ -326,10 +373,11 @@ def main():
     ap.add_argument("--netlist", required=True, help="gate-level Verilog (e.g. 6_final.v)")
     ap.add_argument("--liberty", required=True, help="Liberty file of the standard cells")
     ap.add_argument("--top", default="orbit_demo")
+    ap.add_argument("--clock", default="clk", help="top-level clock port")
     ap.add_argument("--report", help="write the audit report here")
     a = ap.parse_args()
 
-    checks, group_lines, ncells, celltypes = audit(a.netlist, a.liberty, a.top)
+    checks, group_lines, ncells, celltypes = audit(a.netlist, a.liberty, a.top, a.clock)
     lines = [f"Storage audit of {a.netlist}",
              f"liberty: {a.liberty}",
              f"leaf cells in netlist: {ncells}",

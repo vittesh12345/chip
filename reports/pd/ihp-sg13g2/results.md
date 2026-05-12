@@ -21,7 +21,7 @@ power figure is a default-activity tool estimate, not a measurement.
 | KLayout LVS | NOT_RUN | 6_lvs.log not produced (run the ORFS 'lvs' target) |
 | LEC synth vs post-CTS repair | NOT_RUN | kepler-formal compared 0 outputs (vacuous miter); not a real equivalence check |
 | LEC synth vs final | NOT_RUN | kepler-formal compared 0 outputs (vacuous miter); not a real equivalence check |
-| storage audit (6_final.v) | PASS | 521 flip-flop cells; RESULT: PASS (18/18 checks passed) |
+| storage audit (6_final.v) | PASS | 521 flip-flop cells; RESULT: PASS (19/19 checks passed) |
 | final GDS written | PASS | build/pd/results/ihp-sg13g2/orbit_demo/base/6_final.gds (11.3 MB) |
 
 ## Numbers

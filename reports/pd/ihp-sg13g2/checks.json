@@ -50,7 +50,7 @@
     {
       "name": "storage audit (6_final.v)",
       "result": "PASS",
-      "detail": "521 flip-flop cells; RESULT: PASS (18/18 checks passed)"
+      "detail": "521 flip-flop cells; RESULT: PASS (19/19 checks passed)"
     },
     {
       "name": "final GDS written",

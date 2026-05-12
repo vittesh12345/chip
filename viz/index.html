@@ -126,7 +126,7 @@ body {
 }
 .chip b { font-weight: 600; }
 .chip.mono { font-family: var(--font-data); font-size: 11.5px; }
-.hint { color: var(--muted); background: none; border: 0; box-shadow: none; padding: 0; white-space: normal; }
+.hint { color: var(--muted); background: color-mix(in srgb, var(--stage) 82%, transparent); border: 0; box-shadow: none; padding: 2px 8px; border-radius: 4px; white-space: normal; }
 
 /* label overlay */
 .labels { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
@@ -272,7 +272,10 @@ td.wrap { white-space: normal; }
 
 /* parts list */
 .parts { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-.pgroup { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--well); padding: 4px 10px; display: flex; justify-content: space-between; }
+.pgroup { font: inherit; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--well); padding: 6px 10px; display: flex; justify-content: space-between; gap: 8px; width: 100%; border: 0; border-top: 1px solid var(--line); border-radius: 0; text-align: left; }
+.pgroup:first-child { border-top: 0; }
+.pgroup:hover { color: var(--ink); border-color: var(--line); }
+.pgroup .car { font-style: normal; display: inline-block; width: 12px; }
 .prow { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: 2px 8px; align-items: center; padding: 5px 8px 5px 10px; border-top: 1px solid var(--line); }
 .pgroup + .prow { border-top: 0; }
 .prow.sel { background: var(--accent-soft); }
@@ -571,7 +574,7 @@ async function loadData() {
 const state = {
   exag: 3, gap: 0, highlight: false, dim: true, group: 'all', view: 'iso',
   mode: 'parts', labels: true, regions: true, pins: true, power: false, rows: false, fill: false,
-  sel: -1, hidden: new Set(), section: { on: false, axis: 'x', pos: 0.5, flip: false },
+  sel: -1, hidden: new Set(), collapsed: new Set(), section: { on: false, axis: 'x', pos: 0.5, flip: false },
 };
 let meta, buf, renderer, scene, camera, controls, layerObjs = [], dieSize, center, dw, dh;
 let flopMesh, flopList = [], pairLines, rulers, rulersY, slab, dieOutline, feWindow, hemi, sun;
@@ -780,9 +783,12 @@ function updatePartTex() {
   if (!partTex) return;
   const d = partTex.image.data;
   const c = new THREE.Color();
+  const dimC = new THREE.Color(cssVar('--dim-cell'));
+  const ghost = state.highlight && state.dim;
   d.fill(0);
   for (const p of parts) {
     c.set(partColor(p));
+    if (ghost) c.lerp(dimC, 0.8);
     d.set([c.r, c.g, c.b, partVisible(p) ? 1 : 0], p.index * 4);
   }
   partTex.needsUpdate = true;
@@ -873,6 +879,13 @@ function buildRegions() {
       line.userData.role = r.role;
       line.renderOrder = 55;
       regionGroup.add(line);
+      // translucent tint so the fence reads as an area, not only an outline
+      const fill = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, y1 - y0),
+        new THREE.MeshBasicMaterial({ color: new THREE.Color(cssVar(ROLE_VAR[r.role] || '--accent')), transparent: true, opacity: 0.13, depthWrite: false, side: THREE.DoubleSide }));
+      fill.position.set((x0 + x1) / 2 - dw / 2, (y0 + y1) / 2 - dh / 2, 0);
+      fill.userData.role = r.role;
+      fill.renderOrder = 54;
+      regionGroup.add(fill);
     }
   }
   scene.add(regionGroup);
@@ -1620,7 +1633,7 @@ function fillTip(rec) {
   }
   const y = describeYosys(rec.name);
   if (y) h += '<div class="row m">' + esc(y) + '</div>';
-  h += '<div class="row m">Part: ' + esc(p.name) + (p.source === 'netlist-cone' ? ' (inferred from netlist cones)' : p.source === 'instance-name' ? ' (from the instance name)' : ' (from the ' + p.source.replace('-', ' ') + ')') + '</div>';
+  h += '<div class="row m">Part: ' + esc(p.name) + (rec.flop || /^(g_lane|u_thermal|out_valid_q|fault_q)/.test(rec.name) ? ' (from the instance name)' : p.source === 'netlist-cone' ? ' (inferred from netlist cones)' : p.source === 'instance-name' ? ' (from the instance name)' : ' (from the ' + p.source.replace('-', ' ') + ')') + '</div>';
   if (rec.serves && rec.serves.id !== p.id) h += '<div class="row m">Buffers a net of: ' + esc(rec.serves.name) + '</div>';
   const [x0, y0, x1, y1] = rec.box;
   h += '<div class="row m">' + fx(x1 - x0, 2) + ' × ' + fx(y1 - y0, 2) + ' µm (' + fx((x1 - x0) * (y1 - y0), 2) + ' µm²) at (' + fx(x0, 2) + ', ' + fx(y0, 2) + ') µm · ' + esc(rec.orient) + '</div>';
@@ -1685,6 +1698,7 @@ function focusPart(id, animate = true) {
   if (!p || !p.cells) return;
   if (!partsMode()) setMode('parts');
   state.hidden.delete(p.index);
+  if (state.collapsed.delete(p.group)) fillPartsList();
   if (p.kind === 'fill' && !state.fill) { state.fill = true; $('o-fill').checked = true; }
   selectPart(p.index);
   const b = p.compact ? p.core_um : p.bbox_um;
@@ -1709,11 +1723,16 @@ function fillPartsList() {
     if (!p.cells) continue;
     if (p.group !== group) {
       group = p.group;
-      const h = document.createElement('div'); h.className = 'pgroup';
+      const g = group;
+      const h = document.createElement('button'); h.type = 'button'; h.className = 'pgroup';
       const members = parts.filter((q) => q.group === group && q.cells);
-      h.innerHTML = '<span>' + esc(group) + '</span><span>' + fmt(members.reduce((a, q) => a + q.cells, 0)) + ' cells</span>';
+      const open = !state.collapsed.has(g);
+      h.setAttribute('aria-expanded', String(open));
+      h.innerHTML = '<span><i class="car" aria-hidden="true">' + (open ? '\u25BE' : '\u25B8') + '</i>' + esc(group) + '</span><span>' + members.length + ' parts · ' + fmt(members.reduce((a, q) => a + q.cells, 0)) + ' cells</span>';
+      h.addEventListener('click', () => { if (state.collapsed.has(g)) state.collapsed.delete(g); else state.collapsed.add(g); fillPartsList(); });
       list.appendChild(h);
     }
+    if (state.collapsed.has(group)) continue;
     const row = document.createElement('div');
     row.className = 'prow' + (p.index === state.sel ? ' sel' : '');
     row.dataset.idx = p.index;
@@ -1931,6 +1950,7 @@ function selectGroup(id, focus = true) {
   document.querySelectorAll('#r-table tbody tr').forEach((tr) => tr.classList.toggle('sel', tr.dataset.group === id));
   if (!state.highlight) { state.highlight = true; $('r-on').checked = true; }
   updateFlops();
+  updatePartTex();
   applyVisibility();
   if (focus) {
     if (id === 'all') setView(state.view === 'group' || state.view === 'part' ? 'iso' : state.view);
@@ -1972,8 +1992,8 @@ function wireControls() {
   $('c-flip').addEventListener('click', () => { state.section.flip = !state.section.flip; applySection(); if (state.view === 'section') setView('section'); });
   $('p-all').addEventListener('click', () => { state.hidden.clear(); updatePartTex(); fillPartsList(); });
   $('p-clear').addEventListener('click', () => selectPart(-1));
-  $('r-on').addEventListener('change', (e) => { state.highlight = e.target.checked; updateFlops(); applyVisibility(); });
-  $('r-dim').addEventListener('change', (e) => { state.dim = e.target.checked; applyVisibility(); });
+  $('r-on').addEventListener('change', (e) => { state.highlight = e.target.checked; updateFlops(); updatePartTex(); applyVisibility(); });
+  $('r-dim').addEventListener('change', (e) => { state.dim = e.target.checked; updatePartTex(); applyVisibility(); });
   $('r-group').addEventListener('change', (e) => selectGroup(e.target.value));
   const gl = $('gl');
   gl.addEventListener('pointermove', onPointerMove);
@@ -2005,6 +2025,8 @@ async function main() {
     parts = (meta.parts && meta.parts.list) || [];
     partById = {};
     for (const p of parts) partById[p.id] = p;
+    // phones: start with the part groups folded so the panel stays short
+    if (window.innerWidth < 820) for (const p of parts) state.collapsed.add(p.group);
     for (const f of (meta.redundancy && meta.redundancy.flops) || []) flopByName.set(f.n, f);
     const span = Math.max(meta.die_um[2], meta.die_um[3]);
     defaultExag = Math.min(6, Math.max(2, Math.round(span / 110)));
