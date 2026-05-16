@@ -21,7 +21,7 @@
 #   make ecc-formal       formal/ecc/*.sby: codec proof, bank proofs (clean, sec, ded),
 #                         covers, bounded end-to-end BMC with the real decoder, and
 #                         negative controls that must FAIL (il1_neg, codec_even_col,
-#                         bank_no_writeback)
+#                         bank_no_writeback: BMC from reset, task sec_bmc)
 #   make ecc-synth        Yosys generic synthesis of the encoder, decoder and bank:
 #                         check -assert, no latches, codec without flip-flops, bank
 #                         flip-flop count as designed; statistics in $(ECC_OUT)/synth/
@@ -215,7 +215,7 @@ ecc-formal-neg:
 	$(ECC_RUN_SBY) $(ECC_OUT)/formal/neg/codec_even_col/orbit_secded72.sby codec FAIL \
 	    $(ECC_FORMAL_TIMEOUT) formal_neg_codec_even_col | tee $(ECC_RES)/formal_neg_codec_even_col.txt; \
 	[ $${PIPESTATUS[0]} -eq 0 ] || fail=1; \
-	$(ECC_RUN_SBY) $(ECC_OUT)/formal/neg/bank_no_writeback/orbit_ecc_bank.sby sec FAIL \
+	$(ECC_RUN_SBY) $(ECC_OUT)/formal/neg/bank_no_writeback/orbit_ecc_bank.sby sec_bmc FAIL \
 	    $(ECC_FORMAL_TIMEOUT) formal_neg_bank_no_writeback | tee $(ECC_RES)/formal_neg_bank_no_writeback.txt; \
 	[ $${PIPESTATUS[0]} -eq 0 ] || fail=1; \
 	exit $$fail

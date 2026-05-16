@@ -15,6 +15,11 @@
 #   ded       A1-A4, U4: additionally a second upset in a codeword (UE)
 #   il1_neg   `sec` with INTERLEAVE 1: must FAIL (an adjacent 2-bit upset is a
 #             double error without interleaving) - negative control
+#   sec_bmc   the `sec` harness as a BMC from reset (depth 6). Used only by the
+#             negative control on a bank without scrub write-back
+#             (make ecc-formal-neg): a broken design must give a real
+#             counterexample from reset, not merely a failed induction step
+#             (which the depth-2 `sec` prove reports as UNKNOWN).
 # Covers (smtbmc, from reset):
 #   cover     U4 bound reached, CE read of half an adjacent upset, scrub repair,
 #             counter saturation
@@ -33,6 +38,7 @@ clean     prv
 sec       prv
 ded       prv
 il1_neg   prv
+sec_bmc   bmc
 cover     cov
 cover_ded cov
 e2e_clean e2e
@@ -46,6 +52,8 @@ ded: depth 2
 # deeper, so that the base case (not only the induction step) reaches the
 # counterexample: reset, upset, double error visible two steps later
 il1_neg: depth 4
+bmc: mode bmc
+sec_bmc: depth 6
 cov: mode cover
 cov: depth 24
 e2e: mode bmc
@@ -55,6 +63,7 @@ e2e_upset: depth 4
 [engines]
 prv: smtbmc bitwuzla
 cov: smtbmc yices
+bmc: smtbmc bitwuzla
 e2e: smtbmc bitwuzla
 
 [script]
@@ -63,6 +72,7 @@ read_verilog -formal orbit_secded72.v
 read_verilog -formal -DORBIT_ECC_UPSET orbit_ecc_bank.v
 clean:     read_verilog -formal -sv -DFV_CLEAN orbit_ecc_bank_fv.sv
 sec:       read_verilog -formal -sv -DFV_SEC orbit_ecc_bank_fv.sv
+sec_bmc:   read_verilog -formal -sv -DFV_SEC orbit_ecc_bank_fv.sv
 ded:       read_verilog -formal -sv -DFV_DED orbit_ecc_bank_fv.sv
 il1_neg:   read_verilog -formal -sv -DFV_SEC orbit_ecc_bank_fv.sv
 cover:     read_verilog -formal -sv -DFV_SEC -DFV_COVER orbit_ecc_bank_fv.sv
