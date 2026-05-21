@@ -1634,7 +1634,7 @@ function fillTip(rec) {
   const y = describeYosys(rec.name);
   if (y) h += '<div class="row m">' + esc(y) + '</div>';
   h += '<div class="row m">Part: ' + esc(p.name) + (rec.flop || /^(g_lane|u_thermal|out_valid_q|fault_q)/.test(rec.name) ? ' (from the instance name)' : p.source === 'netlist-cone' ? ' (inferred from netlist cones)' : p.source === 'instance-name' ? ' (from the instance name)' : ' (from the ' + p.source.replace('-', ' ') + ')') + '</div>';
-  if (rec.serves && rec.serves.id !== p.id) h += '<div class="row m">' + (/buf|inv|dly/.test(rec.master) ? 'Buffers a net of: ' : 'Drives logic of: ') + esc(rec.serves.name) + '</div>';
+  if (rec.serves && rec.serves.id !== p.id && p.category !== 'storage' && !rec.flop) h += '<div class="row m">' + (/buf|inv|dly/.test(rec.master) ? 'Buffers a net of: ' : 'Drives logic of: ') + esc(rec.serves.name) + '</div>';
   const [x0, y0, x1, y1] = rec.box;
   h += '<div class="row m">' + fx(x1 - x0, 2) + ' × ' + fx(y1 - y0, 2) + ' µm (' + fx((x1 - x0) * (y1 - y0), 2) + ' µm²) at (' + fx(x0, 2) + ', ' + fx(y0, 2) + ') µm · ' + esc(rec.orient) + '</div>';
   tip.innerHTML = h;
