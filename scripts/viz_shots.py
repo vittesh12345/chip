@@ -114,7 +114,10 @@ def build_site(page_dir, site_dir, glb=None):
     for name in ("layout.json", "layout.b64.txt"):
         p = os.path.join(page_dir, name)
         if os.path.exists(p):
-            shutil.copyfile(p, os.path.join(site_dir, name))
+            dst = os.path.join(site_dir, name)
+            if os.path.lexists(dst):
+                os.remove(dst)  # a stale symlink back to page_dir would make copyfile fail
+            shutil.copyfile(p, dst)
         else:
             print(f"viz_shots: warning: {p} missing (the page will show its error state)")
     for i, g in enumerate(glb or []):
@@ -601,7 +604,7 @@ def main():
 
         for name, scheme in (("viewer_phone", "light"), ("viewer_phone_dark", "dark")):
             if want(name):
-                ctx, page, logs = open_page(390, 844, scheme=scheme, dpr=2, mobile=True)
+                ctx, page, logs = open_page(390, 844, scheme=scheme, dpr=1.5, mobile=True)  # 1.5: Chromium repeats content past ~8192 device px
                 check_labels(page, name, problems, 8)
                 # Full-page capture repeats the composited WebGL layer at the bottom on
                 # mobile emulation, so grow the viewport to the page height instead

@@ -29,7 +29,7 @@ FORMAL_REPORT_DIR  ?= reports/formal
 FORMAL_FULL_DIR    := $(FORMAL_OUT)/full
 FORMAL_QUICK_DIR   := $(FORMAL_OUT)/quick
 
-FORMAL_PROVE_TASKS := thermal dup handshake datapath product
+FORMAL_PROVE_TASKS := thermal dup handshake datapath clear product
 FORMAL_PDR_TASKS   := thermal_pdr dup_pdr handshake_pdr
 FORMAL_LIVE_TASKS  := live
 FORMAL_COVER_TASKS := cover wrap

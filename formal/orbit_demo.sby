@@ -10,6 +10,8 @@
 # dup            P7                                           prove, k-induction, smtbmc yices
 # handshake      P2, P3, P4 (+ P5-P7 and helpers)             prove, k-induction, smtbmc yices
 # datapath       P1, P8 (+ P7 and helpers)                    prove, k-induction, smtbmc yices
+# clear          P8 (and reset -> STOP, thermal rewrite) from     prove, k-induction, smtbmc yices
+#                an arbitrary state incl. fault_q = 1
 # product        P1 lemma: SPEC product formula equals        prove, smtbmc bitwuzla
 #                sign * (|a| * |b|) for all a, b
 # thermal_pdr    P5, P6 without helper invariants             prove, abc pdr
@@ -33,6 +35,7 @@ thermal       prv
 dup           prv
 handshake     prv
 datapath      prv
+clear         prv
 product       prv_bw
 thermal_pdr   pdr
 dup_pdr       pdr
@@ -52,6 +55,7 @@ thermal: depth 8
 dup: depth 6
 handshake: depth 8
 datapath: depth 6
+clear: depth 3
 product: depth 1
 cover: depth 24
 wrap: depth 8
@@ -70,6 +74,7 @@ thermal: read_verilog -formal -sv -DFV_THERMAL orbit_demo_fv.sv
 dup: read_verilog -formal -sv -DFV_DUP orbit_demo_fv.sv
 handshake: read_verilog -formal -sv -DFV_HANDSHAKE -DFV_THERMAL -DFV_DUP orbit_demo_fv.sv
 datapath: read_verilog -formal -sv -DFV_DATAPATH -DFV_DUP orbit_demo_fv.sv
+clear: read_verilog -formal -sv -DFV_ANY_START -DFV_CLEAR orbit_demo_fv.sv
 product: read_verilog -formal -sv -DFV_PRODUCT orbit_demo_fv.sv
 thermal_pdr: read_verilog -formal -sv -DFV_THERMAL -DFV_NO_HELPERS orbit_demo_fv.sv
 dup_pdr: read_verilog -formal -sv -DFV_DUP orbit_demo_fv.sv

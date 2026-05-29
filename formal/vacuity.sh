@@ -121,6 +121,10 @@ mutant result_from_old_acc orbit_mac_lane.v datapath P1_ \
 mutant clear_keeps_acc orbit_mac_lane.v datapath P8_ \
     "s/wire acc_en = clr | mac_en;/wire acc_en = mac_en;/" \
     "clear_fault does not zero the accumulators (both copies)"
+# Only visible from a state with a latched fault (task clear, arbitrary start).
+mutant clear_keeps_fault orbit_demo.v clear P8_any_no_fault \
+    "/else if (clear_fault) begin/,/fault_q/ s/fault_q     <= 1'b0;/fault_q     <= fault_q;/" \
+    "clear_fault does not clear a latched fault"
 # Handshake (P2, P3, P4)
 mutant no_backpressure orbit_demo.v handshake P4_ \
     "s/(~out_valid_q | out_ready);/1'b1;/" \

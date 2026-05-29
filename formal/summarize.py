@@ -25,7 +25,7 @@ PROPERTIES = [
     ("P5", "voted thermal state follows the SPEC table (independent FSM); reset gives STOP"),
     ("P6", "throttle: first THROTTLE cycle admits, consecutive THROTTLE cycles alternate"),
     ("P7", "fault-free: fault and therm_repair never rise, duplicated / triplicated copies equal"),
-    ("P8", "clear_fault: then fault = 0, out_valid = 0, storage zero, next beat sums from 0"),
+    ("P8", "clear_fault: then fault = 0, out_valid = 0, storage zero, next beat sums from 0 (also from a latched fault)"),
 ]
 
 
@@ -37,12 +37,21 @@ METHOD = """## Method
   expected output-buffer contents, and sequence counters of accepted `in_last` beats and
   delivered results. The model follows the DUT's port handshakes like a scoreboard.
 * **Environment.** Every DUT input is a free input in every cycle. The only assumption is
-  reset in the first cycle; `rst_n` and `clear_fault` stay free later, so the proofs also
+  reset in the first cycle (except `clear` and `wrap`, see below); `rst_n` and `clear_fault` stay free later, so the proofs also
   cover reset and clear_fault at arbitrary times.
 * **DUT internals** (P7, P8 storage checks and induction helpers) are read through Yosys
   `hierconn` wires (`(* hierconn *) wire \\dut.<path>`), connected by `flatten` after
   `hierarchy; proc` with `keep_hierarchy` removed. `check -assert` in the script fails the
   run if a path does not exist. Open-source Yosys has no `bind`.
+* **Reset / clear_fault from any state.** In the fault-free reachable states `fault` is
+  always 0, so "fault = 0 after clear_fault" cannot fail there. The `clear` task starts
+  from a completely unconstrained state (latched fault, stale `out_valid_q`, disagreeing
+  copies) and proves that reset or clear_fault gives fault = 0, out_valid = 0 and all 16
+  storage copies zero, that the next beat without in_first sums from 0 in both copies,
+  that reset gives STOP in all three thermal copies, and that every thermal copy is
+  rewritten with the SPEC next state of the bitwise majority (so clear_fault does not
+  touch the thermal state). Added after an independent review found that a
+  "clear_fault does not clear fault_q" bug passed every other task.
 * **Liveness.** `P2_live_delivered` (`assert property (s_eventually !f_watch)`) under the
   fairness assumption `assume property (s_eventually out_ready)`, proven with suprove
   (liveness-to-safety).
@@ -131,6 +140,7 @@ class Task:
         self.groups = [d for d in defines if d != "FV_NO_HELPERS"]
         self.no_helpers = "FV_NO_HELPERS" in defines
         self.free_start = "FV_FREE_START" in defines
+        self.any_start = "FV_ANY_START" in defines
         log = read(os.path.join(self.dir, "logfile.txt"))
         m = re.search(r"Elapsed clock time \[H:MM:SS \(secs\)\]: \S+ \((\d+)\)", log)
         self.seconds = int(m.group(1)) if m else None
@@ -243,7 +253,10 @@ class Task:
         if self.mode == "live":
             return "liveness (unbounded), fair consumer"
         if self.mode == "prove" and self.engine.startswith("smtbmc"):
-            return "k-induction, k = %s" % self.depth
+            what = "k-induction, k = %s" % self.depth
+            if self.any_start:
+                what += ", unconstrained start state (no reset)"
+            return what
         if self.mode == "prove":
             return "PDR (unbounded)"
         if self.mode == "cover":
@@ -306,7 +319,8 @@ def main():
         "bitwuzla " + tool_version(["bitwuzla", "--version"])))
     w("")
     w("Harness: `formal/orbit_demo_fv.sv` (independent reference model from docs/SPEC.md, all DUT")
-    w("inputs free, reset only in the first cycle; reset and clear_fault stay free afterwards).")
+    w("inputs free, reset only in the first cycle; reset and clear_fault stay free afterwards;")
+    w("the `clear` task starts from an unconstrained state and `wrap` from a consistent one).")
     w("Jobs: `formal/orbit_demo.sby`, one task per property group.")
     w("")
 
@@ -362,7 +376,7 @@ def main():
     for t in tasks:
         n_ass = sum(1 for ty, _ in t.props.values() if ty == "ASSERT")
         n_cov = sum(1 for ty, _ in t.props.values() if ty == "COVER")
-        groups = " ".join(g[3:].lower() for g in t.groups) + (" (no helpers)" if t.no_helpers else "")
+        groups = " ".join(g[3:].lower() for g in t.groups if g != "FV_ANY_START") + (" (no helpers)" if t.no_helpers else "")
         w("| %s | %s | %s | %s | %s | %s | %d | %d |" % (
             t.name, groups or "-", t.method(), t.solver, t.status,
             "?" if t.seconds is None else t.seconds, n_ass, n_cov))
