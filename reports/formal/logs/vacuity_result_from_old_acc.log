@@ -1,5 +1,5 @@
 --- rtl/orbit_mac_lane.v	2026-09-29 18:50:18.002938138 +0000
-+++ build/formal/vacuity/result_from_old_acc/rtl/orbit_mac_lane.v	2026-09-29 20:13:39.875717155 +0000
++++ build/formal/vacuity/result_from_old_acc/rtl/orbit_mac_lane.v	2026-09-30 00:13:23.156221116 +0000
 @@ -48,12 +48,12 @@
  
      orbit_keep_reg #(.W(32)) u_res_a (
@@ -16,42 +16,38 @@
  
      assign mismatch = (acc_a != acc_b) | (res_a != res_b);
 
-[formal] datapath       FAIL    (expected FAIL, 1s)
+[formal] datapath       FAIL    (expected FAIL, 0s)
 
-SBY 20:13:39 [datapath] Removing directory '/home/user/chip/build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath'.
-SBY 20:13:40 [datapath] engine_0: smtbmc yices
-SBY 20:13:40 [datapath] base: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY 20:13:40 [datapath] base: finished (returncode=0)
-SBY 20:13:40 [datapath] prep: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath/model; yosys -ql design_prep.log design_prep.ys"
-SBY 20:13:40 [datapath] prep: finished (returncode=0)
-SBY 20:13:40 [datapath] smt2: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath/model; yosys -ql design_smt2.log design_smt2.ys"
-SBY 20:13:40 [datapath] smt2: finished (returncode=0)
-SBY 20:13:40 [datapath] engine_0.basecase: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath; yosys-smtbmc -s yices --presat --unroll --noprogress -t 6  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
-SBY 20:13:40 [datapath] engine_0.induction: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 6  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
-SBY 20:13:40 [datapath] engine_0.induction: ##   0:00:00  Solver: yices
-SBY 20:13:40 [datapath] engine_0.induction: ##   0:00:00  Trying induction in step 6..
-SBY 20:13:40 [datapath] engine_0.induction: ##   0:00:00  Trying induction in step 5..
-SBY 20:13:40 [datapath] engine_0.induction: ##   0:00:00  Trying induction in step 4..
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Solver: yices
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  BMC failed!
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P1_h_res_a_lane1
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P1_h_res_a_lane2
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P1_out_valid_data_lane1
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P1_out_valid_data_lane2
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
-SBY 20:13:40 [datapath] engine_0.basecase: ##   0:00:00  Status: failed
-SBY 20:13:40 [datapath] engine_0.basecase: finished (returncode=1)
-SBY 20:13:40 [datapath] engine_0.basecase: Status returned by engine for basecase: FAIL
-SBY 20:13:40 [datapath] engine_0.induction: terminating process
-SBY 20:13:40 [datapath] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY 20:13:40 [datapath] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY 20:13:40 [datapath] summary: engine_0 (smtbmc yices) returned FAIL for basecase
-SBY 20:13:40 [datapath] summary: counterexample trace [basecase]: build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath/engine_0/trace.vcd
-SBY 20:13:40 [datapath] summary:   failed assertion orbit_demo_fv.P1_h_res_a_lane1 at orbit_demo_fv.sv:536.203-536.270 step 3
-SBY 20:13:40 [datapath] summary:   failed assertion orbit_demo_fv.P1_h_res_a_lane2 at orbit_demo_fv.sv:537.203-537.270 step 3
-SBY 20:13:40 [datapath] summary:   failed assertion orbit_demo_fv.P1_out_valid_data_lane1 at orbit_demo_fv.sv:516.397-516.472 step 3
-SBY 20:13:40 [datapath] summary:   failed assertion orbit_demo_fv.P1_out_valid_data_lane2 at orbit_demo_fv.sv:517.397-517.472 step 3
-SBY 20:13:40 [datapath] DONE (FAIL, rc=2)
+SBY  0:13:23 [datapath] Removing directory '/home/user/chip/build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath'.
+SBY  0:13:23 [datapath] engine_0: smtbmc yices
+SBY  0:13:23 [datapath] base: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:23 [datapath] base: finished (returncode=0)
+SBY  0:13:23 [datapath] prep: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:23 [datapath] prep: finished (returncode=0)
+SBY  0:13:23 [datapath] smt2: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:13:23 [datapath] smt2: finished (returncode=0)
+SBY  0:13:23 [datapath] engine_0.basecase: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath; yosys-smtbmc -s yices --presat --unroll --noprogress -t 6  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:13:23 [datapath] engine_0.induction: starting process "cd build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 6  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P1_h_res_a_lane1
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P1_h_res_a_lane2
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P1_out_valid_data_lane1
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P1_out_valid_data_lane2
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  0:13:23 [datapath] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  0:13:23 [datapath] engine_0.basecase: finished (returncode=1)
+SBY  0:13:23 [datapath] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  0:13:23 [datapath] engine_0.induction: terminating process
+SBY  0:13:23 [datapath] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:23 [datapath] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:23 [datapath] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  0:13:23 [datapath] summary: counterexample trace [basecase]: build/formal/vacuity/result_from_old_acc/run/orbit_demo_datapath/engine_0/trace.vcd
+SBY  0:13:23 [datapath] summary:   failed assertion orbit_demo_fv.P1_h_res_a_lane1 at orbit_demo_fv.sv:542.203-542.270 step 3
+SBY  0:13:23 [datapath] summary:   failed assertion orbit_demo_fv.P1_h_res_a_lane2 at orbit_demo_fv.sv:543.203-543.270 step 3
+SBY  0:13:23 [datapath] summary:   failed assertion orbit_demo_fv.P1_out_valid_data_lane1 at orbit_demo_fv.sv:522.397-522.472 step 3
+SBY  0:13:23 [datapath] summary:   failed assertion orbit_demo_fv.P1_out_valid_data_lane2 at orbit_demo_fv.sv:523.397-523.472 step 3
+SBY  0:13:23 [datapath] DONE (FAIL, rc=2)

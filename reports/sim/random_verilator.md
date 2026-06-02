@@ -4,8 +4,8 @@ cocotb 2.1.0.dev0+41564633, simulator verilator, Python 3.11.6 (/opt/eda/oss-cad
 
 | test | seed | cycles | results checked | errors | missing coverage | wall s | result |
 |---|---|---|---|---|---|---|---|
-| random_workload | 1 | 20000 | 866 | 0 | - | 1.7 | PASS |
-| random_workload | 2 | 20000 | 978 | 0 | - | 1.7 | PASS |
+| random_workload | 1 | 20000 | 866 | 0 | - | 1.6 | PASS |
+| random_workload | 2 | 20000 | 978 | 0 | - | 1.5 | PASS |
 
 Functional coverage (event counts; * = required > 0 in the test that lists it)
 

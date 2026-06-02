@@ -1,5 +1,5 @@
 --- rtl/orbit_mac_lane.v	2026-09-29 18:50:18.002938138 +0000
-+++ build/formal/vacuity/acc_b_clear_value/rtl/orbit_mac_lane.v	2026-09-29 20:13:53.848024263 +0000
++++ build/formal/vacuity/acc_b_clear_value/rtl/orbit_mac_lane.v	2026-09-30 00:13:33.608657215 +0000
 @@ -43,7 +43,7 @@
  
      orbit_keep_reg #(.W(32)) u_acc_b (
@@ -12,41 +12,41 @@
 
 [formal] dup            FAIL    (expected FAIL, 1s)
 
-SBY 20:13:54 [dup] Removing directory '/home/user/chip/build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup'.
-SBY 20:13:54 [dup] engine_0: smtbmc yices
-SBY 20:13:54 [dup] base: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY 20:13:54 [dup] base: finished (returncode=0)
-SBY 20:13:54 [dup] prep: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup/model; yosys -ql design_prep.log design_prep.ys"
-SBY 20:13:54 [dup] prep: finished (returncode=0)
-SBY 20:13:54 [dup] smt2: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup/model; yosys -ql design_smt2.log design_smt2.ys"
-SBY 20:13:54 [dup] smt2: finished (returncode=0)
-SBY 20:13:54 [dup] engine_0.basecase: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll --noprogress -t 6  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
-SBY 20:13:54 [dup] engine_0.induction: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 6  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Solver: yices
-SBY 20:13:54 [dup] engine_0.induction: ##   0:00:00  Solver: yices
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  BMC failed!
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_acc_copies_equal_lane0
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_acc_copies_equal_lane1
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_acc_copies_equal_lane2
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_acc_copies_equal_lane3
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_no_mismatch
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
-SBY 20:13:54 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 6..
-SBY 20:13:54 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 5..
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
-SBY 20:13:54 [dup] engine_0.basecase: ##   0:00:00  Status: failed
-SBY 20:13:54 [dup] engine_0.basecase: finished (returncode=1)
-SBY 20:13:54 [dup] engine_0.basecase: Status returned by engine for basecase: FAIL
-SBY 20:13:54 [dup] engine_0.induction: terminating process
-SBY 20:13:54 [dup] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY 20:13:54 [dup] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY 20:13:54 [dup] summary: engine_0 (smtbmc yices) returned FAIL for basecase
-SBY 20:13:54 [dup] summary: counterexample trace [basecase]: build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup/engine_0/trace.vcd
-SBY 20:13:54 [dup] summary:   failed assertion orbit_demo_fv.P7_acc_copies_equal_lane0 at orbit_demo_fv.sv:408.72-408.150 step 2
-SBY 20:13:54 [dup] summary:   failed assertion orbit_demo_fv.P7_acc_copies_equal_lane1 at orbit_demo_fv.sv:409.72-409.150 step 2
-SBY 20:13:54 [dup] summary:   failed assertion orbit_demo_fv.P7_acc_copies_equal_lane2 at orbit_demo_fv.sv:410.72-410.150 step 2
-SBY 20:13:54 [dup] summary:   failed assertion orbit_demo_fv.P7_acc_copies_equal_lane3 at orbit_demo_fv.sv:411.72-411.150 step 2
-SBY 20:13:54 [dup] summary:   failed assertion orbit_demo_fv.P7_no_mismatch at orbit_demo_fv.sv:418.13-418.56 step 2
-SBY 20:13:54 [dup] DONE (FAIL, rc=2)
+SBY  0:13:33 [dup] Removing directory '/home/user/chip/build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup'.
+SBY  0:13:33 [dup] engine_0: smtbmc yices
+SBY  0:13:33 [dup] base: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:33 [dup] base: finished (returncode=0)
+SBY  0:13:33 [dup] prep: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:33 [dup] prep: finished (returncode=0)
+SBY  0:13:33 [dup] smt2: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:13:33 [dup] smt2: finished (returncode=0)
+SBY  0:13:33 [dup] engine_0.basecase: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll --noprogress -t 6  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:13:33 [dup] engine_0.induction: starting process "cd build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 6  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 6..
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 5..
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_acc_copies_equal_lane0
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_acc_copies_equal_lane1
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_acc_copies_equal_lane2
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_acc_copies_equal_lane3
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_no_mismatch
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  0:13:34 [dup] engine_0.basecase: finished (returncode=1)
+SBY  0:13:34 [dup] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  0:13:34 [dup] engine_0.induction: terminating process
+SBY  0:13:34 [dup] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:34 [dup] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:34 [dup] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  0:13:34 [dup] summary: counterexample trace [basecase]: build/formal/vacuity/acc_b_clear_value/run/orbit_demo_dup/engine_0/trace.vcd
+SBY  0:13:34 [dup] summary:   failed assertion orbit_demo_fv.P7_acc_copies_equal_lane0 at orbit_demo_fv.sv:414.72-414.150 step 2
+SBY  0:13:34 [dup] summary:   failed assertion orbit_demo_fv.P7_acc_copies_equal_lane1 at orbit_demo_fv.sv:415.72-415.150 step 2
+SBY  0:13:34 [dup] summary:   failed assertion orbit_demo_fv.P7_acc_copies_equal_lane2 at orbit_demo_fv.sv:416.72-416.150 step 2
+SBY  0:13:34 [dup] summary:   failed assertion orbit_demo_fv.P7_acc_copies_equal_lane3 at orbit_demo_fv.sv:417.72-417.150 step 2
+SBY  0:13:34 [dup] summary:   failed assertion orbit_demo_fv.P7_no_mismatch at orbit_demo_fv.sv:424.13-424.56 step 2
+SBY  0:13:34 [dup] DONE (FAIL, rc=2)

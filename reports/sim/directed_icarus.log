@@ -11,17 +11,18 @@
 [14210000] scenario 11: negative_temps
 [14580000] scenario 12: int32_wrap
 [1335650000] scenario 13: clear_fault
+[1335870000] scenario 14: reset_midrun
 
 tb_orbit_demo summary (seed 1)
-  scenarios            13
-  cycles               133589
-  model cycle checks   133588 (mismatches 0)
-  scenario checks      101 (failed 0)
-  beats accepted       133206
-  results transferred  400 (all compared with the scoreboard)
-  literal lane checks  148
+  scenarios            14
+  cycles               133601
+  model cycle checks   133600 (mismatches 0)
+  scenario checks      107 (failed 0)
+  beats accepted       133209
+  results transferred  401 (all compared with the scoreboard)
+  literal lane checks  152
   back-to-back results 220
-  results dropped by clear_fault/reset 1
+  results dropped by clear_fault/reset 2
   errors               0
 TB_ORBIT_DEMO PASS
-tb/tb_orbit_demo.v:936: $finish called at 1335900000 (1ps)
+tb/tb_orbit_demo.v:978: $finish called at 1336020000 (1ps)

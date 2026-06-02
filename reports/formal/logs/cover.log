@@ -1,119 +1,119 @@
-SBY 20:15:19 [cover] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_cover'.
-SBY 20:15:19 [cover] engine_0: smtbmc yices
-SBY 20:15:19 [cover] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_cover/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY 20:15:19 [cover] base: finished (returncode=0)
-SBY 20:15:19 [cover] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_cover/model; yosys -ql design_prep.log design_prep.ys"
-SBY 20:15:19 [cover] prep: finished (returncode=0)
-SBY 20:15:19 [cover] smt2: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_cover/model; yosys -ql design_smt2.log design_smt2.ys"
-SBY 20:15:19 [cover] smt2: finished (returncode=0)
-SBY 20:15:19 [cover] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_cover; yosys-smtbmc -s yices --presat --unroll -c --noprogress -t 24  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Solver: yices
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 0..
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 1..
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 2..
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Reached cover statement in step 3 at orbit_demo_fv: C06_recover_from_stop
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace0.vcd
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace0_tb.v
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace0.smtc
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace0.yw
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C04_stop_by_temperature
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace1.vcd
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace1_tb.v
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace1.smtc
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace1.yw
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C03_throttle_entered
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace2.vcd
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace2_tb.v
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace2.smtc
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace2.yw
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C05_stop_by_invalid
-SBY 20:15:19 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace3.vcd
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace3_tb.v
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace3.smtc
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace3.yw
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C01_out_fire
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace4.vcd
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace4_tb.v
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace4.smtc
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace4.yw
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C12_edge_min_min
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace5.vcd
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace5_tb.v
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace5.smtc
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace5.yw
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C13_edge_max_min
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace6.vcd
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace6_tb.v
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace6.smtc
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace6.yw
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C11_replace_no_bubble
-SBY 20:15:20 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace7.vcd
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace7_tb.v
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace7.smtc
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace7.yw
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 4..
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 5..
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Reached cover statement in step 5 at orbit_demo_fv: C07_recover_from_throttle
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace8.vcd
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace8_tb.v
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace8.smtc
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace8.yw
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 5..
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Reached cover statement in step 5 at orbit_demo_fv: C09_throttle_blocks
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace9.vcd
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace9_tb.v
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace9.smtc
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace9.yw
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 5..
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Reached cover statement in step 5 at orbit_demo_fv: C02_back_to_back_fire
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace10.vcd
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace10_tb.v
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace10.smtc
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace10.yw
-SBY 20:15:20 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 5..
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 6..
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Reached cover statement in step 6 at orbit_demo_fv: C14_throttle_admit_run
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace11.vcd
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace11_tb.v
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace11.smtc
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace11.yw
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 6..
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Reached cover statement in step 6 at orbit_demo_fv: C08_clear_then_result
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace12.vcd
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace12_tb.v
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace12.smtc
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace12.yw
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 6..
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Reached cover statement in step 6 at orbit_demo_fv: C10_backpressure_then_fire
-SBY 20:15:21 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace13.vcd
-SBY 20:15:21 [cover] engine_0: ##   0:00:02  Writing trace to Verilog testbench: engine_0/trace13_tb.v
-SBY 20:15:21 [cover] engine_0: ##   0:00:02  Writing trace to constraints file: engine_0/trace13.smtc
-SBY 20:15:21 [cover] engine_0: ##   0:00:02  Writing trace to Yosys witness file: engine_0/trace13.yw
-SBY 20:15:21 [cover] engine_0: ##   0:00:02  Status: passed
-SBY 20:15:21 [cover] engine_0: finished (returncode=0)
-SBY 20:15:21 [cover] engine_0: Status returned by engine: pass
-SBY 20:15:21 [cover] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
-SBY 20:15:21 [cover] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:02 (2)
-SBY 20:15:21 [cover] summary: engine_0 (smtbmc yices) returned pass
-SBY 20:15:21 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace0.vcd
-SBY 20:15:21 [cover] summary:   reached cover statement orbit_demo_fv.C06_recover_from_stop at orbit_demo_fv.sv:603.13-604.58 step 3
-SBY 20:15:21 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace1.vcd
-SBY 20:15:21 [cover] summary:   reached cover statement orbit_demo_fv.C04_stop_by_temperature at orbit_demo_fv.sv:599.13-600.79 step 4
-SBY 20:15:21 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace10.vcd
-SBY 20:15:21 [cover] summary:   reached cover statement orbit_demo_fv.C02_back_to_back_fire at orbit_demo_fv.sv:597.13-597.73 step 5
-SBY 20:15:21 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace11.vcd
-SBY 20:15:21 [cover] summary:   reached cover statement orbit_demo_fv.C14_throttle_admit_run at orbit_demo_fv.sv:614.13-615.113 step 6
-SBY 20:15:21 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace12.vcd
-SBY 20:15:21 [cover] summary:   reached cover statement orbit_demo_fv.C08_clear_then_result at orbit_demo_fv.sv:606.13-606.111 step 6
-SBY 20:15:21 [cover] summary: and 9 further traces
-SBY 20:15:21 [cover] summary: see /home/user/chip/build/formal/full/run/orbit_demo_cover/PASS for a complete summary
-SBY 20:15:21 [cover] DONE (PASS, rc=0)
+SBY  0:14:52 [cover] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_cover'.
+SBY  0:14:53 [cover] engine_0: smtbmc yices
+SBY  0:14:53 [cover] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_cover/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:14:53 [cover] base: finished (returncode=0)
+SBY  0:14:53 [cover] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_cover/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:14:53 [cover] prep: finished (returncode=0)
+SBY  0:14:53 [cover] smt2: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_cover/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:14:53 [cover] smt2: finished (returncode=0)
+SBY  0:14:53 [cover] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_cover; yosys-smtbmc -s yices --presat --unroll -c --noprogress -t 24  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Solver: yices
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 0..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 1..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Reached cover statement in step 3 at orbit_demo_fv: C06_recover_from_stop
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace0.vcd
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace0_tb.v
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace0.smtc
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace0.yw
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 3..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C04_stop_by_temperature
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace1.vcd
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace1_tb.v
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace1.smtc
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace1.yw
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C03_throttle_entered
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace2.vcd
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace2_tb.v
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace2.smtc
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace2.yw
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C05_stop_by_invalid
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace3.vcd
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace3_tb.v
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace3.smtc
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace3.yw
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C01_out_fire
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace4.vcd
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace4_tb.v
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace4.smtc
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace4.yw
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C12_edge_min_min
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace5.vcd
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace5_tb.v
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace5.smtc
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace5.yw
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C13_edge_max_min
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace6.vcd
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace6_tb.v
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace6.smtc
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace6.yw
+SBY  0:14:53 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at orbit_demo_fv: C11_replace_no_bubble
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace7.vcd
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace7_tb.v
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace7.smtc
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace7.yw
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 4..
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 5..
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Reached cover statement in step 5 at orbit_demo_fv: C07_recover_from_throttle
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace8.vcd
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace8_tb.v
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace8.smtc
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace8.yw
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 5..
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Reached cover statement in step 5 at orbit_demo_fv: C09_throttle_blocks
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace9.vcd
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace9_tb.v
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace9.smtc
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace9.yw
+SBY  0:14:54 [cover] engine_0: ##   0:00:00  Checking cover reachability in step 5..
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Reached cover statement in step 5 at orbit_demo_fv: C02_back_to_back_fire
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace10.vcd
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace10_tb.v
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace10.smtc
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace10.yw
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 5..
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 6..
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Reached cover statement in step 6 at orbit_demo_fv: C14_throttle_admit_run
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace11.vcd
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace11_tb.v
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace11.smtc
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace11.yw
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 6..
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Reached cover statement in step 6 at orbit_demo_fv: C08_clear_then_result
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace12.vcd
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace12_tb.v
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace12.smtc
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace12.yw
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Checking cover reachability in step 6..
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Reached cover statement in step 6 at orbit_demo_fv: C10_backpressure_then_fire
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to VCD file: engine_0/trace13.vcd
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace13_tb.v
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to constraints file: engine_0/trace13.smtc
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace13.yw
+SBY  0:14:54 [cover] engine_0: ##   0:00:01  Status: passed
+SBY  0:14:54 [cover] engine_0: finished (returncode=0)
+SBY  0:14:54 [cover] engine_0: Status returned by engine: pass
+SBY  0:14:54 [cover] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  0:14:54 [cover] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  0:14:54 [cover] summary: engine_0 (smtbmc yices) returned pass
+SBY  0:14:54 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace0.vcd
+SBY  0:14:54 [cover] summary:   reached cover statement orbit_demo_fv.C06_recover_from_stop at orbit_demo_fv.sv:648.13-649.58 step 3
+SBY  0:14:54 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace1.vcd
+SBY  0:14:54 [cover] summary:   reached cover statement orbit_demo_fv.C04_stop_by_temperature at orbit_demo_fv.sv:644.13-645.79 step 4
+SBY  0:14:54 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace10.vcd
+SBY  0:14:54 [cover] summary:   reached cover statement orbit_demo_fv.C02_back_to_back_fire at orbit_demo_fv.sv:642.13-642.73 step 5
+SBY  0:14:54 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace11.vcd
+SBY  0:14:54 [cover] summary:   reached cover statement orbit_demo_fv.C14_throttle_admit_run at orbit_demo_fv.sv:659.13-660.113 step 6
+SBY  0:14:54 [cover] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_cover/engine_0/trace12.vcd
+SBY  0:14:54 [cover] summary:   reached cover statement orbit_demo_fv.C08_clear_then_result at orbit_demo_fv.sv:651.13-651.111 step 6
+SBY  0:14:54 [cover] summary: and 9 further traces
+SBY  0:14:54 [cover] summary: see /home/user/chip/build/formal/full/run/orbit_demo_cover/PASS for a complete summary
+SBY  0:14:54 [cover] DONE (PASS, rc=0)

@@ -913,6 +913,48 @@ module tb_orbit_demo;
         in_valid = 1'b0; in_first = 1'b0; in_last = 1'b0;
         drain;
 
+        // ---- 14. Reset in the middle of operation (SPEC 5 and 6): a pending
+        //      result is dropped, the sums restart from 0 and the thermal state
+        //      returns to STOP. Scenario 1 only covers the power-on reset, where
+        //      a 4-state simulator flags uninitialised registers as X anyway;
+        //      this one also catches a register left out of the reset in a
+        //      2-state simulator (Verilator) or on a netlist.
+        start("reset_midrun");
+        set_temp(1'b1, 25);
+        idle(2);
+        out_ready = 1'b1;
+        beat(1'b1, 1'b0, pk8(50, -50, 127, -128), pk8(50, 50, 127, -128));  // sum in progress
+        out_ready = 1'b0;
+        beat(1'b0, 1'b1, pk8(1, 1, 1, 1), pk8(1, 1, 1, 1));                  // result pending
+        in_valid = 1'b1; in_first = 1'b0; in_last = 1'b1;                   // beat offered throughout
+        in_a = pk8(4, -4, 2, -2); in_b = pk8(5, 5, -9, -9);
+        tick;
+        chk(s_out_valid === 1'b1 && s_state === NORMAL, "result pending in NORMAL before the reset");
+        cnt = n_dropped;
+        rst_n = 1'b0;
+        tick;                              // reset edge
+        good = 1'b1;
+        for (k = 0; k < 3; k = k + 1) begin
+            out_ready = k[0];
+            tick;
+            if (!(s_out_valid === 1'b0 && s_state === STOP && s_shutdown === 1'b1 &&
+                  s_in_ready === 1'b0 && s_out_data === {W{1'b0}} && fault === 1'b0)) good = 1'b0;
+        end
+        chk(good === 1'b1, "in reset: buffer empty, out_data zero, STOP, in_ready low");
+        chk(n_dropped - cnt == 1, "the pending result was discarded by the reset");
+        rst_n = 1'b1;
+        out_ready = 1'b1;
+        tick;                              // 25 C registered: STOP -> NORMAL
+        chk(s_state === STOP && s_in_fire === 1'b0, "first cycle after reset still STOP");
+        // Next sum without in_first starts from 0: 20, -20, -18, 18.
+        expect_lit(4'hF, pk32(32'd20, 32'hFFFF_FFEC, 32'hFFFF_FFEE, 32'd18));
+        tick;
+        chk(s_state === NORMAL && s_in_fire === 1'b1, "beat accepted once NORMAL after the reset");
+        in_valid = 1'b0; in_first = 1'b0; in_last = 1'b0;
+        drain;
+        chk(last_out === pk32(32'd20, 32'hFFFF_FFEC, 32'hFFFF_FFEE, 32'd18),
+            "sum after a mid-run reset started from zero");
+
         // ---- End
         idle(3);
         scen = "end";

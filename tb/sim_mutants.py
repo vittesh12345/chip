@@ -73,6 +73,9 @@ MUTANTS = {
     "clear_keeps_out_valid": ("clear_fault does not empty the output buffer", [
         (TOP, "        end else if (clear_fault) begin\n            fault_q     <= 1'b0;\n            out_valid_q <= 1'b0;\n",
          "        end else if (clear_fault) begin\n            fault_q     <= 1'b0;\n", 1)]),
+    "reset_keeps_out_valid": ("reset does not empty the output buffer", [
+        (TOP, "        if (!rst_n) begin\n            fault_q     <= 1'b0;\n            out_valid_q <= 1'b0;\n",
+         "        if (!rst_n) begin\n            fault_q     <= 1'b0;\n", 1)]),
     "ready_during_clear": ("in_ready not held low while clear_fault", [
         (TOP, "~mismatch & ~clear_fault &", "~mismatch &", 1)]),
     "nonlast_not_blocked": ("full buffer blocks only in_last beats", [

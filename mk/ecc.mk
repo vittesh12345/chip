@@ -6,7 +6,7 @@
 #   make ecc              everything below except ecc-report: lint, H-matrix check,
 #                         simulation, formal (proofs, covers, negative controls),
 #                         simulation negative controls and synthesis; non-zero exit
-#                         on any failure (several minutes, see reports/ecc/summary.md)
+#                         on any failure (about 14 minutes; results in reports/ecc/results.txt)
 #   make ecc-quick        fast subset for `make test` (TEST_TARGETS): lint, H-matrix
 #                         check, codec simulation, a short bank simulation, the codec
 #                         proof and the fault-free bank proof
@@ -265,7 +265,7 @@ ecc-report:
 	    [ -f $$f ] || continue; \
 	    n=$$(echo $$f | sed 's|.*/formal/||; s|/|_|g'); \
 	    grep -v -E "Copy '|Treating undriven|engine_0: +[0-9]+ :" $$f | \
-	      sed -E 's|/[^ ]*/formal/|formal/|g' | tail -40 > $(ECC_REPORT_DIR)/logs/formal_$$n; \
+	      sed -E 's|[^ [(]*/formal/|formal/|g' | tail -40 > $(ECC_REPORT_DIR)/logs/formal_$$n; \
 	done
 	@for top in $(ECC_SYNTH_TOPS); do cat $(ECC_OUT)/synth/$$top.stat; done > $(ECC_REPORT_DIR)/synth_stat.txt
 	@echo "ecc-report: wrote $(ECC_REPORT_DIR)/"

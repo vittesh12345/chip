@@ -1,27 +1,27 @@
-SBY 20:14:32 [product] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_product'.
-SBY 20:14:32 [product] engine_0: smtbmc bitwuzla
-SBY 20:14:32 [product] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY 20:14:32 [product] base: finished (returncode=0)
-SBY 20:14:32 [product] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product/model; yosys -ql design_prep.log design_prep.ys"
-SBY 20:14:32 [product] prep: finished (returncode=0)
-SBY 20:14:32 [product] smt2: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product/model; yosys -ql design_smt2.log design_smt2.ys"
-SBY 20:14:32 [product] smt2: finished (returncode=0)
-SBY 20:14:32 [product] engine_0.basecase: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product; yosys-smtbmc -s bitwuzla --presat --unroll --noprogress -t 1  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
-SBY 20:14:32 [product] engine_0.induction: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product; yosys-smtbmc -s bitwuzla --presat --unroll -i --noprogress -t 1  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
-SBY 20:14:32 [product] engine_0.basecase: ##   0:00:00  Solver: bitwuzla
-SBY 20:14:32 [product] engine_0.induction: ##   0:00:00  Solver: bitwuzla
-SBY 20:14:32 [product] engine_0.induction: ##   0:00:00  Trying induction in step 1..
-SBY 20:14:38 [product] engine_0.induction: ##   0:00:05  Temporal induction successful.
-SBY 20:14:38 [product] engine_0.induction: ##   0:00:05  Status: passed
-SBY 20:14:38 [product] engine_0.induction: finished (returncode=0)
-SBY 20:14:38 [product] engine_0.induction: Status returned by engine for induction: pass
-SBY 20:14:39 [product] engine_0.basecase: ##   0:00:07  Status: passed
-SBY 20:14:39 [product] engine_0.basecase: finished (returncode=0)
-SBY 20:14:39 [product] engine_0.basecase: Status returned by engine for basecase: pass
-SBY 20:14:39 [product] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:07 (7)
-SBY 20:14:39 [product] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:09 (9)
-SBY 20:14:39 [product] summary: engine_0 (smtbmc bitwuzla) returned pass for basecase
-SBY 20:14:39 [product] summary: engine_0 (smtbmc bitwuzla) returned pass for induction
-SBY 20:14:39 [product] summary: engine_0 did not produce any traces
-SBY 20:14:39 [product] summary: successful proof by k-induction.
-SBY 20:14:39 [product] DONE (PASS, rc=0)
+SBY  0:14:07 [product] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_product'.
+SBY  0:14:07 [product] engine_0: smtbmc bitwuzla
+SBY  0:14:07 [product] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:14:07 [product] base: finished (returncode=0)
+SBY  0:14:07 [product] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:14:07 [product] prep: finished (returncode=0)
+SBY  0:14:07 [product] smt2: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:14:07 [product] smt2: finished (returncode=0)
+SBY  0:14:07 [product] engine_0.basecase: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product; yosys-smtbmc -s bitwuzla --presat --unroll --noprogress -t 1  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:14:07 [product] engine_0.induction: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_product; yosys-smtbmc -s bitwuzla --presat --unroll -i --noprogress -t 1  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:14:07 [product] engine_0.induction: ##   0:00:00  Solver: bitwuzla
+SBY  0:14:07 [product] engine_0.induction: ##   0:00:00  Trying induction in step 1..
+SBY  0:14:08 [product] engine_0.basecase: ##   0:00:00  Solver: bitwuzla
+SBY  0:14:13 [product] engine_0.induction: ##   0:00:05  Temporal induction successful.
+SBY  0:14:13 [product] engine_0.induction: ##   0:00:05  Status: passed
+SBY  0:14:13 [product] engine_0.induction: finished (returncode=0)
+SBY  0:14:13 [product] engine_0.induction: Status returned by engine for induction: pass
+SBY  0:14:13 [product] engine_0.basecase: ##   0:00:05  Status: passed
+SBY  0:14:13 [product] engine_0.basecase: finished (returncode=0)
+SBY  0:14:13 [product] engine_0.basecase: Status returned by engine for basecase: pass
+SBY  0:14:13 [product] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:06 (6)
+SBY  0:14:13 [product] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:08 (8)
+SBY  0:14:13 [product] summary: engine_0 (smtbmc bitwuzla) returned pass for basecase
+SBY  0:14:13 [product] summary: engine_0 (smtbmc bitwuzla) returned pass for induction
+SBY  0:14:13 [product] summary: engine_0 did not produce any traces
+SBY  0:14:13 [product] summary: successful proof by k-induction.
+SBY  0:14:13 [product] DONE (PASS, rc=0)
