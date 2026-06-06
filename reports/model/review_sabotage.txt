@@ -1,0 +1,23 @@
+Independent review of the model area (2026-09-30)
+==================================================
+Clean run: rm -rf build/model; make model -> 31 tests OK, report regenerated, exit 0 (~0.1 s).
+Independent hand calculation (system python, without importing the model) reproduces
+6.5536/26.2144 TOPS, 36 MiB raw, 51.2/819.2 GB/s, 0.512 TOPS, 102.4 ops/B (95.37 with GiB/s),
+2.42/1.87/1.31 m2 per kW, 242/187/131 m2 per 100 kW, 66.85/96.85 C.
+Brief figures re-transcribed from docs/orbit-ai-design-brief.pdf text (pp.1-3): all match brief_figures().
+
+Sabotage on copies of rtl/ (make RTL_DIR=build/sabotage_model/rtl BUILD=... model):
+  T_STOP 8'sd95 -> 8'sd96                       caught  (96 != 95), exit 2
+  LANES 4 -> 2                                  caught  (2 != 4), exit 2
+  T_RECOVER 8'sd70 -> 8'sd75                    caught  (75 != 70), exit 2
+  thermal instance .T_STOP(T_STOP)->(T_THROTTLE) caught after review fix (was missed), exit 2
+  LANES 4 -> 4'h8                               caught after review fix (was read as 4 = width)
+  T_STOP 8'sd95 -> 8'sh5F (same value)          passes after review fix (was a false failure, read as 8)
+  unmodified copy                               passes, report left in BUILD, reports/ untouched
+
+Review fixes: Verilog literal parser (base d/h/o/b, unparseable -> None), comments stripped
+before parameter search, new check that orbit_demo passes each threshold unchanged to
+orbit_thermal_tmr, pd closed-clock parser ignores negated lines ("not closed", "failed")
+and only reads numbers after the word "closed"; negative-control tests for each.
+Out of scope for this area: behavioral bugs inside orbit_thermal_tmr/orbit_mac_lane
+(comparison operators, admission rate) are not visible to a parameter cross-check.

@@ -247,37 +247,97 @@ def brief_qualitative_claims():
 # ---------------------------------------------------------------------------
 # Optional inputs from other areas
 # ---------------------------------------------------------------------------
+RTL_PARAM_NAMES = ("LANES", "T_THROTTLE", "T_STOP", "T_RECOVER")
+THERMAL_PARAM_NAMES = ("T_THROTTLE", "T_STOP", "T_RECOVER")
+
+
+def _strip_verilog_comments(text):
+    text = re.sub(r"/\*.*?\*/", " ", text, flags=re.S)
+    return re.sub(r"//[^\n]*", " ", text)
+
+
+def verilog_int(literal):
+    """Value of a plain Verilog integer literal, or None if it is not one.
+
+    Accepts 95, 8'd95, 8'sd95, 8'h5F, 8'sb0101_1111, 'o137.  Anything else
+    (an expression, x/z digits) returns None so the cross-check fails loudly
+    instead of reading a wrong number (e.g. the width of a hex literal).
+    """
+    s = literal.strip().replace("_", "")
+    if re.fullmatch(r"\d+", s):
+        return int(s)
+    m = re.fullmatch(r"(\d+)?'[sS]?([dDhHoObB])([0-9a-fA-F]+)", s)
+    if not m:
+        return None
+    base = {"d": 10, "h": 16, "o": 8, "b": 2}[m.group(2).lower()]
+    try:
+        return int(m.group(3), base)
+    except ValueError:
+        return None
+
+
 def rtl_parameters(rtl_dir):
-    """Read LANES and the thermal thresholds from $(RTL_DIR)/orbit_demo.v."""
+    """Read LANES and the thermal thresholds from $(RTL_DIR)/orbit_demo.v.
+
+    A parameter whose default is not a plain integer literal is reported as
+    None (present but unreadable), which fails the cross-check.
+    """
     path = os.path.join(rtl_dir, "orbit_demo.v")
     with open(path) as fh:
-        text = fh.read()
+        text = _strip_verilog_comments(fh.read())
     params = {}
-    for name in ("LANES", "T_THROTTLE", "T_STOP", "T_RECOVER"):
-        m = re.search(r"parameter\b[^;,)]*?\b%s\s*=\s*(?:\d+'s?d)?(\d+)" % name, text)
+    for name in RTL_PARAM_NAMES:
+        m = re.search(r"parameter\b[^;,)]*?\b%s\s*=\s*([^,;)\s]+)" % name, text)
         if m:
-            params[name] = int(m.group(1))
+            params[name] = verilog_int(m.group(1))
     return params
+
+
+def rtl_thermal_overrides(rtl_dir):
+    """Map each threshold to the expression orbit_demo passes to orbit_thermal_tmr.
+
+    The model's thermal states assume the top-level thresholds are the ones
+    the thermal FSM uses, i.e. each override is `.T_X (T_X)`.  Returns
+    {name: expression or None if not overridden}.
+    """
+    path = os.path.join(rtl_dir, "orbit_demo.v")
+    with open(path) as fh:
+        text = _strip_verilog_comments(fh.read())
+    m = re.search(r"\borbit_thermal_tmr\s*#\s*\((.*?)\)\s*\w+\s*\(", text, flags=re.S)
+    block = m.group(1) if m else ""
+    conn = {}
+    for name in THERMAL_PARAM_NAMES:
+        c = re.search(r"\.\s*%s\s*\(\s*([^()]*?)\s*\)" % name, block)
+        conn[name] = c.group(1) if c else None
+    return conn
 
 
 def pd_closed_clock_mhz(path):
     """Closed clock from the pd area's summary, or None.
 
-    Accepts a line mentioning a closed/achieved clock with a MHz value, or a
-    closed clock period in ns, e.g. "closed clock: 142.9 MHz" or
-    "timing closed at period 7.0 ns".  Returns the first match.
+    Accepts a line stating a closed clock with a MHz value or a clock period
+    in ns after the word "closed", e.g. "closed clock: 142.9 MHz",
+    "Best closed period: **7 ns (142.9 MHz)**" or "timing closed at period
+    7.0 ns".  Lines that negate closure ("not closed", "failed", "unclosed")
+    are ignored, and only numbers after "closed" count, so a target
+    frequency quoted earlier on the line is not taken for the closed one.
+    Returns the first match.
     """
     if not path or not os.path.isfile(path):
         return None
     with open(path) as fh:
         for line in fh:
             low = line.lower()
-            if "clos" not in low:
+            c = re.search(r"\bclosed\b", low)
+            if not c:
                 continue
-            m = re.search(r"(\d+(?:\.\d+)?)\s*mhz", low)
-            if m:
+            if re.search(r"\b(not|never|unclosed|fail\w*)\b", low):
+                continue
+            tail = low[c.end():]
+            m = re.search(r"(\d+(?:\.\d+)?)\s*mhz", tail)
+            if m and float(m.group(1)) > 0:
                 return float(m.group(1))
-            m = re.search(r"period[^0-9]*(\d+(?:\.\d+)?)\s*ns", low)
+            m = re.search(r"(?:period|at)[^0-9]*(\d+(?:\.\d+)?)\s*ns", tail)
             if m and float(m.group(1)) > 0:
                 return 1e3 / float(m.group(1))
     return None
@@ -381,7 +441,7 @@ def report(demo_lanes=DEMO_LANES_DEFAULT, demo_clocks_mhz=DEMO_CLOCKS_MHZ_DEFAUL
     w("4-lane demonstrator (rtl/orbit_demo.v)")
     w("-" * 72)
     if rtl_params:
-        w("  RTL parameters read: " + ", ".join("%s=%d" % kv for kv in sorted(rtl_params.items())))
+        w("  RTL parameters read: " + ", ".join("%s=%s" % kv for kv in sorted(rtl_params.items())))
     w("  lanes %d, %d ops per MAC, one beat per cycle in NORMAL; clock: %s" %
       (demo_lanes, OPS_PER_MAC, demo_clock_source))
     w("  %-12s %16s %16s" % ("clock", "peak GOPS", "throttled GOPS"))
@@ -430,8 +490,12 @@ def main(argv=None):
         expect = {"T_RECOVER": T_RECOVER_C, "T_THROTTLE": T_THROTTLE_C, "T_STOP": T_STOP_C}
         for k, v in expect.items():
             if k in rtl_params and rtl_params[k] != v:
-                print("warning: RTL %s=%d differs from model %d" % (k, rtl_params[k], v),
+                print("warning: RTL %s=%s differs from model %d" % (k, rtl_params[k], v),
                       file=sys.stderr)
+        for k, expr in rtl_thermal_overrides(args.rtl_dir).items():
+            if expr != k:
+                print("warning: orbit_thermal_tmr gets .%s(%s), not the top-level %s"
+                      % (k, expr, k), file=sys.stderr)
 
     closed = pd_closed_clock_mhz(args.pd_summary)
     if closed is not None:

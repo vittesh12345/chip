@@ -9,7 +9,10 @@ test_throttled_peak_is_half (__main__.TestCompute.test_throttled_peak_is_half) .
 test_tops_per_watt_allocation (__main__.TestCompute.test_tops_per_watt_allocation) ... ok
 test_demo_peak (__main__.TestDemonstrator.test_demo_peak) ... ok
 test_pd_clock_parsing (__main__.TestDemonstrator.test_pd_clock_parsing) ... ok
+test_rtl_parameter_parser_negative_controls (__main__.TestDemonstrator.test_rtl_parameter_parser_negative_controls) ... ok
 test_rtl_parameters_match_model (__main__.TestDemonstrator.test_rtl_parameters_match_model) ... ok
+test_rtl_thresholds_reach_thermal_fsm (__main__.TestDemonstrator.test_rtl_thresholds_reach_thermal_fsm) ... ok
+test_verilog_int_literals (__main__.TestDemonstrator.test_verilog_int_literals) ... ok
 test_local_bw_per_tile (__main__.TestMemory.test_local_bw_per_tile) ... ok
 test_local_bw_total (__main__.TestMemory.test_local_bw_total) ... ok
 test_matvec_ceiling (__main__.TestMemory.test_matvec_ceiling) ... ok
@@ -28,6 +31,6 @@ test_radiator_area_per_kw (__main__.TestThermal.test_radiator_area_per_kw) ... o
 test_radiator_law (__main__.TestThermal.test_radiator_law) ... ok
 
 ----------------------------------------------------------------------
-Ran 28 tests in 0.005s
+Ran 31 tests in 0.007s
 
 OK

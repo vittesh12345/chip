@@ -26,8 +26,10 @@
 //             never delivered)
 //   EXTRA     a result was transferred when none was pending (duplicate or
 //             stale re-presentation)
-//   HANG      not stopped, but no beat accepted under favourable conditions
-//             (second half of drain A)
+//   HANG      no beat accepted under favourable conditions in the second
+//             half of drain A, although the host clears any fault within 3
+//             cycles (so a stop that clear_fault does not end is a HANG too,
+//             whatever the value of fault at the end of the trial)
 //   OTHER     a stop that did not block the handshakes (structural check)
 //   DETECTED  fault rose (the host then clears it); no wrong data transferred
 //   TIMING    no fault, all data correct, but the port trace differs from the
@@ -519,7 +521,7 @@ module tb_seu_campaign;
             if (u_dut.n_sdc)                                   outcome = "SDC";
             else if (u_dut.n_lost)                             outcome = "LOST";
             else if (u_dut.n_extra)                            outcome = "EXTRA";
-            else if (!u_dut.fault && drain_fire == 0)          outcome = "HANG";
+            else if (drain_fire == 0)                          outcome = "HANG";
             else if (u_dut.n_stop_viol)                        outcome = "OTHER";
             else if (u_dut.saw_fault)                          outcome = "DETECTED";
             else if (diff_ports)                               outcome = "TIMING";

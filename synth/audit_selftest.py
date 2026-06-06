@@ -186,10 +186,20 @@ def main():
     ok, _, _ = run_audit(src)
     print("%-32s %s" % ("baseline (unmodified)", "PASS as expected" if ok else "UNEXPECTED FAIL"))
     failures += 0 if ok else 1
+    if not ok:
+        # Injected defects are only meaningful on a netlist that passes; the
+        # mutators may not even find the nets they need on one that does not.
+        print("AUDIT_SELFTEST FAIL: the unmodified netlist does not pass the audit")
+        return 1
 
     for i, (name, expect, mutate) in enumerate(DEFECTS):
         data = copy.deepcopy(base)
-        mutate(top_of(data))
+        try:
+            mutate(top_of(data))
+        except (KeyError, IndexError) as exc:
+            print("%-32s could not be injected (%s)" % (name, exc))
+            failures += 1
+            continue
         path = os.path.join(work, "defect_%02d.json" % i)
         with open(path, "w") as fh:
             json.dump(data, fh)

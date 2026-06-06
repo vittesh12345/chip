@@ -268,6 +268,6 @@ Found and reported 0 problems.
 13. Executing JSON backend.
 14. Executing LTP pass (find longest path).
 Longest topological path in orbit_demo (length=60):
-End of script. Logfile hash: af5ef3ab88, time: 1.60s, user: 0.59s, system: 0.06s, MEM: 41.76 MB peak
+End of script. Logfile hash: af5ef3ab88, time: 1.21s, user: 0.48s, system: 0.07s, MEM: 40.57 MB peak
 Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)
-Time spent: 68% 1x abc (1 sec), 6% 29x opt_expr (0 sec), ...
+Time spent: 64% 1x abc (0 sec), 7% 24x opt_clean (0 sec), ...

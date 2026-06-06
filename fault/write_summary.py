@@ -311,7 +311,7 @@ def main():
     L.append("REPAIRED (only `therm_repair` differed), TIMING (no fault, every result correct, but the port")
     L.append("trace differs, e.g. a shifted throttled admission), SDC (a transferred result is wrong), LOST")
     L.append("(an accepted result dropped without fault), EXTRA (a result transferred with none pending:")
-    L.append("duplicate or stale), HANG (no fault but no progress in the drain), OTHER.")
+    L.append("duplicate or stale), HANG (no beat accepted in the drain, even after the host's `clear_fault`), OTHER.")
     L.append("")
     if camp_md:
         L.append(camp_md.strip())

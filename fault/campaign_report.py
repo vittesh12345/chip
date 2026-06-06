@@ -149,9 +149,12 @@ def main():
         check("%s: no escape (DETECTED, or overwritten by clear_fault in the upset cycle)" % key, g and not bad,
               "%d trials; %s" % (len(g), "; ".join("trial %d %s %s" % (t["trial"], bit_name(t["id"]), t["outcome"])
                                                   for t in bad[:5]) or "none escaped"))
-        check("%s: fault one cycle after the upset, handshakes blocked in the upset cycle" % key, g and not lat_bad,
+        # Not vacuous: at least one trial must have been DETECTED at all.
+        n_det = sum(t["outcome"] == "DETECTED" for t in g)
+        check("%s: fault one cycle after the upset, handshakes blocked in the upset cycle" % key,
+              g and n_det > 0 and not lat_bad,
               "%d detected trials checked; exceptions: %s" %
-              (sum(t["outcome"] == "DETECTED" for t in g),
+              (n_det,
                ", ".join("trial %d latency %d stop %d" % (t["trial"], t["latency"], t["stop_same_cycle"])
                          for t in lat_bad[:5]) or "none"))
     g = [t for t in inj if 512 <= t["id"] < 518]

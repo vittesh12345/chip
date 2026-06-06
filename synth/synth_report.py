@@ -23,23 +23,24 @@ BRIEF_LOGIC_CELLS = 4356          # brief page 4: "4,356 generic logic cells"
 BRIEF_FF_BITS = 521               # brief page 4 and SPEC section 7
 
 # Interpretation appended to reports/synth/summary.md after the result table.
-# The {fields} are filled in from the current run. The other numbers (the
-# 521 -> 517 negative control, the 4,340 / 4,373 probe) describe the production
-# RTL as of 2026-09-29; the table above the notes is always from the current run.
+# The {fields} are filled in from the current run; only the 4,340 / 4,373
+# probe is a fixed observation (production RTL, 2026-09-29). If any check in
+# the table failed or did not run, cmd_summary puts a warning above the notes,
+# because the prose describes the passing case.
 NOTES = """## Notes
 
 **Brief page 4 claims.** The brief reports "4,356 generic logic cells and 521
 flip-flop bits" (Yosys 0.69 through YoWASP) and a nine-group storage audit.
 
-* Flip-flop bits: reproduced exactly (521) with native Yosys and with YoWASP
-  Yosys 0.69. 518 of them are in the nine redundant groups; the other three
-  are `fault_q`, `out_valid_q` and `u_thermal.phase` (SPEC section 8).
+* Flip-flop bits: {native_ff} with native Yosys and {yowasp_ff} with YoWASP
+  Yosys 0.69 (brief and SPEC: 521). 518 of them are in the nine redundant
+  groups; the other three are `fault_q`, `out_valid_q` and `u_thermal.phase` (SPEC section 8).
 * Generic logic cells: **not reproduced exactly**. With this RTL and
   `synth/synth_generic.ys`, native Yosys gives {native_logic} and YoWASP Yosys 0.69
   gives {yowasp_logic}, against 4,356 in the brief. "Logic cells" here means every
   generic gate cell other than flip-flops and `$scopeinfo`. The brief does not
-  give its script. As an informational probe (not a make target),
-  `synth -top orbit_demo` without `-flatten` gave 4,340 and plain
+  give its script. As an informational probe (not a make target, run once on
+  2026-09-29), `synth -top orbit_demo` without `-flatten` gave 4,340 and plain
   `synth -flatten` gave 4,373 with native Yosys, so no variant tried matched
   4,356. The difference is in the ABC gate mapping only; flip-flop counts are
   the same in every run. It is small, but it is a difference, so the table
@@ -52,9 +53,9 @@ flip-flop bits" (Yosys 0.69 through YoWASP) and a nine-group storage audit.
 **Why keep_hierarchy matters (negative control).** When the `keep_hierarchy`
 attribute is removed from `orbit_keep_reg`, Yosys merges the three thermal
 copies. They have identical D, clock, reset and enable, so the flip-flop
-count drops from 521 to 517 (6 thermal bits become 2) and the audit fails.
-Putting `(* keep *)` on the `q` register alone does **not** prevent this (same
-517 bits, audit fails). This matches the brief's remark that "signal attributes
+count drops from {native_ff} to {nokeep_ff} (6 thermal bits become 2) and the audit fails.
+Putting `(* keep *)` on the `q` register alone gives {regkeep_ff} flip-flop
+bits (this run: {regkeep_verdict}). This matches the brief's remark that "signal attributes
 alone initially allowed copies to merge". The accumulator and result pairs
 are not merged in either variant because their D logic comes from each copy's
 own stored value.
@@ -275,8 +276,36 @@ def cmd_summary(args):
     else:
         yl = counts(os.path.join(b, "yowasp", "synth_stat.json"))["logic"] \
             if os.path.exists(os.path.join(b, "yowasp", "synth_stat.json")) else None
+        yf = counts(os.path.join(b, "yowasp", "synth_stat.json"))["ff"] \
+            if os.path.exists(os.path.join(b, "yowasp", "synth_stat.json")) else None
+        # Flip-flop bits and thermal verdict of the negative-control variants,
+        # from their table rows in negative_control.txt.
+        vff = {}
+        try:
+            with open(nc_path) as fh:
+                for line in fh:
+                    m = re.match(r"^(nokeep|regkeep)\s+(\d+)\s+\d+\s+(\S+)", line)
+                    if m:
+                        vff[m.group(1)] = (m.group(2), m.group(3))
+        except OSError:
+            pass
+        if "regkeep" not in vff:
+            rk_verdict = "not run"
+        elif vff["regkeep"][1] == "MERGED":
+            rk_verdict = "thermal copies MERGED, so it does **not** prevent the merge"
+        else:
+            rk_verdict = "thermal copies distinct, so it prevents the merge"
+        if any(r[1] in ("FAIL", "NOT RUN") for r in rows):
+            out.append("> **Warning:** at least one check above FAILED or was NOT RUN. The notes"
+                       " below describe the passing case; the table is authoritative.")
+            out.append("")
         out.append(NOTES.format(native_logic="{:,}".format(c["logic"]) if c else "(not run)",
                                 yowasp_logic="{:,}".format(yl) if yl is not None else "(not run)",
+                                native_ff=c["ff"] if c else "(not run)",
+                                yowasp_ff=yf if yf is not None else "(not run)",
+                                nokeep_ff=vff.get("nokeep", ("(not run)",))[0],
+                                regkeep_ff=vff.get("regkeep", ("(not run)",))[0],
+                                regkeep_verdict=rk_verdict,
                                 depth=depth if depth is not None else "?", path=path or "?").rstrip())
     out.append("")
     with open(args.out, "w") as fh:

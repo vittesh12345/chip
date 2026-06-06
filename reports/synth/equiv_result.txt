@@ -6,7 +6,7 @@ method: register-correspondence combinational equivalence; every flip-flop cut
 netlist: build/synth/orbit_demo_synth.v
 
 register ports cut (incl. alias names): 47, identical names in RTL and netlist
-tasks (2 in parallel, 42 s wall):
+tasks (2 in parallel, 40 s wall):
   task lane0  PASS
   task lane1  PASS
   task lane2  PASS
