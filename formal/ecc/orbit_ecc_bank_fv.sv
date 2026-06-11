@@ -42,8 +42,12 @@
 //       the data last written to that address (read-first: a same-cycle write
 //       is not yet visible), with rd_ce = (1 error), rd_ue = (2 errors); a UE
 //       read returns the uncorrected received data
-//   A3  the encoded write word carries wr_data; scrub_row advances by one per
-//       idle cycle only
+//   A3  the encoded write word is {enc(wr_data), wr_data} with the real
+//       encoder, so every golden word G is a codeword of the proven code;
+//       scrub_row advances by one per idle cycle only
+//   A5  each (abstracted) decoder instance is fed exactly the stored codeword
+//       of its way of the decoded row (documented de-interleaving), so the
+//       decoder contract is applied to the decoder's real input
 //   A4  ce_count, ue_count (CNT_W = 3, saturating), last_err_* equal the model
 //   U2  (FV_SEC, FV_CLEAN) no read and no scrub ever sees a UE: ue_count = 0
 //   U4  (FV_SEC, FV_DED) scrub bound: a single error is repaired within DEPTH
@@ -117,6 +121,21 @@ module orbit_ecc_bank_fv #(
     (* hierconn *) wire [IL*CW-1:0]       \dut.way_cw ;      // decoder outputs (abstracted)
     (* hierconn *) wire [IL-1:0]          \dut.way_ce ;
     (* hierconn *) wire [IL-1:0]          \dut.way_ue ;
+    // Inputs of the (abstracted) decoder instances. The contract below is
+    // stated for the harness's own de-interleaving of the array (rx); A5
+    // asserts that the bank really feeds that word to its decoder, otherwise a
+    // wrong read-side bit mapping would be hidden by the free decoder outputs.
+    // Way 1 is read only when INTERLEAVE > 1 (it does not exist otherwise).
+    (* hierconn *) wire [63:0]            \dut.g_dec[0].u_dec.data_in ;
+    (* hierconn *) wire [7:0]             \dut.g_dec[0].u_dec.check_in ;
+    (* hierconn *) wire [63:0]            \dut.g_dec[1].u_dec.data_in ;
+    (* hierconn *) wire [7:0]             \dut.g_dec[1].u_dec.check_in ;
+
+    // The real encoder, applied to wr_data: A3 asserts that the bank stores
+    // exactly this codeword, so every golden word G is a codeword of the code
+    // that orbit_secded72.sby proves (the premise of the decoder contract).
+    wire [7:0] f_wr_check;
+    orbit_secded72_enc u_f_enc (.data(wr_data), .check(f_wr_check));
 
     // ------------------------------------------------------------------
     // Reset in the first cycle
@@ -353,7 +372,12 @@ module orbit_ecc_bank_fv #(
             a_rd_data:  assert (rd_data == exp_d);
             a_rd_flags: assert (rd_ce == exp_ce && rd_ue == exp_ue);
         end
-        a_wr_cw:     assert (\dut.wr_cw [63:0] == wr_data);                     // A3
+        a_wr_cw:     assert (\dut.wr_cw == {f_wr_check, wr_data});              // A3
+        a_dec_in0:   assert ({\dut.g_dec[0].u_dec.check_in , \dut.g_dec[0].u_dec.data_in } ==
+                             g_dec[0].rx);                                       // A5
+        if (IL > 1)
+            a_dec_in1: assert ({\dut.g_dec[1].u_dec.check_in , \dut.g_dec[1].u_dec.data_in } ==
+                               g_dec[IL > 1 ? 1 : 0].rx);                        // A5
         a_ptr:       assert (\dut.scrub_ptr == m_ptr && scrub_row == m_ptr);
         a_log:       assert (ce_count == m_ce && ue_count == m_ue &&            // A4
                              last_err_valid == m_lev && last_err_ue == m_leu &&

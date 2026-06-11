@@ -171,7 +171,7 @@ Results and run times: `reports/ecc/results.txt` (written by `make ecc-report`).
   traffic with random single, adjacent 2-bit and double upsets against an
   independent reference model (data, error patterns, scrub pointer, log) and
   compares the whole array bit for bit.
-* `ecc-sim-mutants`: the benches must fail on six broken RTL copies.
+* `ecc-sim-mutants`: the benches must fail on seven broken RTL copies.
 * `ecc-formal`:
   * `orbit_secded72.sby` proves, for every 64-bit data word and every error
     position(s): no error returns data and check bits with no flags; any
@@ -190,8 +190,15 @@ Results and run times: `reports/ecc/results.txt` (written by `make ecc-report`).
     proves for the real decoder (for a stored word G xor E with G a
     codeword produced by the encoder: |E| = 0 or 1 gives G with the right
     flag, |E| = 2 gives UE and the unchanged word). The bank proof shows
-    G's data is the last written data, and G always comes from the bank's
-    own encoder, so the two proofs compose into the end-to-end statement.
+    G's data is the last written data, asserts that the stored write word is
+    exactly `{enc(wr_data), wr_data}` with the real encoder (so G is a
+    codeword of the proven code), and asserts that each decoder instance is
+    fed exactly the stored codeword G xor E of its way (A5), so the contract
+    is applied to the decoder's real input; with these premises checked the
+    two proofs compose into the end-to-end statement. (Before A5 and the
+    full-width write-word check were added, a bank that swapped the ways on
+    the read side, or stored wrong check bits, still passed `clean` and
+    `sec`.)
     The direct end-to-end check with the real decoder (`e2e_clean`,
     `e2e_upset`) is only a bounded BMC (5 and 4 steps from reset at
     `DEPTH = 2`; too short for the scrub bound),
@@ -200,6 +207,7 @@ Results and run times: `reports/ecc/results.txt` (written by `make ecc-report`).
   * Negative controls that must fail: `il1_neg` (the `sec` proof with
     `INTERLEAVE = 1`), the codec proof on a copy with an even-weight column,
     and the `sec` harness, as a BMC from reset (task `sec_bmc`), on a bank
-    that never writes back (the depth-2 `sec` prove would only report a
+    that never writes back and on a bank whose read-side de-interleaving
+    swaps the ways (the depth-2 `sec` prove would only report a
     failed induction step, i.e. UNKNOWN, not a reachable counterexample).
 * `ecc-synth`: Yosys generic synthesis of the encoder, decoder and bank.
