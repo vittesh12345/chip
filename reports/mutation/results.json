@@ -1,0 +1,2727 @@
+{
+ "m00": {
+  "description": "unmodified copy",
+  "gap_bench": {
+   "errors": [],
+   "status": "PASS"
+  },
+  "invalid": false,
+  "name": "baseline",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 56.6
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 14.2
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 88.2
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 92.6
+   }
+  }
+ },
+ "m01": {
+  "description": "product zero-extended instead of sign-extended to 32 bits",
+  "invalid": false,
+  "name": "prod_zext",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN ERRORS trials=1101 errors=1101",
+     "[fault] campaign check FAIL bench finished without internal errors: footer: {'trials': '1101', 'errors': '1101'}",
+     "[fault] campaign check FAIL fault-free controls are MASKED: 5 controls, not MASKED: [0, 1, 2, 3, 4]"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 44.6
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] datapath       FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m01/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] cover          FAIL    (expected PASS, 3s)  see /home/user/chip/build/mutation/m01/build/formal/quick/run/orbit_demo_cover/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m01/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m01/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.3
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m01/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m01/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m01/build/sim/directed/icarus.log",
+     "ERROR t=254000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=254000 [reset_stop] transferred result differs from the scoreboard",
+     "ERROR t=254000 [reset_stop] transferred lane differs from the hand-computed literal",
+     "ERROR t=254000 [reset_stop] transferred lane differs from the hand-computed literal"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 7.5
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m01/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m01/build/synth/audit_selftest \\",
+     "nokeep        517    4429 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4429 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-equiv",
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 52.8
+   }
+  }
+ },
+ "m02": {
+  "description": "operands multiplied as unsigned",
+  "invalid": false,
+  "name": "prod_unsigned",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN ERRORS trials=1101 errors=1101",
+     "[fault] campaign check FAIL bench finished without internal errors: footer: {'trials': '1101', 'errors': '1101'}",
+     "[fault] campaign check FAIL fault-free controls are MASKED: 5 controls, not MASKED: [0, 1, 2, 3, 4]"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 55.2
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] datapath       FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m02/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m02/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m02/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 12.7
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m02/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m02/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m02/build/sim/directed/icarus.log",
+     "ERROR t=254000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=254000 [reset_stop] transferred result differs from the scoreboard",
+     "ERROR t=254000 [reset_stop] transferred lane differs from the hand-computed literal",
+     "ERROR t=254000 [reset_stop] transferred lane differs from the hand-computed literal"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 7.1
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m02/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m02/build/synth/audit_selftest \\",
+     "nokeep        517    4586 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4586 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 48.5
+   }
+  }
+ },
+ "m03": {
+  "description": "accumulate ignores in_first (both copies)",
+  "invalid": false,
+  "name": "first_ignored",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.8s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN ERRORS trials=1101 errors=1101",
+     "[fault] campaign check FAIL bench finished without internal errors: footer: {'trials': '1101', 'errors': '1101'}",
+     "[fault] campaign check FAIL fault-free controls are MASKED: 5 controls, not MASKED: [0, 1, 2, 3, 4]"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 47.9
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] datapath       FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m03/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m03/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 12.5
+   },
+   "lint": {
+    "evidence": [
+     "%Error: Exiting due to 1 warning(s)"
+    ],
+    "failed_rules": [
+     "lint"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m03/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m03/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m03/build/sim/directed/icarus.log",
+     "ERROR t=274000 [signed_edges] DUT outputs differ from the reference model",
+     "ERROR t=274000 [signed_edges] transferred result differs from the scoreboard",
+     "ERROR t=274000 [signed_edges] transferred lane differs from the hand-computed literal",
+     "ERROR t=274000 [signed_edges] transferred lane differs from the hand-computed literal"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 25.4
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m03/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m03/build/synth/audit_selftest \\",
+     "nokeep        517    4631 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4631 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 76.5
+   }
+  }
+ },
+ "m04": {
+  "description": "copy B accumulates from copy A's stored value (loses independence)",
+  "invalid": false,
+  "name": "acc_b_from_a",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 38.7
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 13.8
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 85.2
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "acc pair lane 0             2    32   64/64     32/32 bits SHARED                      FAIL",
+     "acc pair lane 1             2    32   64/64     32/32 bits SHARED                      FAIL",
+     "acc pair lane 2             2    32   64/64     32/32 bits SHARED                      FAIL",
+     "acc pair lane 3             2    32   64/64     32/32 bits SHARED                      FAIL",
+     "result pair lane 0          2    32   64/64     32/32 bits SHARED                      FAIL"
+    ],
+    "failed_rules": [
+     "synth-audit",
+     "synth-audit-selftest"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 106.8
+   }
+  }
+ },
+ "m05": {
+  "description": "result registers load on every beat, not only on in_last",
+  "invalid": false,
+  "name": "res_en_every_beat",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 41.3
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] datapath       FAIL    (expected PASS, 2s)  see /home/user/chip/build/mutation/m05/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m05/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 17.4
+   },
+   "lint": {
+    "evidence": [
+     "%Error: Exiting due to 1 warning(s)"
+    ],
+    "failed_rules": [
+     "lint"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m05/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m05/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m05/build/sim/directed/icarus.log",
+     "ERROR t=454000 [multi_beat] DUT outputs differ from the reference model",
+     "ERROR t=464000 [multi_beat] DUT outputs differ from the reference model",
+     "ERROR t=494000 [multi_beat] DUT outputs differ from the reference model",
+     "ERROR t=504000 [multi_beat] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 7.3
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m05/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m05/build/synth/audit_selftest \\",
+     "nokeep        261    4365 MERGED           FAIL        4/9 pass",
+     "regkeep       261    4365 MERGED           FAIL        4/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 261 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (261 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 83.0
+   }
+  }
+ },
+ "m06": {
+  "description": "result A loaded from accumulator copy B",
+  "invalid": false,
+  "name": "res_a_from_acc_b",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 50.3
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 13.4
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 88.5
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "result pair lane 0          2    32   64/64     32/32 bits SHARED                      FAIL",
+     "result pair lane 1          2    32   64/64     32/32 bits SHARED                      FAIL",
+     "result pair lane 2          2    32   64/64     32/32 bits SHARED                      FAIL",
+     "result pair lane 3          2    32   64/64     32/32 bits SHARED                      FAIL",
+     "ERRORS (128):"
+    ],
+    "failed_rules": [
+     "synth-audit",
+     "synth-audit-selftest"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 90.2
+   }
+  }
+ },
+ "m07": {
+  "description": "out_data driven from result copy B instead of A",
+  "extra": {
+   "formal": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 41.4
+   }
+  },
+  "gap_bench": {
+   "errors": [
+    "ERR T2: out_valid=0 out_data[31:0]=31 (copy A holds 15)"
+   ],
+   "status": "FAIL"
+  },
+  "invalid": false,
+  "name": "result_from_b",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 49.2
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 15.0
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 90.5
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 103.7
+   }
+  }
+ },
+ "m08": {
+  "description": "mismatch compares the accumulators but not the results",
+  "invalid": false,
+  "name": "mismatch_no_res",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.6s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "[fault] res_b            prove  FAIL    (expected PASS,   0.7s)  L_stop_in_upset_cycle at step 1   <-- UNEXPECTED, see /home/user/chip/build/mutation/m08/build/fault/quick/formal/res_b/fault_prove/log",
+     "[fault] res_b            cover  FAIL    (expected PASS,   1.5s)  6 covers reached, 2 unreached   <-- UNEXPECTED, see /home/user/chip/build/mutation/m08/build/fault/quick/formal/res_b/fault_cover/logfi"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 26.0
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 14.1
+   },
+   "lint": {
+    "evidence": [
+     "%Error: Exiting due to 1 warning(s)"
+    ],
+    "failed_rules": [
+     "lint"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 86.6
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "result pair lane 0          2    32   32/64     not checkable (0/32 bits have flops)   FAIL",
+     "result pair lane 1          2    32   32/64     not checkable (0/32 bits have flops)   FAIL",
+     "result pair lane 2          2    32   32/64     not checkable (0/32 bits have flops)   FAIL",
+     "result pair lane 3          2    32   32/64     not checkable (0/32 bits have flops)   FAIL",
+     "ERRORS (5):"
+    ],
+    "failed_rules": [
+     "synth-audit",
+     "synth-audit-selftest"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 83.0
+   }
+  }
+ },
+ "m09": {
+  "description": "mismatch compares the results but not the accumulators",
+  "invalid": false,
+  "name": "mismatch_no_acc",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   0.8s)  L_stop_in_upset_cycle at step 1   <-- UNEXPECTED, see /home/user/chip/build/mutation/m09/build/fault/quick/formal/acc_a/fault_prove/log",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.6s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 3"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 30.2
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] FAILED: see /home/user/chip/build/mutation/m09/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.6
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 85.9
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 84.3
+   }
+  }
+ },
+ "m10": {
+  "description": "accumulator compare covers bits [15:0] only",
+  "invalid": false,
+  "name": "mismatch_low16",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   0.7s)  L_stop_in_upset_cycle at step 1   <-- UNEXPECTED, see /home/user/chip/build/mutation/m10/build/fault/quick/formal/acc_a/fault_prove/log",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 31.0
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] FAILED: see /home/user/chip/build/mutation/m10/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 18.5
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 87.3
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 92.7
+   }
+  }
+ },
+ "m11": {
+  "description": "clear_fault does not enable the accumulators (they keep their sum)",
+  "invalid": false,
+  "name": "acc_en_no_clr",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   0.8s)  H_after_upset at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m11/build/fault/quick/formal/acc_a/fault_prove/logfile.txt",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.8s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 22.5
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] datapath       FAIL    (expected PASS, 2s)  see /home/user/chip/build/mutation/m11/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m11/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m11/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 12.8
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.2
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m11/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m11/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m11/build/sim/directed/icarus.log",
+     "ERROR t=1335744000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335744000 [clear_fault] transferred result differs from the scoreboard",
+     "ERROR t=1335744000 [clear_fault] transferred lane differs from the hand-computed literal",
+     "ERROR t=1335744000 [clear_fault] transferred lane differs from the hand-computed literal"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 24.6
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m11/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m11/build/synth/audit_selftest \\",
+     "nokeep        517    4851 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4851 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 54.4
+   }
+  }
+ },
+ "m12": {
+  "description": "clear_fault does not zero accumulator copy B",
+  "invalid": false,
+  "name": "clr_skips_acc_b",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   0.9s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m12/build/fault/quick/formal/acc_a/fault_prove/logfil",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.8s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "[fault] res_b            prove  FAIL    (expected PASS,   0.9s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m12/build/fault/quick/formal/res_b/fault_prove/logfil",
+     "[fault] therm_c1         prove  FAIL    (expected PASS,   0.9s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m12/build/fault/quick/formal/therm_c1/fault_prove/log"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.8
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m12/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] dup            FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m12/build/formal/quick/run/orbit_demo_dup/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m12/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] datapath       FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m12/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m12/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m12/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.3
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m12/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m12/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m12/build/sim/directed/icarus.log",
+     "ERROR t=1335734000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335740000 [clear_fault] beat accepted once clear_fault is released",
+     "ERROR t=1335744000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335750000 [clear_fault] sum after clear_fault started from zero"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 24.6
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m12/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m12/build/synth/audit_selftest \\",
+     "nokeep        517    4718 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4718 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 67.4
+   }
+  }
+ },
+ "m13": {
+  "description": "clear_fault does not zero result copy B",
+  "invalid": false,
+  "name": "clr_skips_res_b",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   0.8s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m13/build/fault/quick/formal/acc_a/fault_prove/logfil",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.8s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 3",
+     "[fault] res_b            prove  FAIL    (expected PASS,   0.8s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m13/build/fault/quick/formal/res_b/fault_prove/logfil",
+     "[fault] therm_c1         prove  FAIL    (expected PASS,   0.8s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m13/build/fault/quick/formal/therm_c1/fault_prove/log"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 10.7
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m13/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] dup            FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m13/build/formal/quick/run/orbit_demo_dup/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m13/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] datapath       FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m13/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m13/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m13/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.4
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m13/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m13/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m13/build/sim/directed/icarus.log",
+     "ERROR t=1335734000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335740000 [clear_fault] beat accepted once clear_fault is released",
+     "ERROR t=1335744000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335750000 [clear_fault] sum after clear_fault started from zero"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 24.6
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m13/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m13/build/synth/audit_selftest \\",
+     "nokeep        517    4717 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4717 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 76.8
+   }
+  }
+ },
+ "m14": {
+  "description": "orbit_keep_reg default reset value all ones (lane storage resets to -1)",
+  "invalid": false,
+  "name": "keep_reset_ones",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN ERRORS trials=1101 errors=487",
+     "[fault] campaign check FAIL bench finished without internal errors: footer: {'trials': '1101', 'errors': '487'}",
+     "[fault] campaign check FAIL fault-free controls are MASKED: 5 controls, not MASKED: [1, 4]"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 56.4
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] datapath       FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m14/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m14/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m14/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m14/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.5
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m14/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m14/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m14/build/sim/directed/icarus.log",
+     "ERROR t=24000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=34000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=44000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=54000 [reset_stop] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 8.0
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m14/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m14/build/synth/audit_selftest \\",
+     "nokeep        517    4865 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4865 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 52.9
+   }
+  }
+ },
+ "m15": {
+  "description": "in_ready ignores out_ready (bubble when replacing the result)",
+  "invalid": false,
+  "name": "in_ready_ignores_out_ready",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 57.1
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m15/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m15/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] cover          FAIL    (expected PASS, 2s)  see /home/user/chip/build/mutation/m15/build/formal/quick/run/orbit_demo_cover/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m15/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 12.9
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m15/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m15/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m15/build/sim/directed/icarus.log",
+     "ERROR t=254000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=274000 [signed_edges] DUT outputs differ from the reference model",
+     "ERROR t=284000 [signed_edges] DUT outputs differ from the reference model",
+     "ERROR t=294000 [signed_edges] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 7.1
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m15/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m15/build/synth/audit_selftest \\",
+     "nokeep        517    4865 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4865 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 53.9
+   }
+  }
+ },
+ "m16": {
+  "description": "in_ready ignores a full output buffer (result overwritten)",
+  "invalid": false,
+  "name": "in_ready_no_buffer_check",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.6s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN ERRORS trials=1101 errors=775",
+     "[fault] campaign check FAIL bench finished without internal errors: footer: {'trials': '1101', 'errors': '775'}",
+     "[fault] campaign check FAIL fault-free controls are MASKED: 5 controls, not MASKED: [2, 3, 4]"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 55.2
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m16/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m16/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.9
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m16/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m16/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m16/build/sim/directed/icarus.log",
+     "ERROR t=3174000 [multi_beat] DUT outputs differ from the reference model",
+     "ERROR t=3804000 [multi_beat] DUT outputs differ from the reference model",
+     "ERROR t=4054000 [multi_beat] DUT outputs differ from the reference model",
+     "ERROR t=4064000 [multi_beat] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 6.9
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m16/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m16/build/synth/audit_selftest \\",
+     "nokeep        517    4863 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4863 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 61.8
+   }
+  }
+ },
+ "m17": {
+  "description": "in_ready not masked by the combinational mismatch",
+  "invalid": false,
+  "name": "in_ready_no_mismatch",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   0.8s)  L_stop_blocks at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m17/build/fault/quick/formal/acc_a/fault_prove/logfile.txt",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "[fault] res_b            prove  FAIL    (expected PASS,   1.0s)  L_stop_blocks at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m17/build/fault/quick/formal/res_b/fault_prove/logfile.txt"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 21.1
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 13.4
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 89.9
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 94.1
+   }
+  }
+ },
+ "m18": {
+  "description": "in_ready not masked by clear_fault (beat accepted and lost)",
+  "invalid": false,
+  "name": "in_ready_no_clear",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 53.4
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m18/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m18/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 14.3
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m18/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m18/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m18/build/sim/directed/icarus.log",
+     "ERROR t=1335684000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335694000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335704000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335714000 [clear_fault] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 27.9
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m18/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m18/build/synth/audit_selftest \\",
+     "nokeep        517    4864 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4864 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 55.7
+   }
+  }
+ },
+ "m19": {
+  "description": "out_valid not masked by the combinational mismatch",
+  "invalid": false,
+  "name": "out_valid_no_mismatch",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   1.1s)  L_stop_blocks at step 3   <-- UNEXPECTED, see /home/user/chip/build/mutation/m19/build/fault/quick/formal/acc_a/fault_prove/logfile.txt",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "[fault] res_b            prove  FAIL    (expected PASS,   1.0s)  L_stop_blocks at step 3   <-- UNEXPECTED, see /home/user/chip/build/mutation/m19/build/fault/quick/formal/res_b/fault_prove/logfile.txt"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 21.7
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 14.6
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 88.4
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 97.5
+   }
+  }
+ },
+ "m20": {
+  "description": "out_valid not masked by the latched fault",
+  "extra": {
+   "formal": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 37.8
+   }
+  },
+  "gap_bench": {
+   "errors": [
+    "ERR T1 cycle 0: fault=1 out_valid=1 in_ready=0",
+    "ERR T1 cycle 1: fault=1 out_valid=1 in_ready=0",
+    "ERR T1 cycle 2: fault=1 out_valid=1 in_ready=0",
+    "ERR T1 cycle 3: fault=1 out_valid=1 in_ready=0"
+   ],
+   "status": "FAIL"
+  },
+  "invalid": false,
+  "name": "out_valid_no_fault",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 62.5
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 13.4
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 88.2
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 94.3
+   }
+  }
+ },
+ "m21": {
+  "description": "out_fire uses the raw buffer flag (drains while masked)",
+  "extra": {
+   "formal": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 37.6
+   }
+  },
+  "gap_bench": {
+   "errors": [
+    "ERR T4: out_valid=0 after fault_q 1->0 (held result lost)"
+   ],
+   "status": "FAIL"
+  },
+  "invalid": false,
+  "name": "out_fire_unmasked",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 52.9
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 13.5
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 88.2
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 93.6
+   }
+  }
+ },
+ "m22": {
+  "description": "fault_q follows mismatch instead of being sticky",
+  "extra": {
+   "formal": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 40.1
+   }
+  },
+  "gap_bench": {
+   "errors": [
+    "ERR T1 cycle 0: fault=0 out_valid=1 in_ready=0",
+    "ERR T1 cycle 1: fault=0 out_valid=1 in_ready=0",
+    "ERR T1 cycle 2: fault=0 out_valid=1 in_ready=0",
+    "ERR T1 cycle 3: fault=0 out_valid=1 in_ready=0"
+   ],
+   "status": "FAIL"
+  },
+  "invalid": false,
+  "name": "fault_not_sticky",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 57.4
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 13.4
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 86.9
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 92.2
+   }
+  }
+ },
+ "m23": {
+  "description": "clear_fault does not empty the output buffer",
+  "invalid": false,
+  "name": "clear_keeps_out_valid",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 20.4
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] handshake      FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m23/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] datapath       FAIL    (expected PASS, 2s)  see /home/user/chip/build/mutation/m23/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m23/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m23/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 12.6
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m23/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m23/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m23/build/sim/directed/icarus.log",
+     "ERROR t=1335684000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335694000 [clear_fault] DUT outputs differ from the reference model",
+     "ERROR t=1335694000 [clear_fault] out_fire with no expected result queued",
+     "ERROR t=1335704000 [clear_fault] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 25.9
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m23/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m23/build/synth/audit_selftest \\",
+     "nokeep        517    4856 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4856 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 55.2
+   }
+  }
+ },
+ "m24": {
+  "description": "out_fire wins over a same-cycle in_last (replacement result lost)",
+  "invalid": false,
+  "name": "out_fire_priority",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN ERRORS trials=1101 errors=1087",
+     "[fault] campaign check FAIL bench finished without internal errors: footer: {'trials': '1101', 'errors': '1087'}",
+     "[fault] campaign check FAIL fault-free controls are MASKED: 5 controls, not MASKED: [0, 1, 2, 3, 4]"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 47.0
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m24/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] cover          FAIL    (expected PASS, 2s)  see /home/user/chip/build/mutation/m24/build/formal/quick/run/orbit_demo_cover/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m24/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.4
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m24/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m24/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m24/build/sim/directed/icarus.log",
+     "ERROR t=284000 [signed_edges] DUT outputs differ from the reference model",
+     "ERROR t=294000 [signed_edges] transferred result differs from the scoreboard",
+     "ERROR t=294000 [signed_edges] transferred lane differs from the hand-computed literal",
+     "ERROR t=294000 [signed_edges] transferred lane differs from the hand-computed literal"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 7.9
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m24/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m24/build/synth/audit_selftest \\",
+     "nokeep        517    4865 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4865 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 52.1
+   }
+  }
+ },
+ "m25": {
+  "description": "lane operand A sliced one bit too high (in_a[8*i+1 +: 8])",
+  "invalid": false,
+  "name": "lane_a_offbyone",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.6s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN ERRORS trials=1101 errors=2935",
+     "ValueError: invalid literal for int() with base 10: 'x'"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 43.7
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] datapath       FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m25/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m25/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m25/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.2
+   },
+   "lint": {
+    "evidence": [
+     "%Error: Exiting due to 1 warning(s)"
+    ],
+    "failed_rules": [
+     "lint"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m25/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m25/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m25/build/sim/directed/icarus.log",
+     "ERROR t=254000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=264000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=274000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=284000 [reset_stop] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 9.8
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "acc pair lane 3             2    32    0/64     not checkable (0/32 bits have flops)   FAIL",
+     "result pair lane 3          2    32    0/64     not checkable (0/32 bits have flops)   FAIL",
+     "ERRORS (128):",
+     "STORAGE_AUDIT FAIL: 7/9 groups pass, 521 flip-flop bits, 3 unprotected",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m25/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m25/build/synth/audit_selftest \\"
+    ],
+    "failed_rules": [
+     "synth-audit",
+     "synth-audit-selftest",
+     "synth-equiv",
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 51.0
+   }
+  }
+ },
+ "m26": {
+  "description": "lane operand B taken from the mirrored lane",
+  "invalid": false,
+  "name": "lane_b_reversed",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN ERRORS trials=1101 errors=1101",
+     "[fault] campaign check FAIL bench finished without internal errors: footer: {'trials': '1101', 'errors': '1101'}",
+     "[fault] campaign check FAIL fault-free controls are MASKED: 5 controls, not MASKED: [0, 1, 2, 3, 4]"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 56.7
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] datapath       FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m26/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m26/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m26/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.5
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.2
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m26/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m26/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m26/build/sim/directed/icarus.log",
+     "ERROR t=254000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=254000 [reset_stop] transferred result differs from the scoreboard",
+     "ERROR t=254000 [reset_stop] transferred lane differs from the hand-computed literal",
+     "ERROR t=254000 [reset_stop] transferred lane differs from the hand-computed literal"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 7.6
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m26/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m26/build/synth/audit_selftest \\",
+     "nokeep        517    4865 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4865 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 54.1
+   }
+  }
+ },
+ "m27": {
+  "description": "shutdown_req only for code 2, not for the unused code 3",
+  "extra": {
+   "formal": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 43.0
+   }
+  },
+  "gap_bench": {
+   "errors": [
+    "ERR T3: therm_state=3 shutdown_req=0 in_ready=0"
+   ],
+   "status": "FAIL"
+  },
+  "invalid": false,
+  "name": "shutdown_only_stop",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 52.1
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 14.9
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 86.4
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 96.1
+   }
+  }
+ },
+ "m28": {
+  "description": "throttle at > 80 instead of >= 80",
+  "invalid": false,
+  "name": "throttle_gt",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 55.4
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m28/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m28/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m28/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m28/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.6
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m28/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m28/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m28/build/sim/directed/icarus.log",
+     "ERROR t=12424000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=12434000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=12444000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=12454000 [throttle] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 8.2
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m28/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m28/build/synth/audit_selftest \\",
+     "nokeep        517    4867 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4867 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 56.5
+   }
+  }
+ },
+ "m29": {
+  "description": "stop at > 95 instead of >= 95",
+  "invalid": false,
+  "name": "stop_gt",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 55.9
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m29/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m29/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m29/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m29/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m29/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.5
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m29/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m29/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m29/build/sim/directed/icarus.log",
+     "ERROR t=13514000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=13520000 [throttle] 95 C from THROTTLE: STOP next cycle",
+     "ERROR t=13524000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=13534000 [throttle] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 27.6
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m29/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m29/build/synth/audit_selftest \\",
+     "nokeep        517    4861 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4861 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 53.4
+   }
+  }
+ },
+ "m30": {
+  "description": "THROTTLE recovers at < 70 instead of <= 70",
+  "invalid": false,
+  "name": "recover_lt_throttle",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 47.5
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m30/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m30/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m30/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m30/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m30/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.6
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m30/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m30/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m30/build/sim/directed/icarus.log",
+     "ERROR t=13234000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=13244000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=13254000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=13264000 [throttle] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.8
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m30/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m30/build/synth/audit_selftest \\",
+     "nokeep        517    4852 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4852 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 53.5
+   }
+  }
+ },
+ "m31": {
+  "description": "STOP recovers at < 70 instead of <= 70",
+  "invalid": false,
+  "name": "recover_lt_stop",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 52.1
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m31/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m31/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m31/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m31/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.9
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m31/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m31/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m31/build/sim/directed/icarus.log",
+     "ERROR t=244000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=250000 [reset_stop] first NORMAL cycle admits the waiting beat",
+     "ERROR t=254000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=260000 [reset_stop] exactly one result after reset scenario"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 24.3
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m31/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m31/build/synth/audit_selftest \\",
+     "nokeep        517    4849 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4849 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 52.9
+   }
+  }
+ },
+ "m32": {
+  "description": "temperature compared unsigned (negative readings look hot)",
+  "invalid": false,
+  "name": "temp_unsigned",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 57.6
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m32/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m32/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m32/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m32/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m32/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.0
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m32/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m32/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m32/build/sim/directed/icarus.log",
+     "ERROR t=14244000 [negative_temps] DUT outputs differ from the reference model",
+     "ERROR t=14254000 [negative_temps] DUT outputs differ from the reference model",
+     "ERROR t=14264000 [negative_temps] DUT outputs differ from the reference model",
+     "ERROR t=14274000 [negative_temps] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 25.5
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m32/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m32/build/synth/audit_selftest \\",
+     "nokeep        517    4865 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4865 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 54.9
+   }
+  }
+ },
+ "m33": {
+  "description": "invalid sensor reading does not force STOP",
+  "invalid": false,
+  "name": "invalid_ignored",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 63.0
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m33/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m33/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m33/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m33/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m33/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 12.7
+   },
+   "lint": {
+    "evidence": [
+     "%Error: Exiting due to 1 warning(s)"
+    ],
+    "failed_rules": [
+     "lint"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m33/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m33/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m33/build/sim/directed/icarus.log",
+     "ERROR t=64000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=70000 [reset_stop] invalid sensor after reset: STOP, in_ready=0",
+     "ERROR t=74000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=80000 [reset_stop] invalid sensor after reset: STOP, in_ready=0"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 24.3
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m33/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m33/build/synth/audit_selftest \\",
+     "nokeep        517    4864 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4864 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 57.1
+   }
+  }
+ },
+ "m34": {
+  "description": "thermal copy 0 resets to NORMAL (outvoted by copies 1 and 2)",
+  "invalid": false,
+  "name": "reset_copy0_normal",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   0.8s)  H_ref_copies_equal at step 1   <-- UNEXPECTED, see /home/user/chip/build/mutation/m34/build/fault/quick/formal/acc_a/fault_prove/logfil",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.5s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "[fault] res_b            prove  FAIL    (expected PASS,   0.8s)  H_ref_copies_equal at step 1   <-- UNEXPECTED, see /home/user/chip/build/mutation/m34/build/fault/quick/formal/res_b/fault_prove/logfil",
+     "[fault] therm_c1         prove  FAIL    (expected PASS,   0.8s)  H_ref_copies_equal at step 1   <-- UNEXPECTED, see /home/user/chip/build/mutation/m34/build/fault/quick/formal/therm_c1/fault_prove/log"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.0
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m34/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] dup            FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m34/build/formal/quick/run/orbit_demo_dup/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m34/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] datapath       FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m34/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m34/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m34/build/formal/quick/run/orbit_demo_wrap/logfile.txt"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 10.4
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m34/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m34/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m34/build/sim/directed/icarus.log",
+     "ERROR t=24000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=34000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=44000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=54000 [reset_stop] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 33.7
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m34/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m34/build/synth/audit_selftest \\",
+     "nokeep        518    4850 MERGED           FAIL        8/9 pass",
+     "regkeep       518    4850 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 518 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (518 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 52.7
+   }
+  }
+ },
+ "m35": {
+  "description": "all thermal copies reset to NORMAL instead of STOP",
+  "invalid": false,
+  "name": "reset_all_normal",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 49.9
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m35/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m35/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m35/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m35/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m35/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 14.5
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m35/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m35/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m35/build/sim/directed/icarus.log",
+     "ERROR t=24000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=34000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=44000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=50000 [reset_stop] in reset: STOP, in_ready=0, out_valid=0, fault=0"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 29.8
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m35/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m35/build/synth/audit_selftest \\",
+     "nokeep        517    4850 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4850 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 52.0
+   }
+  }
+ },
+ "m36": {
+  "description": "voter uses only copies 0 and 1 (AND of two copies)",
+  "invalid": false,
+  "name": "voter_two_copies",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "[fault] therm_c1         prove  FAIL    (expected PASS,   0.8s)  T_admission_equal at step 1   <-- UNEXPECTED, see /home/user/chip/build/mutation/m36/build/fault/quick/formal/therm_c1/fault_prove/logf"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 39.1
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] clear          FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m36/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m36/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 13.5
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 85.6
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 92.5
+   }
+  }
+ },
+ "m37": {
+  "description": "therm_repair compares copies 0 and 1 only",
+  "invalid": false,
+  "name": "repair_no_c2",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.6s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.7s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "SEU_CAMPAIGN DONE trials=1101 errors=0",
+     "[fault] campaign check PASS bench finished without internal errors: footer: {'trials': '1101', 'errors': '0'}",
+     "[fault] campaign check FAIL therm: every upset REPAIRED, nothing else visible: 12 trials; trial 1037 u_thermal.u_copy2.q[0] MASKED; trial 1038 u_thermal.u_copy2.q[0] MASKED; trial 1039 u_thermal.u_cop"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 59.6
+   },
+   "formal-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 17.6
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 87.2
+   },
+   "synth": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 126.3
+   }
+  }
+ },
+ "m38": {
+  "description": "thermal copy 2 is not rewritten from the voted next state",
+  "invalid": false,
+  "name": "copy2_no_feedback",
+  "targets": {
+   "fault-quick": {
+    "evidence": [
+     "[fault] acc_a            prove  FAIL    (expected PASS,   0.8s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m38/build/fault/quick/formal/acc_a/fault_prove/logfil",
+     "[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 1",
+     "[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.8s)  D_no_silent_loss at step 3",
+     "[fault] neg_product      fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 3",
+     "[fault] res_b            prove  FAIL    (expected PASS,   1.0s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m38/build/fault/quick/formal/res_b/fault_prove/logfil",
+     "[fault] therm_c1         prove  FAIL    (expected PASS,   1.0s)  H_ref_copies_equal at step 2   <-- UNEXPECTED, see /home/user/chip/build/mutation/m38/build/fault/quick/formal/therm_c1/fault_prove/log"
+    ],
+    "failed_rules": [
+     "fault-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 11.1
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m38/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] dup            FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m38/build/formal/quick/run/orbit_demo_dup/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m38/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] datapath       FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m38/build/formal/quick/run/orbit_demo_datapath/logfile.txt",
+     "[formal] clear          FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m38/build/formal/quick/run/orbit_demo_clear/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m38/build/formal/quick/run/orbit_demo_wrap/logfile.txt"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 14.9
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.2
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m38/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m38/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m38/build/sim/directed/icarus.log",
+     "ERROR t=244000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=254000 [reset_stop] DUT outputs differ from the reference model",
+     "ERROR t=264000 [signed_edges] DUT outputs differ from the reference model",
+     "ERROR t=274000 [signed_edges] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 6.6
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "thermal triple              3     2    4/6      not checkable (0/2 bits have flops)    FAIL",
+     "ERRORS (2):",
+     "STORAGE_AUDIT FAIL: 8/9 groups pass, 521 flip-flop bits, 3 unprotected",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m38/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m38/build/synth/audit_selftest \\",
+     "baseline (unmodified)            UNEXPECTED FAIL"
+    ],
+    "failed_rules": [
+     "synth-audit",
+     "synth-audit-selftest",
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 80.4
+   }
+  }
+ },
+ "m39": {
+  "description": "throttle phase not forced to 0 outside THROTTLE",
+  "invalid": false,
+  "name": "phase_not_reset",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 55.1
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m39/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m39/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m39/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 16.6
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.1
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m39/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m39/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m39/build/sim/directed/icarus.log",
+     "ERROR t=13444000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=13450000 [throttle] single THROTTLE cycle admits",
+     "ERROR t=13454000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=13554000 [throttle] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 7.7
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m39/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m39/build/synth/audit_selftest \\",
+     "nokeep        517    4861 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4861 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 76.3
+   }
+  }
+ },
+ "m40": {
+  "description": "first THROTTLE cycle blocks (admit = phase)",
+  "invalid": false,
+  "name": "throttle_first_blocks",
+  "targets": {
+   "fault-quick": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 49.6
+   },
+   "formal-quick": {
+    "evidence": [
+     "[formal] thermal        FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m40/build/formal/quick/run/orbit_demo_thermal/logfile.txt",
+     "[formal] handshake      FAIL    (expected PASS, 0s)  see /home/user/chip/build/mutation/m40/build/formal/quick/run/orbit_demo_handshake/logfile.txt",
+     "[formal] wrap           FAIL    (expected PASS, 1s)  see /home/user/chip/build/mutation/m40/build/formal/quick/run/orbit_demo_wrap/logfile.txt",
+     "[formal] FAILED: see /home/user/chip/build/mutation/m40/build/formal/summary_quick.md"
+    ],
+    "failed_rules": [
+     "formal-quick"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 15.6
+   },
+   "lint": {
+    "evidence": [],
+    "failed_rules": [],
+    "rc": 0,
+    "status": "PASS",
+    "wall_s": 0.2
+   },
+   "sim": {
+    "evidence": [
+     "set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /home/user/chip/build/mutation/m40/build/sim/model.log",
+     "set -o pipefail; vvp -n /home/user/chip/build/mutation/m40/build/sim/directed/tb.vvp +seed=1 | tee /home/user/chip/build/mutation/m40/build/sim/directed/icarus.log",
+     "ERROR t=12424000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=12434000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=12444000 [throttle] DUT outputs differ from the reference model",
+     "ERROR t=12454000 [throttle] DUT outputs differ from the reference model"
+    ],
+    "failed_rules": [
+     "sim-directed",
+     "sim-random"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 7.6
+   },
+   "synth": {
+    "evidence": [
+     "SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings",
+     "set -o pipefail; python3 synth/audit_selftest.py /home/user/chip/build/mutation/m40/build/synth/orbit_demo_synth_flat.json /home/user/chip/build/mutation/m40/build/synth/audit_selftest \\",
+     "nokeep        517    4844 MERGED           FAIL        8/9 pass",
+     "regkeep       517    4844 MERGED           FAIL        8/9 pass",
+     "nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)",
+     "regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)"
+    ],
+    "failed_rules": [
+     "synth-gls"
+    ],
+    "rc": 2,
+    "status": "KILL",
+    "wall_s": 63.3
+   }
+  }
+ }
+}

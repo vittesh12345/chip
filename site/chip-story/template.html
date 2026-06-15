@@ -1,0 +1,304 @@
+<title>ORBIT-AI Chip Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: four scroll scenes, each a tall section with a sticky 100svh stage whose
+   scroll progress (0..1) drives CSS variables; a static spec grid closes the page.
+   Deliberately one dark, cinematic look (die photography on black). */
+:root {
+  color-scheme: dark;
+  --bg: #05070a;
+  --ink: #eef2f1;
+  --ink-dim: rgba(238, 242, 241, 0.22);
+  --muted: #8d9a97;
+  --line: #ffffff;
+  --accent: #46d6a8;
+  --panel: #0e5f47;
+  --panel-ink: #e9f7f1;
+  --panel-dim: rgba(233, 247, 241, 0.26);
+  --rule: rgba(238, 242, 241, 0.14);
+  --font: "Geist", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+[hidden] { display: none !important; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 400 16px/1.5 var(--font); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+.scene { position: relative; }
+.stage { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+#hero { height: 420svh; }
+#proof { height: 240svh; }
+#build { height: 300svh; }
+
+/* ---------- scene 1: die photo, headline, line-art, tilt ---------- */
+.persp { position: absolute; inset: 0; display: grid; place-items: center; perspective: 1400px; }
+.card {
+  --size: min(60vw, 58svh);
+  position: relative; width: var(--size); aspect-ratio: 1; margin-top: calc(var(--lift, 0) * -12svh);
+  transform-style: preserve-3d; will-change: transform;
+}
+.card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.card .shade {
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 90% at 50% 55%, rgba(5, 7, 10, 0.25), rgba(5, 7, 10, 0.78));
+  opacity: var(--shade, 1);
+}
+.frame {
+  position: absolute; inset: -5%; border: 1px solid var(--line); border-radius: 10px;
+  opacity: var(--frame, 0); transform: translateZ(-120px);
+}
+.frame::before, .frame::after {
+  content: ""; position: absolute; width: 10px; height: 10px; border: 1px solid var(--line); background: var(--bg);
+}
+.frame::before { left: -6px; top: 18%; }
+.frame::after { right: -6px; bottom: 22%; }
+
+.trace { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.trace rect, .trace path {
+  fill: none; stroke: var(--line); stroke-width: 0.55;
+}
+.trace .edge { stroke-width: 0.8; }
+.trace .fence { stroke-width: 0.9; }
+.trace .hot { stroke: var(--accent); stroke-width: 1.1; }
+.trace .block { stroke-width: 0.45; opacity: 0.85; }
+.trace .tag {
+  font: 500 5.2px var(--mono); letter-spacing: 0.08em; fill: var(--line);
+  opacity: 0;
+}
+
+.headline {
+  position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+  padding-inline: 24px; text-align: center; pointer-events: none;
+}
+.headline h1 {
+  margin: 0 auto; max-width: 15ch; font-weight: 400; letter-spacing: -0.035em;
+  font-size: clamp(38px, 7vw, 96px); line-height: 1.02; text-wrap: balance;
+}
+.w { opacity: var(--o, 0.12); transition: opacity 0.12s linear; }
+
+.caption {
+  position: absolute; left: 50%; bottom: 7svh; transform: translateX(-50%);
+  width: min(620px, calc(100vw - 32px)); text-align: center;
+}
+.caption p { margin: 0; font-size: clamp(18px, 2.2vw, 26px); letter-spacing: -0.015em; }
+.caption small { display: block; margin-top: 8px; font: 400 12px/1.5 var(--mono); color: var(--muted); letter-spacing: 0.04em; }
+
+.eyebrow { font: 500 12px var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.corner { position: absolute; top: 24px; left: 24px; right: 24px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+/* ---------- scene 2: green proof panel ---------- */
+#proof .stage { display: grid; place-items: center; padding: 16px; }
+.panel {
+  width: min(1100px, 100%); min-height: min(68svh, 640px); border-radius: 18px;
+  background: var(--panel); color: var(--panel-ink);
+  padding: clamp(28px, 6vw, 72px); display: flex; flex-direction: column; justify-content: space-between; gap: 32px;
+  transform: translateY(calc((1 - var(--rise, 0)) * 55svh)) scale(calc(0.94 + var(--rise, 0) * 0.06));
+}
+.panel .big {
+  margin: 0; font-weight: 400; letter-spacing: -0.03em; line-height: 1.08; text-wrap: balance;
+  font-size: clamp(30px, 5.2vw, 68px); max-width: 20ch;
+}
+.panel .w { opacity: 1; color: color-mix(in srgb, var(--panel-ink) calc(var(--o, 0) * 100%), var(--panel-dim)); }
+.panel .foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font: 400 13px/1.5 var(--mono); color: var(--panel-ink); opacity: 0.8; }
+
+/* ---------- scene 3: parts, then package ---------- */
+#build .stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); align-items: center; gap: 4vw; padding-inline: max(16px, 6vw); }
+.copy { display: grid; gap: 18px; }
+.copy h2 { margin: 0; font-weight: 400; letter-spacing: -0.03em; line-height: 1.06; font-size: clamp(30px, 4.2vw, 58px); text-wrap: balance; max-width: 16ch; }
+.copy p { margin: 0; color: var(--muted); max-width: 44ch; }
+.swap { position: relative; aspect-ratio: 1; width: 100%; max-width: 78svh; justify-self: center; }
+.swap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+.swap .b { opacity: var(--x, 0); }
+.swap .a { opacity: calc(1 - var(--x, 0)); }
+.steps { display: grid; gap: 10px; }
+.step { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: baseline; opacity: calc(0.3 + var(--on, 0) * 0.7); }
+.step b { font: 500 12px var(--mono); color: var(--accent); }
+.mock { font: 400 12px/1.5 var(--mono); color: var(--muted); }
+
+/* ---------- specs ---------- */
+#specs { padding: 18svh max(16px, 6vw) 12svh; display: grid; gap: 56px; }
+#specs h2 { margin: 0; font-weight: 400; letter-spacing: -0.03em; font-size: clamp(30px, 4vw, 54px); max-width: 18ch; line-height: 1.06; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--rule); }
+.spec { padding: 22px 20px 26px 0; border-bottom: 1px solid var(--rule); min-width: 0; }
+.spec .n { font-size: clamp(30px, 3.6vw, 46px); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.spec .n small { font-size: 0.45em; color: var(--muted); letter-spacing: 0; margin-left: 4px; }
+.spec .l { color: var(--muted); font-size: 14px; max-width: 30ch; }
+.cta { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px;
+  background: var(--ink); color: var(--bg); text-decoration: none; font-weight: 500;
+}
+.btn:hover { background: var(--accent); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.fine { color: var(--muted); font: 400 12px/1.6 var(--mono); max-width: 90ch; }
+
+@media (max-width: 760px) {
+  #build .stage { grid-template-columns: 1fr; align-content: center; gap: 24px; }
+  .swap { max-width: min(88vw, 46svh); order: -1; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card { --size: min(84vw, 56svh); }
+  .corner .eyebrow:last-child { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .w { transition: none; }
+}
+</style>
+
+<main>
+  <section class="scene" id="hero" aria-label="The die">
+    <div class="stage">
+      <div class="corner"><span class="eyebrow">ORBIT-AI · 4-lane INT8 demonstrator</span><span class="eyebrow">SkyWater sky130 · routed with OpenROAD</span></div>
+      <div class="persp">
+        <div class="card" id="card">
+          <div class="frame"></div>
+          <img src="{{IMG_DIE_TOP}}" alt="Top-down render of the routed ORBIT-AI demonstrator die: gold power grid over blue, green and purple wiring">
+          <div class="shade"></div>
+          {{TRACE}}
+        </div>
+      </div>
+      <div class="headline"><h1 data-words>AI in orbit has to catch its own mistakes.</h1></div>
+      <div class="caption" id="cap">
+        <p data-words>Every protected bit has a twin at least 250 µm away.</p>
+        <small>Copy A and copy B sit in separate placement fences; the three thermal-state copies sit 98 µm apart.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="proof" aria-label="Fault injection result">
+    <div class="stage">
+      <div class="panel">
+        <p class="eyebrow" style="color:inherit;opacity:.75">Gate-level fault injection · routed netlist</p>
+        <p class="big" data-words>936 bit flips injected into the routed chip's protected registers. Every one was stopped or repaired.</p>
+        <div class="foot"><span>702 duplicated-copy flips → fault-stop, no wrong result released</span><span>234 thermal-copy flips → repaired next clock</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="scene" id="build" aria-label="From layout to package">
+    <div class="stage">
+      <div class="copy">
+        <span class="eyebrow">From layout to part</span>
+        <h2>750,439 rectangles of real layout. One small package.</h2>
+        <div class="steps">
+          <div class="step" data-step="0"><b>01</b><span>6,270 logic cells, each traced to the part it belongs to.</span></div>
+          <div class="step" data-step="1"><b>02</b><span>Die, bond wires, leadframe and lid, pulled apart like an assembly drawing.</span></div>
+        </div>
+        <p class="mock">The package is an illustrative mockup. The die geometry is measured.</p>
+      </div>
+      <div class="swap">
+        <img class="a" src="{{IMG_LAYOUT_PARTS}}" alt="The routed layout coloured by part: storage copies at the left and right edges, lane arithmetic in the middle">
+        <img class="b" src="{{IMG_PACKAGE_EXPLODED}}" alt="Exploded view of a mockup QFN package: lid lifted above the die, bond wires and leadframe">
+      </div>
+    </div>
+  </section>
+
+  <section id="specs" aria-label="Specifications">
+    <h2>Built with open tools. Checked like a real tapeout.</h2>
+    <div class="grid">
+      <div class="spec"><div class="n">346<small>µm</small></div><div class="l">Die edge, sky130 open PDK</div></div>
+      <div class="spec"><div class="n">139<small>MHz</small></div><div class="l">7.2 ns clock, setup and hold met after routing</div></div>
+      <div class="spec"><div class="n">521</div><div class="l">Flip-flops; 518 in duplicated or triplicated storage</div></div>
+      <div class="spec"><div class="n">0<small>/ 262</small></div><div class="l">Same-bit copy pairs in touching cells (13 before separation)</div></div>
+      <div class="spec"><div class="n">0</div><div class="l">DRC errors; LVS and antenna checks clean</div></div>
+      <div class="spec"><div class="n">4×</div><div class="l">Signed INT8 MAC lanes with INT32 accumulation</div></div>
+    </div>
+    <div class="cta">
+      <a class="btn" href="{{EXPLORER}}" target="_blank" rel="noopener">Explore the die in 3D →</a>
+      <span class="eyebrow">Layout · die photo · package</span>
+    </div>
+    <p class="fine">A small demonstrator of the ORBIT-AI concept, not the 16-tile chip. Nothing here is radiation-qualified: distances are geometry, not an upset-rate model, and sky130 is not radiation-characterised. Colours in the die render approximate thin-film interference.</p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+  var seg = function (p, a, b) { return clamp((p - a) / (b - a), 0, 1); };
+  var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
+
+  // Split sentences into word spans once.
+  var groups = [].slice.call(document.querySelectorAll('[data-words]')).map(function (el) {
+    var words = el.textContent.trim().split(/\s+/);
+    el.textContent = '';
+    return { el: el, spans: words.map(function (w, i) {
+      var s = document.createElement('span');
+      s.className = 'w';
+      s.textContent = w;
+      el.appendChild(s);
+      if (i < words.length - 1) el.appendChild(document.createTextNode(' '));
+      return s;
+    }) };
+  });
+  function reveal(g, t, soft) {
+    var n = g.spans.length;
+    g.spans.forEach(function (s, i) {
+      var o = clamp(t * (n + soft) - i, 0, 1);
+      s.style.setProperty('--o', (0.12 + 0.88 * o).toFixed(3));
+    });
+  }
+  function revealPanel(g, t) {
+    var n = g.spans.length;
+    g.spans.forEach(function (s, i) { s.style.setProperty('--o', clamp(t * (n + 2) - i, 0, 1).toFixed(3)); });
+  }
+
+  var hero = document.getElementById('hero'), card = document.getElementById('card');
+  var proof = document.getElementById('proof'), build = document.getElementById('build');
+  var head = groups[0], cap = groups[1], big = groups[2];
+  var headEl = document.querySelector('.headline'), capEl = document.getElementById('cap');
+  var steps = [].slice.call(document.querySelectorAll('[data-step]'));
+  var delay = function (el) { return parseFloat(el.style.getPropertyValue('--d')) || 0; };
+  var traces = [].slice.call(document.querySelectorAll('.trace rect, .trace path')).map(function (el) {
+    var len = el.getTotalLength();
+    el.removeAttribute('pathLength');
+    el.style.strokeDasharray = len.toFixed(2) + ' ' + len.toFixed(2);
+    return { el: el, len: len, d: delay(el) };
+  });
+  var tags = [].slice.call(document.querySelectorAll('.trace .tag')).map(function (el) { return { el: el, d: delay(el) }; });
+
+  function progress(sec) {
+    var r = sec.getBoundingClientRect();
+    return clamp(-r.top / (r.height - window.innerHeight), 0, 1);
+  }
+
+  function frame() {
+    var p = reduce.matches ? 1 : progress(hero);
+    // 0-0.22 headline words, 0.22-0.30 headline out, 0.28-0.58 line-art draws, 0.55-0.9 tilt, caption
+    var vw = window.innerWidth, vh = window.innerHeight, size = card.offsetWidth || 1;
+    var cover = Math.max(vw, vh) / size * 1.04;
+    var t = ease(seg(p, 0.5, 0.88));
+    var s = cover + (1 - cover) * t;
+    card.style.transform = 'scale(' + s.toFixed(4) + ') rotateX(' + (t * 10).toFixed(2) + 'deg) rotateY(' + (-t * 22).toFixed(2) + 'deg) rotateZ(' + (t * 2).toFixed(2) + 'deg)';
+    card.style.setProperty('--lift', t.toFixed(4));
+    var draw = seg(p, 0.26, 0.6);
+    traces.forEach(function (o) { o.el.style.strokeDashoffset = (o.len * (1 - clamp((draw - o.d) * 3, 0, 1))).toFixed(2); });
+    tags.forEach(function (o) { o.el.style.opacity = clamp((draw - o.d) * 4 - 0.4, 0, 1).toFixed(3); });
+    card.style.setProperty('--shade', (0.35 + 0.65 * (1 - seg(p, 0.2, 0.34))).toFixed(3));
+    card.style.setProperty('--frame', seg(p, 0.7, 0.9).toFixed(3));
+    reveal(head, seg(p, 0.02, 0.2), 1.5);
+    headEl.style.opacity = (1 - seg(p, 0.22, 0.3)).toFixed(3);
+    headEl.style.transform = 'translateY(calc(-50% - ' + (seg(p, 0.22, 0.3) * 40).toFixed(1) + 'px))';
+    capEl.style.opacity = seg(p, 0.72, 0.8).toFixed(3);
+    reveal(cap, seg(p, 0.74, 0.94), 1.5);
+
+    var q = reduce.matches ? 1 : progress(proof);
+    document.querySelector('.panel').style.setProperty('--rise', ease(seg(q, 0, 0.3)).toFixed(4));
+    revealPanel(big, seg(q, 0.25, 0.85));
+
+    var b = reduce.matches ? 1 : progress(build);
+    var x = ease(seg(b, 0.45, 0.65));
+    document.querySelector('.swap').style.setProperty('--x', x.toFixed(4));
+    steps[0].style.setProperty('--on', (seg(b, 0.05, 0.2) * (1 - x * 0.7)).toFixed(3));
+    steps[1].style.setProperty('--on', x.toFixed(3));
+  }
+
+  var queued = false;
+  function request() { if (!queued) { queued = true; requestAnimationFrame(function () { queued = false; frame(); }); } }
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  if (reduce.addEventListener) reduce.addEventListener('change', request);
+  frame();
+})();
+</script>

@@ -155,7 +155,89 @@ MUTANTS = [
 
 # Hand-written analysis of mutants that survive the fast suite, filled in
 # after inspecting results.json. Keys are mutant names; value: (equivalent?, text).
-ANALYSIS = {}
+ANALYSIS = {
+    "result_from_b": (False,
+        "Not observable in any *transferred* result: `out_data` differs from production only while "
+        "`res_a != res_b`, and then `mismatch` forces `out_valid = 0` in the same cycle; reset and "
+        "`clear_fault` zero both copies. It is observable at the `out_data` port, though: after a single "
+        "upset of `u_res_b` while a result is held, production keeps showing the correct copy-A value "
+        "(SPEC 5: \"`out_data` comes from copy A\"), the mutant shows the corrupted copy. No check looks "
+        "at `out_data` while `out_valid` is low (the sim benches and the fault harness compare data only on "
+        "transfer), so SPEC 5's sentence is untested. Low severity. Missing check: in the fault harness / "
+        "SEU campaign, for `u_res_b` (and `u_acc_*`) upsets, `out_data` of the faulty design must equal "
+        "the fault-free reference in every cycle, not only on `out_fire` (evidence bench T2). If the "
+        "project regards `out_data` as don't-care while `out_valid` is low, this mutant becomes equivalent "
+        "and SPEC 5 should say so instead."),
+    "out_valid_no_fault": (False,
+        "Differs only when `fault_q = 1`, `mismatch = 0` and `out_valid_q = 1`. Fault-free, `fault_q` never "
+        "rises; after a single lane-storage upset the copies stay different until `clear_fault` (no beat "
+        "can be accepted while `mismatch`/`fault_q` is high), so `~mismatch` alone already masks, which is "
+        "why the lane scenarios of fault-quick cannot see it. It is reachable with one upset of the "
+        "unprotected `fault_q` (SPEC 8; bit 520 of the SEU campaign) while a result is held: production "
+        "stops (`out_valid = 0`, the SPEC 4 formula), the mutant keeps offering the result with `fault = 1`. "
+        "`fault/campaign_report.py` reports the `fault_q` trials but does not check them, and the fault "
+        "formal scenarios have no `fault_q` scenario. Missing check: the port invariant "
+        "`fault -> !out_valid && !in_ready` in every cycle of every SEU-campaign trial (including bit 520), "
+        "or as an always-on property in `fault/fi_harness.sv` together with a `fault_q` upset scenario "
+        "(evidence bench T1)."),
+    "fault_not_sticky": (False,
+        "`fault_q <= mismatch` instead of sticky. After a single lane upset the copies never re-agree "
+        "without `clear_fault`/reset (all writes are blocked), so `fault_q` stays high in the mutant too, and "
+        "fault-free it is never set: that is why every single-upset lane check passes. It is observable with "
+        "one `fault_q` 0->1 upset (SPEC 8): production holds the false fault stop until `clear_fault`, the "
+        "mutant drops `fault` at the next edge and presents the held result again; also with two lane "
+        "upsets that restore agreement. Missing check: stickiness at the port, `$past(fault) && "
+        "$past(rst_n) && !$past(clear_fault) -> fault`, in the fault harness (it holds under any single "
+        "upset, so it can be always on) and in the SEU campaign for bit 520 (after a `fault_q` 0->1 upset "
+        "`fault` must stay high and `out_valid`/`in_ready` low until the next `clear_fault`; evidence bench T1)."),
+    "out_fire_unmasked": (True,
+        "Equivalent under the SPEC's fault model (fault-free, or one upset). `out_fire` differs only in "
+        "cycles with `out_valid_q & out_ready & (fault_q | mismatch)`, where the mutant clears `out_valid_q`. "
+        "In those cycles both designs drive `out_valid = 0` and `in_ready = 0`. From such a cycle on, "
+        "`fault_q` is (or becomes, one cycle later) 1 and stays 1 until `clear_fault` or reset, because a "
+        "lane mismatch cannot heal without a write and no write is admitted, and a spurious `fault_q` "
+        "0->1 upset is itself sticky; `clear_fault` and reset then write `out_valid_q = 0` in both designs. "
+        "So the only state difference is overwritten before it can reach a port. It becomes visible only "
+        "with a second, independent upset (`fault_q` 0->1 with `out_ready` high, then `fault_q` 1->0: "
+        "production re-presents the held result, the mutant has silently drained it; evidence bench T4, "
+        "run with +t4). SPEC 8 names the `fault_q` 1->0 upset as a known escape, so no check is proposed."),
+    "shutdown_only_stop": (False,
+        "Differs only in voted state 3. Every copy resets to STOP and is written from `nxt`, which is never 3; "
+        "one upset copy is outvoted, and two copies agreeing on a value in {0,1,2} vote to it, so code 3 needs "
+        "two copies upset before the next repair edge (formal proves `P5_never_code3` fault-free). The mutant "
+        "is therefore equivalent under the single-upset model, but SPEC 2/6 specify code 3 explicitly as a "
+        "defensive requirement (\"3 unused, behaves as STOP\", `shutdown_req = therm_state[1]`), and "
+        "`P5_shutdown_req` / `P4_blocked_stop_or_3` are vacuous for code 3 because the harness cannot reach it. "
+        "Test gap for a defensive requirement. Missing check: force two thermal copies to 2'b11 in simulation "
+        "(or a formal task with the three copies' state unconstrained after reset, or a double-upset "
+        "thermal scenario) and assert `therm_state == 3 -> shutdown_req && !in_ready` (evidence bench T3)."),
+}
+
+# Hand-written observations on the kill matrix (not about single survivors).
+NOTES = [
+    "* The baseline (unmodified copy) passes every target, so every kill is caused by the mutation.",
+    "* The targets are complementary. `sim` alone lets through every mutant whose effect needs an upset "
+    "(`mismatch_*`, `in_ready_no_mismatch`, `out_valid_no_mismatch`, `voter_two_copies`, `repair_no_c2`); "
+    "`fault-quick` is the only killer of `in_ready_no_mismatch`, `out_valid_no_mismatch` and `repair_no_c2`.",
+    "* `acc_b_from_a` and `res_a_from_acc_b` remove the independence of the two copies without changing any "
+    "single-upset behaviour (a lone upset is still caught by the compare); only the synthesis storage audit "
+    "(shared D-input logic between copies) kills them. That is the right check for a common-mode defect.",
+    "* Most `synth` kills are not independent: `synth-gls` first runs the directed bench "
+    "`tb/tb_orbit_demo.v` on the RTL as its reference, and that reference run is what fails "
+    "(`synth-gls: RTL reference run FAILED`) for every functional mutant also killed by `sim`. "
+    "The kills that belong to synthesis itself are the storage audit (`acc_b_from_a`, `res_a_from_acc_b`, "
+    "`mismatch_no_res`, `lane_a_offbyone`, `copy2_no_feedback`) and the netlist equivalence check "
+    "(`prod_zext`, `lane_a_offbyone`).",
+    "* The `lint` kills (Verilator -Wall: an input or register left unused, an out-of-range part select) are "
+    "incidental side effects of those mutations; every lint-killed mutant is also killed by a functional target.",
+    "* All five fast-suite survivors also pass the full `formal` set (liveness and pdr tasks included), "
+    "which checks the fault-free design only.",
+    "* Four of the five survivors concern `fault_q`, `out_valid` masking or code 3, i.e. behaviour that is "
+    "only reachable through an upset of an unprotected flip-flop or a double upset. The single-upset lane "
+    "and thermal scenarios are tested thoroughly; the gap is at the port-level invariants around the "
+    "fault latch (`fault` sticky, `fault -> !out_valid && !in_ready`) under a `fault_q` upset.",
+    "* No RTL or SPEC defect was found by this campaign.",
+]
 
 
 def log(msg):
@@ -228,6 +310,22 @@ def run_target(repo, rtl_dir, build_dir, target, logfile, timeout):
             "evidence": evidence if status != "PASS" else []}
 
 
+def run_gap_bench(bench, rtl_dir, workdir):
+    """Compile and run the evidence bench on one RTL copy; returns PASS / FAIL / ERROR."""
+    workdir.mkdir(parents=True, exist_ok=True)
+    vvp = workdir / "gap_bench.vvp"
+    r = subprocess.run(["iverilog", "-g2005", "-o", str(vvp), str(bench)]
+                       + [str(rtl_dir / f) for f in RTL_FILES], capture_output=True, text=True)
+    if r.returncode != 0:
+        (workdir / "gap_bench.log").write_text(r.stdout + r.stderr)
+        return "ERROR", []
+    r = subprocess.run(["vvp", "-n", str(vvp), "+t4"], capture_output=True, text=True, timeout=300)
+    (workdir / "gap_bench.log").write_text(r.stdout + r.stderr)
+    status = "PASS" if re.search(r"^TB_MUTATION_GAPS PASS", r.stdout, re.M) else \
+             "FAIL" if re.search(r"^TB_MUTATION_GAPS FAIL", r.stdout, re.M) else "ERROR"
+    return status, [l for l in r.stdout.splitlines() if l.startswith("ERR")][:4]
+
+
 class Results:
     """results.json, written after every completed target so a run can resume."""
 
@@ -275,9 +373,13 @@ def md_escape(s):
 
 def write_report(a, res, mutants, targets, extra):
     lines = ["# Mutation testing of the verification suite", ""]
+    try:
+        out_shown = a.out.relative_to(a.repo)
+    except ValueError:
+        out_shown = a.out
     lines.append(f"Generated by `scripts/mutation_test.py` on {datetime.date.today()} "
                  f"(`make mutation`). Source RTL: `{a.rtl_dir}`. Each mutant is a copy under "
-                 f"`{a.out}/m<NN>/rtl` with one design error; each column is "
+                 f"`{out_shown}/m<NN>/rtl` with one design error; each column is "
                  f"`make RTL_DIR=<copy> BUILD=<dir> -k <target>`.")
     lines.append("")
     lines.append("K = target failed (mutant killed), . = target passed (mutant survived it), "
@@ -324,6 +426,21 @@ def write_report(a, res, mutants, targets, extra):
     lines.append("")
     lines.append("Kills per target: " + ", ".join(f"{t} {per_target[t]}" for t in targets) + ".")
     lines.append("")
+    sole = {t: [] for t in targets}
+    for mid, (name, _, _) in mutants:
+        ks = [t for t in targets if (res.data.get(mid, {}).get("targets", {}).get(t) or {}).get("status") == "KILL"]
+        if len(ks) == 1:
+            sole[ks[0]].append(f"`{name}`")
+    lines.append("Mutants killed by exactly one target (no redundancy in the suite for these): "
+                 + "; ".join(f"{t}: {', '.join(v)}" for t, v in sole.items() if v) + ".")
+    lines.append("")
+    gb0 = res.data.get("m00", {}).get("gap_bench")
+    if gb0:
+        lines.append(f"Evidence bench `{a.gap_bench}` (checks the suite lacks, see the survivors) "
+                     f"on the unmodified RTL: **{gb0['status']}**.")
+        lines.append("")
+    if NOTES:
+        lines += ["## Observations", ""] + NOTES + [""]
     lines.append("## Surviving mutants")
     lines.append("")
     if not survivors:
@@ -343,6 +460,12 @@ def write_report(a, res, mutants, targets, extra):
                 f"`{t}` {'KILLED it' if r['status'] == 'KILL' else r['status']}"
                 + (f" ({', '.join(r['failed_rules'])})" if r['failed_rules'] else "")
                 for t, r in ex.items()) + ".")
+            lines.append("")
+        gb = res.data.get(mid, {}).get("gap_bench")
+        if gb:
+            lines.append(f"Evidence bench `{a.gap_bench}` on this mutant: **{gb['status']}**"
+                         + (" (" + "; ".join(f"`{e}`" for e in gb['errors']) + ")" if gb['errors'] else "")
+                         + ".")
             lines.append("")
         if name in ANALYSIS:
             eq, text = ANALYSIS[name]
@@ -380,6 +503,8 @@ def main():
     ap.add_argument("--only", default="", help="comma-separated mutant names (default all)")
     ap.add_argument("--resume", action="store_true", help="reuse results.json, skip finished runs")
     ap.add_argument("--keep-build", action="store_true", help="keep each mutant's build directory")
+    ap.add_argument("--gap-bench", default="", help="evidence bench run on the source RTL "
+                    "(must pass) and on every survivor (should fail); recorded in the report")
     ap.add_argument("--report", default=None, help="summary.md path (default <out>/summary.md)")
     ap.add_argument("--list", action="store_true", help="list the mutants and exit")
     ap.add_argument("--report-only", action="store_true", help="rewrite the report from results.json")
@@ -457,7 +582,22 @@ def main():
                 if not a.keep_build:
                     shutil.rmtree(base / "build", ignore_errors=True)
 
+    gap_bad = []
+    if a.gap_bench and not a.report_only:
+        bench = a.repo / a.gap_bench
+        surv = ["m00"] + [mid for mid, m in selected if not res.data.get(mid, {}).get("invalid") and
+                          not any((res.get(mid, t) or {}).get("status") == "KILL" for t in targets)]
+        for mid in surv:
+            rtl = a.out / mid / "rtl"
+            st, errs = run_gap_bench(bench, rtl, a.out / mid)
+            res.set_meta(mid, gap_bench={"status": st, "errors": errs})
+            log(f"{mid} gap bench {st}")
+            if (mid == "m00") != (st == "PASS"):
+                gap_bad.append(mid)
     killed, valid, survivors, missing = write_report(a, res, selected, targets, extra)
+    if gap_bad:
+        log(f"evidence bench gave an unexpected result on: {', '.join(gap_bad)}")
+        return 1
     if missing:
         log(f"survivor(s) without a written analysis: {', '.join(missing)}")
         return 1
