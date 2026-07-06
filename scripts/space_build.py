@@ -28,6 +28,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, "site", "chip-space")
 TEX_DIR = os.path.join(OUT_DIR, "tex")
 EXPLORER = "https://claude.ai/artifact/5R9GAuPsfhBUXSWFermUvm"
+# Real photograph from the Vantage site checkout (vantage.industries), used as context only.
+# NASA iss073e0703405, Cygnus XL on final approach to the ISS; credited in the page caption.
+SITE_ASSETS = os.environ.get("VANTAGE_SITE", "/home/user/vittesh12345/vantage-defense") + "/assets"
+PHOTO_SRC = "segments-approach.webp"
+PHOTO_MAX_W = 2000
 
 # texture group -> GDS layers merged into it (vias fold into the metal above)
 GROUPS = [
@@ -110,6 +115,22 @@ def data_uri(path):
         return f"data:{mime};base64," + base64.b64encode(f.read()).decode("ascii")
 
 
+def photo_uri(src_dir=None):
+    """Re-encode the site photograph as a webp data URI (resized to PHOTO_MAX_W, natural
+    colour, no filter). Keeps whichever of the re-encode and the site's own file is smaller."""
+    path = os.path.join(src_dir or SITE_ASSETS, PHOTO_SRC)
+    raw = open(path, "rb").read()
+    im = Image.open(io.BytesIO(raw)).convert("RGB")
+    if im.width > PHOTO_MAX_W:
+        im = im.resize((PHOTO_MAX_W, round(im.height * PHOTO_MAX_W / im.width)), Image.LANCZOS)
+    buf = io.BytesIO()
+    im.save(buf, "WEBP", quality=80, method=6)
+    data = buf.getvalue() if len(buf.getvalue()) < len(raw) else raw
+    w, h = Image.open(io.BytesIO(data)).size
+    print(f"  photo {PHOTO_SRC}: {w}x{h}, {len(data) / 1e3:.0f} kB")
+    return "data:image/webp;base64," + base64.b64encode(data).decode("ascii"), w, h
+
+
 def scene_data(meta):
     """Geometry the page needs, in die micrometres (origin lower-left, y up)."""
     regions = {r["role"]: r["boxes"][0] for r in meta["regions"]["list"]}
@@ -127,6 +148,7 @@ def main():
     ap.add_argument("--size", type=int, default=1400, help="texture edge in pixels")
     ap.add_argument("--skip-raster", action="store_true", help="reuse site/chip-space/tex/*.png")
     ap.add_argument("--explorer-url", default=EXPLORER)
+    ap.add_argument("--site-assets", default=SITE_ASSETS, help="vantage.industries assets/ directory")
     args = ap.parse_args()
 
     meta = json.load(open(os.path.join(ROOT, "viz", "layout.json")))
@@ -138,8 +160,10 @@ def main():
         paths = rasterize(meta, args.size)
     tex = {n: data_uri(paths[n]) for n in names}
 
+    photo, pw, ph = photo_uri(args.site_assets)
     tpl = open(os.path.join(OUT_DIR, "template.html")).read()
-    html = (tpl.replace("{{TEXTURES}}", json.dumps(tex))
+    html = (tpl.replace("{{PHOTO}}", photo).replace("{{PHOTO_W}}", str(pw)).replace("{{PHOTO_H}}", str(ph))
+               .replace("{{TEXTURES}}", json.dumps(tex))
                .replace("{{SCENE}}", json.dumps(scene_data(meta), separators=(",", ":")))
                .replace("{{EXPLORER}}", args.explorer_url))
     out = os.path.join(OUT_DIR, "index.html")

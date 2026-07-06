@@ -1,632 +1,685 @@
 <title>ORBIT-AI Space Chip</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a fixed three.js canvas (stars, Earth, the die) behind a column of tall scroll
-   scenes. Each scene has a sticky 100svh stage; its scroll progress drives both the 3D
-   choreography and HTML text that enters from different directions.
-   Visual system: the Vantage public site (vantage-home.css, scoped .vx there): near-black
-   ground, 1px hairline grids, 2px corners, mono eyebrows with a leading rule, Space Grotesk
-   display, IBM Plex Sans body, IBM Plex Mono data. ~95% neutral; colour only where it means
-   something (accent = copy A / built, accent-2 = copy B / verified values, warn = thermal
-   and scope). One dark look. */
+/* Vantage editorial light/dark system, inlined from vantage.industries (design.md, tokens.css,
+   site.css). The page alternates full-light and full-dark bands. One fixed WebGL canvas (a quiet
+   star field and the routed die) sits behind everything; the dark scroll scenes are transparent
+   so it shows through them, and every light band is opaque so it never does. */
 :root {
-  color-scheme: dark;
-  --bg: #05070a;
-  --bg-2: #0a0e14;
-  --panel: #0d1219;
-  --panel-hi: #0f1620;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-2: rgba(255, 255, 255, 0.14);
-  --txt: #e8edf2;
-  --soft: #b9c6d3;
-  --muted: #8a97a6;
-  --dim: #5b6672;
-  --accent: #4da3ff;
-  --accent-2: #7cf6c9;
-  --warn: #ffb454;
-  --term: #070b11;
-  --term-bar: #0b1017;
-  --glass: rgba(5, 7, 10, 0.8);
-  --glass-panel: rgba(13, 18, 25, 0.9);
-  --font-d: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-b: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-m: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --head: 68px;
-}
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; background: var(--bg); color: var(--txt); }
-body { font: 400 16.5px/1.6 var(--font-b); -webkit-font-smoothing: antialiased; overflow-x: clip; }
-a { color: inherit; }
-.wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  /* Tone: LIGHT (default) */
+  --bg: #ffffff;
+  --bg-2: #f2f1ee;
+  --bg-3: #e8e7e2;
+  --panel: #ffffff;
+  --fg: #16181c;
+  --fg-muted: #565a62;
+  --fg-faint: #83878f;
+  --rule: #e4e3df;
+  --rule-strong: #c7c6c1;
+  --status-nominal: #1f9d57;
+  --status-watch: #9a7400;
+  --status-threat: #cf3d2c;
+  /* Fixed regardless of tone */
+  --ink: #16181c;
+  --paper: #ffffff;
+  --night: #0e0f12;
+  --block-grey: #ecebe7;
+  --glass: rgba(14, 15, 18, 0.82);
+  --glass-line: #3c414a;
+  --glass-fg: #f4f4f2;
+  --glass-muted: #a7abb2;
 
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --text-micro: 11px;
+  --text-caption: 12.5px;
+  --text-body-lg: 19px;
+  --text-lede: clamp(19px, 1.6vw, 23px);
+  --text-h3: clamp(21px, 2.2vw, 28px);
+  --text-h2: clamp(28px, 3.4vw, 46px);
+  --text-h1: clamp(38px, 5.4vw, 74px);
+  --text-statement: clamp(30px, 4.4vw, 60px);
+  --text-display: clamp(40px, 7vw, 104px);
+  --tracking-display: -0.03em;
+  --tracking-tight: -0.02em;
+  --tracking-label: 0.16em;
+  --page-max-width: 1240px;
+  --header-height: 60px;
+  --header-inset: 14px;
+  --anchor-offset: 104px;
+  --head: 92px;
+  --section-pad: 96px;
+  --section-pad-tight: 64px;
+  --section-pad-lg: 128px;
+  --radius-sm: 4px;
+  --radius-nav: 16px;
+  --radius-pill: 999px;
+  --motion-fast: 160ms;
+  --motion-mid: 320ms;
+  --motion-reveal: 680ms;
+  --motion-ease-out: cubic-bezier(0.16, 0.84, 0.3, 1);
+}
+.tone-dark {
+  --bg: #0e0f12;
+  --bg-2: #16181c;
+  --bg-3: #1e2128;
+  --panel: #16181c;
+  --fg: #f4f4f2;
+  --fg-muted: #a7abb2;
+  --fg-faint: #787d86;
+  --rule: #2a2d33;
+  --rule-strong: #3c414a;
+  --status-nominal: #3ad389;
+  --status-watch: #ffca16;
+  --status-threat: #ff6b5f;
+}
+
+/* ---------- reset and base (site.css) ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; background: var(--night); }
+body { background: var(--night); color: var(--fg); font-family: var(--font-sans); font-size: 16px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; overflow-x: clip; }
+img { max-width: 100%; display: block; }
+svg { display: block; }
+a { color: inherit; text-decoration: none; }
+a, button { outline-offset: 3px; }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--fg); }
+[hidden] { display: none !important; }
+::selection { background: var(--fg); color: var(--bg); }
+.skip-link { position: fixed; top: 12px; left: 12px; z-index: 100; padding: 8px 12px; background: var(--fg); color: var(--bg); border-radius: var(--radius-sm); transform: translateY(-180%); }
+.skip-link:focus { transform: none; }
+.wrap { max-width: var(--page-max-width); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+.m { font-family: var(--font-mono); font-size: 0.92em; letter-spacing: -0.01em; }
+
+/* ---------- WebGL stage and label layer ---------- */
 #gl { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100lvh; display: block; z-index: 0; }
 .nogl #gl { display: none; }
-.nogl body, .nogl { background: radial-gradient(140% 70% at 50% 120%, #0e2a4d 0%, #06101d 38%, var(--bg) 70%); }
-#veil { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(90% 80% at 50% 50%, rgba(5, 7, 10, 0.55), rgba(5, 7, 10, 0.86)); opacity: 0; }
-#hud { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+/* Labels sit between the canvas and the page: dark scenes let them through, opaque light bands cover them. */
+#hud { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; background: transparent; }
 #hud svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 #hud line, #hud polyline { fill: none; stroke-width: 1; }
 main { position: relative; z-index: 2; }
+footer { position: relative; z-index: 2; }
 
-/* ---------- header (site Nav) ---------- */
-.vhead { position: fixed; top: 0; left: 0; right: 0; z-index: 5; padding-top: env(safe-area-inset-top, 0px);
-  background: rgba(5, 7, 10, 0.55); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
-  border-bottom: 1px solid transparent; transition: background-color 0.3s, border-color 0.3s; }
-.vhead.scrolled { background: rgba(5, 7, 10, 0.85); border-bottom-color: rgba(255, 255, 255, 0.1); }
-.vhead .wrap { height: var(--head); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex: none; }
-.brand svg { width: 26px; height: 26px; flex: none; }
-.brand span { font: 700 19px/1 var(--font-d); letter-spacing: 0.04em; color: var(--txt); }
-.vnav { display: flex; align-items: center; gap: 36px; }
-.vnav a { font-size: 14px; color: var(--muted); text-decoration: none; transition: color 0.2s; white-space: nowrap; }
-.vnav a:hover, .vnav a[aria-current] { color: var(--txt); }
-.vright { display: flex; align-items: center; gap: 14px; }
-.vstat { display: flex; align-items: center; gap: 7px; font: 400 10px/1 var(--font-m); letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim); white-space: nowrap; }
-.vstat i { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); flex: none; animation: vpulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-@keyframes vpulse { 50% { opacity: 0.45; } }
-.hbtn { display: inline-flex; align-items: center; white-space: nowrap; border-radius: 2px; border: 1px solid var(--line-2); background: var(--txt); color: #05070a;
-  padding: 8px 16px; font: 500 13px/1.2 var(--font-d); letter-spacing: 0.04em; text-decoration: none; transition: all 0.2s; }
-.hbtn:hover { background: var(--accent); border-color: var(--accent); }
+/* ---------- tone bands ---------- */
+.tone-light, .tone-dark { background: var(--bg); color: var(--fg); }
+section { position: relative; scroll-margin-top: var(--anchor-offset); }
+.sec { padding: var(--section-pad) 0; }
+.sec-wide { padding: var(--section-pad-lg) 0; }
+.divider { border-top: 1px solid var(--rule); }
+/* Scroll scenes and the hero are dark bands painted by the canvas behind them. */
+.tone-dark.scene, .tone-dark.hero, .tone-dark.end { background: transparent; }
 
-/* ---------- shared components (site .vx) ---------- */
-.eyebrow { font: 400 12px/1.5 var(--font-m); letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent);
-  display: inline-flex; align-items: center; gap: 10px; }
-.eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--accent); opacity: 0.7; flex: none; }
-.btn { font: 500 13px/1.2 var(--font-d); letter-spacing: 0.04em; padding: 11px 20px; border: 1px solid var(--line-2); border-radius: 2px;
-  color: var(--txt); background: rgba(5, 7, 10, 0.35); display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
-  transition: all 0.2s; cursor: pointer; text-shadow: none; white-space: nowrap; }
-.btn:hover { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 22px -6px var(--accent); }
-.btn-solid { background: var(--txt); color: #05070a; border-color: var(--txt); }
-.btn-solid:hover { background: var(--accent); border-color: var(--accent); color: #05070a; box-shadow: 0 0 26px -6px var(--accent); }
-.btn:focus-visible, .hbtn:focus-visible, .vnav a:focus-visible, .brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.hero-cta { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
-.idx { position: absolute; top: 20px; right: 22px; font: 400 12px/1 var(--font-m); color: var(--dim); }
-.vtag { display: inline-block; align-self: flex-start; border: 1px solid var(--line); background: var(--bg-2); padding: 5px 10px;
-  border-radius: 2px; font: 400 11px/1.45 var(--font-m); color: var(--muted); }
-.vtag b { color: var(--accent-2); font-weight: 600; }
-.lead { font: 400 10px/1.4 var(--font-m); letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent-2); }
-/* hairline grid for cells that sit on translucent glass (no background bleed while cells animate) */
-.hair { border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
-.hair > * { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-/* hairline grid on opaque cells: exactly the site's gap:1px technique */
-.hgrid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.eyebrow { display: inline-flex; align-items: center; gap: 12px; font-family: var(--font-sans); font-weight: 600; font-size: var(--text-caption);
+  letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg-faint); }
+.eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--rule-strong); flex: 0 0 auto; }
+.sec-head { max-width: 62ch; }
+.sec-head h2 { font-weight: 600; color: var(--fg); font-size: var(--text-h2); line-height: 1.03; letter-spacing: var(--tracking-display); margin: 20px 0; text-wrap: balance; }
+.sec-head p { color: var(--fg-muted); font-size: var(--text-lede); max-width: 56ch; }
+.sec-head p + p { margin-top: 16px; }
 
-.scene { position: relative; }
-.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-#s-hero { height: 290svh; }
+/* ---------- floating pill header (site.css) ---------- */
+header#hdr { position: fixed; top: calc(var(--header-inset) + env(safe-area-inset-top, 0px)); left: 0; right: 0; z-index: 50; pointer-events: none; }
+.nav-pill { pointer-events: auto; position: relative; display: flex; align-items: center; gap: 16px; height: var(--header-height); padding: 0 12px 0 20px;
+  border-radius: var(--radius-nav); border: 1px solid #e4e3df; background: color-mix(in srgb, var(--paper) 82%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5); backdrop-filter: blur(20px) saturate(1.5); color: var(--ink); box-shadow: 0 1px 2px rgba(16, 18, 20, .04);
+  transition: background var(--motion-mid) var(--motion-ease-out), color var(--motion-mid) var(--motion-ease-out), border-color var(--motion-mid) var(--motion-ease-out), box-shadow var(--motion-mid) var(--motion-ease-out); }
+#hdr:not(.scrolled) .nav-pill { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; border-color: rgba(255, 255, 255, .22); color: #fff; box-shadow: none; }
+#hdr.scrolled .nav-pill { box-shadow: 0 6px 24px rgba(16, 18, 20, .10); }
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; letter-spacing: .01em; color: inherit; white-space: nowrap; }
+.brand .mark { width: 22px; height: 22px; flex: 0 0 auto; }
+.brand .mark svg { width: 100%; height: 100%; fill: currentColor; }
+.navlinks { display: flex; align-items: center; gap: 24px; margin-left: 28px; }
+.navlinks a { display: inline-flex; align-items: center; height: var(--header-height); font-size: 14px; font-weight: 500; color: inherit; opacity: .62; white-space: nowrap; transition: opacity var(--motion-fast) var(--motion-ease-out); }
+.navlinks a:hover, .navlinks a[aria-current] { opacity: 1; }
+.navlinks a.nav-extra { display: none; }
+.nav-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.nav-cta { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border: 1px solid currentColor; border-radius: var(--radius-sm);
+  font-size: 13.5px; font-weight: 500; color: inherit; white-space: nowrap; transition: background var(--motion-fast) var(--motion-ease-out); }
+.nav-cta:hover { background: currentColor; }
+.nav-cta:hover span { color: var(--paper); }
+#hdr.scrolled .nav-cta:hover span { color: var(--paper); }
+#hdr:not(.scrolled) .nav-cta:hover span { color: var(--ink); }
+.nav-toggle { display: none; align-items: center; justify-content: center; width: 40px; height: 40px; border: 1px solid transparent; border-radius: var(--radius-sm); color: inherit; background: none; cursor: pointer; }
+.nav-toggle:hover { border-color: currentColor; }
+.nav-toggle svg { width: 20px; height: 20px; stroke: currentColor; fill: none; }
+.nav-clock { display: none; font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; opacity: .62; font-variant-numeric: tabular-nums; }
+@media (min-width: 1040.02px) { .nav-clock:not(:empty) { display: inline; } }
+
+/* ---------- buttons and CTA blocks (site.css) ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 24px; border: 1px solid var(--fg); border-radius: var(--radius-sm);
+  font-family: var(--font-sans); font-size: 14.5px; font-weight: 500; letter-spacing: .005em; color: var(--fg); background: transparent; cursor: pointer; white-space: nowrap;
+  transition: background var(--motion-fast) var(--motion-ease-out), color var(--motion-fast) var(--motion-ease-out); }
+.btn:hover { background: var(--fg); color: var(--bg); }
+.btn-solid { background: var(--fg); color: var(--bg); }
+.btn-solid:hover { background: transparent; color: var(--fg); }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.cta-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cta-block { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 168px; padding: clamp(24px, 4vw, 44px);
+  font-size: var(--text-h3); font-weight: 500; letter-spacing: var(--tracking-tight); line-height: 1.2; }
+.cta-block .arrow { font-size: 1.5em; transition: transform var(--motion-mid) var(--motion-ease-out); }
+.cta-block:hover .arrow { transform: translateX(10px); }
+.cta-block--grey { background: var(--block-grey); color: var(--ink); }
+.cta-block--ink { background: var(--ink); color: var(--paper); }
+.cta-head { max-width: 60ch; margin-bottom: 40px; }
+.cta-head h2 { font-weight: 600; color: var(--fg); font-size: var(--text-h2); letter-spacing: var(--tracking-display); line-height: 1.05; margin: 20px 0 16px; text-wrap: balance; }
+.cta-head p { color: var(--fg-muted); font-size: var(--text-lede); max-width: 52ch; }
+
+/* ---------- status chips (site.css): only where a real state is reported ---------- */
+.chip { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--text-micro); letter-spacing: .1em; text-transform: uppercase;
+  padding: 5px 8px; border-radius: var(--radius-sm); border: 1px solid currentColor; color: var(--fg-faint); white-space: nowrap; line-height: 1.3; }
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+.chip-nominal { color: var(--status-nominal); }
+.chip-watch { color: var(--status-watch); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+/* Provenance label over a figure (the site's .disc-lead) */
+.lead { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg-faint); }
+.note { font-family: var(--font-mono); font-size: 12px; color: var(--fg-faint); line-height: 1.6; max-width: 84ch; }
+
+/* ---------- 1 hero (dark) ---------- */
+.hero { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: calc(var(--header-inset) + var(--header-height) + 40px) 0; text-align: center; }
+.hero .eyebrow { justify-content: center; }
+.hero h1 { font-weight: 600; color: var(--fg); font-size: var(--text-h1); line-height: 1.02; letter-spacing: var(--tracking-display); margin: 24px auto 20px; max-width: 22ch; }
+.hero h1 .hl { display: block; }
+.hero .lede { font-size: var(--text-lede); color: var(--fg-muted); max-width: 52ch; margin: 0 auto 32px; }
+.hero .cta-row { justify-content: center; }
+.hero .scope-line { margin-top: 28px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; color: var(--fg-faint); }
+
+/* ---------- 2 statement (light) ---------- */
+.statement p.big { font-weight: 600; color: var(--fg); font-size: var(--text-statement); line-height: 1.1; letter-spacing: var(--tracking-display); max-width: 24ch; }
+.statement .dim { color: var(--fg-faint); }
+.statement em { font-style: italic; }
+.statement a { color: var(--fg); border-bottom: 2px solid var(--rule-strong); transition: border-color var(--motion-fast) var(--motion-ease-out); }
+.statement a:hover { border-bottom-color: var(--fg); }
+.statement .sub { margin-top: 32px; font-family: var(--font-mono); font-size: 13px; color: var(--fg-muted); max-width: 64ch; }
+.stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 64px; position: relative; padding-top: 32px; }
+.stages::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: var(--rule-strong); transform: scaleX(0); transform-origin: 0 50%; transition: transform 560ms linear; }
+.stages.in::after { transform: scaleX(1); }
+.stage { position: relative; }
+.stage::before { content: ""; position: absolute; top: -33px; left: 0; width: 36px; height: 3px; background: var(--fg); transform: scaleX(0); transform-origin: 0 50%; transition: transform var(--motion-fast) var(--motion-ease-out); }
+.stage.in::before { transform: scaleX(1); }
+.stage .sn { font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; color: var(--fg-faint); }
+.stage .who { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); margin-top: 8px; }
+.stage h4 { font-weight: 600; color: var(--fg); font-size: var(--text-body-lg); line-height: 1.25; margin: 12px 0 8px; letter-spacing: -0.01em; }
+.stage p { font-size: 14px; color: var(--fg-muted); }
+
+/* ---------- scroll scenes (dark, transparent over the canvas) ---------- */
+.stage-s { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 #s-build { height: 620svh; }
 #s-rad { height: 360svh; }
-#s-proof { height: 240svh; }
-#s-cards { height: 420svh; }
 #s-pack { height: 380svh; }
-
 [data-a] { will-change: transform, opacity; }
-.shadow { text-shadow: 0 2px 24px rgba(5, 7, 10, 0.9), 0 0 2px rgba(5, 7, 10, 0.8); }
-
-/* ---------- hero ---------- */
-.hero-bg { position: absolute; inset: 0; pointer-events: none; }
-.grid-bg { position: absolute; inset: 0;
-  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 64px 64px; background-position: center top;
-  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, #000 30%, transparent 75%);
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, #000 30%, transparent 75%); opacity: 0.6; }
-.glow { position: absolute; top: -10%; left: 50%; transform: translateX(-50%); width: 720px; height: 720px; max-width: 100%;
-  background: radial-gradient(circle, rgba(77, 163, 255, 0.14), transparent 62%); filter: blur(20px); }
-.hero-copy { position: absolute; left: 0; right: 0; top: calc(var(--head) + max(24px, 7svh)); }
-.hero-copy h1 { margin: 24px 0 22px; font: 700 clamp(38px, 6vw, 72px)/1.03 var(--font-d); letter-spacing: -0.02em; max-width: 17ch; color: var(--txt); }
-.hero-copy h1 .w { display: inline-block; }
-.hl { background: linear-gradient(120deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; }
-.hero-copy .lede { margin: 0 0 32px; max-width: 62ch; font-size: clamp(16px, 1.6vw, 19px); color: var(--muted); }
-.hero-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: clamp(28px, 6svh, 64px); text-shadow: none; }
-.hero-stats .cell { background: rgba(5, 7, 10, 0.82); padding: 22px 22px; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); min-width: 0; }
-.hero-stats .num { font: 600 29px/1.2 var(--font-d); color: var(--txt); white-space: nowrap; }
-.hero-stats .lbl { font-size: 12.5px; line-height: 1.45; color: var(--dim); letter-spacing: 0.03em; margin-top: 4px; }
-.cue { position: absolute; right: max(28px, calc((100vw - 1180px) / 2 + 28px)); bottom: 4svh; display: grid; justify-items: end; gap: 10px; }
-.cue span { font: 400 10.5px/1.4 var(--font-m); letter-spacing: 0.24em; text-transform: uppercase; color: var(--dim); }
-.cue i { display: block; width: 1px; height: 38px; margin-right: 4px; background: linear-gradient(var(--muted), transparent); }
-
-/* ---------- scroll beats ---------- */
-.beat { position: absolute; left: 0; right: 0; max-width: 1180px; margin: 0 auto; padding-inline: 28px; }
-.beat.top { top: calc(var(--head) + 3svh); }
+.shadow { text-shadow: 0 2px 24px rgba(14, 15, 18, 0.9), 0 0 2px rgba(14, 15, 18, 0.8); }
+.beat { position: absolute; left: 0; right: 0; max-width: var(--page-max-width); margin: 0 auto; padding-inline: clamp(16px, 4vw, 40px); }
+.beat.top { top: var(--head); }
 .beat.bot { bottom: 8svh; }
-.beat h2, .h2 { margin: 0; font: 600 clamp(28px, 3.6vw, 44px)/1.1 var(--font-d); letter-spacing: -0.015em; text-wrap: balance; max-width: 18ch; color: var(--txt); }
+.beat .lead { margin-bottom: 14px; }
+.beat h2 { font-weight: 600; font-size: var(--text-h2); line-height: 1.05; letter-spacing: var(--tracking-display); text-wrap: balance; max-width: 18ch; color: var(--fg); }
 .beat .eyebrow + h2 { margin-top: 16px; }
-.beat p { margin: 14px 0 0; max-width: 44ch; color: var(--muted); font-size: clamp(15.5px, 1.4vw, 17px); }
-.beat.right.narrow p { margin-left: auto; padding: 10px 14px; border-radius: 2px; border: 1px solid var(--line); background: var(--glass); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.beat p { margin-top: 14px; max-width: 44ch; color: var(--fg-muted); font-size: clamp(15.5px, 1.4vw, 18px); }
 .right { text-align: right; }
-/* Radiation beats sit beside the top-down die, so they hug the viewport edge instead of the 1180 wrap. */
+.right .lead, .right .eyebrow { justify-content: flex-end; }
 .beat.narrow { max-width: none; padding-inline: max(16px, 5vw); }
 .narrow h2 { font-size: clamp(24px, 2.6vw, 36px); max-width: 12ch; }
 .narrow p { max-width: 28ch; }
 .right h2, .right p { margin-left: auto; }
+.mock { display: inline-block; max-width: 46ch; margin-top: 16px; padding: 5px 10px; border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); background: var(--glass);
+  font: 400 11.5px/1.5 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--fg-muted); text-shadow: none; }
 
-/* ---------- assembly labels ---------- */
-.tag {
-  position: absolute; left: 0; top: 0; width: 250px; padding: 9px 12px 10px;
-  background: var(--glass); border: 1px solid var(--line-2); border-radius: 2px;
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); opacity: 0;
-}
-.tag b { display: flex; align-items: center; gap: 8px; font: 600 15px/1.2 var(--font-d); color: var(--txt); }
+/* assembly labels, projected from the 3D die (fixed dark glass, the layer is always over the night canvas) */
+.tag { position: absolute; left: 0; top: 0; width: 250px; padding: 9px 12px 10px; background: var(--glass); border: 1px solid var(--glass-line); border-radius: var(--radius-sm);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); opacity: 0; }
+.tag b { display: flex; align-items: center; gap: 8px; font: 500 14px/1.2 var(--font-mono); letter-spacing: .04em; color: var(--glass-fg); }
 .tag b::before { content: ""; width: 10px; height: 10px; border-radius: 1px; background: var(--sw); flex: none; }
-.tag span { display: block; margin-top: 4px; font: 400 12px/1.4 var(--font-m); color: var(--muted); letter-spacing: 0.02em; }
-.tag em { font-style: normal; color: var(--txt); }
-.chip-tag { position: absolute; left: 0; top: 0; font: 500 11px/1 var(--font-m); letter-spacing: 0.12em; padding: 6px 8px; border-radius: 2px; background: var(--glass); border: 1px solid currentColor; white-space: nowrap; opacity: 0; }
-.cap-card {
-  position: absolute; left: 16px; right: 16px; bottom: max(18px, env(safe-area-inset-bottom, 0px)); padding: 14px 16px;
-  background: var(--glass); border: 1px solid var(--line-2); border-radius: 2px; display: none;
-  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); opacity: 0;
-}
-.cap-card .n { font: 400 11px var(--font-m); color: var(--dim); letter-spacing: 0.14em; }
-.cap-card b { display: flex; gap: 8px; align-items: center; margin-top: 4px; font: 600 20px/1.2 var(--font-d); color: var(--txt); }
+.tag span { display: block; margin-top: 4px; font: 400 12px/1.4 var(--font-mono); color: var(--glass-muted); }
+.tag em, .cap-card em { font-style: normal; color: var(--glass-fg); }
+.chip-tag { position: absolute; left: 0; top: 0; font: 500 11px/1 var(--font-mono); letter-spacing: 0.12em; padding: 6px 8px; border-radius: var(--radius-sm); background: var(--glass); border: 1px solid currentColor; white-space: nowrap; opacity: 0; }
+.cap-card { position: absolute; left: 16px; right: 16px; bottom: max(18px, env(safe-area-inset-bottom, 0px)); padding: 14px 16px; background: var(--glass); border: 1px solid var(--glass-line); border-radius: var(--radius-sm);
+  display: none; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); opacity: 0; }
+.cap-card .n { font: 400 11px var(--font-mono); color: var(--glass-muted); letter-spacing: 0.14em; }
+.cap-card b { display: flex; gap: 8px; align-items: center; margin-top: 4px; font: 500 18px/1.2 var(--font-mono); color: var(--glass-fg); }
 .cap-card b::before { content: ""; width: 12px; height: 12px; border-radius: 1px; background: var(--sw); }
-.cap-card span { display: block; margin-top: 4px; font: 400 13px/1.4 var(--font-m); color: var(--muted); }
+.cap-card span { display: block; margin-top: 4px; font: 400 13px/1.4 var(--font-mono); color: var(--glass-muted); }
 
-/* ---------- proof: panel on bg-2 + terminal log ---------- */
-#s-proof .stage { display: grid; place-items: center; padding: var(--head) 16px 0; perspective: 1400px; }
-.panel {
-  position: relative; overflow: hidden; width: min(1124px, 100%); border-radius: 2px;
-  background: radial-gradient(ellipse 60% 80% at 15% 0%, rgba(77, 163, 255, 0.08), transparent 70%), var(--bg-2);
-  border: 1px solid var(--line); color: var(--txt);
-  padding: clamp(22px, 4.4vw, 56px); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(22px, 4vw, 56px); align-items: center;
-  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6); transform-origin: 50% 100%;
-}
-.panel .big { margin: 20px 0 0; font: 600 clamp(24px, 3vw, 40px)/1.14 var(--font-d); letter-spacing: -0.015em; text-wrap: balance; max-width: 22ch; }
-.panel .w { color: color-mix(in srgb, var(--txt) calc(var(--o, 1) * 100%), rgba(232, 237, 242, 0.16)); }
-.terminal { background: var(--term); border: 1px solid var(--line-2); border-radius: 6px; overflow: hidden; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9); min-width: 0; }
-.term-bar { display: flex; align-items: center; gap: 7px; padding: 12px 15px; border-bottom: 1px solid var(--line); background: var(--term-bar); }
-.term-bar .dot { width: 11px; height: 11px; border-radius: 50%; background: #2a3340; flex: none; }
-.term-bar .t { margin-left: 10px; font: 400 12px/1.2 var(--font-m); color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.term-body { margin: 0; padding: 20px; font: 400 12.6px/1.85 var(--font-m); color: var(--soft); overflow-x: auto; white-space: pre; }
-.term-body .c1 { color: var(--accent-2); }
-.term-body .c2 { color: var(--accent); }
-.term-body .c3 { color: var(--warn); }
-.term-body .c4 { color: var(--dim); }
-.term-body .blink { animation: vblink 1.1s steps(1) infinite; }
-@keyframes vblink { 50% { opacity: 0; } }
+/* ---------- 4 evidence (light): four mechanisms + fault injection ---------- */
+.prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+.prod { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); padding: 32px; min-width: 0; }
+.prod-top { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.prod-designator { font-family: var(--font-mono); font-size: 13px; letter-spacing: var(--tracking-label); color: var(--fg); }
+.prod-count { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--fg-faint); }
+.prod h3 { font-weight: 600; color: var(--fg); font-size: var(--text-h3); letter-spacing: var(--tracking-tight); line-height: 1.15; margin: 16px 0 12px; }
+.prod p { color: var(--fg-muted); font-size: 15px; max-width: 48ch; }
+.prod-models { list-style: none; margin-top: auto; border-top: 1px solid var(--rule); }
+.prod p { margin-bottom: 24px; }
+.prod-models li { display: flex; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--fg-muted); }
+.prod-models .i { font-family: var(--font-mono); font-size: 14px; color: var(--fg); flex: 0 0 auto; min-width: 9ch; }
+.fig { margin-top: 64px; }
+.fig .lead { margin-bottom: 20px; }
+.panel { background: var(--panel); border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); padding: clamp(20px, 3.4vw, 40px); }
+.panel .big { margin-top: 20px; font-weight: 600; font-size: var(--text-h3); line-height: 1.2; letter-spacing: var(--tracking-tight); max-width: 34ch; color: var(--fg); text-wrap: balance; }
+.rail { margin-top: 32px; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--rule); }
+.rail .cell { padding: 24px 24px 0 0; }
+.rail .cell + .cell { border-left: 1px solid var(--rule); padding-left: 24px; }
+.rail .num { font-family: var(--font-mono); font-size: clamp(23px, 2.3vw, 31px); font-weight: 500; color: var(--fg); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.rail .lbl { font-size: 14px; color: var(--fg-muted); margin-top: 8px; max-width: 32ch; }
+.panel .note { margin-top: 24px; }
 
-/* ---------- horizontal cards ---------- */
-#s-cards .stage { display: flex; flex-direction: column; justify-content: center; gap: clamp(20px, 4svh, 40px); padding-top: var(--head); }
-.cards-head { width: 100%; max-width: 1180px; margin: 0 auto; padding-inline: 28px; }
-.cards-head .h2 { margin-top: 16px; max-width: 26ch; }
-.track { display: flex; gap: clamp(16px, 2.4vw, 32px); padding-inline: max(16px, 6vw); width: max-content; perspective: 1600px; }
-.card {
-  position: relative; overflow: hidden;
-  width: min(84vw, 420px); min-height: min(56svh, 450px); padding: clamp(22px, 2.4vw, 30px) clamp(20px, 2.2vw, 28px); border-radius: 2px; flex: none;
-  background: rgba(13, 18, 25, 0.96); border: 1px solid var(--line-2);
-  display: flex; flex-direction: column; gap: 12px; transform-style: preserve-3d; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
-}
-.card .k { font: 400 10.5px/1.4 var(--font-m); letter-spacing: 0.16em; text-transform: uppercase; color: var(--c); }
-.card h3 { margin: 0; font: 600 clamp(19px, 1.7vw, 22px)/1.2 var(--font-d); color: var(--txt); text-wrap: balance; }
-.card p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
-.card svg { width: 100%; height: auto; max-height: 116px; margin-top: auto; }
-.card svg * { vector-effect: non-scaling-stroke; }
+/* ---------- 6 photo (dark) ---------- */
+.photo-figure { margin: 48px 0 0; }
+.photo-figure img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
+.photo-figure figcaption { margin-top: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--fg-faint); line-height: 1.6; }
 
-/* ---------- comparison ---------- */
-.cmp { position: relative; background: linear-gradient(rgba(5, 7, 10, 0) 0, var(--bg) 22svh, var(--bg) calc(100% - 22svh), rgba(5, 7, 10, 0) 100%); padding: 30svh 0 30svh; }
-.cmp-in { display: grid; gap: 28px; }
-.sec-head { max-width: 72ch; }
-.sec-head .h2 { margin-top: 18px; max-width: 22ch; }
-.sec-head p { margin: 16px 0 0; color: var(--muted); font-size: 16.5px; }
-.fig { margin: 0; padding: clamp(16px, 2.4vw, 26px); border: 1px solid var(--line); border-radius: 2px; background: var(--bg-2); }
-.fig-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px 20px; flex-wrap: wrap; margin-bottom: 14px; }
-.fig-head .t { font: 600 15px/1.3 var(--font-d); color: var(--txt); }
-.legend { display: flex; gap: 6px 16px; flex-wrap: wrap; font: 400 11.5px/1.4 var(--font-m); color: var(--muted); }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
-.mk { display: inline-block; width: 10px; height: 10px; flex: none; }
-.mk.int { border-radius: 50%; background: var(--soft); }
-.mk.fp { border-radius: 50%; border: 2px solid var(--soft); }
-.mk.ins { border-radius: 1px; background: var(--muted); transform: rotate(45deg) scale(0.85); }
-.mk.us { border-radius: 50%; background: var(--accent); }
-.mk.tgt { border-radius: 1px; width: 16px; background: repeating-linear-gradient(135deg, rgba(138, 151, 166, 0.6) 0 2px, transparent 2px 5px); border: 1px solid var(--muted); }
-.dots { display: grid; gap: 0; }
-.drow { display: grid; grid-template-columns: minmax(0, 230px) minmax(0, 1fr); gap: 4px 16px; align-items: center; padding: 7px 0; border-top: 1px solid var(--line); }
-.drow .nm { font: 600 14px/1.25 var(--font-d); color: var(--txt); min-width: 0; }
-.drow .nm small { display: block; font: 400 11.5px/1.35 var(--font-m); color: var(--muted); letter-spacing: 0.02em; }
-.drow.us .nm { color: var(--accent); }
-.drow.tg .nm { color: var(--muted); }
-.trk { position: relative; height: 22px; background: repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px calc(100% / 7)); background-size: calc(100% + 1px) 100%; }
-.trk::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--line); }
-.trk i { position: absolute; top: 50%; left: var(--x); width: 12px; height: 12px; margin: -6px 0 0 -6px; z-index: 1; border-radius: 50%; background: var(--soft); box-shadow: 0 0 0 2px var(--bg-2); }
-.trk i.fp { background: var(--bg-2); border: 2px solid var(--soft); }
-.trk i.ins { border-radius: 1px; background: var(--muted); transform: rotate(45deg) scale(0.85); }
-.trk i.us { background: var(--accent); width: 14px; height: 14px; margin: -7px 0 0 -7px; box-shadow: 0 0 0 2px var(--bg-2), 0 0 16px -2px var(--accent); }
-.trk .rng { position: absolute; top: 50%; left: var(--x); width: var(--w); height: 12px; margin-top: -6px; z-index: 1; border-radius: 1px; border: 1px solid var(--muted);
-  background: repeating-linear-gradient(135deg, rgba(138, 151, 166, 0.55) 0 2px, rgba(138, 151, 166, 0.08) 2px 6px); }
-.axis { position: relative; height: 18px; margin-top: 6px; font: 400 10.5px/1 var(--font-m); color: var(--dim); }
-.axis-row { display: grid; grid-template-columns: minmax(0, 230px) minmax(0, 1fr); gap: 0 16px; }
+/* ---------- 7 comparison (light) ---------- */
+.cmp-scope { margin-top: 24px; padding: 16px 20px; border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); max-width: 86ch; }
+.cmp-scope .lead { display: block; margin-bottom: 6px; color: var(--fg); }
+.cmp-scope p { font-size: 15px; color: var(--fg-muted); }
+.tbl-lead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 24px; flex-wrap: wrap; margin: 56px 0 16px; }
+.scroll-hint { font-family: var(--font-mono); font-size: 11px; color: var(--fg-faint); display: none; }
+.tbl-wrap { overflow-x: auto; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); -webkit-overflow-scrolling: touch; }
+table.cmp-t { border-collapse: collapse; width: 100%; min-width: 1060px; font-size: 14px; line-height: 1.5; color: var(--fg-muted); }
+.cmp-t th, .cmp-t td { text-align: left; vertical-align: top; padding: 14px 16px 14px 0; border-bottom: 1px solid var(--rule); }
+.cmp-t td { padding-left: 16px; }
+.cmp-t thead th { font: 500 11px/1.35 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); padding-top: 16px; }
+.cmp-t thead th + th { padding-left: 16px; }
+.cmp-t tbody th { font-weight: 600; font-size: 15px; color: var(--fg); min-width: 168px; position: sticky; left: 0; background: var(--bg); z-index: 1; box-shadow: 1px 0 0 var(--rule); }
+.cmp-t tbody th small { display: block; margin-top: 2px; font: 400 11.5px/1.4 var(--font-mono); color: var(--fg-faint); }
+.cmp-t .grp th { position: static; padding: 28px 0 10px; font: 600 12.5px/1.3 var(--font-sans); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg); box-shadow: none; border-bottom: 1px solid var(--rule-strong); }
+.cmp-t .grp th span { margin-left: 12px; font: 400 12px var(--font-mono); letter-spacing: 0; text-transform: none; color: var(--fg-faint); }
+.cmp-t td b { color: var(--fg); font-weight: 600; }
+.cmp-t .v { display: block; font-family: var(--font-mono); font-size: 15px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.cmp-t .v small { font-size: 12px; color: var(--fg-faint); }
+.cmp-t .v + span { display: block; font-size: 13px; color: var(--fg-faint); margin-top: 2px; }
+.cmp-t .chip { margin-bottom: 6px; }
+.cmp-t td .mono-s { font-family: var(--font-mono); font-size: 12.5px; }
+.cmp-t tr.us th, .cmp-t tr.us td { background: var(--bg-2); }
+.cmp-t sup a { font: 500 10px var(--font-mono); color: var(--fg-faint); margin-left: 2px; border-bottom: 1px solid var(--rule-strong); }
+.cmp-t sup a:hover { color: var(--fg); }
+.cmp-t .col-for { min-width: 190px; }
+.cmp-t .col-ai { min-width: 150px; }
+.cmp-t .col-rad { min-width: 210px; }
+.cmp-t .col-err { min-width: 220px; }
+.cmp-t .col-fly { min-width: 170px; }
+
+/* one chart, one unit: peak INT8 TOPS on a log axis */
+.bars { margin-top: 64px; }
+.bars-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 24px; flex-wrap: wrap; margin-bottom: 8px; }
+.bars-head h3 { font-weight: 600; font-size: var(--text-h3); letter-spacing: var(--tracking-tight); line-height: 1.2; color: var(--fg); max-width: 30ch; }
+.bars-sub { font-family: var(--font-mono); font-size: 12px; color: var(--fg-faint); margin-bottom: 24px; }
+.brow { display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 4px 24px; align-items: center; padding: 10px 0; border-top: 1px solid var(--rule); }
+.brow .nm { font-weight: 600; font-size: 15px; line-height: 1.25; color: var(--fg); }
+.brow .nm small { display: block; margin-top: 2px; font: 400 11.5px/1.4 var(--font-mono); color: var(--fg-faint); }
+.trk { position: relative; height: 28px; background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px calc(100% / 7)); }
+.trk .bar { position: absolute; left: 0; top: 4px; bottom: 4px; width: var(--w); background: var(--fg); border-radius: 0 4px 4px 0; }
+.trk .rng { position: absolute; top: 4px; bottom: 4px; left: var(--x); width: var(--w); border: 1px solid var(--fg); border-radius: 2px;
+  background: repeating-linear-gradient(135deg, var(--fg) 0 1.5px, transparent 1.5px 6px); }
+.trk .val { position: absolute; top: 50%; transform: translateY(-50%); font-family: var(--font-mono); font-size: 13px; color: var(--fg); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.trk .val.out { left: calc(var(--w) + 8px); }
+.trk .val.in { right: calc(100% - var(--w) + 8px); color: var(--bg); }
+.trk .val.before { right: calc(100% - var(--x) + 8px); }
+.axis-row { display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 0 24px; border-top: 1px solid var(--rule-strong); }
+.axis { position: relative; height: 22px; margin-top: 6px; font: 400 11px/1 var(--font-mono); color: var(--fg-faint); }
 .axis span { position: absolute; top: 4px; transform: translateX(-50%); white-space: nowrap; }
 .axis span:first-child { transform: none; }
 .axis span:last-child { transform: translateX(-100%); }
-.axis-u { font: 400 11px/1.4 var(--font-m); color: var(--dim); }
-.fig figcaption { margin-top: 14px; font: 400 13px/1.6 var(--font-b); color: var(--muted); max-width: 90ch; }
-.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 2px; background: var(--bg-2); -webkit-overflow-scrolling: touch; }
-.tbl-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-table.cmp-t { border-collapse: collapse; width: 100%; min-width: 1120px; font: 400 13px/1.5 var(--font-b); color: var(--soft); }
-.cmp-t th, .cmp-t td { text-align: left; vertical-align: top; padding: 11px 14px; border-bottom: 1px solid var(--line); }
-.cmp-t thead th { font: 400 10.5px/1.3 var(--font-m); letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); background: var(--term-bar); white-space: nowrap; }
-.cmp-t tbody th { font: 600 14px/1.3 var(--font-d); color: var(--txt); min-width: 150px; position: sticky; left: 0; background: var(--bg-2); z-index: 1; box-shadow: 1px 0 0 var(--line); }
-.cmp-t tbody th small { display: block; margin-top: 2px; font: 400 11px/1.35 var(--font-m); color: var(--muted); }
-.cmp-t td.f { font-family: var(--font-m); font-size: 12.5px; color: var(--txt); }
-.cmp-t td:last-child { min-width: 180px; }
-.cmp-t td:nth-child(3) { min-width: 150px; }
-.cmp-t .grp th { position: static; padding: 18px 14px 8px; font: 400 10.5px/1.3 var(--font-m); letter-spacing: 0.22em; text-transform: uppercase; color: var(--dim); background: var(--term-bar); box-shadow: none; }
-.cmp-t .grp.us th { color: var(--accent); border-top: 1px solid rgba(77, 163, 255, 0.5); }
-.cmp-t tr.us td { background: rgba(77, 163, 255, 0.06); }
-.cmp-t tr.us th { color: var(--accent); background: #0e1722; }
-.cmp-t tr.tg th { color: var(--muted); }
-.cmp-t tr.tg td, .cmp-t tr.tg th { background-image: repeating-linear-gradient(135deg, rgba(138, 151, 166, 0.06) 0 6px, transparent 6px 12px); }
-.cmp-t tr.tg th { background-color: var(--bg-2); }
-.cmp-t .tag-t { display: inline-block; margin-top: 4px; padding: 2px 6px; border-radius: 2px; font: 500 10px/1.3 var(--font-m); letter-spacing: 0.14em; text-transform: uppercase; }
-.tag-t.b { color: var(--accent); border: 1px solid rgba(77, 163, 255, 0.45); }
-.tag-t.t { color: var(--muted); border: 1px solid var(--line-2); }
-.cmp-t sup a { color: var(--accent); text-decoration: none; font: 500 10px var(--font-m); margin-left: 2px; }
-.scroll-hint { font: 400 11px/1.4 var(--font-m); color: var(--dim); margin: -18px 0 0; display: none; }
-.pitch { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.pitch > div { position: relative; background: var(--panel); padding: 28px 26px; transition: background 0.25s; }
-.pitch > div:hover { background: var(--panel-hi); }
-.pitch b { display: block; margin: 12px 0 8px; font: 600 17px/1.25 var(--font-d); color: var(--txt); }
-.pitch p { margin: 0; font-size: 14.5px; color: var(--muted); }
-.scope { padding: 18px 22px; border: 1px solid rgba(255, 180, 84, 0.28); border-radius: 2px; background: rgba(255, 180, 84, 0.035); }
-.scope p { margin: 0; font: 400 14px/1.65 var(--font-b); color: var(--soft); max-width: 100ch; }
-.scope p b { font: 500 11px/1 var(--font-m); letter-spacing: 0.22em; text-transform: uppercase; color: var(--warn); margin-right: 8px; }
-.src { margin: 0; padding-left: 22px; font: 400 11.5px/1.7 var(--font-m); color: var(--dim); columns: 2 320px; column-gap: 32px; }
+.axis-u { grid-column: 2; font: 400 11px/1.4 var(--font-mono); color: var(--fg-faint); margin-top: 2px; }
+.not-plotted { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule); display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 8px 24px; }
+.not-plotted .k { font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); }
+.not-plotted ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 28px; font-size: 14px; color: var(--fg-muted); }
+.not-plotted li b { color: var(--fg); font-weight: 600; }
+.bars .note { margin-top: 20px; }
+.src { margin-top: 56px; padding: 20px 0 0 22px; border-top: 1px solid var(--rule); font: 400 11.5px/1.75 var(--font-mono); color: var(--fg-faint); columns: 2 340px; column-gap: 40px; }
 .src li { break-inside: avoid; }
-.src a { color: var(--muted); text-decoration-color: var(--line-2); text-underline-offset: 2px; overflow-wrap: anywhere; }
-.src a:hover { color: var(--accent); }
+.src a { color: var(--fg-muted); border-bottom: 1px solid var(--rule-strong); overflow-wrap: anywhere; }
+.src a:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
-/* ---------- package + end ---------- */
-.mock { display: inline-block; max-width: 46ch; margin-top: 16px; padding: 5px 10px; border: 1px solid rgba(255, 180, 84, 0.3); border-radius: 2px; background: var(--glass);
-  font: 400 11.5px/1.5 var(--font-m); color: var(--warn); letter-spacing: 0.02em; text-shadow: none; }
-#s-end { position: relative; }
+/* ---------- 8 package end + specs (dark) ---------- */
 .end-hero { min-height: 100svh; display: grid; align-content: end; padding-bottom: 10svh; }
 .end-hero > .wrap { width: 100%; }
-.end-hero h2 { margin: 22px 0 0; font: 700 clamp(32px, 5.4vw, 64px)/1.03 var(--font-d); letter-spacing: -0.02em; max-width: 16ch; text-wrap: balance; color: var(--txt); }
-.end-hero p { margin: 18px 0 0; max-width: 54ch; color: var(--muted); font-size: clamp(16px, 1.5vw, 18px); }
-.specs { padding: 12svh 0 0; background: linear-gradient(rgba(5, 7, 10, 0), var(--bg) 18%); }
-.specs .eyebrow { margin-bottom: 26px; }
-.grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.spec { background: var(--bg); padding: 24px 22px; min-width: 0; }
-.spec .n { font: 600 clamp(24px, 2.4vw, 30px)/1.15 var(--font-d); color: var(--txt); font-variant-numeric: tabular-nums; }
-.spec .n small { font: 400 12px var(--font-m); color: var(--dim); letter-spacing: 0.02em; margin-left: 6px; }
-.spec .l { margin-top: 6px; color: var(--muted); font-size: 13.5px; line-height: 1.5; max-width: 34ch; }
-.cta { position: relative; overflow: hidden; text-align: center; padding: 116px 0; background: var(--bg); }
-.cta .glow2 { position: absolute; inset: 0; background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(77, 163, 255, 0.12), transparent 70%); pointer-events: none; }
-.cta .wrap { position: relative; }
-.cta h2 { font: 700 clamp(30px, 4.4vw, 50px)/1.08 var(--font-d); letter-spacing: -0.02em; margin: 20px auto; max-width: 22ch; color: var(--txt); }
-.cta p { color: var(--muted); font-size: 17px; max-width: 54ch; margin: 0 auto 32px; }
-.cta .hero-cta { justify-content: center; }
-.vfoot { position: relative; z-index: 2; border-top: 1px solid var(--line); background: var(--bg-2); }
-.vfoot .wrap { padding-top: 56px; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 22px; }
-.fine { color: var(--muted); font: 400 13.5px/1.7 var(--font-b); max-width: 96ch; margin: 0; }
-.foot-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; padding-top: 24px; border-top: 1px solid var(--line); }
-.foot-row p { margin: 0; font-size: 12.5px; color: var(--dim); }
-.foot-chip { border: 1px solid var(--line); border-radius: 2px; padding: 5px 12px; font: 400 11px/1.4 var(--font-m); letter-spacing: 0.1em; color: var(--dim); }
+.end-hero h2 { margin-top: 22px; font-weight: 600; font-size: var(--text-h1); line-height: 1.02; letter-spacing: var(--tracking-display); max-width: 16ch; text-wrap: balance; color: var(--fg); }
+.end-hero p { margin-top: 18px; max-width: 54ch; color: var(--fg-muted); font-size: var(--text-lede); }
+.specs { background: var(--bg); padding: var(--section-pad) 0 var(--section-pad-lg); border-top: 1px solid var(--rule); }
+.spec-grid { margin-top: 32px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; }
+.spec { border-top: 1px solid var(--rule); padding: 20px 0 24px; min-width: 0; }
+.spec .n { font-family: var(--font-mono); font-size: clamp(23px, 2.3vw, 31px); font-weight: 500; line-height: 1.1; color: var(--fg); font-variant-numeric: tabular-nums; }
+.spec .n small { font-size: 12.5px; color: var(--fg-faint); margin-left: 6px; letter-spacing: 0.02em; font-weight: 400; }
+.spec .l { margin-top: 8px; color: var(--fg-muted); font-size: 14px; line-height: 1.5; max-width: 34ch; }
 
-/* ---------- why orbit (inside the hero stage) ---------- */
-.why { position: absolute; left: 0; right: 0; top: calc(var(--head) + 4svh); }
-.why-head .h2 { margin-top: 14px; }
-/* Each cell carries its own opaque hairline (overlapped by 1px), so no empty frame shows while cells slide in. */
-.why-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 1124px; margin-top: 22px; padding: 1px 0 0 1px; }
-.why-item { position: relative; margin: -1px 0 0 -1px; border: 1px solid #1f242a; background: var(--glass-panel); padding: 22px 26px 22px 24px; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); text-shadow: none; }
-.why-item b { display: block; margin-top: 8px; padding-right: 28px; font: 600 clamp(17px, 1.5vw, 19px)/1.25 var(--font-d); color: var(--txt); }
-.why-item p { margin: 8px 0 0; font-size: 14px; line-height: 1.55; color: var(--muted); }
-.why-item p strong { color: var(--txt); font-weight: 600; }
+/* ---------- footer (site.css) ---------- */
+footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule); padding: 80px 0 calc(40px + env(safe-area-inset-bottom, 0px)); }
+.foot-top { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.foot-brand .brand { color: var(--fg); font-size: 19px; }
+.foot-brand p { color: var(--fg-muted); font-size: 14px; max-width: 40ch; margin-top: 16px; }
+.social-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
+.social { display: inline-flex; align-items: center; height: 38px; padding: 0 16px; border: 1px solid var(--rule-strong); border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-muted); }
+.foot-col h5 { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-faint); margin-bottom: 12px; font-weight: 500; }
+.foot-col a, .foot-col .plain { display: flex; align-items: center; min-height: 40px; color: var(--fg-muted); font-size: 14px; transition: color var(--motion-fast) var(--motion-ease-out); }
+.foot-col a:hover { color: var(--fg); }
+.foot-col .plain { font-family: var(--font-mono); color: var(--fg-faint); user-select: all; overflow-wrap: anywhere; }
+.fine { color: var(--fg-muted); font-size: 13px; line-height: 1.7; padding-top: 24px; border-top: 1px solid var(--rule); margin-bottom: 24px; }
+.foot-bot { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 24px; border-top: 1px solid var(--rule); flex-wrap: wrap; }
+.foot-bot p { font-size: 13px; color: var(--fg-faint); }
+.foot-bot .region { display: flex; gap: 16px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: var(--fg-faint); }
 
-@media (max-width: 1080px) { .vstat { display: none; } }
+/* ---------- scrollspy rail (site.css, 1440px and up) ---------- */
+.rail-spy { display: none; }
+@media (min-width: 1440px) {
+  .rail-spy { display: flex; flex-direction: column; gap: 10px; position: fixed; left: 28px; top: 50%; transform: translateY(-50%); z-index: 5; font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; pointer-events: none; }
+  .rail-spy span { color: #83878f; opacity: .55; transition: opacity var(--motion-fast) var(--motion-ease-out), color var(--motion-fast) var(--motion-ease-out); }
+  .rail-spy span.cur { opacity: 1; color: #16181c; }
+  .rail-spy.on-dark span { color: #787d86; }
+  .rail-spy.on-dark span.cur { color: #f4f4f2; }
+}
+
+/* ---------- reveal (site.css) ---------- */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity var(--motion-reveal) var(--motion-ease-out), transform var(--motion-reveal) var(--motion-ease-out); }
+.reveal.in { opacity: 1; transform: none; }
+.photo-figure img { clip-path: inset(0 100% 0 0); transition: clip-path 900ms var(--motion-ease-out) 120ms; }
+.photo-figure.in img { clip-path: inset(0 0 0 0); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1040px) {
+  .nav-toggle { display: inline-flex; }
+  .navlinks { display: none; position: absolute; top: calc(var(--header-height) + 8px); left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 0; margin: 0;
+    padding: 8px 20px 16px; background: color-mix(in srgb, var(--paper) 96%, transparent); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    border: 1px solid #e4e3df; border-radius: var(--radius-nav); box-shadow: 0 12px 32px rgba(16, 18, 20, .14); }
+  .navlinks a { height: auto; min-height: 50px; color: var(--ink); opacity: .7; border-top: 1px solid #e4e3df; }
+  .navlinks a:first-child { border-top: 0; }
+  .navlinks a.nav-extra { display: flex; }
+  header.menu-open .navlinks { display: flex; }
+  #hdr.menu-open .nav-pill { background: color-mix(in srgb, var(--paper) 92%, transparent); color: var(--ink); border-color: #e4e3df; }
+  .stages { grid-template-columns: 1fr 1fr; gap: 24px 32px; }
+  .stage::before { position: static; display: block; margin-bottom: 12px; }
+}
 @media (max-width: 900px) {
-  .vnav { display: none; }
-  .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .panel { grid-template-columns: minmax(0, 1fr); }
+  .prod-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 820px) {
+  .cta-blocks { grid-template-columns: 1fr; }
+  .foot-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .rail { grid-template-columns: 1fr; }
+  .rail .cell + .cell { border-left: 0; border-top: 1px solid var(--rule); padding-left: 0; margin-top: 16px; padding-top: 16px; }
+  .rail .cell { padding-top: 16px; }
+  .spec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
+  .brow, .axis-row, .not-plotted { grid-template-columns: minmax(0, 1fr); }
+  .axis-row > :first-child { display: none; }
+  .axis-u { grid-column: 1; }
+  .brow { padding: 12px 0 8px; }
 }
 @media (max-width: 720px) {
-  body { font-size: 16px; }
-  .wrap, .beat, .cards-head { padding-left: 16px; padding-right: 16px; }
-  .hbtn { padding: 7px 12px; font-size: 12.5px; }
-  .brand span { font-size: 18px; }
-  .hero-copy { top: calc(var(--head) + 3svh); }
-  .hero-copy h1 { margin: 18px 0 16px; }
-  .hero-copy .lede { margin-bottom: 22px; font-size: 15.5px; }
-  .hero-cta { gap: 10px; }
-  .btn { padding: 10px 14px; }
-  .hero-stats { margin-top: 22px; }
-  .hero-stats .cell { padding: 12px 14px; }
-  .hero-stats .num { font-size: 21px; }
-  .hero-stats .lbl { font-size: 11.5px; letter-spacing: 0.02em; }
-  .cue { display: none; }
-  .why { top: calc(var(--head) + 2svh); }
-  .why-head .h2 { margin-top: 10px; }
-  .why-grid { grid-template-columns: minmax(0, 1fr); margin-top: 14px; }
-  .why-item { padding: 12px 14px 13px; }
-  .why-item .idx { top: 13px; right: 14px; font-size: 11px; }
-  .why-item b { font-size: 16px; margin-top: 4px; }
-  .why-item p { font-size: 13px; margin-top: 4px; line-height: 1.5; }
-  .eyebrow { font-size: 11px; letter-spacing: 0.22em; }
-  .eyebrow::before { width: 18px; }
-  .drow, .axis-row { grid-template-columns: 1fr; }
-  .axis-row > :first-child { display: none; }
-  .axis span:nth-child(odd) { display: none; }
-  .drow { padding: 8px 0 4px; }
-  .pitch { grid-template-columns: 1fr; }
-  .scroll-hint { display: block; }
-  .cmp { padding: 22svh 0 24svh; }
   .tag { display: none; }
   .cap-card { display: block; }
-  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .spec { padding: 18px 16px; }
-  .spec:last-child { grid-column: 1 / -1; }
-  .panel { padding: 20px 16px; gap: 18px; }
-  .panel .big { font-size: 23px; margin-top: 14px; }
-  .term-body { padding: 14px 14px; font-size: 11.2px; line-height: 1.75; }
-  .term-bar { padding: 10px 12px; }
+  .scroll-hint { display: block; }
+  .axis span:nth-child(even) { display: none; }
+  .nav-cta { display: none; }
   .beat p { font-size: 15.5px; }
-  .beat.top { top: calc(var(--head) + 2svh); }
   .narrow h2 { max-width: 17ch; }
   .narrow p { max-width: 36ch; }
-  .cta { padding: 84px 0; }
-  .cta p { font-size: 16px; }
+  .end-hero h2 { font-size: clamp(34px, 9vw, 48px); }
+}
+@media (max-width: 560px) {
+  .sec, .sec-wide { padding: var(--section-pad-tight) 0; }
+  .stages { grid-template-columns: 1fr; }
+  .foot-top { grid-template-columns: 1fr; }
+  .prod { padding: 24px 20px; }
+  .spec-grid { grid-template-columns: 1fr; }
+  .hero .cta-row .btn { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  #s-cards { height: auto; }
-  #s-cards .stage { position: relative; height: auto; overflow: visible; padding-block: 14svh; }
-  .track { width: auto; flex-wrap: wrap; }
-  .card { min-height: 0; }
-  .vstat i, .term-body .blink { animation: none; }
-  .btn, .hbtn, .vhead { transition: none; }
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .stages::after, .stage::before { transform: none; transition: none; }
+  .photo-figure img { clip-path: none; transition: none; }
+  .btn, .nav-pill, .cta-block .arrow, .navlinks a { transition: none; }
 }
 </style>
+<noscript><style>.reveal{opacity:1;transform:none}.stages::after,.stage::before{transform:none}.photo-figure img{clip-path:none}[data-a]{opacity:1!important}</style></noscript>
 
 <canvas id="gl" aria-hidden="true"></canvas>
-<div id="veil"></div>
-<div id="hud" aria-hidden="true">
+<div id="hud" class="tone-dark" aria-hidden="true">
   <svg id="leaders"></svg>
   <div id="tags"></div>
 </div>
 
-<header class="vhead" id="vhead">
+<a class="skip-link" href="#main">Skip to main content</a>
+<header id="hdr">
   <div class="wrap">
-    <a class="brand" href="#s-hero" aria-label="Vantage · ORBIT-AI, back to top">
-      <svg viewBox="0 0 100 100" fill="#e8edf2" aria-hidden="true"><polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/><polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/><polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/><circle cx="50" cy="49.8" r="6.3"/></svg>
-      <span>VANTAGE</span>
-    </a>
-    <nav class="vnav" aria-label="Sections">
-      <a href="#s-hero" aria-current="page">Orbital Compute</a>
-      <a href="#s-build">Chip</a>
-      <a href="#s-compare">How it compares</a>
-      <a href="#s-pack">Package</a>
+    <nav class="nav-pill" aria-label="Sections">
+      <a class="brand" href="#top" aria-label="Vantage, back to top">
+        <span class="mark">
+          <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
+            <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
+            <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
+            <circle cx="50" cy="49.8" r="6.3"/>
+          </svg>
+        </span>
+        VANTAGE
+      </a>
+      <div class="navlinks" id="primary-nav">
+        <a href="#why">Why orbit</a>
+        <a href="#s-build">The chip</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#s-compare">How it compares</a>
+        <a class="nav-extra" href="https://claude.ai/artifact/5R9GAuPsfhBUXSWFermUvm" target="_blank" rel="noopener">Explore the die in 3D</a>
+        <a class="nav-extra" href="https://vantage.industries/contact/" target="_blank" rel="noopener">Request a briefing</a>
+      </div>
+      <div class="nav-right">
+        <time class="nav-clock" id="utc" aria-hidden="true"></time>
+        <a href="https://vantage.industries/contact/" class="nav-cta" target="_blank" rel="noopener"><span>Request a briefing</span></a>
+        <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
+          <svg viewBox="0 0 24 24" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
     </nav>
-    <div class="vright">
-      <span class="vstat"><i></i>demonstrator · not flight-qualified</span>
-      <a class="hbtn" href="https://claude.ai/artifact/5R9GAuPsfhBUXSWFermUvm" target="_blank" rel="noopener">Explore in 3D</a>
-    </div>
   </div>
 </header>
-<main>
-  <section class="scene" id="s-hero" aria-label="Introduction">
-    <div class="stage">
-      <div class="hero-bg" aria-hidden="true" data-a data-in="up" data-k="0,0,0.3,0.46" data-out="up"><div class="grid-bg"></div><div class="glow"></div></div>
-      <div class="hero-copy shadow">
-        <div class="wrap">
-          <span class="eyebrow" data-a data-in="up" data-k="0,0,0.1,0.24" data-out="up">ORBIT-AI · on-orbit AI compute</span>
-          <h1 id="hero-h1">An AI chip <span class="hl">for orbit.</span></h1>
-          <p class="lede" data-a data-in="right" data-k="0,0,0.14,0.3" data-out="right">ORBIT-AI is a Vantage chip design for running AI on board a spacecraft. This 346&nbsp;µm demonstrator catches its own bit flips, then stops or repairs them.</p>
-          <div class="hero-cta" data-a data-in="down" data-k="0,0,0.12,0.28" data-out="down">
-            <a class="btn btn-solid" href="https://claude.ai/artifact/5R9GAuPsfhBUXSWFermUvm" target="_blank" rel="noopener">Explore the die in 3D →</a>
-            <a class="btn" href="#s-compare">How it compares</a>
-          </div>
-          <div class="hero-stats hair" data-a data-in="down" data-k="0,0,0.1,0.26" data-out="down">
-            <div class="cell"><div class="num">346&nbsp;µm</div><div class="lbl">Die edge · SkyWater sky130 demonstrator</div></div>
-            <div class="cell"><div class="num">936 / 936</div><div class="lbl">Injected bit flips stopped or repaired</div></div>
-            <div class="cell"><div class="num">≥ 251&nbsp;µm</div><div class="lbl">Between every same-bit twin</div></div>
-            <div class="cell"><div class="num">139&nbsp;MHz</div><div class="lbl">Clock after routing · setup and hold met</div></div>
-          </div>
-        </div>
+
+<main id="main">
+
+  <!-- 1 HERO (dark) -->
+  <section class="hero tone-dark" id="s-hero">
+    <span id="top"></span>
+    <div class="wrap">
+      <span class="eyebrow reveal">ORBIT-AI · On-orbit AI compute</span>
+      <h1 class="reveal"><span class="hl">An AI chip for orbit.</span> <span class="hl">It catches its own mistakes.</span></h1>
+      <p class="lede reveal">ORBIT-AI is a Vantage chip design for running AI on board a spacecraft. This <span class="m">346&nbsp;µm</span> demonstrator flags its own bit flips, then stops or repairs them.</p>
+      <div class="cta-row reveal">
+        <a href="https://claude.ai/artifact/5R9GAuPsfhBUXSWFermUvm" class="btn btn-solid" target="_blank" rel="noopener">Explore the die in 3D →</a>
+        <a href="#s-compare" class="btn">How it compares →</a>
       </div>
-      <div class="cue" aria-hidden="true" data-a data-in="down" data-k="0,0,0.05,0.12" data-out="down"><span>Scroll · why orbit is hard</span><i></i></div>
-      <div class="why" aria-labelledby="why-h">
-        <div class="wrap">
-          <div class="why-head shadow" data-a data-in="up" data-k="0.36,0.46,0.9,1" data-out="up">
-            <span class="eyebrow">01 · Why orbit is hard</span>
-            <h2 class="h2" id="why-h">Orbit is hostile to chips. Four reasons.</h2>
-          </div>
-          <div class="why-grid">
-            <div class="why-item" data-a data-in="left" data-k="0.4,0.5,0.9,1" data-out="left">
-              <span class="idx">01</span>
-              <span class="lead">Radiation</span>
-              <b>One charged particle can flip a stored bit.</b>
-              <p><strong>Answer: duplicate and compare.</strong> Results are kept twice. A mismatch stops the chip before a wrong result leaves it.</p>
-            </div>
-            <div class="why-item" data-a data-in="right" data-k="0.43,0.53,0.9,1" data-out="right">
-              <span class="idx">02</span>
-              <span class="lead">No repair visits</span>
-              <b>Nobody can swap a part in orbit.</b>
-              <p><strong>Answer: triple-stored thermal state.</strong> A flipped copy is outvoted and rewritten on the next clock.</p>
-            </div>
-            <div class="why-item" data-a data-in="left" data-k="0.46,0.56,0.9,1" data-out="left">
-              <span class="idx">03</span>
-              <span class="lead">Heat</span>
-              <b>In vacuum, heat only leaves by radiation.</b>
-              <p><strong>Answer: a thermal guard.</strong> Throttle at 80&nbsp;°C, stop at 95&nbsp;°C, recover at 70&nbsp;°C.</p>
-            </div>
-            <div class="why-item" data-a data-in="right" data-k="0.49,0.59,0.9,1" data-out="right">
-              <span class="idx">04</span>
-              <span class="lead">Power</span>
-              <b>Every watt comes from solar panels and batteries.</b>
-              <p><strong>Answer: inference first, in INT8.</strong> Small integer maths does more work per watt than floating point.</p>
-            </div>
-          </div>
-        </div>
+      <p class="scope-line reveal">Demonstrator · simulated evidence · not flight-qualified</p>
+    </div>
+  </section>
+
+  <!-- 2 STATEMENT (light) -->
+  <section class="sec sec-wide statement tone-light" id="why">
+    <div class="wrap">
+      <p class="big reveal"><span class="dim">Anyone can put a chip in orbit.</span> Keeping it <em>right</em> when <a href="#s-rad">radiation flips its bits</a> is the hard part.</p>
+      <p class="sub reveal">Orbit adds three more problems. Nobody can visit to repair a part, heat leaves only by radiation, and every watt comes from solar panels. ORBIT-AI answers each one in the chip's layout.</p>
+      <div class="stages reveal" data-stagger="130">
+        <div class="stage reveal"><span class="sn">01 · Radiation</span><span class="who">Answer: duplicate + compare</span><h4>A flipped bit stops the chip.</h4><p>Results are kept twice. A mismatch halts it before a wrong result leaves.</p></div>
+        <div class="stage reveal"><span class="sn">02 · No repair visits</span><span class="who">Answer: triple voting</span><h4>A flipped copy is outvoted.</h4><p>Thermal state is kept three times and rewritten on the next clock.</p></div>
+        <div class="stage reveal"><span class="sn">03 · Heat</span><span class="who">Answer: thermal guard</span><h4>It throttles before it cooks.</h4><p>Throttle at <span class="m">80&nbsp;°C</span>, stop at <span class="m">95&nbsp;°C</span>, recover at <span class="m">70&nbsp;°C</span>.</p></div>
+        <div class="stage reveal"><span class="sn">04 · Power</span><span class="who">Answer: INT8 inference</span><h4>Integer maths, more work per watt.</h4><p>Small integer arithmetic does more work per watt than floating point.</p></div>
       </div>
     </div>
   </section>
 
-  <section class="scene" id="s-build" aria-label="The chip assembles layer by layer">
-    <div class="stage">
+  <!-- 3 THE CHIP ASSEMBLES (dark, 3D) -->
+  <section class="scene tone-dark" id="s-build" aria-label="The chip assembles layer by layer">
+    <div class="stage-s">
       <div class="beat top shadow" data-a data-in="up" data-k="0,0.05,0.12,0.18" data-out="left">
-        <span class="eyebrow">02 · The layout · 750,439 rectangles</span>
+        <span class="lead">Product output · routed layout · <span class="m">750,439</span> rectangles</span>
         <h2>The real routed chip. Layer by layer.</h2>
       </div>
       <div class="beat top right shadow" data-a data-in="down" data-k="0.84,0.92,1,1.1" data-out="up">
-        <span class="eyebrow">True scale</span>
+        <span class="lead">True scale</span>
         <h2>Pressed flat, it is a few µm thick.</h2>
-        <p>Eight layers on a die 346&nbsp;µm across. The spacing above was exaggerated so you could see them.</p>
+        <p>Eight layers on a die <span class="m">346&nbsp;µm</span> across. The spacing above was exaggerated so you could see them.</p>
       </div>
       <div id="caps"></div>
     </div>
   </section>
 
-  <section class="scene" id="s-rad" aria-label="Radiation and redundancy">
-    <div class="stage">
+  <!-- 4 EVIDENCE (light) -->
+  <section class="sec sec-wide tone-light" id="evidence">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Evidence</span>
+        <h2>It catches its own mistakes. In the layout, not in software.</h2>
+        <p>Four mechanisms, placed and checked on the routed chip. Then we flipped its bits on purpose to see what got through.</p>
+      </div>
+
+      <div class="prod-grid" data-stagger="90">
+        <div class="prod reveal">
+          <span class="prod-top"><span class="prod-designator">M/01 DETECT</span><span class="prod-count">duplicated state</span></span>
+          <h3>Duplicate and compare.</h3>
+          <p>Every accumulator and result register exists twice. A comparator checks each pair every clock. On a mismatch the chip raises a fault and stops, so no wrong result leaves it.</p>
+          <ul class="prod-models"><li><span class="i">702 / 702</span>injected flips ended in a fault-stop</li></ul>
+        </div>
+        <div class="prod reveal">
+          <span class="prod-top"><span class="prod-designator">M/02 REPAIR</span><span class="prod-count">triplicated state</span></span>
+          <h3>Triple voting on thermal state.</h3>
+          <p>The thermal state machine runs in three copies behind a majority voter. A flipped copy is outvoted and rewritten on the next clock.</p>
+          <ul class="prod-models"><li><span class="i">234 / 234</span>injected flips repaired on the next clock</li></ul>
+        </div>
+        <div class="prod reveal">
+          <span class="prod-top"><span class="prod-designator">M/03 SEPARATE</span><span class="prod-count">placement fences</span></span>
+          <h3>Keep the twins apart.</h3>
+          <p>One particle track can upset neighbouring cells. So copy A and copy B sit in fences <span class="m">242&nbsp;µm</span> apart, and every same-bit twin is at least <span class="m">251&nbsp;µm</span> from its partner.</p>
+          <ul class="prod-models"><li><span class="i">0 of 262</span>same-bit pairs touching, down from 13 before separation</li></ul>
+        </div>
+        <div class="prod reveal">
+          <span class="prod-top"><span class="prod-designator">M/04 COMPUTE</span><span class="prod-count">4 lanes</span></span>
+          <h3>Signed INT8 arithmetic.</h3>
+          <p>Four signed INT8 multiply-accumulate lanes with INT32 accumulation. Timing closes at a <span class="m">7.2&nbsp;ns</span> clock after routing, setup and hold met.</p>
+          <ul class="prod-models"><li><span class="i">1.1 GOPS</span>INT8 peak: 4 MACs × 2 ops × 139&nbsp;MHz</li></ul>
+        </div>
+      </div>
+
+      <figure class="fig reveal">
+        <span class="lead">Simulation output · gate-level fault injection</span>
+        <div class="panel">
+          <div class="chip-row">
+            <span class="chip chip-nominal">936 / 936 stopped or repaired</span>
+            <span class="chip chip-watch">Not radiation-tested</span>
+          </div>
+          <p class="big">We flipped 936 bits in the routed chip's protected registers. All 936 were stopped or repaired.</p>
+          <div class="rail">
+            <div class="cell"><div class="num">702 / 702</div><div class="lbl">Flips in duplicated copies. Each one caught, chip fault-stopped.</div></div>
+            <div class="cell"><div class="num">234 / 234</div><div class="lbl">Flips in thermal copies. Each one repaired on the next clock.</div></div>
+            <div class="cell"><div class="num">0</div><div class="lbl">Wrong results released.</div></div>
+          </div>
+          <p class="note">Gate-level simulation of the routed netlist, not a beam test. It shows the error catching works as designed. It says nothing yet about radiation tolerance.</p>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 5 RADIATION VIEW (dark, 3D) -->
+  <section class="scene tone-dark" id="s-rad" aria-label="Radiation and redundancy">
+    <div class="stage-s">
       <div class="beat top narrow shadow" data-a data-in="left" data-k="0.02,0.14,0.3,0.4" data-out="up">
-        <span class="eyebrow">03 · Radiation · cosmic rays, trapped protons</span>
+        <span class="lead">Radiation · cosmic rays, trapped protons</span>
         <h2>Particles hit. Bits flip.</h2>
       </div>
       <div class="beat bot right narrow shadow" data-a data-in="right" data-k="0.32,0.44,0.6,0.7" data-out="down">
+        <span class="lead">Product output · placement fences</span>
         <h2>Every protected bit is stored twice.</h2>
-        <p>Copy A sits in the left fence, copy B in the right. The fences are 242&nbsp;µm apart. Every same-bit twin is at least 251&nbsp;µm from its partner.</p>
+        <p>Copy A sits in the left fence, copy B in the right. The fences are <span class="m">242&nbsp;µm</span> apart. Every same-bit twin is at least <span class="m">251&nbsp;µm</span> from its partner.</p>
       </div>
       <div class="beat top narrow shadow" data-a data-in="spin" data-k="0.62,0.74,0.92,1" data-out="spinR">
         <h2>Thermal state is kept three times.</h2>
-        <p>Three copies in the centre column, at least 98&nbsp;µm apart. A majority vote runs every clock.</p>
+        <p>Three copies in the centre column, at least <span class="m">98&nbsp;µm</span> apart. A majority vote runs every clock.</p>
       </div>
     </div>
   </section>
 
-  <section class="scene" id="s-proof" aria-label="Fault injection result">
-    <div class="stage">
-      <div class="panel" id="panel">
-        <div>
-          <p class="eyebrow" style="margin:0">04 · Proof · fault injection</p>
-          <p class="big" id="big">We flipped 936 bits in the routed chip's protected registers. All 936 were stopped or repaired.</p>
-        </div>
-        <div class="terminal" role="img" aria-label="Fault-injection log: 936 bit flips injected into the routed netlist. 702 in duplicated copies, all 702 caused a fault-stop. 234 in thermal copies, all 234 repaired on the next clock. Wrong results released: 0. Assurance: simulation only, no beam test.">
-          <div class="term-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="t">vantage · fault-injection log</span></div>
-<pre class="term-body" aria-hidden="true"><span class="c4">// routed netlist · gate-level sim</span>
-<span class="c2">[ inject ]</span> 936 bit flips
-  <span class="c4">duplicated copies ....</span> 702
-  <span class="c4">thermal copies .......</span> 234
-<span class="c2">[ detect ]</span> fault-stop <span class="c1">702 / 702</span>
-<span class="c2">[ repair ]</span> next clock <span class="c1">234 / 234</span>
-<span class="c2">[ output ]</span> wrong results released <span class="c1">0</span>
-<span class="c3">[ SCOPE ]</span>  assurance: sim only
-           <span class="c3">no beam test</span>
-<span class="c1">&gt;</span> 936 / 936 stopped or repaired <span class="blink">▊</span></pre>
-        </div>
+  <!-- 6 WHERE IT HAS TO WORK (dark, real photograph) -->
+  <section class="sec sec-wide tone-dark divider" id="s-photo">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">Where it has to work</span>
+        <h2>No repair visits. No second chance.</h2>
+        <p>A part that fails in orbit stays failed. That is why the error catching lives in the silicon, where it cannot be skipped.</p>
       </div>
-    </div>
-  </section>
-
-  <section class="scene" id="s-cards" aria-label="How it protects itself">
-    <div class="stage">
-      <div class="cards-head shadow" data-a data-in="up" data-k="0,0.06,0.94,1" data-out="up">
-        <span class="eyebrow">05 · Four mechanisms</span>
-        <h2 class="h2">It catches its own mistakes. In the layout, not in software.</h2>
-      </div>
-      <div class="track" id="track">
-        <article class="card" style="--c:var(--accent)">
-          <span class="idx">01</span>
-          <span class="k">Detect</span>
-          <h3>Duplicate and compare</h3>
-          <p>Every accumulator and result register exists twice. A comparator checks each pair every clock. On a mismatch the chip raises a fault and stops, so no wrong result leaves it.</p>
-          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--accent)"><rect x="10" y="12" width="70" height="30" rx="2"/><rect x="10" y="68" width="70" height="30" rx="2"/><path d="M80 27h60v20M80 83h60v-20"/><circle cx="160" cy="55" r="18"/><path d="M178 55h40"/><rect x="218" y="40" width="72" height="30" rx="2"/></g><g font-family="IBM Plex Mono, monospace" font-size="10" fill="#b9c6d3"><text x="22" y="31">copy A</text><text x="22" y="87">copy B</text><text x="152" y="59">=?</text><text x="224" y="59">fault-stop</text></g></svg>
-          <span class="vtag">▸ <b>702 / 702</b> injected flips → fault-stop</span>
-        </article>
-        <article class="card" style="--c:var(--warn)">
-          <span class="idx">02</span>
-          <span class="k">Repair</span>
-          <h3>Triple-redundant thermal state</h3>
-          <p>The thermal state machine runs in three copies behind a majority voter. A flipped copy is outvoted and rewritten on the next clock. Throttle at 80&nbsp;°C, stop at 95&nbsp;°C, recover at 70&nbsp;°C.</p>
-          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--warn)"><rect x="10" y="6" width="60" height="24" rx="2"/><rect x="10" y="43" width="60" height="24" rx="2"/><rect x="10" y="80" width="60" height="24" rx="2"/><path d="M70 18h50l20 30M70 55h70M70 92h50l20-30"/><path d="M140 35h30a22 22 0 0 1 0 40h-30z"/><path d="M192 55h40M232 55v45H40v4" stroke-dasharray="3 3"/></g><g font-family="IBM Plex Mono, monospace" font-size="10" fill="#b9c6d3"><text x="24" y="22">copy 0</text><text x="24" y="59">copy 1</text><text x="24" y="96">copy 2</text><text x="146" y="59">vote</text><text x="240" y="52">every</text><text x="240" y="64">clock</text></g></svg>
-          <span class="vtag">▸ <b>234 / 234</b> injected flips repaired next clock</span>
-        </article>
-        <article class="card" style="--c:var(--accent-2)">
-          <span class="idx">03</span>
-          <span class="k">Separate</span>
-          <h3>Physical separation</h3>
-          <p>One particle track can upset neighbouring cells. So copy A and copy B sit in fences 242&nbsp;µm apart, and every same-bit twin is at least 251&nbsp;µm from its partner.</p>
-          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke-width="1.2"><rect x="10" y="8" width="40" height="94" stroke="#4da3ff"/><rect x="250" y="8" width="40" height="94" stroke="#7cf6c9"/><path d="M50 55h200M50 47v16M250 47v16" stroke="#8a97a6"/></g><text x="150" y="46" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="#e8edf2">242&nbsp;µm</text></svg>
-          <span class="vtag">▸ <b>0 of 262</b> same-bit pairs touching (13 before separation)</span>
-        </article>
-        <article class="card" style="--c:var(--muted)">
-          <span class="idx">04</span>
-          <span class="k">Compute</span>
-          <h3>Signed INT8 × 4 lanes</h3>
-          <p>Four signed INT8 multiply-accumulate lanes with INT32 accumulation. Timing closes at a 7.2&nbsp;ns clock after routing, setup and hold met. Peak: 4 MACs × 2 ops × 139&nbsp;MHz ≈ 1.1&nbsp;GOPS.</p>
-          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--muted)"><rect x="10" y="6" width="280" height="20" rx="2"/><rect x="10" y="32" width="280" height="20" rx="2"/><rect x="10" y="58" width="280" height="20" rx="2"/><rect x="10" y="84" width="280" height="20" rx="2"/></g><g font-family="IBM Plex Mono, monospace" font-size="10" fill="#b9c6d3"><text x="18" y="20">lane 0  int8 × int8 → int32</text><text x="18" y="46">lane 1  int8 × int8 → int32</text><text x="18" y="72">lane 2  int8 × int8 → int32</text><text x="18" y="98">lane 3  int8 × int8 → int32</text></g></svg>
-          <span class="vtag">▸ <b>139&nbsp;MHz</b> after routing · <b>1.1&nbsp;GOPS</b> INT8 peak</span>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section id="s-compare" class="cmp" aria-labelledby="cmp-h">
-    <div class="wrap cmp-in">
-      <div class="sec-head">
-        <span class="eyebrow">06 · How it compares</span>
-        <h2 class="h2" id="cmp-h">Far smaller than what flies today. Built to be checked.</h2>
-        <p>Flight-proven processors are radiation-hardened but slow. Commercial AI chips are fast but carry no radiation rating. Newer space-grade parts such as PIC64-HPSC and XQR Versal close the gap. ORBIT-AI's pitch is the architecture: fault detection and repair built into the layout, and INT8 inference sized for an orbit power budget. The built demonstrator is tiny. The concept is where it aims.</p>
-      </div>
-
-      <figure class="fig">
-        <div class="fig-head">
-          <span class="t">Peak compute, vendor figures, log scale</span>
-          <div class="legend" aria-label="Legend">
-            <span><i class="mk int"></i>INT8 ops</span>
-            <span><i class="mk fp"></i>floating-point ops</span>
-            <span><i class="mk ins"></i>instructions (MIPS / DMIPS)</span>
-            <span><i class="mk us"></i>ORBIT-AI built</span>
-            <span><i class="mk tgt"></i>ORBIT-AI target</span>
-          </div>
-        </div>
-        <div class="dots" role="list">
-          <div class="drow" role="listitem"><div class="nm">RAD750<small>BAE Systems · ~400&nbsp;MIPS</small></div><div class="trk" aria-label="RAD750: about 400&nbsp;MIPS at 200&nbsp;MHz (instructions per second)"><i class="ins" style="--x:8.60%" title="RAD750: about 400&nbsp;MIPS at 200&nbsp;MHz (instructions per second)"></i></div></div>
-          <div class="drow us" role="listitem"><div class="nm">ORBIT-AI demonstrator<small>Built · 1.1&nbsp;GOPS INT8</small></div><div class="trk" aria-label="ORBIT-AI demonstrator: 1.1&nbsp;GOPS INT8 peak, 4 MACs × 2 ops × 139&nbsp;MHz"><i class="us" style="--x:14.88%" title="ORBIT-AI demonstrator: 1.1&nbsp;GOPS INT8 peak, 4 MACs × 2 ops × 139&nbsp;MHz"></i></div></div>
-          <div class="drow" role="listitem"><div class="nm">GR740<small>Frontgrade Gaisler · 1,700&nbsp;DMIPS</small></div><div class="trk" aria-label="GR740: 1,700&nbsp;DMIPS at 250&nbsp;MHz (instructions per second)"><i class="ins" style="--x:17.58%" title="GR740: 1,700&nbsp;DMIPS at 250&nbsp;MHz (instructions per second)"></i></div></div>
-          <div class="drow" role="listitem"><div class="nm">RAD5545<small>BAE Systems · 3.7&nbsp;GFLOPS</small></div><div class="trk" aria-label="RAD5545: 3.7&nbsp;GFLOPS (vendor also quotes 5.6&nbsp;GOPS)"><i class="fp" style="--x:22.40%" title="RAD5545: 3.7&nbsp;GFLOPS (vendor also quotes 5.6&nbsp;GOPS)"></i></div></div>
-          <div class="drow" role="listitem"><div class="nm">Myriad 2<small>Intel Movidius · ~1&nbsp;TFLOPS FP16</small></div><div class="trk" aria-label="Myriad 2: about 1,000&nbsp;GFLOPS FP16"><i class="fp" style="--x:57.14%" title="Myriad 2: about 1,000&nbsp;GFLOPS FP16"></i></div></div>
-          <div class="drow" role="listitem"><div class="nm">PIC64-HPSC<small>Microchip · 2&nbsp;TOPS INT8</small></div><div class="trk" aria-label="PIC64-HPSC: up to 2&nbsp;TOPS INT8 (vector units)"><i style="--x:61.44%" title="PIC64-HPSC: up to 2&nbsp;TOPS INT8 (vector units)"></i></div></div>
-          <div class="drow tg" role="listitem"><div class="nm">ORBIT-AI concept<small>Target · 6.55–26.21&nbsp;TOPS INT8</small></div><div class="trk" aria-label="ORBIT-AI concept: 6.55 to 26.21 dense INT8&nbsp;TOPS at 200 to 800&nbsp;MHz, unvalidated target"><span class="rng" style="--x:68.81%;--w:8.60%" title="ORBIT-AI concept: 6.55 to 26.21 dense INT8&nbsp;TOPS at 200 to 800&nbsp;MHz, unvalidated target"></span></div></div>
-          <div class="drow" role="listitem"><div class="nm">Jetson Orin NX 16GB<small>NVIDIA · 100&nbsp;TOPS INT8, sparse</small></div><div class="trk" aria-label="Jetson Orin NX 16GB: up to 100&nbsp;TOPS INT8, sparse"><i style="--x:85.71%" title="Jetson Orin NX 16GB: up to 100&nbsp;TOPS INT8, sparse"></i></div></div>
-          <div class="drow" role="listitem"><div class="nm">XQR Versal AI Core<small>AMD · 133&nbsp;TOPS INT8</small></div><div class="trk" aria-label="XQRVC1902: 133&nbsp;TOPS INT8 AI Engine peak (VC1902 figure)"><i style="--x:87.48%" title="XQRVC1902: 133&nbsp;TOPS INT8 AI Engine peak (VC1902 figure)"></i></div></div>
-        </div>
-        <div class="axis-row"><div></div><div class="axis" aria-hidden="true"><span style="left:0.00%">100 M</span><span style="left:14.29%">1 G</span><span style="left:28.57%">10 G</span><span style="left:42.86%">100 G</span><span style="left:57.14%">1 T</span><span style="left:71.43%">10 T</span><span style="left:85.71%">100 T</span><span style="left:100.00%">1 P</span></div></div>
-        <div class="axis-row"><div></div><div class="axis-u">operations or instructions per second</div></div>
-        <figcaption>Each mark is the vendor's own peak in its own unit, so the marks are not like-for-like: an instruction is not an operation, and sparse INT8 counts skipped zeros. Read it for orders of magnitude only. The ORBIT-AI concept range is an unvalidated target.</figcaption>
+      <figure class="photo-figure reveal">
+        <img src="data:image/webp;base64,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" width="2000" height="600" decoding="async"
+             alt="Northrop Grumman's Cygnus XL cargo spacecraft against black space, orange solar arrays deployed, on final approach to the International Space Station.">
+        <figcaption>Cargo vehicle on final approach to the International Space Station, photographed from the station. Photograph: NASA, iss073e0703405.</figcaption>
       </figure>
+    </div>
+  </section>
 
-      <p class="scroll-hint">Table scrolls sideways →</p>
-      <div class="tbl-wrap" tabindex="0" role="region" aria-label="Comparison table of space compute chips">
+  <!-- 7 THE COMPARISON (light) -->
+  <section class="sec sec-wide tone-light" id="s-compare" aria-labelledby="cmp-h">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="eyebrow">How it compares</span>
+        <h2 id="cmp-h">Today you choose: survives space, or fast at AI.</h2>
+        <p>Flight-proven radiation-hardened processors are dependable, but they are general-purpose CPUs, not AI engines. The fast AI chips that fly are either costly radiation-tolerant parts or commercial chips with no radiation rating.</p>
+        <p>ORBIT-AI is designed to put AI speed and built-in error catching on one chip.</p>
+      </div>
+      <div class="cmp-scope reveal">
+        <span class="lead">What is proven so far</span>
+        <p>The built demonstrator proves the error catching, in simulation. It does not yet prove AI speed or radiation tolerance.</p>
+      </div>
+
+      <div class="tbl-lead reveal">
+        <span class="lead">Nine chips, five plain questions</span>
+        <span class="scroll-hint">Table scrolls sideways →</span>
+      </div>
+      <div class="tbl-wrap reveal" tabindex="0" role="region" aria-label="Comparison of space compute chips">
         <table class="cmp-t">
           <thead>
-            <tr><th scope="col">Chip</th><th scope="col">Process</th><th scope="col">Peak compute</th><th scope="col">Power</th><th scope="col">Radiation, as published</th><th scope="col">Fault handling / approach</th><th scope="col">Status</th></tr>
+            <tr><th scope="col">Chip</th><th scope="col" class="col-for">What it is for</th><th scope="col" class="col-ai">AI speed, INT8 TOPS</th><th scope="col" class="col-rad">Survives radiation?</th><th scope="col" class="col-err">Catches its own errors on chip?</th><th scope="col" class="col-fly">Flying today?</th></tr>
           </thead>
           <tbody>
-            <tr class="grp"><th colspan="7" scope="colgroup">Flying or qualified today</th></tr>
-            <tr><th scope="row">RAD750<small>BAE Systems</small></th><td class="f">250 / 150&nbsp;nm</td><td class="f">~400&nbsp;MIPS at 200&nbsp;MHz</td><td class="f">5&nbsp;W</td><td class="f">200&nbsp;krad to 1&nbsp;Mrad TID</td><td>Radiation-hardened PowerPC 750 CPU</td><td>Flight heritage: Curiosity, Perseverance, JWST<sup><a href="#src-1">1</a></sup></td></tr>
-            <tr><th scope="row">RAD5545<small>BAE Systems</small></th><td class="f">45&nbsp;nm SOI</td><td class="f">5.6&nbsp;GOPS / 3.7&nbsp;GFLOPS</td><td class="f">~20&nbsp;W chip; 35&nbsp;W board</td><td class="f">100&nbsp;krad TID</td><td>Radiation-hardened quad-core SoC</td><td>SpaceVPX board product<sup><a href="#src-2">2</a></sup></td></tr>
-            <tr><th scope="row">GR740<small>Frontgrade Gaisler</small></th><td class="f">65&nbsp;nm</td><td class="f">1,700&nbsp;DMIPS at 250&nbsp;MHz</td><td class="f">&lt; 3&nbsp;W core, typical</td><td class="f">300&nbsp;krad(Si) TID; SEL immune to 125 MeV·cm²/mg</td><td>Four fault-tolerant LEON4FT cores</td><td>QML-V qualified, 2022<sup><a href="#src-3">3</a></sup></td></tr>
-            <tr><th scope="row">XQR Versal AI Core<small>AMD · XQRVC1902</small></th><td class="f">7&nbsp;nm</td><td class="f">133&nbsp;TOPS INT8 (AI Engines)</td><td class="f">Not published per device</td><td class="f">Passed 120&nbsp;krad(Si) TID; no SEL to LET 80 MeV·cm²/mg</td><td>Rad-tolerant by design; triple-redundant platform controller handles upset mitigation</td><td>Class B qualified, 2022<sup><a href="#src-4">4</a></sup></td></tr>
-            <tr><th scope="row">PIC64-HPSC<small>Microchip · NASA HPSC</small></th><td class="f">12&nbsp;nm FinFET</td><td class="f">2&nbsp;TOPS INT8 / 1&nbsp;TFLOPS BF16</td><td class="f">Not found</td><td class="f">Rad-hard: 100&nbsp;krad TID, SEL 78 MeV·cm²/mg. Rad-tolerant: 50&nbsp;krad</td><td>Rad-hard and rad-tolerant variants; RISC-V vector units for AI</td><td>Announced 2024; in NASA JPL testing, 2026<sup><a href="#src-5">5</a></sup></td></tr>
-            <tr class="grp"><th colspan="7" scope="colgroup">Commercial parts flown as-is</th></tr>
-            <tr><th scope="row">Jetson Orin NX 16GB<small>NVIDIA</small></th><td class="f">8&nbsp;nm</td><td class="f">100&nbsp;TOPS INT8, sparse</td><td class="f">10 to 25&nbsp;W</td><td class="f">No rating. One TID test: survived past 36.2&nbsp;krad(Si)</td><td>Commercial module; relies on shielding, ECC and software</td><td>Flew shielded, Aug 2024<sup><a href="#src-6">6</a></sup></td></tr>
-            <tr><th scope="row">Myriad 2<small>Intel Movidius</small></th><td class="f">28&nbsp;nm</td><td class="f">~1&nbsp;TFLOPS FP16</td><td class="f">~1&nbsp;W</td><td class="f">No rating. Beam-tested at CERN, 2018</td><td>Commercial vision processor, flown unmodified</td><td>Flew on ESA Φ-sat-1, 2020<sup><a href="#src-7">7</a></sup></td></tr>
-            <tr class="grp us"><th colspan="7" scope="colgroup">ORBIT-AI · Vantage</th></tr>
-            <tr class="us"><th scope="row">ORBIT-AI demonstrator<small><span class="tag-t b">Built</span></small></th><td class="f">130&nbsp;nm (sky130)</td><td class="f">1.1&nbsp;GOPS INT8 at 139&nbsp;MHz</td><td class="f">Not measured</td><td class="f">None claimed. sky130 is not radiation-characterised</td><td>Duplicate + compare with fault-stop; triple-voted thermal state; twins ≥ 251&nbsp;µm apart. 936 / 936 injected flips stopped or repaired</td><td>Routed layout: DRC 0, LVS clean. No radiation or flight test</td></tr>
-            <tr class="tg"><th scope="row">ORBIT-AI concept<small><span class="tag-t t">Target</span></small></th><td class="f">Not specified</td><td class="f">6.55 to 26.21&nbsp;TOPS INT8, dense, at 200 to 800&nbsp;MHz</td><td class="f">40&nbsp;W sizing allocation, not an estimate</td><td class="f">None claimed</td><td>Selectable duplication, checkpoint and retry; 32&nbsp;MiB SECDED SRAM</td><td>Concept only. Nothing built, nothing validated</td></tr>
+            <tr class="grp"><th colspan="6" scope="colgroup">Radiation-hardened processors <span>the flight-proven class</span></th></tr>
+            <tr><th scope="row">RAD750<small>BAE Systems</small></th><td>Flight computer, Curiosity, Perseverance and JWST</td><td><b>Not an AI chip</b><br><span class="mono-s">CPU, ~400&nbsp;MIPS</span></td><td><span class="chip chip-nominal">Yes</span><br>Rated <span class="mono-s">200&nbsp;krad to 1&nbsp;Mrad</span> TID</td><td>Not published</td><td><b>Yes.</b> Curiosity, Perseverance, JWST<sup><a href="#src-1">1</a></sup></td></tr>
+            <tr><th scope="row">RAD5545<small>BAE Systems</small></th><td>Quad-core flight computer, sold as a SpaceVPX board</td><td><b>Not an AI chip</b><br><span class="mono-s">CPU, 5.6&nbsp;GOPS / 3.7&nbsp;GFLOPS</span></td><td><span class="chip chip-nominal">Yes</span><br>Rated <span class="mono-s">100&nbsp;krad</span> TID</td><td>Not published</td><td>Board product; no mission named in our sources<sup><a href="#src-2">2</a></sup></td></tr>
+            <tr><th scope="row">GR740<small>Frontgrade Gaisler</small></th><td>Quad-core flight processor</td><td><b>Not an AI chip</b><br><span class="mono-s">CPU, 1,700&nbsp;DMIPS</span></td><td><span class="chip chip-nominal">Yes</span><br>Rated <span class="mono-s">300&nbsp;krad(Si)</span> TID</td><td><b>Yes, as published:</b> fault-tolerant LEON4FT cores</td><td>QML-V qualified, 2022; no mission named in our sources<sup><a href="#src-3">3</a></sup></td></tr>
+
+            <tr class="grp"><th colspan="6" scope="colgroup">AI chips used in space <span>fast, but either costly or unrated</span></th></tr>
+            <tr><th scope="row">XQR Versal AI Core<small>AMD · XQRVC1902</small></th><td>Space-grade adaptive chip with AI engines</td><td><span class="v">133</span><span>Commercial VC1902 peak; space part may differ</span></td><td><span class="chip chip-nominal">Yes</span><br>Passed <span class="mono-s">120&nbsp;krad(Si)</span> TID</td><td><b>Partly:</b> a triple-redundant platform controller handles upset mitigation</td><td>Class B qualified, 2022; shipping since 2023<sup><a href="#src-4">4</a></sup></td></tr>
+            <tr><th scope="row">PIC64-HPSC<small>Microchip · NASA HPSC</small></th><td>NASA's next spaceflight processor, with AI vector units</td><td><span class="v">2</span><span>Vector units</span></td><td><span class="chip chip-nominal">Yes</span><br>Rated <span class="mono-s">100&nbsp;krad</span> TID (hardened version)</td><td>Not published</td><td>Not yet. In NASA JPL testing, 2026<sup><a href="#src-5">5</a></sup></td></tr>
+            <tr><th scope="row">Jetson Orin NX 16GB<small>NVIDIA</small></th><td>Commercial edge-AI module</td><td><span class="v">100</span><span>Sparse: counts skipped zeros</span></td><td><span class="chip chip-watch">Not rated</span><br>One test to past <span class="mono-s">36.2&nbsp;krad(Si)</span></td><td>ECC memory; relies on shielding and software</td><td><b>Yes.</b> Flew shielded, Aug 2024<sup><a href="#src-6">6</a></sup></td></tr>
+            <tr><th scope="row">Myriad 2<small>Intel Movidius</small></th><td>Commercial vision processor</td><td><b>No INT8 figure</b><br><span class="mono-s">~1&nbsp;TFLOPS FP16</span></td><td><span class="chip chip-watch">Not rated</span><br>Beam-tested at CERN, 2018</td><td>Not published</td><td><b>Yes.</b> ESA Φ-sat-1, 2020<sup><a href="#src-7">7</a></sup></td></tr>
+
+            <tr class="grp"><th colspan="6" scope="colgroup">ORBIT-AI <span>Vantage</span></th></tr>
+            <tr class="us"><th scope="row">Demonstrator<small>Built · sky130</small></th><td>Test chip that proves the error catching</td><td><span class="v">0.0011</span><span>1.1&nbsp;GOPS: 4 lanes × 2 ops × 139&nbsp;MHz</span></td><td><span class="chip chip-watch">Not tested</span><br>sky130 is not radiation-characterised</td><td><b>Yes:</b> duplicate + compare, triple voting. Verified in simulation, <span class="mono-s">936 / 936</span></td><td>No. Routed layout: DRC 0, LVS clean</td></tr>
+            <tr class="us"><th scope="row">Concept<small>Target · not built</small></th><td>16-tile INT8 inference chip</td><td><span class="v">6.55 to 26.21</span><span>Dense, 200 to 800&nbsp;MHz. Target, not built</span></td><td><span class="chip chip-watch">Not tested</span><br>None claimed</td><td><b>Planned:</b> selectable duplication, checkpoint and retry, <span class="mono-s">32&nbsp;MiB</span> SECDED SRAM</td><td>No. Nothing built</td></tr>
           </tbody>
         </table>
       </div>
 
-      <div class="pitch hgrid">
-        <div><span class="idx">01</span><span class="lead">In the layout</span><b>Fault handling you can inspect.</b><p>Duplicate + compare, triple voting and physical separation are placed and checked on the routed netlist, not left to software.</p></div>
-        <div><span class="idx">02</span><span class="lead">Inference first</span><b>INT8 where the work is.</b><p>16 tiles of 32 × 32 INT8 MACs in the concept, with a BF16/FP16 training extension planned, not built.</p></div>
-        <div><span class="idx">03</span><span class="lead">Direction</span><b>Built for denied links.</b><p>A path to on-board inference hardware for autonomy when the ground link is gone, the job GuardianEdge runs.</p></div>
-      </div>
+      <figure class="bars reveal" aria-labelledby="bars-h">
+        <div class="bars-head">
+          <h3 id="bars-h">Peak AI throughput, INT8 TOPS, vendor figures, log scale</h3>
+        </div>
+        <p class="bars-sub">Only chips whose vendor states an INT8 figure. Each gridline is ten times the one before it.</p>
+        <div role="list">
+          <div class="brow" role="listitem"><div class="nm">XQR Versal AI Core<small>AMD · commercial-part peak</small></div><div class="trk" title="XQR Versal AI Core: 133 TOPS INT8, AI Engine peak of the commercial VC1902"><span class="bar" style="--w:87.48%"></span><span class="val in" style="--w:87.48%">133</span></div></div>
+          <div class="brow" role="listitem"><div class="nm">Jetson Orin NX 16GB<small>NVIDIA · sparse figure</small></div><div class="trk" title="Jetson Orin NX 16GB: up to 100 TOPS INT8, sparse"><span class="bar" style="--w:85.71%"></span><span class="val in" style="--w:85.71%">100</span></div></div>
+          <div class="brow" role="listitem"><div class="nm">ORBIT-AI concept<small>Target, not built</small></div><div class="trk" title="ORBIT-AI concept: 6.55 to 26.21 TOPS INT8 dense at 200 to 800 MHz. Unvalidated target."><span class="rng" style="--x:68.80%;--w:8.60%"></span><span class="val before" style="--x:68.80%">6.55 to 26.21</span></div></div>
+          <div class="brow" role="listitem"><div class="nm">PIC64-HPSC<small>Microchip · vector units</small></div><div class="trk" title="PIC64-HPSC: up to 2 TOPS INT8"><span class="bar" style="--w:61.44%"></span><span class="val out" style="--w:61.44%">2</span></div></div>
+          <div class="brow" role="listitem"><div class="nm">ORBIT-AI demonstrator<small>Built · 1.1 GOPS</small></div><div class="trk" title="ORBIT-AI demonstrator: 0.0011 TOPS (1.1 GOPS) INT8 peak, 4 MACs × 2 ops × 139 MHz"><span class="bar" style="--w:14.88%"></span><span class="val out" style="--w:14.88%">0.0011</span></div></div>
+        </div>
+        <div class="axis-row"><div></div><div class="axis" aria-hidden="true"><span style="left:0%">0.0001</span><span style="left:14.29%">0.001</span><span style="left:28.57%">0.01</span><span style="left:42.86%">0.1</span><span style="left:57.14%">1</span><span style="left:71.43%">10</span><span style="left:85.71%">100</span><span style="left:100%">1,000</span></div><div class="axis-u">INT8 TOPS, trillions of operations per second</div></div>
+        <div class="not-plotted">
+          <span class="k">Not rated in INT8 operations, so not plotted</span>
+          <ul>
+            <li><b>RAD750</b> <span class="m">~400&nbsp;MIPS</span></li>
+            <li><b>RAD5545</b> <span class="m">5.6&nbsp;GOPS / 3.7&nbsp;GFLOPS</span></li>
+            <li><b>GR740</b> <span class="m">1,700&nbsp;DMIPS</span></li>
+            <li><b>Myriad 2</b> <span class="m">~1&nbsp;TFLOPS FP16</span></li>
+          </ul>
+        </div>
+        <figcaption class="note">The built demonstrator sits five orders of magnitude below the fastest parts. It was built to prove the error catching, not speed. The concept range is an unvalidated target. The Jetson figure is sparse, which counts skipped zeros. The Versal figure is the commercial VC1902 peak; the space-grade part's clock, and so its peak, may differ.</figcaption>
+      </figure>
 
-      <div class="scope"><p><b>Scope, stated plainly</b>The built demonstrator has four INT8 lanes and a 1.1&nbsp;GOPS peak, orders of magnitude below the space AI parts above. It has no radiation rating, test or flight heritage. Its fault handling was verified by gate-level fault injection, not by beam testing. The concept figures are unvalidated targets, and 40&nbsp;W is a sizing allocation, not a power estimate. Competitor figures are vendor peaks in their own units, taken from the sources below.</p></div>
-
-      <ol class="src" aria-label="Sources">
       <ol class="src" aria-label="Sources">
         <li id="src-1">RAD750: <a href="https://www.spaceflightnow.com/mars/msl/120810computer/" target="_blank" rel="noopener">Spaceflight Now</a>, <a href="https://satsearch.co/products/bae-systems-rad750-radiation-hardened-powerpc-microprocessor" target="_blank" rel="noopener">satsearch (BAE)</a>, <a href="https://en.wikipedia.org/wiki/RAD750" target="_blank" rel="noopener">Wikipedia</a></li>
         <li id="src-2">RAD5545: <a href="https://satsearch.co/products/bae-systems-rad5545-space-vpx-single-board-computer" target="_blank" rel="noopener">satsearch (BAE SpaceVPX SBC)</a>, <a href="https://en.wikipedia.org/wiki/RAD5500" target="_blank" rel="noopener">Wikipedia</a></li>
@@ -636,37 +689,37 @@ table.cmp-t { border-collapse: collapse; width: 100%; min-width: 1120px; font: 4
         <li id="src-6">Jetson Orin NX: <a href="https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/" target="_blank" rel="noopener">NVIDIA</a>, <a href="https://www.researchgate.net/publication/387116286_Total_Ionizing_Dose_Radiation_Testing_of_NVIDIA_Jetson_Orin_NX_System_on_Module" target="_blank" rel="noopener">TID test</a>, <a href="https://hubble.com/community/guides/nvidia-jetson-orin-on-satellites-what-on-orbit-edge-ai-looks-like-today/" target="_blank" rel="noopener">flight summary</a></li>
         <li id="src-7">Myriad 2: <a href="https://www.intel.com/content/dam/support/us/en/documents/boardsandkits/neural-compute-sticks/Myriad2VPU-ProductBrief.pdf" target="_blank" rel="noopener">Intel brief</a>, <a href="https://www.esa.int/Enabling_Support/Space_Engineering_Technology/ESA_team_blasts_Intel_s_new_AI_chip_with_radiation_at_CERN" target="_blank" rel="noopener">ESA</a>, <a href="https://www.eoportal.org/satellite-missions/phisat-1" target="_blank" rel="noopener">eoPortal</a></li>
       </ol>
-      </ol>
     </div>
   </section>
 
-  <section class="scene" id="s-pack" aria-label="The package closes around the die">
-    <div class="stage">
+  <!-- 8 PACKAGE (dark, 3D) -->
+  <section class="scene tone-dark" id="s-pack" aria-label="The package closes around the die">
+    <div class="stage-s">
       <div class="beat top shadow" data-a data-in="left" data-k="0.02,0.12,0.5,0.6" data-out="left">
-        <span class="eyebrow">07 · Package</span>
+        <span class="lead">Mockup · not routed data</span>
         <h2>Then it gets a package.</h2>
         <p>Leadframe, bond wires and a lid close in around the die.</p>
         <span class="mock">Illustrative QFN-style mockup. Not routed data, not to scale, not a flight package.</span>
       </div>
       <div class="beat bot right shadow" data-a data-in="tilt" data-k="0.62,0.74,0.95,1.05" data-out="up">
         <h2>Under one lid.</h2>
-        <p>6,270 logic cells and 521 flip-flops. 518 of those flip-flops hold duplicated or triplicated state.</p>
+        <p><span class="m">6,270</span> logic cells and <span class="m">521</span> flip-flops. <span class="m">518</span> of those flip-flops hold duplicated or triplicated state.</p>
       </div>
     </div>
   </section>
 
-  <section id="s-end" aria-label="Specifications">
+  <section class="end tone-dark" id="s-end" aria-label="Specifications">
     <div class="end-hero shadow">
       <div class="wrap">
         <span class="eyebrow" data-a data-in="left" data-k="0,0.5,2,2">ORBIT-AI · sky130 demonstrator</span>
-        <h2 data-a data-in="down" data-k="0,0.6,2,2">An AI chip that <span class="hl">catches its own mistakes.</span></h2>
+        <h2 data-a data-in="down" data-k="0,0.6,2,2">An AI chip that catches its own mistakes.</h2>
         <p data-a data-in="down" data-k="0,0.7,2,2">Direction, not a product: on-board inference hardware for spacecraft autonomy when the ground link is denied, the job Vantage built GuardianEdge for.</p>
       </div>
     </div>
     <div class="specs">
       <div class="wrap">
-        <span class="eyebrow">Specifications · routed demonstrator</span>
-        <div class="grid hgrid">
+        <span class="eyebrow reveal">Specifications · routed demonstrator</span>
+        <div class="spec-grid reveal">
           <div class="spec"><div class="n">346<small>× 346&nbsp;µm</small></div><div class="l">Die, SkyWater sky130 open PDK</div></div>
           <div class="spec"><div class="n">1.1<small>GOPS INT8</small></div><div class="l">Peak: 4 MAC lanes × 2 ops × 139&nbsp;MHz. 6,270 logic cells, routed with OpenROAD</div></div>
           <div class="spec"><div class="n">750,439</div><div class="l">Layout rectangles in the routed die</div></div>
@@ -679,30 +732,71 @@ table.cmp-t { border-collapse: collapse; width: 100%; min-width: 1120px; font: 4
         </div>
       </div>
     </div>
-    <div class="cta">
-      <div class="glow2"></div>
-      <div class="wrap">
+  </section>
+
+  <!-- 9 CLOSING (light) -->
+  <section class="sec sec-wide tone-light" id="contact">
+    <div class="wrap">
+      <div class="cta-head reveal">
         <span class="eyebrow">Explore the die</span>
-        <h2>Put inference where the mission is.</h2>
-        <p>Walk every layer, every protected register and the mockup package in 3D. A demonstrator with simulated evidence, not a flight part.</p>
-        <div class="hero-cta">
-          <a class="btn btn-solid" href="https://claude.ai/artifact/5R9GAuPsfhBUXSWFermUvm" target="_blank" rel="noopener">Explore the die in 3D →</a>
-          <a class="btn" href="#s-compare">How it compares</a>
-        </div>
+        <h2>Walk every layer yourself. Then bring us a mission.</h2>
+        <p>Every layer, every protected register and the mockup package, in 3D. A demonstrator with simulated evidence, not a flight part.</p>
+      </div>
+      <div class="cta-blocks reveal">
+        <a class="cta-block cta-block--grey" href="https://claude.ai/artifact/5R9GAuPsfhBUXSWFermUvm" target="_blank" rel="noopener">Explore the die in 3D <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="cta-block cta-block--ink" href="https://vantage.industries/contact/" target="_blank" rel="noopener">Request a briefing <span class="arrow" aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
+
 </main>
-<footer class="vfoot">
+
+<footer class="tone-light">
   <div class="wrap">
-    <a class="brand" href="#s-hero" aria-label="Vantage · back to top">
-      <svg viewBox="0 0 100 100" fill="#e8edf2" aria-hidden="true"><polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/><polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/><polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/><circle cx="50" cy="49.8" r="6.3"/></svg>
-      <span>VANTAGE</span>
-    </a>
-    <p class="fine">Scope, stated plainly: this is a small demonstrator on the SkyWater sky130 open PDK, not the 16-tile ORBIT-AI concept chip. It is not radiation-qualified or flight-qualified, and sky130 is not radiation-characterised. The distances shown are layout geometry, not an upset-rate model. Fault handling was verified by gate-level fault injection on the routed netlist, not by beam testing. The package is an illustrative mockup. Layer colours are approximate, and layer spacing is exaggerated during the assembly.</p>
-    <div class="foot-row">
-      <p>Vantage · ORBIT-AI on-orbit AI compute</p>
-      <span class="foot-chip">SIMULATED EVIDENCE · NOT FLIGHT-QUALIFIED</span>
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="#top">
+          <span class="mark">
+            <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+              <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
+              <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
+              <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
+              <circle cx="50" cy="49.8" r="6.3"/>
+            </svg>
+          </span>
+          VANTAGE
+        </a>
+        <p>ORBIT-AI is Vantage's chip design for running AI on board a spacecraft, with the error catching built into the silicon. This page shows the routed sky130 demonstrator.</p>
+        <div class="social-row">
+          <span class="social">Demonstrator</span>
+          <span class="social">Simulated evidence</span>
+          <span class="social">Not flight-qualified</span>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>This page</h5>
+        <a href="#why">Why orbit</a>
+        <a href="#s-build">The chip</a>
+        <a href="#evidence">Evidence</a>
+        <a href="#s-compare">How it compares</a>
+        <a href="https://claude.ai/artifact/5R9GAuPsfhBUXSWFermUvm" target="_blank" rel="noopener">Explore the die in 3D</a>
+      </div>
+      <div class="foot-col">
+        <h5>Vantage</h5>
+        <a href="https://vantage.industries/" target="_blank" rel="noopener">vantage.industries</a>
+        <a href="https://vantage.industries/orbwatch/" target="_blank" rel="noopener">ORBWATCH</a>
+        <a href="https://vantage.industries/guardian/" target="_blank" rel="noopener">GUARDIAN</a>
+      </div>
+      <div class="foot-col">
+        <h5>Contact</h5>
+        <a href="https://vantage.industries/contact/" target="_blank" rel="noopener">Request a briefing</a>
+        <span class="plain">contact@vantage.industries</span>
+      </div>
+    </div>
+    <p class="fine">Scope, stated plainly: this is a small demonstrator on the SkyWater sky130 open PDK, not the 16-tile ORBIT-AI concept chip. It is not radiation-qualified or flight-qualified, and sky130 is not radiation-characterised. The distances shown are layout geometry, not an upset-rate model. Fault handling was verified by gate-level fault injection on the routed netlist, not by beam testing. The package is an illustrative mockup. Layer colours are approximate, and layer spacing is exaggerated during the assembly. Competitor figures are vendor peaks, from the sources listed above.</p>
+    <div class="foot-bot">
+      <p>© 2026 Vantage · ORBIT-AI on-orbit AI compute</p>
+      <span class="region"><span>SIMULATED EVIDENCE</span><span>NOT FLIGHT-QUALIFIED</span></span>
     </div>
   </div>
 </footer>
@@ -712,21 +806,125 @@ window.__SPACE = { tex: {"sub": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB
 </script>
 
 <script>
-/* Scroll choreography for the HTML layers. Everything is a pure function of a smoothed
-   scroll position; window.__scene (set by the three.js module) renders the same state. */
+/* Site shell behaviour, ported from vantage.industries scripts/site.js: mobile menu, the
+   scrolled pill, nav position, real UTC clock, scrollspy rail, staggered reveal. */
+(function () {
+  'use strict';
+  var hdr = document.getElementById('hdr');
+  var navToggle = document.querySelector('.nav-toggle');
+  var navLinks = document.getElementById('primary-nav');
+  if (hdr && navToggle && navLinks) {
+    var onOutside = function (e) { if (!hdr.contains(e.target)) setMenu(false); };
+    var onKey = function (e) { if (e.key === 'Escape') { setMenu(false); navToggle.focus(); } };
+    var setMenu = function (open) {
+      hdr.classList.toggle('menu-open', open);
+      navToggle.setAttribute('aria-expanded', String(open));
+      navToggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+      var bind = open ? 'addEventListener' : 'removeEventListener';
+      document[bind]('click', onOutside); document[bind]('keydown', onKey);
+    };
+    navToggle.addEventListener('click', function () { setMenu(!hdr.classList.contains('menu-open')); });
+    navLinks.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+    addEventListener('resize', function () { if (innerWidth > 1040) setMenu(false); });
+    var ticking = false;
+    var setScrolled = function () { hdr.classList.toggle('scrolled', scrollY > 10); ticking = false; };
+    addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(setScrolled); } }, { passive: true });
+    setScrolled();
+  }
+  var offset = 104;
+
+  /* nav position */
+  (function () {
+    if (!navLinks || !('IntersectionObserver' in window)) return;
+    var managed = [];
+    navLinks.querySelectorAll('a[href^="#"]').forEach(function (link) {
+      var id = link.getAttribute('href').slice(1), s = id && document.getElementById(id);
+      if (s) managed.push({ link: link, section: s, id: id });
+    });
+    var order = managed.map(function (m) { return m.id; }), visible = [], current = null;
+    var apply = function (id) {
+      if (id === current) return; current = id;
+      managed.forEach(function (m) { if (m.id === id) m.link.setAttribute('aria-current', 'location'); else m.link.removeAttribute('aria-current'); });
+    };
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { var at = visible.indexOf(en.target.id);
+        if (en.isIntersecting) { if (at === -1) visible.push(en.target.id); } else if (at !== -1) visible.splice(at, 1); });
+      if (!visible.length) return;
+      visible.sort(function (a, b) { return order.indexOf(a) - order.indexOf(b); });
+      apply(visible[visible.length - 1]);
+    }, { rootMargin: (-offset) + 'px 0px -70% 0px', threshold: 0 });
+    managed.forEach(function (m) { io.observe(m.section); });
+    addEventListener('scroll', function () { if (scrollY < 40) { visible.length = 0; apply(null); } }, { passive: true });
+  })();
+
+  /* real UTC: the only time on the page */
+  (function () {
+    var el = document.getElementById('utc'); if (!el) return;
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    var render = function () { var d = new Date();
+      el.textContent = pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes()) + ':' + pad(d.getUTCSeconds()) + 'Z'; el.setAttribute('datetime', d.toISOString()); };
+    var timer = null;
+    var start = function () { if (timer === null) { render(); timer = setInterval(render, 1000); } };
+    var stop = function () { if (timer !== null) { clearInterval(timer); timer = null; } };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') start(); else stop(); });
+    if (document.visibilityState === 'visible') start();
+  })();
+
+  /* scrollspy rail, 1440px and up */
+  (function () {
+    if (!('IntersectionObserver' in window)) return;
+    var sections = document.querySelectorAll('main > section');
+    var rail = document.createElement('div'); rail.className = 'rail-spy'; rail.setAttribute('aria-hidden', 'true');
+    var marks = [];
+    sections.forEach(function (sec, i) { var s = document.createElement('span'); s.textContent = 'S/' + String(i + 1).padStart(2, '0'); rail.appendChild(s); marks.push({ el: s, sec: sec }); });
+    document.body.appendChild(rail);
+    var visible = [], arr = Array.prototype.slice.call(sections);
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { var at = visible.indexOf(en.target);
+        if (en.isIntersecting) { if (at === -1) visible.push(en.target); } else if (at !== -1) visible.splice(at, 1); });
+      if (!visible.length) return;
+      var cur = visible.slice().sort(function (a, b) { return arr.indexOf(a) - arr.indexOf(b); }).pop();
+      marks.forEach(function (m) { m.el.classList.toggle('cur', m.sec === cur); });
+      rail.classList.toggle('on-dark', cur.classList.contains('tone-dark'));
+    }, { rootMargin: (-offset) + 'px 0px -60% 0px', threshold: 0 });
+    sections.forEach(function (s) { io.observe(s); });
+  })();
+
+  /* reveal, staggered within each group */
+  var targets = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { targets.forEach(function (el) { el.classList.add('in'); }); return; }
+  var groups = new Set();
+  targets.forEach(function (el) { groups.add(el.parentElement); });
+  groups.forEach(function (g) {
+    var step = parseInt(g.getAttribute('data-stagger'), 10) || 60;
+    g.querySelectorAll(':scope > .reveal').forEach(function (el, i) { if (i > 0) el.style.transitionDelay = Math.min(i, 5) * step + 'ms'; });
+  });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      var el = en.target; io.unobserve(el); el.classList.add('in');
+      if (el.style.transitionDelay) el.addEventListener('transitionend', function () { el.style.transitionDelay = ''; }, { once: true });
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0 });
+  targets.forEach(function (el) { io.observe(el); });
+})();
+</script>
+
+<script>
+/* Scroll choreography for the 3D scenes. Story time T advances through each story section
+   (i -> i + 1 across its own height) and holds in the opaque light bands between them, so
+   the chip moves only while a dark band shows it. window.__scene renders the same state. */
 (function () {
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   var clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
   var seg = function (p, a, b) { return b <= a ? (p >= b ? 1 : 0) : clamp((p - a) / (b - a), 0, 1); };
   var ease = function (t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; };
-  var ids = ['s-hero', 's-build', 's-rad', 's-proof', 's-cards', 's-pack', 's-end'];
+  // Story order the camera keys were written for: 0 hero, 1 build, 2 radiation, 3 and 4 the
+  // opaque photo and comparison bands (the camera repositions unseen), 5 package, 6 finale.
+  var ids = ['s-hero', 's-build', 's-rad', 's-photo', 's-compare', 's-pack', 's-end'];
   var secs = ids.map(function (id) { return { el: document.getElementById(id), top: 0, h: 0 }; });
   var vh = window.innerHeight, vw = window.innerWidth;
-  // The comparison section sits in normal flow between the cards and the package. Story
-  // time holds at 5 while it scrolls past, so the 3D does not move behind the table.
-  var cmpEl = document.getElementById('s-compare'), cmpTop = 0;
 
-  // Directions text can arrive from or leave to; a = 0 means at rest.
   var D = {
     left: function (a) { return 'translate3d(' + (-70 * a) + 'vw,0,0) rotate(' + (-4 * a) + 'deg)'; },
     right: function (a) { return 'translate3d(' + (70 * a) + 'vw,0,0) rotate(' + (4 * a) + 'deg)'; },
@@ -741,62 +939,18 @@ window.__SPACE = { tex: {"sub": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB
     return { el: el, sec: ids.indexOf(sec.id), k: el.dataset.k.split(',').map(Number), i: el.dataset.in, o: el.dataset.out || el.dataset.in };
   });
 
-  // Hero headline: words scatter in different directions as you scroll away.
-  var h1 = document.getElementById('hero-h1');
-  var h1words = [];
-  [].slice.call(h1.childNodes).forEach(function (nd) {
-    var hl = nd.nodeType === 1 && nd.classList.contains('hl');
-    nd.textContent.trim().split(/\s+/).forEach(function (w) { if (w) h1words.push({ w: w, hl: hl }); });
-  });
-  h1.textContent = '';
-  var hw = h1words.map(function (o, i) {
-    var s = document.createElement('span'); s.className = o.hl ? 'w hl' : 'w'; s.textContent = o.w;
-    h1.appendChild(s); if (i < h1words.length - 1) h1.appendChild(document.createTextNode(' '));
-    return s;
-  });
-  // One continuous accent -> accent-2 gradient across the highlighted words (each word is its own span).
-  function fitHl() {
-    var hs = hw.filter(function (s) { return s.classList.contains('hl'); });
-    if (!hs.length) return;
-    var lines = {};   // group by line so a wrapped phrase still runs accent -> accent-2 on each line
-    hs.forEach(function (s) { var k = s.offsetTop, L = lines[k] || (lines[k] = { x0: Infinity, x1: -Infinity, s: [] });
-      L.x0 = Math.min(L.x0, s.offsetLeft); L.x1 = Math.max(L.x1, s.offsetLeft + s.offsetWidth); L.s.push(s); });
-    Object.keys(lines).forEach(function (k) { var L = lines[k];
-      L.s.forEach(function (s) { s.style.backgroundSize = Math.max(1, L.x1 - L.x0) + 'px 100%'; s.style.backgroundPosition = (L.x0 - s.offsetLeft) + 'px 0'; }); });
-  }
-  var head = document.getElementById('vhead');
-  var scatter = [[-60, -30, -25], [40, -45, 18], [-30, 40, 12], [70, 25, -20]];
-
-  // Proof panel: word-by-word reveal.
-  var big = document.getElementById('big');
-  var bw = big.textContent.trim().split(/\s+/);
-  big.textContent = '';
-  var bspans = bw.map(function (w, i) {
-    var s = document.createElement('span'); s.className = 'w'; s.textContent = w;
-    big.appendChild(s); if (i < bw.length - 1) big.appendChild(document.createTextNode(' '));
-    return s;
-  });
-  var panel = document.getElementById('panel');
-  var track = document.getElementById('track');
-  var cards = [].slice.call(track.children);
-  var veil = document.getElementById('veil');
-
   function measure() {
     vh = window.innerHeight; vw = window.innerWidth;
-    fitHl();
     secs.forEach(function (s) { var r = s.el.getBoundingClientRect(); s.top = r.top + window.scrollY; s.h = s.el.offsetHeight; });
-    if (cmpEl) cmpTop = cmpEl.getBoundingClientRect().top + window.scrollY;
   }
   function prog(i, y) {
     var s = secs[i];
     if (i === secs.length - 1) return clamp((y - s.top + vh) / vh, 0, 2);
     return clamp((y - s.top) / Math.max(1, s.h - vh), 0, 1);
   }
-  // Story time T: section i spans [i, i+1] from its top to the next section's top.
   function storyT(y) {
     for (var i = secs.length - 2; i >= 0; i--) {
-      var end = (i === 4 && cmpEl) ? cmpTop : secs[i + 1].top;
-      if (y >= secs[i].top) return i + clamp((y - secs[i].top) / Math.max(1, end - secs[i].top), 0, 1);
+      if (y >= secs[i].top) return i + clamp((y - secs[i].top) / Math.max(1, secs[i].h), 0, 1);
     }
     return 0;
   }
@@ -804,11 +958,9 @@ window.__SPACE = { tex: {"sub": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB
   var target = window.scrollY, cur = target, last = 0, running = false;
   function apply(y) {
     var rm = reduce.matches;
-    head.classList.toggle('scrolled', window.scrollY > 10);
     var P = secs.map(function (s, i) { return prog(i, y); });
     var T = storyT(y);
     if (secs[6] && y > secs[6].top - vh) T = 6 + clamp((y - secs[6].top + vh) / vh, 0, 1);
-
     anims.forEach(function (a) {
       var p = P[a.sec], k = a.k;
       var ei = ease(seg(p, k[0], k[1])), eo = ease(seg(p, k[2], k[3]));
@@ -817,38 +969,6 @@ window.__SPACE = { tex: {"sub": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB
       a.el.style.visibility = op < 0.005 ? 'hidden' : 'visible';
       a.el.style.transform = rm ? 'none' : D[a.i](1 - ei) + ' ' + D[a.o](eo);
     });
-
-    var ph = P[0];
-    hw.forEach(function (s, i) {
-      var t = ease(seg(ph, 0.12 + i * 0.05, 0.42 + i * 0.05)), v = scatter[i % 4];
-      s.style.opacity = (1 - t).toFixed(3);
-      s.style.transform = rm ? 'none' : 'translate3d(' + (v[0] * t) + 'vw,' + (v[1] * t) + 'vh,0) rotate(' + (v[2] * t) + 'deg)';
-    });
-
-    var q = P[3];
-    var rise = rm ? 1 : ease(seg(q, 0, 0.3)), leave = rm ? 0 : ease(seg(q, 0.86, 1));
-    panel.style.transform = 'translate3d(0,' + ((1 - rise) * 70 - leave * 70) + 'vh,0) rotateX(' + ((1 - rise) * 38) + 'deg) scale(' + (0.9 + rise * 0.1) + ')';
-    panel.style.opacity = (Math.min(rise * 1.5, 1) * (1 - leave)).toFixed(3);
-    var wt = rm ? 1 : seg(q, 0.22, 0.72), n = bspans.length;
-    bspans.forEach(function (s, i) { s.style.setProperty('--o', clamp(wt * (n + 2) - i, 0, 1).toFixed(3)); });
-
-    if (!rm) {
-      var pc = P[4];
-      var span = track.scrollWidth - vw;
-      var x = (vw * 0.35) - ease(seg(pc, 0.04, 0.96)) * (span + vw * 0.35);
-      track.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,0)';
-      cards.forEach(function (c) {
-        var cx = c.offsetLeft + c.offsetWidth / 2 + x - vw / 2;
-        var r = clamp(cx / vw, -1, 1);
-        c.style.transform = 'rotateY(' + (-r * 32).toFixed(2) + 'deg) translateZ(' + (-Math.abs(r) * 160).toFixed(1) + 'px) translateY(' + (r * r * 30).toFixed(1) + 'px)';
-        c.style.opacity = (1 - clamp(Math.abs(r) - 0.55, 0, 1) * 1.4).toFixed(3);
-      });
-    } else { track.style.transform = 'none'; cards.forEach(function (c) { c.style.transform = 'none'; c.style.opacity = 1; }); }
-
-    // Veil darkens the 3D behind dense text (proof panel and cards).
-    var v = Math.max(seg(T, 3.0, 3.25) * (1 - seg(T, 4.0, 4.2)) * 0.55, seg(T, 4.0, 4.15) * (1 - seg(T, 4.9, 5.05)) * 0.6);
-    veil.style.opacity = v.toFixed(3);
-
     if (window.__scene) window.__scene.render({ T: T, P: P, reduce: rm, vw: vw, vh: vh });
   }
   function tick(now) {
@@ -866,7 +986,9 @@ window.__SPACE = { tex: {"sub": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAB
   window.addEventListener('resize', function () { measure(); if (window.__scene) window.__scene.resize(); kick(); });
   if (reduce.addEventListener) reduce.addEventListener('change', kick);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measure(); kick(); });
-  window.__story = { kick: kick, measure: measure, jump: function () { cur = target = window.scrollY; apply(cur); } };
+  // Late layout shifts (reveals, image decode) move section tops; re-measure after load.
+  window.addEventListener('load', function () { measure(); kick(); });
+  window.__story = { kick: kick, measure: measure, jump: function () { measure(); cur = target = window.scrollY; apply(cur); } };
   measure(); apply(cur);
 })();
 </script>
@@ -886,7 +1008,7 @@ try {
   document.documentElement.classList.add('nogl');
   throw e;
 }
-renderer.setClearColor(0x05070a, 1);
+renderer.setClearColor(0x0e0f12, 1);
 renderer.autoClear = false;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -899,18 +1021,18 @@ const DEG = Math.PI / 180;
 let rngSeed = 7;
 const rnd = () => { rngSeed = (rngSeed * 16807) % 2147483647; return (rngSeed - 1) / 2147483646; };
 
-/* ================= background: stars, Earth, orbit ================= */
+/* ================= background: a quiet star field (hero only reads it; dark bands let it through) ================= */
 const bg = new THREE.Scene();
 const bgCam = new THREE.PerspectiveCamera(50, 1, 0.1, 4000);
 bgCam.rotation.order = 'YXZ';
 {
-  const N = 2800, pos = new Float32Array(N * 3), col = new Float32Array(N * 3), size = new Float32Array(N);
+  const N = 1600, pos = new Float32Array(N * 3), col = new Float32Array(N * 3), size = new Float32Array(N);
   for (let i = 0; i < N; i++) {
     const u = rnd() * 2 - 1, th = rnd() * Math.PI * 2, r = 900 + rnd() * 900, s = Math.sqrt(1 - u * u);
     pos.set([Math.cos(th) * s * r, u * r, Math.sin(th) * s * r], i * 3);
-    const b = 0.35 + Math.pow(rnd(), 3) * 0.9, t = rnd();
+    const b = (0.35 + Math.pow(rnd(), 3) * 0.9) * 0.45, t = rnd();
     col.set(t < 0.15 ? [b, b * 0.85, b * 0.7] : t < 0.35 ? [b * 0.8, b * 0.9, b] : [b, b, b], i * 3);
-    size[i] = 0.9 + Math.pow(rnd(), 4) * 2.6;
+    size[i] = 0.8 + Math.pow(rnd(), 4) * 1.8;
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -926,98 +1048,6 @@ bgCam.rotation.order = 'YXZ';
   bg.add(new THREE.Points(g, m));
   bg.userData.stars = m;
 }
-const NOISE = `
-vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;} vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
-vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);} vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-.85373472095314*r;}
-float snoise(vec3 v){ const vec2 C=vec2(1./6.,1./3.); const vec4 D=vec4(0.,.5,1.,2.);
-  vec3 i=floor(v+dot(v,C.yyy)); vec3 x0=v-i+dot(i,C.xxx); vec3 g=step(x0.yzx,x0.xyz); vec3 l=1.-g;
-  vec3 i1=min(g.xyz,l.zxy); vec3 i2=max(g.xyz,l.zxy); vec3 x1=x0-i1+C.xxx; vec3 x2=x0-i2+C.yyy; vec3 x3=x0-D.yyy;
-  i=mod289(i); vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
-  float n_=.142857142857; vec3 ns=n_*D.wyz-D.xzx; vec4 j=p-49.*floor(p*ns.z*ns.z); vec4 x_=floor(j*ns.z); vec4 y_=floor(j-7.*x_);
-  vec4 x=x_*ns.x+ns.yyyy; vec4 y=y_*ns.x+ns.yyyy; vec4 h=1.-abs(x)-abs(y); vec4 b0=vec4(x.xy,y.xy); vec4 b1=vec4(x.zw,y.zw);
-  vec4 s0=floor(b0)*2.+1.; vec4 s1=floor(b1)*2.+1.; vec4 sh=-step(h,vec4(0.)); vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy; vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
-  vec3 p0=vec3(a0.xy,h.x); vec3 p1=vec3(a0.zw,h.y); vec3 p2=vec3(a1.xy,h.z); vec3 p3=vec3(a1.zw,h.w);
-  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3))); p0*=norm.x; p1*=norm.y; p2*=norm.z; p3*=norm.w;
-  vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.); m=m*m;
-  return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3))); }
-float fbm(vec3 p){ float a=.5, s=0.; for(int i=0;i<5;i++){ s+=a*snoise(p); p*=2.03; a*=.5; } return s; }`;
-const EARTH_R = 60;
-const earthRig = new THREE.Group();
-bg.add(earthRig);
-const SUN = new THREE.Vector3(-0.55, 0.06, -1.0).normalize();
-const earthMat = new THREE.ShaderMaterial({
-  uniforms: { uSun: { value: SUN }, uSpin: { value: 0 }, uCam: { value: new THREE.Vector3() } },
-  vertexShader: `varying vec3 vN; varying vec3 vP; varying vec3 vO;
-    void main(){ vO = normalize(position); vN = normalize(mat3(modelMatrix) * normal); vec4 w = modelMatrix * vec4(position,1.); vP = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
-  fragmentShader: NOISE + `
-    uniform vec3 uSun; uniform float uSpin; uniform vec3 uCam; varying vec3 vN; varying vec3 vP; varying vec3 vO;
-    void main(){
-      float c = cos(uSpin), s = sin(uSpin); vec3 p = vec3(c*vO.x + s*vO.z, vO.y, -s*vO.x + c*vO.z);
-      float land = fbm(p * 2.4 + vec3(3.1, 0., 1.7));
-      float cloud = fbm(p * 5.0 + vec3(0., 9.2, 4.)) + .15 * snoise(p * 18.);
-      vec3 n = normalize(vN), v = normalize(uCam - vP);
-      float ndl = dot(n, uSun);
-      float day = smoothstep(-0.12, 0.45, ndl);
-      float isLand = smoothstep(0.04, 0.12, land);
-      vec3 ocean = vec3(0.02, 0.07, 0.16);
-      vec3 ground = mix(vec3(0.06, 0.13, 0.09), vec3(0.30, 0.26, 0.17), smoothstep(0.15, 0.55, land));
-      vec3 surf = mix(ocean, ground, isLand);
-      float cl = smoothstep(0.08, 0.55, cloud) * 0.75;
-      surf = mix(surf, vec3(0.86, 0.9, 0.96), cl);
-      vec3 col = surf * day * 1.15;
-      float city = isLand * (1. - cl) * smoothstep(0.78, 0.98, snoise(p * 190.) * .5 + .5) * smoothstep(0.3, 0.7, snoise(p * 9.) * .5 + .5) * (1. - smoothstep(-0.2, 0.05, ndl));
-      col += vec3(1.0, 0.66, 0.34) * city * 0.8;
-      vec3 h = normalize(uSun + v);
-      col += (1. - isLand) * (1. - cl) * pow(max(dot(n, h), 0.), 70.) * day * 0.5;
-      float fr = pow(1. - max(dot(n, v), 0.), 2.6);
-      col = mix(col, vec3(0.35, 0.62, 1.0), fr * (0.15 + 0.85 * smoothstep(-0.3, 0.4, ndl)));
-      col += vec3(0.02, 0.04, 0.08);
-      gl_FragColor = vec4(col, 1.);
-    }`
-});
-const earth = new THREE.Mesh(new THREE.SphereGeometry(EARTH_R, 128, 96), earthMat);
-earthRig.add(earth);
-const atmoMat = new THREE.ShaderMaterial({
-  uniforms: { uSun: { value: SUN }, uCam: { value: new THREE.Vector3() }, uC: { value: new THREE.Vector3() } },
-  side: THREE.BackSide, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  vertexShader: `varying vec3 vN; varying vec3 vP; void main(){ vN = normalize(mat3(modelMatrix) * normal); vec4 w = modelMatrix * vec4(position,1.); vP = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
-  fragmentShader: `uniform vec3 uSun; uniform vec3 uCam; uniform vec3 uC; varying vec3 vN; varying vec3 vP;
-    void main(){ vec3 v = normalize(vP - uCam);
-      vec3 oc = uC - uCam; float tc = dot(oc, v); vec3 cp = uCam + v * tc;
-      float dmin = length(cp - uC);
-      float h = (dmin - ${EARTH_R.toFixed(1)}) / ${(EARTH_R * 0.04).toFixed(2)};
-      if (h < 0.) discard;
-      float a = exp(-h * 4.2) * 1.3 + exp(-h * 2.4) * 0.22;
-      vec3 up = normalize(cp - uC);
-      float sun = 0.18 + 0.82 * smoothstep(-0.45, 0.35, dot(up, uSun));
-      gl_FragColor = vec4(vec3(0.32, 0.62, 1.0) * a * sun, 1.); }`
-});
-earthRig.add(new THREE.Mesh(new THREE.SphereGeometry(EARTH_R * 1.1, 128, 96), atmoMat));
-// Orbit ring + a satellite riding it
-const ORBIT_R = EARTH_R + 5.5;
-const orbit = new THREE.Group();
-orbit.rotation.set(0.32, 0, 0.12);
-earthRig.add(orbit);
-{
-  const n = 512, p = new Float32Array(n * 3), c = new Float32Array(n * 3);
-  for (let i = 0; i < n; i++) {
-    const a = i / n * Math.PI * 2;
-    p.set([Math.cos(a) * ORBIT_R, 0, Math.sin(a) * ORBIT_R], i * 3);
-    c.set([0.3, 0.64, 1.0], i * 3);
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.BufferAttribute(p, 3));
-  g.setAttribute('color', new THREE.BufferAttribute(c, 3));
-  orbit.add(new THREE.LineLoop(g, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.38, blending: THREE.AdditiveBlending, depthWrite: false })));
-}
-const satMat = new THREE.ShaderMaterial({
-  uniforms: { uDpr: { value: 1 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-  vertexShader: `uniform float uDpr; void main(){ gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.); gl_PointSize = 26. * uDpr; }`,
-  fragmentShader: `void main(){ float d = length(gl_PointCoord - .5); float a = smoothstep(.5, 0., d); gl_FragColor = vec4(vec3(.62, .97, .86) * (a * a * 1.2 + smoothstep(.08, .0, d)), 1.); }`
-});
-const sat = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(new Float32Array(3), 3)), satMat);
-orbit.add(sat);
-
 /* ================= foreground: the die ================= */
 const scene = new THREE.Scene();
 const cam = new THREE.PerspectiveCamera(32, 1, 0.1, 400);
@@ -1233,10 +1263,10 @@ function lidTexture() {
   const w0 = 512 - 268, w = 536;
   g.clearRect(w0, w0, w, w);
   g.fillStyle = 'rgba(120,170,220,0.10)'; g.fillRect(w0, w0, w, w);
-  g.strokeStyle = 'rgba(77,163,255,0.9)'; g.lineWidth = 4; g.strokeRect(w0 - 6, w0 - 6, w + 12, w + 12);
+  g.strokeStyle = 'rgba(167,171,178,0.9)'; g.lineWidth = 4; g.strokeRect(w0 - 6, w0 - 6, w + 12, w + 12);
   g.fillStyle = 'rgba(210,218,230,0.72)';
-  g.font = '600 58px "Space Grotesk", Arial, sans-serif'; g.fillText('ORBIT-AI', 64, 150);
-  g.font = '400 30px "IBM Plex Mono", monospace'; g.fillText('SKY130 DEMONSTRATOR · 4 × INT8', 64, 196);
+  g.font = '600 58px "Geist", Arial, sans-serif'; g.fillText('ORBIT-AI', 64, 150);
+  g.font = '400 30px "Geist Mono", monospace'; g.fillText('SKY130 DEMONSTRATOR · 4 × INT8', 64, 196);
   g.fillText('MOCKUP PACKAGE', 64, 960);
   g.beginPath(); g.arc(930, 110, 22, 0, Math.PI * 2); g.fill();
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
@@ -1263,16 +1293,16 @@ LAYERS.forEach((l, i) => {
   const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('r', 3); dot.setAttribute('fill', l.sw); svg.appendChild(dot); l.dot = dot;
   const c = document.createElement('div');
   c.className = 'cap-card'; c.style.setProperty('--sw', l.sw);
-  c.innerHTML = `<div class="n">LAYER ${i + 1} OF 8 · BOTTOM UP</div><b>${l.n}</b><span><em style="font-style:normal;color:var(--txt)">${l.h}</em> · ${l.role}</span>`;
+  c.innerHTML = `<div class="n">LAYER ${i + 1} OF 8 · BOTTOM UP</div><b>${l.n}</b><span><em>${l.h}</em> · ${l.role}</span>`;
   caps.appendChild(c); l.cap = c;
 });
 function chipTag(text, color) {
   const d = document.createElement('div'); d.className = 'chip-tag'; d.textContent = text; d.style.color = color; tagBox.appendChild(d); return d;
 }
 const tagsR = {
-  A: chipTag('COPY A', '#4da3ff'), B: chipTag('COPY B', '#7cf6c9'), AB: chipTag('FENCES 242 µm APART', '#e8edf2'),
+  A: chipTag('COPY A', '#4da3ff'), B: chipTag('COPY B', '#7cf6c9'), AB: chipTag('FENCES 242 µm APART', '#f4f4f2'),
   T: chipTag('THERMAL STATE × 3', '#ffb454'), T98: chipTag('≥ 98 µm APART', '#ffb454'),
-  lead: chipTag('LEADFRAME · MOCKUP', '#b9c6d3'), wire: chipTag('BOND WIRES · MOCKUP', '#b9c6d3'), lidt: chipTag('LID · MOCKUP', '#b9c6d3'),
+  lead: chipTag('LEADFRAME · MOCKUP', '#a7abb2'), wire: chipTag('BOND WIRES · MOCKUP', '#a7abb2'), lidt: chipTag('LID · MOCKUP', '#a7abb2'),
 };
 const v3 = new THREE.Vector3();
 let W = 1, H = 1;
@@ -1311,7 +1341,7 @@ function pose(T) {
   const t = ease(clamp((T - a[0]) / (b[0] - a[0]), 0, 1));
   return a.slice(1).map((v, j) => lerp(v, b[j + 1], t));
 }
-// Background camera: [T, pitch°, yaw°]; pitch > 0 lifts the view off the Earth.
+// Background camera: [T, pitch°, yaw°]; a slow drift of the star field.
 const BG = [[0, 7, 0], [1.0, 16, 10], [1.4, 30, 25], [2.0, 30, 40], [2.4, 11, 55], [3.2, 12, 70], [4.0, 26, 90], [5.0, 28, 115], [5.8, 16, 130], [6.7, 5, 140], [7, 5, 142]];
 function bgPose(T) {
   let i = 0;
@@ -1346,7 +1376,7 @@ function resize() {
   renderer.setSize(W, H, false);
   cam.aspect = bgCam.aspect = W / H;
   bgCam.updateProjectionMatrix();
-  bg.userData.stars.uniforms.uDpr.value = dpr; satMat.uniforms.uDpr.value = dpr; flMat.uniforms.uDpr.value = dpr; trMat.uniforms.uDpr.value = dpr;
+  bg.userData.stars.uniforms.uDpr.value = dpr; flMat.uniforms.uDpr.value = dpr; trMat.uniforms.uDpr.value = dpr;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   if (lastState) render(lastState);
 }
@@ -1359,18 +1389,6 @@ function render(S) {
   // ---- background ----
   const [pitch, yaw] = bgPose(T);
   bgCam.rotation.set(pitch * DEG, yaw * DEG, 0);
-  earthRig.rotation.y = yaw * DEG;
-  earthRig.position.set(0, 0, 0);
-  earth.position.set(0, -EARTH_R - 3.2, -34);
-  earthRig.children[1].position.copy(earth.position);
-  orbit.position.copy(earth.position);
-  earthMat.uniforms.uSpin.value = 0.6 + T * 0.35;
-  bgCam.updateMatrixWorld(); earthRig.updateMatrixWorld(true);
-  earthMat.uniforms.uCam.value.setFromMatrixPosition(bgCam.matrixWorld);
-  atmoMat.uniforms.uCam.value.copy(earthMat.uniforms.uCam.value);
-  earth.getWorldPosition(atmoMat.uniforms.uC.value);
-  const sa = -1.2 + T * 0.32;
-  sat.position.set(Math.cos(sa) * ORBIT_R, 0, Math.sin(sa) * ORBIT_R);
 
   // ---- assembly ----
   const b = P[1];
@@ -1414,7 +1432,7 @@ function render(S) {
   cam.updateMatrixWorld();
 
   // chip visible only after the hero
-  chip.visible = T > 0.7;
+  chip.visible = T > 0.97;   // hidden behind the light statement band until the build scene
   // finale: the packaged part tilts and floats
   const fin = seg(T, 6.0, 7.0);
   scene.rotation.set(0, 0, 0);
