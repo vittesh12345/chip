@@ -23,7 +23,7 @@ using any figure outside this page.
 | Jetson Orin NX 16GB | NVIDIA | 8 nm (Samsung) | up to 100 TOPS INT8 (sparse) | 10 to 25 W configurable | Not rad-hard. TID test: survived past 36.2 krad(Si). Heavy-ion test: no destructive latch-up at tested energies | COTS; a shielded Orin NX flew Aug 2024 (Transporter-11, Aethero) |
 | Myriad 2 (MA2450) | Intel Movidius | 28 nm | ~1,000 GFLOPS FP16 | ~1 W nominal | No rating published; beam-tested at CERN (2018), passed unmodified | COTS; flew on ESA Φ-sat-1 (launched Sep 2020) |
 | ORBIT-AI demonstrator (built) | Vantage | 130 nm (SkyWater sky130 open PDK) | 1.1 GOPS INT8 peak (4 MACs × 2 ops × 139 MHz) | not measured | None claimed; sky130 is not radiation-characterised | Routed layout: DRC 0, LVS clean; 936 / 936 injected flips stopped or repaired |
-| ORBIT-AI concept (target) | Vantage | not specified | 6.55 to 26.21 TOPS INT8 dense at 200 to 800 MHz (unvalidated target) | 40 W sizing allocation, not an estimate | None claimed | Concept only; nothing built |
+| ORBIT-AI 16-tile full-size design | Vantage | not specified | 6.55 to 26.21 TOPS INT8 dense at 200 to 800 MHz (design figure, on paper) | 40 W sizing allocation, not an estimate | None claimed | Design only; not built |
 
 ## Sources
 
