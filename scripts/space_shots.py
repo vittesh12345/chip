@@ -9,10 +9,10 @@ WRAP='<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" con
 DESK=[("01_hero","s-hero",0),("02_why","why",0.0),("02b_why_stages","why",0.9),("03_build_intro","s-build",0.08),("04_build_mid","s-build",0.42),
 ("05_build_full","s-build",0.78),("06_compressed","s-build",0.96),("06b_build_exit","s-build",1.12),("07_evidence","evidence",0.0),("08_evidence_boxes","evidence",0.35),("09_evidence_fault","evidence",0.85),
 ("10_rad_hits","s-rad",0.2),("11_rad_ab","s-rad",0.5),("12_rad_tmr","s-rad",0.8),("13_photo","s-photo",0.3),("14_compare_head","s-compare",0.0),("15_compare_matrix","@cmp-mx",90),
-("15b_compare_legend","@cmp-leg",560),("16_compare_numbers","@cmp-ns",90),("17_compare_src","s-compare",1.0),("18_pack_wires","s-pack",0.6),("19_pack_lid","s-pack",0.9),("20_end","s-end",1.0),("21_specs","s-end",1.9),
+("15b_compare_legend","@cmp-leg",560),("16_compare_src","@cmp-src",200),("17_compare_src","s-compare",1.0),("18_pack_wires","s-pack",0.6),("19_pack_lid","s-pack",0.9),("20_end","s-end",1.0),("21_specs","s-end",1.9),
 ("22_cta","contact",0.3),("23_footer","__end",0)]
 MOB=[("m01_hero","s-hero",0),("m02_why","why",0.0),("m02b_why_stages","why",0.8),("m03_build_mid","s-build",0.5),("m04_compressed","s-build",0.96),("m05_evidence","evidence",0.3),
-("m06_evidence_fault","evidence",0.85),("m07_rad","s-rad",0.8),("m08_photo","s-photo",0.4),("m09_compare_head","s-compare",0.02),("m10_compare_matrix","@cmp-mx",80),("m10b_compare_legend","@cmp-leg",520),("m11_compare_numbers","@cmp-ns",80),
+("m06_evidence_fault","evidence",0.85),("m07_rad","s-rad",0.8),("m08_photo","s-photo",0.4),("m09_compare_head","s-compare",0.02),("m10_compare_matrix","@cmp-mx",80),("m10b_compare_legend","@cmp-leg",520),("m11_compare_src","@cmp-src",300),
 ("m12_compare_src","s-compare",0.95),("m13_pack","s-pack",0.7),("m14_specs","s-end",2.2),("m15_cta","contact",0.4),("m16_footer","__end",0)]
 async def run(p, vp, shots, prefix):
     b = await p.chromium.launch(args=["--use-angle=swiftshader","--enable-unsafe-swiftshader","--ignore-gpu-blocklist"])
