@@ -3,7 +3,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
 <style>
-/* Vantage editorial light/dark system, inlined from vantage.industries (design.md, tokens.css,
+/* Editorial light/dark system (design.md, tokens.css,
    site.css). The page alternates full-light and full-dark bands. One fixed WebGL canvas (a quiet
    star field and the routed die) sits behind everything; the dark scroll scenes are transparent
    so it shows through them, and every light band is opaque so it never does. */
@@ -324,7 +324,7 @@ table.mx { border-collapse: separate; border-spacing: 0; width: 100%; min-width:
 
 /* ---------- footer (site.css) ---------- */
 footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule); padding: 80px 0 calc(40px + env(safe-area-inset-bottom, 0px)); }
-.foot-top { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+.foot-top { display: grid; grid-template-columns: 1.7fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
 .foot-brand .brand { color: var(--fg); font-size: 19px; }
 .foot-brand p { color: var(--fg-muted); font-size: 14px; max-width: 40ch; margin-top: 16px; }
 .foot-col h5 { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-faint); margin-bottom: 12px; font-weight: 500; }
@@ -429,16 +429,14 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
 <header id="hdr">
   <div class="wrap">
     <nav class="nav-pill" aria-label="Sections">
-      <a class="brand" href="#top" aria-label="Vantage, back to top">
+      <a class="brand" href="#top" aria-label="Heliocore, back to top">
         <span class="mark">
           <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-            <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
-            <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
-            <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
-            <circle cx="50" cy="49.8" r="6.3"/>
+            <rect x="33" y="33" width="34" height="34" rx="3"/>
+            <polygon points="79.6,44.9 96.0,50.0 79.6,55.1"/><polygon points="74.5,67.3 82.5,82.5 67.3,74.5"/><polygon points="55.1,79.6 50.0,96.0 44.9,79.6"/><polygon points="32.7,74.5 17.5,82.5 25.5,67.3"/><polygon points="20.4,55.1 4.0,50.0 20.4,44.9"/><polygon points="25.5,32.7 17.5,17.5 32.7,25.5"/><polygon points="44.9,20.4 50.0,4.0 55.1,20.4"/><polygon points="67.3,25.5 82.5,17.5 74.5,32.7"/>
           </svg>
         </span>
-        VANTAGE
+        HELIOCORE
       </a>
       <div class="navlinks" id="primary-nav">
         <a href="#why">Why orbit</a>
@@ -446,11 +444,11 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
         <a href="#evidence">Evidence</a>
         <a href="#s-compare">How it compares</a>
         <a class="nav-extra" href="{{EXPLORER}}" target="_blank" rel="noopener">Explore the die in 3D</a>
-        <a class="nav-extra" href="https://vantage.industries/contact/" target="_blank" rel="noopener">Request a briefing</a>
+        <a class="nav-extra" href="https://github.com/vittesh12345/chip" target="_blank" rel="noopener">Source on GitHub</a>
       </div>
       <div class="nav-right">
         <time class="nav-clock" id="utc" aria-hidden="true"></time>
-        <a href="https://vantage.industries/contact/" class="nav-cta" target="_blank" rel="noopener"><span>Request a briefing</span></a>
+        <a href="https://github.com/vittesh12345/chip" class="nav-cta" target="_blank" rel="noopener"><span>Source on GitHub</span></a>
         <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
           <svg viewBox="0 0 24 24" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
@@ -603,7 +601,7 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
       <div class="mx-wrap reveal" tabindex="0" role="region" aria-label="Capability matrix: ORBIT-AI against five space compute chips">
         <table class="mx">
           <thead>
-            <tr><th scope="col" class="mx-f"><span class="mx-k">Capability</span></th><th scope="col" class="us"><span class="mx-c"><span class="mx-n">ORBIT-AI</span></span><span class="mx-v">Vantage</span></th><th scope="col"><span class="mx-c"><span class="mx-n">RAD750</span></span><span class="mx-v">BAE Systems<sup><a href="#src-1" aria-label="Source 1">1</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">GR740</span></span><span class="mx-v">Frontgrade Gaisler<sup><a href="#src-2" aria-label="Source 2">2</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">XQR Versal</span></span><span class="mx-v">AMD<sup><a href="#src-3" aria-label="Source 3">3</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">PIC64-HPSC</span></span><span class="mx-v">Microchip<sup><a href="#src-4" aria-label="Source 4">4</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">Jetson Orin NX</span></span><span class="mx-v">NVIDIA<sup><a href="#src-5" aria-label="Source 5">5</a></sup></span></th></tr>
+            <tr><th scope="col" class="mx-f"><span class="mx-k">Capability</span></th><th scope="col" class="us"><span class="mx-c"><span class="mx-n">ORBIT-AI</span></span><span class="mx-v">Heliocore</span></th><th scope="col"><span class="mx-c"><span class="mx-n">RAD750</span></span><span class="mx-v">BAE Systems<sup><a href="#src-1" aria-label="Source 1">1</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">GR740</span></span><span class="mx-v">Frontgrade Gaisler<sup><a href="#src-2" aria-label="Source 2">2</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">XQR Versal</span></span><span class="mx-v">AMD<sup><a href="#src-3" aria-label="Source 3">3</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">PIC64-HPSC</span></span><span class="mx-v">Microchip<sup><a href="#src-4" aria-label="Source 4">4</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">Jetson Orin NX</span></span><span class="mx-v">NVIDIA<sup><a href="#src-5" aria-label="Source 5">5</a></sup></span></th></tr>
           </thead>
           <tbody>
             <tr><th scope="row"><span class="mx-t">AI inference engine, INT8</span><small>1.1 GOPS demonstrator</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td></tr>
@@ -676,11 +674,11 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
     <div class="wrap">
       <div class="cta-head reveal">
         <span class="eyebrow">Explore the die</span>
-        <h2>Walk every layer. Then bring us a mission.</h2>
+        <h2>Walk every layer. Then read every line.</h2>
       </div>
       <div class="cta-blocks reveal">
         <a class="cta-block cta-block--grey" href="{{EXPLORER}}" target="_blank" rel="noopener">Explore the die in 3D <span class="arrow" aria-hidden="true">→</span></a>
-        <a class="cta-block cta-block--ink" href="https://vantage.industries/contact/" target="_blank" rel="noopener">Request a briefing <span class="arrow" aria-hidden="true">→</span></a>
+        <a class="cta-block cta-block--ink" href="https://github.com/vittesh12345/chip" target="_blank" rel="noopener">Read the source <span class="arrow" aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
@@ -694,13 +692,11 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
         <a class="brand" href="#top">
           <span class="mark">
             <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-              <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
-              <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
-              <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
-              <circle cx="50" cy="49.8" r="6.3"/>
+              <rect x="33" y="33" width="34" height="34" rx="3"/>
+              <polygon points="79.6,44.9 96.0,50.0 79.6,55.1"/><polygon points="74.5,67.3 82.5,82.5 67.3,74.5"/><polygon points="55.1,79.6 50.0,96.0 44.9,79.6"/><polygon points="32.7,74.5 17.5,82.5 25.5,67.3"/><polygon points="20.4,55.1 4.0,50.0 20.4,44.9"/><polygon points="25.5,32.7 17.5,17.5 32.7,25.5"/><polygon points="44.9,20.4 50.0,4.0 55.1,20.4"/><polygon points="67.3,25.5 82.5,17.5 74.5,32.7"/>
             </svg>
           </span>
-          VANTAGE
+          HELIOCORE
         </a>
         <p>Demonstrator. Simulated evidence. Not flight-qualified.</p>
       </div>
@@ -713,19 +709,13 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
         <a href="{{EXPLORER}}" target="_blank" rel="noopener">Explore the die in 3D</a>
       </div>
       <div class="foot-col">
-        <h5>Vantage</h5>
-        <a href="https://vantage.industries/" target="_blank" rel="noopener">vantage.industries</a>
-        <a href="https://vantage.industries/orbwatch/" target="_blank" rel="noopener">ORBWATCH</a>
-        <a href="https://vantage.industries/guardian/" target="_blank" rel="noopener">GUARDIAN</a>
-      </div>
-      <div class="foot-col">
-        <h5>Contact</h5>
-        <a href="https://vantage.industries/contact/" target="_blank" rel="noopener">Request a briefing</a>
-        <span class="plain">contact@vantage.industries</span>
+        <h5>Heliocore</h5>
+        <a href="https://github.com/vittesh12345/chip" target="_blank" rel="noopener">Source on GitHub</a>
+        <a href="https://github.com/vittesh12345/chip/tree/main/reports" target="_blank" rel="noopener">Test reports</a>
       </div>
     </div>
     <div class="foot-bot">
-      <p>© 2026 Vantage · ORBIT-AI</p>
+      <p>© 2026 Heliocore · ORBIT-AI</p>
       <span class="region"><span>SKY130 NOT RADIATION-CHARACTERISED</span><span>DISTANCES ARE LAYOUT GEOMETRY</span></span>
     </div>
   </div>
@@ -736,7 +726,7 @@ window.__SPACE = { tex: {{TEXTURES}}, geo: {{SCENE}} };
 </script>
 
 <script>
-/* Site shell behaviour, ported from vantage.industries scripts/site.js: mobile menu, the
+/* Site shell behaviour: mobile menu, the
    scrolled pill, nav position, real UTC clock, scrollspy rail, staggered reveal. */
 (function () {
   'use strict';
