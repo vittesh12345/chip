@@ -1,0 +1,6 @@
+GLS: 30000 cycles, seed 1, 518 redundant bits, injection every 32 cycles
+coverage: beats accepted 8729, results taken 1037 (1037 non-zero), resets 6, clears 733
+coverage: cycles NORMAL 14075, THROTTLE 1737, STOP 14182, code3 0; throttle-blocked beats 525
+injections: 702 duplicated-copy flips (702 stopped), 234 thermal-copy flips (234 repaired); 518 of 518 redundant bits hit
+GLS PASS: 30000 cycles, 0 mismatches
+pd/gls/tb_gls.v:262: $finish called at 300004000 (1ps)

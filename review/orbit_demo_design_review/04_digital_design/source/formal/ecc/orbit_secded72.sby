@@ -1,0 +1,24 @@
+# SymbiYosys job: (72,64) SECDED codec properties (harness orbit_secded72_fv.sv).
+# The codec is combinational, so a depth-1 proof covers every input value.
+# mk/ecc.mk copies this file into $(BUILD)/ecc/formal/ and fills in the paths
+# of the codec source (@CODEC@) and harness (@CODEC_HARNESS@). bitwuzla is
+# markedly faster than yices and abc pdr on this XOR-heavy problem.
+
+[tasks]
+codec
+
+[options]
+mode prove
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read -formal orbit_secded72.v
+read -formal orbit_secded72_fv.sv
+prep -top orbit_secded72_fv
+
+[files]
+@CODEC@
+@CODEC_HARNESS@

@@ -1,0 +1,83 @@
+// Block diagram of orbit_demo, drawn by hand from rtl/orbit_demo.v, rtl/orbit_mac_lane.v,
+// rtl/orbit_thermal_tmr.v and rtl/orbit_keep_reg.v (RTL unchanged since commit 26566f0).
+// Instance, port and net names are copied from the RTL. Bus widths in [ ].
+// Clock/reset: one clock clk, one synchronous active-low reset rst_n, to every flip-flop.
+// Power: one domain (VDD/VSS pins of the sep layout; no other supplies in DEF or RTL).
+digraph orbit_demo {
+  graph [rankdir=LR, fontname="Helvetica", fontsize=11, nodesep=0.25, ranksep=0.6, labelloc=t,
+         label="orbit_demo (LANES=4, T_THROTTLE=80, T_STOP=95, T_RECOVER=70)   clock domain: clk   reset: rst_n (sync, active low) to all flip-flops   power domain: single VDD/VSS"];
+  node  [fontname="Helvetica", fontsize=10, shape=box];
+  edge  [fontname="Helvetica", fontsize=9];
+
+  // ---- top-level ports ----
+  subgraph cluster_in { label="inputs"; style=dashed;
+    p_in [shape=record, label="{<v>in_valid|<f>in_first|<l>in_last|<a>in_a [31:0]|<b>in_b [31:0]|<or>out_ready|<cf>clear_fault|<tv>temp_valid|<tc>temp_c [7:0]|<clk>clk|<rst>rst_n}"];
+  }
+  subgraph cluster_out { label="outputs"; style=dashed;
+    p_out [shape=record, label="{<ir>in_ready|<ov>out_valid|<od>out_data [127:0]|<fa>fault|<ts>therm_state [1:0]|<tr>therm_repair|<sd>shutdown_req}"];
+  }
+
+  // ---- top-level glue (orbit_demo.v) ----
+  subgraph cluster_top { label="orbit_demo glue logic"; style=solid;
+    infire  [label="in_fire = in_valid & in_ready"];
+    inready [label="in_ready = admit & ~fault_q & ~mismatch\n& ~clear_fault & (~out_valid_q | out_ready)"];
+    outvalid[label="out_valid = out_valid_q & ~fault_q & ~mismatch\nout_fire = out_valid & out_ready"];
+    mism    [label="mismatch = |lane_mismatch[3:0]\n(combinational)"];
+    faultq  [label="fault_q  (1 FF, sticky, unprotected)\nset by mismatch, cleared by clear_fault/rst_n", style=filled, fillcolor="#eeeeee"];
+    ovq     [label="out_valid_q (1 FF, unprotected)\nset on in_fire & in_last, cleared on out_fire", style=filled, fillcolor="#eeeeee"];
+    sdreq   [label="shutdown_req = therm_state[1]"];
+  }
+
+  // ---- one lane (x4: g_lane[0..3].u_lane, orbit_mac_lane) ----
+  subgraph cluster_lane { label="g_lane[i].u_lane : orbit_mac_lane   (x4, i = 0..3; lane i uses in_a/in_b[8*i +: 8], drives out_data[32*i +: 32])"; style=solid;
+    mul   [label="prod = $signed(a) * $signed(b)  [15:0]\nprod32 = sext32(prod)\n(shared by both copies)"];
+    adda  [label="acc_a_sum = (first ? 0 : acc_a) + prod32  [31:0]"];
+    addb  [label="acc_b_sum = (first ? 0 : acc_b) + prod32  [31:0]"];
+    acca  [label="u_acc_a : orbit_keep_reg W=32\nen = acc_en = clr | mac_en", style=filled, fillcolor="#d8ecff"];
+    accb  [label="u_acc_b : orbit_keep_reg W=32\nen = acc_en", style=filled, fillcolor="#ffe0f0"];
+    resa  [label="u_res_a : orbit_keep_reg W=32\nen = res_en = clr | (mac_en & last)", style=filled, fillcolor="#d8ecff"];
+    resb  [label="u_res_b : orbit_keep_reg W=32\nen = res_en", style=filled, fillcolor="#ffe0f0"];
+    cmp   [label="mismatch = (acc_a != acc_b) | (res_a != res_b)"];
+  }
+
+  // ---- thermal (u_thermal, orbit_thermal_tmr) ----
+  subgraph cluster_th { label="u_thermal : orbit_thermal_tmr"; style=solid;
+    nxt   [label="nxt (next-state logic from voted, temp_valid, t = signed temp_c)\nSTOP if !temp_valid or t >= 95; NORMAL->THROTTLE at t >= 80; ->NORMAL at t <= 70"];
+    c0    [label="u_copy0 : orbit_keep_reg W=2\nRESET_VAL = S_STOP (2'd2), en = 1", style=filled, fillcolor="#fff6c0"];
+    c1    [label="u_copy1 : orbit_keep_reg W=2", style=filled, fillcolor="#fff6c0"];
+    c2    [label="u_copy2 : orbit_keep_reg W=2", style=filled, fillcolor="#fff6c0"];
+    vote  [label="voted = (c0&c1)|(c1&c2)|(c0&c2)  [1:0]\nrepair = (c0!=c1)|(c1!=c2)"];
+    phase [label="phase (1 FF, unprotected)\ntoggles in THROTTLE, else 0", style=filled, fillcolor="#eeeeee"];
+    admit [label="admit = (voted==NORMAL) | ((voted==THROTTLE) & ~phase)"];
+  }
+
+  // ---- connections ----
+  p_in:a -> mul [label="a = in_a[8*i +: 8]"];
+  p_in:b -> mul [label="b = in_b[8*i +: 8]"];
+  p_in:f -> adda [label="first = in_first"]; p_in:f -> addb;
+  p_in:v -> infire; inready -> infire [label="in_ready"];
+  infire -> acca [label="mac_en"]; infire -> resa [label="mac_en & last"];
+  infire -> ovq [label="in_fire & in_last"];
+  p_in:l -> resa [label="last = in_last"];
+  p_in:cf -> acca [label="clr = clear_fault (d <= 0)"];
+  mul -> adda [label="prod32"]; mul -> addb [label="prod32"];
+  adda -> acca [label="d"]; adda -> resa [label="d"];
+  addb -> accb [label="d"]; addb -> resb [label="d"];
+  acca -> adda [label="acc_a", constraint=false]; accb -> addb [label="acc_b", constraint=false];
+  acca -> cmp; accb -> cmp; resa -> cmp; resb -> cmp;
+  resa -> p_out:od [label="result = res_a -> out_data[32*i +: 32]"];
+  cmp -> mism [label="lane_mismatch[i]"];
+  mism -> faultq; mism -> outvalid; mism -> inready;
+  faultq -> outvalid; faultq -> inready; faultq -> p_out:fa [label="fault"];
+  ovq -> outvalid; ovq -> inready; p_in:or -> outvalid; p_in:or -> inready [label="out_ready (comb. path, SPEC 4)"];
+  outvalid -> p_out:ov [label="out_valid"]; outvalid -> ovq [label="out_fire"];
+  inready -> p_out:ir [label="in_ready"]; p_in:cf -> inready; p_in:cf -> faultq; p_in:cf -> ovq;
+  p_in:tv -> nxt; p_in:tc -> nxt;
+  nxt -> c0 [label="d = nxt"]; nxt -> c1; nxt -> c2;
+  c0 -> vote [label="c0"]; c1 -> vote [label="c1"]; c2 -> vote [label="c2"];
+  vote -> nxt [label="voted", constraint=false]; vote -> phase; phase -> admit; vote -> admit;
+  admit -> inready [label="admit"];
+  vote -> p_out:ts [label="state -> therm_state"]; vote -> p_out:tr [label="repair -> therm_repair"];
+  vote -> sdreq; sdreq -> p_out:sd;
+  p_in:clk -> faultq [label="clk, rst_n to all FFs", style=dotted];
+}

@@ -1,0 +1,86 @@
+# Equivalence of the synthesized netlist against the RTL. Area: synth.
+#
+# Method: register-correspondence combinational equivalence. Both designs are
+# flattened, every flip-flop is converted to a plain D flip-flop with its
+# enable and synchronous reset moved into the D logic (dffunmap), and then cut
+# (expose -evert-dff): its Q becomes a free input and its D (next state) an
+# output, named after the register's net (e.g. g_lane[1].u_lane.u_acc_b.q.q /
+# .d). The miter requires identical port names, so every register of the RTL
+# must exist under the same name in the netlist and vice versa. Proving that
+# every output and every next-state function is equal for all inputs and all
+# register values proves, by induction from any common start state, that the
+# netlist and the RTL are cycle-equivalent. The proof itself is done by
+# SymbiYosys (synth/equiv.sby), one task per partition of the outputs.
+#
+# Run from $(BUILD)/synth/equiv with the RTL files on the command line:
+#     yosys -l equiv_prep.log -s <abs>/equiv_cut.ys <abs RTL files>
+# Reads the netlist ./gate.v (a copy of orbit_demo_synth.v); writes
+# gold_gate.il (modules gold and gate), gold_ports.txt and gate_ports.txt.
+
+# ---- gold: the RTL ----------------------------------------------------------
+hierarchy -check -top orbit_demo
+proc
+setattr -mod -unset keep_hierarchy
+flatten
+opt_clean
+# proc leaves an 'x' on a mux input that is never selected (the case value
+# computed while the outer if already forces STOP in orbit_thermal_tmr);
+# -mux_undef replaces such a mux by its defined input, which is exact here.
+opt_expr -mux_undef
+dffunmap
+expose -evert-dff t:$dff t:$_DFF_P_
+# expose leaves the flip-flop cells behind with their Q disconnected; drop them
+# and make sure no state element is left anywhere.
+opt_clean
+select -assert-none t:$*dff* t:$_*DFF*_ t:$*ff t:$_FF_ t:$*latch* t:$_*LATCH*_ t:$sr t:$_SR_*
+# out_data aliases the four res_a registers, so expose also produced
+# out_data.d (their 128-bit next state). Give each lane its own copy of its
+# slice so it is proven together with that lane (synth/equiv.sby).
+add -output out_data_lane0.d 32
+add -output out_data_lane1.d 32
+add -output out_data_lane2.d 32
+add -output out_data_lane3.d 32
+connect -set out_data_lane0.d out_data.d[31:0]
+connect -set out_data_lane1.d out_data.d[63:32]
+connect -set out_data_lane2.d out_data.d[95:64]
+connect -set out_data_lane3.d out_data.d[127:96]
+delete -output w:out_data.d
+tee -q -o gold_ports.txt select -list i:* o:*
+rename orbit_demo gold
+design -stash gold
+
+# ---- gate: the synthesized netlist (Yosys internal cells) -------------------
+read_verilog -icells gate.v
+hierarchy -check -top orbit_demo
+setattr -mod -unset keep_hierarchy
+flatten
+opt_clean
+dffunmap
+expose -evert-dff t:$dff t:$_DFF_P_
+# expose leaves the flip-flop cells behind with their Q disconnected; drop them
+# and make sure no state element is left anywhere.
+opt_clean
+select -assert-none t:$*dff* t:$_*DFF*_ t:$*ff t:$_FF_ t:$*latch* t:$_*LATCH*_ t:$sr t:$_SR_*
+# out_data aliases the four res_a registers, so expose also produced
+# out_data.d (their 128-bit next state). Give each lane its own copy of its
+# slice so it is proven together with that lane (synth/equiv.sby).
+add -output out_data_lane0.d 32
+add -output out_data_lane1.d 32
+add -output out_data_lane2.d 32
+add -output out_data_lane3.d 32
+connect -set out_data_lane0.d out_data.d[31:0]
+connect -set out_data_lane1.d out_data.d[63:32]
+connect -set out_data_lane2.d out_data.d[95:64]
+connect -set out_data_lane3.d out_data.d[127:96]
+delete -output w:out_data.d
+tee -q -o gate_ports.txt select -list i:* o:*
+rename orbit_demo gate
+design -stash gate
+
+# ---- both designs for SymbiYosys; the full miter here checks port names ----
+design -copy-from gold -as gold gold
+design -copy-from gate -as gate gate
+write_rtlil gold_gate.il
+miter -equiv -flatten -make_assert gold gate miter
+hierarchy -top miter
+select -assert-none t:$*dff* t:$_*DFF*_ t:$*ff t:$_FF_

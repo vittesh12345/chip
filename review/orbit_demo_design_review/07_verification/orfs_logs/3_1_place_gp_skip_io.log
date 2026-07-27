@@ -1,0 +1,418 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 2 thread(s).
+read_liberty /OpenROAD-flow-scripts/flow/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+read_db /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/2_floorplan.odb
+read_sdc /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/2_floorplan.sdc
+source /OpenROAD-flow-scripts/flow/platforms/sky130hd/setRC.tcl
+[INFO GPL-0022] Initialize gpl and calculate uniform density.
+Placement density is 0.5300000047683716, computed from PLACE_DENSITY_LB_ADDON  0.20 and lower bound 0.4000000059604645
+global_placement -skip_io -density 0.5300000047683716 -pad_left 0 -pad_right 0
+[INFO GPL-0001] ---- Initialize GPL Main Data Structures
+[INFO GPL-0002] DBU: 1000
+[INFO GPL-0003] SiteSize: (  0.460  2.720 ) um
+[INFO GPL-0004] CoreBBox: (  2.300  2.720 ) ( 344.080 342.720 ) um
+[INFO GPL-0016] Core area:                  116205.200 um^2
+[INFO GPL-0036] Movable instances area:      47847.139 um^2
+[INFO GPL-0037] Total instances area:        49753.968 um^2
+[INFO GPL-0035] Pin density area adjust:      3647.825 um^2
+[INFO GPL-0032] ---- Initialize Region: Top-level
+[INFO GPL-0006] Number of instances:              5388
+[INFO GPL-0007] Movable instances:                3463
+[INFO GPL-0008] Fixed instances:                  1524
+[INFO GPL-0009] Dummy instances:                   401
+[INFO GPL-0010] Number of nets:                   5811
+[INFO GPL-0011] Number of pins:                  17968
+[INFO GPL-0012] Die BBox:       (  0.000  0.000 ) ( 346.295 346.295 ) um
+[INFO GPL-0013] Placement BBox: (  2.300  2.720 ) ( 344.080 342.720 ) um
+[INFO GPL-0014] Region name: top-level.
+[INFO GPL-0015] Region area:                116205.200 um^2
+[INFO GPL-0017] Fixed instances area:        36628.880 um^2
+[INFO GPL-0018] Movable instances area:      31155.161 um^2
+[INFO GPL-0019] Utilization:                    39.151 %
+[INFO GPL-0020] Standard cells area:         31155.161 um^2
+[INFO GPL-0021] Large instances area:            0.000 um^2
+[INFO GPL-0032] ---- Initialize Region: pdsep_grp_copyA
+[INFO GPL-0006] Number of instances:              1014
+[INFO GPL-0007] Movable instances:                 824
+[INFO GPL-0008] Fixed instances:                   190
+[INFO GPL-0009] Dummy instances:                     0
+[INFO GPL-0010] Number of nets:                   5811
+[INFO GPL-0011] Number of pins:                  17968
+[INFO GPL-0012] Die BBox:       (  0.000  0.000 ) ( 346.295 346.295 ) um
+[INFO GPL-0013] Placement BBox: (  2.300  2.720 ) ( 52.440 342.720 ) um
+[INFO GPL-0014] Region name: pdsep_grp_copyA.
+[INFO GPL-0015] Region area:                 17047.600 um^2
+[INFO GPL-0017] Fixed instances area:          237.728 um^2
+[INFO GPL-0018] Movable instances area:      10052.444 um^2
+[INFO GPL-0019] Utilization:                    59.801 %
+[INFO GPL-0020] Standard cells area:         10052.444 um^2
+[INFO GPL-0021] Large instances area:            0.000 um^2
+[INFO GPL-0032] ---- Initialize Region: pdsep_grp_copyB
+[INFO GPL-0006] Number of instances:              1015
+[INFO GPL-0007] Movable instances:                 824
+[INFO GPL-0008] Fixed instances:                   191
+[INFO GPL-0009] Dummy instances:                     0
+[INFO GPL-0010] Number of nets:                   5811
+[INFO GPL-0011] Number of pins:                  17968
+[INFO GPL-0012] Die BBox:       (  0.000  0.000 ) ( 346.295 346.295 ) um
+[INFO GPL-0013] Placement BBox: ( 293.940  2.720 ) ( 344.080 342.720 ) um
+[INFO GPL-0014] Region name: pdsep_grp_copyB.
+[INFO GPL-0015] Region area:                 17047.600 um^2
+[INFO GPL-0017] Fixed instances area:          238.979 um^2
+[INFO GPL-0018] Movable instances area:      10052.444 um^2
+[INFO GPL-0019] Utilization:                    59.805 %
+[INFO GPL-0020] Standard cells area:         10052.444 um^2
+[INFO GPL-0021] Large instances area:            0.000 um^2
+[INFO GPL-0032] ---- Initialize Region: pdsep_grp_th0
+[INFO GPL-0006] Number of instances:                14
+[INFO GPL-0007] Movable instances:                   8
+[INFO GPL-0008] Fixed instances:                     6
+[INFO GPL-0009] Dummy instances:                     0
+[INFO GPL-0010] Number of nets:                   5811
+[INFO GPL-0011] Number of pins:                  17968
+[INFO GPL-0012] Die BBox:       (  0.000  0.000 ) ( 346.295 346.295 ) um
+[INFO GPL-0013] Placement BBox: ( 161.920 272.000 ) ( 184.920 288.320 ) um
+[INFO GPL-0014] Region name: pdsep_grp_th0.
+[INFO GPL-0015] Region area:                   375.360 um^2
+[INFO GPL-0017] Fixed instances area:            7.507 um^2
+[INFO GPL-0018] Movable instances area:         78.305 um^2
+[INFO GPL-0019] Utilization:                    21.287 %
+[INFO GPL-0020] Standard cells area:            78.305 um^2
+[INFO GPL-0021] Large instances area:            0.000 um^2
+[INFO GPL-0032] ---- Initialize Region: pdsep_grp_th1
+[INFO GPL-0006] Number of instances:                14
+[INFO GPL-0007] Movable instances:                   8
+[INFO GPL-0008] Fixed instances:                     6
+[INFO GPL-0009] Dummy instances:                     0
+[INFO GPL-0010] Number of nets:                   5811
+[INFO GPL-0011] Number of pins:                  17968
+[INFO GPL-0012] Die BBox:       (  0.000  0.000 ) ( 346.295 346.295 ) um
+[INFO GPL-0013] Placement BBox: ( 161.920 165.920 ) ( 184.920 182.240 ) um
+[INFO GPL-0014] Region name: pdsep_grp_th1.
+[INFO GPL-0015] Region area:                   375.360 um^2
+[INFO GPL-0017] Fixed instances area:            7.507 um^2
+[INFO GPL-0018] Movable instances area:         78.305 um^2
+[INFO GPL-0019] Utilization:                    21.287 %
+[INFO GPL-0020] Standard cells area:            78.305 um^2
+[INFO GPL-0021] Large instances area:            0.000 um^2
+[INFO GPL-0032] ---- Initialize Region: pdsep_grp_th2
+[INFO GPL-0006] Number of instances:                14
+[INFO GPL-0007] Movable instances:                   8
+[INFO GPL-0008] Fixed instances:                     6
+[INFO GPL-0009] Dummy instances:                     0
+[INFO GPL-0010] Number of nets:                   5811
+[INFO GPL-0011] Number of pins:                  17968
+[INFO GPL-0012] Die BBox:       (  0.000  0.000 ) ( 346.295 346.295 ) um
+[INFO GPL-0013] Placement BBox: ( 161.920 57.120 ) ( 184.920 73.440 ) um
+[INFO GPL-0014] Region name: pdsep_grp_th2.
+[INFO GPL-0015] Region area:                   375.360 um^2
+[INFO GPL-0017] Fixed instances area:            7.507 um^2
+[INFO GPL-0018] Movable instances area:         78.305 um^2
+[INFO GPL-0019] Utilization:                    21.287 %
+[INFO GPL-0020] Standard cells area:            78.305 um^2
+[INFO GPL-0021] Large instances area:            0.000 um^2
+[INFO GPL-0005] ---- Execute Conjugate Gradient Initial Placement.
+[INFO GPL-0051] Source of initial instance position counters:
+	Odb location = 0	Core center = 3463	Region center = 1672
+[INFO GPL-0033] ---- Initialize Nesterov Region: Top-level
+[INFO GPL-0023] Placement target density:       0.5300
+[INFO GPL-0024] Movable insts average area:      8.997 um^2
+[INFO GPL-0025] Ideal bin area:                 16.975 um^2
+[INFO GPL-0026] Ideal bin count:                  6845
+[INFO GPL-0027] Total bin area:             116205.200 um^2
+[INFO GPL-0028] Bin count (X, Y):          64 ,     64
+[INFO GPL-0029] Bin size (W * H):       5.340 *  5.312 um
+[INFO GPL-0030] Number of bins:                   4096
+[INFO GPL-0033] ---- Initialize Nesterov Region: pdsep_grp_copyA
+[WARNING GPL-0302] Target density 0.5300 is too low for the available free area.
+Automatically adjusting to uniform density 0.6000.
+[INFO GPL-0023] Placement target density:       0.6000
+[INFO GPL-0024] Movable insts average area:     12.200 um^2
+[INFO GPL-0025] Ideal bin area:                 20.333 um^2
+[INFO GPL-0026] Ideal bin count:                   838
+[INFO GPL-0027] Total bin area:              17047.600 um^2
+[INFO GPL-0028] Bin count (X, Y):           8 ,     32
+[INFO GPL-0029] Bin size (W * H):       6.268 * 10.625 um
+[INFO GPL-0030] Number of bins:                    256
+[INFO GPL-0033] ---- Initialize Nesterov Region: pdsep_grp_copyB
+[WARNING GPL-0302] Target density 0.5300 is too low for the available free area.
+Automatically adjusting to uniform density 0.6000.
+[INFO GPL-0023] Placement target density:       0.6000
+[INFO GPL-0024] Movable insts average area:     12.200 um^2
+[INFO GPL-0025] Ideal bin area:                 20.333 um^2
+[INFO GPL-0026] Ideal bin count:                   838
+[INFO GPL-0027] Total bin area:              17047.600 um^2
+[INFO GPL-0028] Bin count (X, Y):           8 ,     32
+[INFO GPL-0029] Bin size (W * H):       6.268 * 10.625 um
+[INFO GPL-0030] Number of bins:                    256
+[INFO GPL-0033] ---- Initialize Nesterov Region: pdsep_grp_th0
+[INFO GPL-0023] Placement target density:       0.5300
+[INFO GPL-0024] Movable insts average area:      9.788 um^2
+[INFO GPL-0025] Ideal bin area:                 18.468 um^2
+[INFO GPL-0026] Ideal bin count:                    20
+[INFO GPL-0027] Total bin area:                375.360 um^2
+[INFO GPL-0028] Bin count (X, Y):           4 ,      4
+[INFO GPL-0029] Bin size (W * H):       5.750 *  4.080 um
+[INFO GPL-0030] Number of bins:                     16
+[INFO GPL-0033] ---- Initialize Nesterov Region: pdsep_grp_th1
+[INFO GPL-0023] Placement target density:       0.5300
+[INFO GPL-0024] Movable insts average area:      9.788 um^2
+[INFO GPL-0025] Ideal bin area:                 18.468 um^2
+[INFO GPL-0026] Ideal bin count:                    20
+[INFO GPL-0027] Total bin area:                375.360 um^2
+[INFO GPL-0028] Bin count (X, Y):           4 ,      4
+[INFO GPL-0029] Bin size (W * H):       5.750 *  4.080 um
+[INFO GPL-0030] Number of bins:                     16
+[INFO GPL-0033] ---- Initialize Nesterov Region: pdsep_grp_th2
+[INFO GPL-0023] Placement target density:       0.5300
+[INFO GPL-0024] Movable insts average area:      9.788 um^2
+[INFO GPL-0025] Ideal bin area:                 18.468 um^2
+[INFO GPL-0026] Ideal bin count:                    20
+[INFO GPL-0027] Total bin area:                375.360 um^2
+[INFO GPL-0028] Bin count (X, Y):           4 ,      4
+[INFO GPL-0029] Bin size (W * H):       5.750 *  4.080 um
+[INFO GPL-0030] Number of bins:                     16
+[INFO GPL-0084] ---- Execute Nesterov Global Placement.
+[INFO GPL-0031] HPWL: Half-Perimeter Wirelength
+Iteration | Overflow |     HPWL (um) |  HPWL(%) |   Penalty | Group
+---------------------------------------------------------------
+        0 |   0.9843 |  1.374325e+05 |   +0.00% |  1.09e-13 |      
+        0 |   0.9532 |  1.374325e+05 |   +0.00% |  6.47e-12 |  (pdsep_grp_copyA)
+        0 |   0.9607 |  1.374325e+05 |   +0.00% |  5.94e-12 |  (pdsep_grp_copyB)
+        0 |   0.3285 |  1.374325e+05 |   +0.00% |  6.16e-12 |  (pdsep_grp_th0)
+        0 |   0.3694 |  1.374325e+05 |   +0.00% |  3.81e-13 |  (pdsep_grp_th1)
+        0 |   0.3345 |  1.374325e+05 |   +0.00% |  6.06e-12 |  (pdsep_grp_th2)
+       10 |   0.9691 |  1.225106e+05 |  -10.86% |  1.78e-13 |      
+       10 |   0.9842 |  1.225106e+05 |  -10.86% |  1.05e-11 |  (pdsep_grp_copyA)
+       10 |   0.9842 |  1.225106e+05 |  -10.86% |  9.65e-12 |  (pdsep_grp_copyB)
+       10 |   0.3909 |  1.225106e+05 |  -10.86% |  9.14e-12 |  (pdsep_grp_th0)
+       10 |   0.3631 |  1.225106e+05 |  -10.86% |  6.20e-13 |  (pdsep_grp_th1)
+       10 |   0.3944 |  1.225106e+05 |  -10.86% |  9.00e-12 |  (pdsep_grp_th2)
+       20 |   0.9642 |  1.180684e+05 |   -3.63% |  2.90e-13 |      
+       20 |   0.9842 |  1.180684e+05 |   -3.63% |  1.71e-11 |  (pdsep_grp_copyA)
+       20 |   0.9842 |  1.180684e+05 |   -3.63% |  1.57e-11 |  (pdsep_grp_copyB)
+       20 |   0.4027 |  1.180684e+05 |   -3.63% |  1.35e-11 |  (pdsep_grp_th0)
+       20 |   0.3829 |  1.180684e+05 |   -3.63% |  1.01e-12 |  (pdsep_grp_th1)
+       20 |   0.4062 |  1.180684e+05 |   -3.63% |  1.33e-11 |  (pdsep_grp_th2)
+       30 |   0.9626 |  1.151829e+05 |   -2.44% |  4.72e-13 |      
+       30 |   0.9842 |  1.151829e+05 |   -2.44% |  2.79e-11 |  (pdsep_grp_copyA)
+       30 |   0.9842 |  1.151829e+05 |   -2.44% |  2.56e-11 |  (pdsep_grp_copyB)
+       30 |   0.3772 |  1.151829e+05 |   -2.44% |  1.98e-11 |  (pdsep_grp_th0)
+       30 |   0.3465 |  1.151829e+05 |   -2.44% |  1.64e-12 |  (pdsep_grp_th1)
+       30 |   0.3767 |  1.151829e+05 |   -2.44% |  1.95e-11 |  (pdsep_grp_th2)
+       40 |   0.9630 |  1.153265e+05 |   +0.12% |  7.69e-13 |      
+       40 |   0.9842 |  1.153265e+05 |   +0.12% |  4.55e-11 |  (pdsep_grp_copyA)
+       40 |   0.9836 |  1.153265e+05 |   +0.12% |  4.17e-11 |  (pdsep_grp_copyB)
+       40 |   0.3780 |  1.153265e+05 |   +0.12% |  2.92e-11 |  (pdsep_grp_th0)
+       40 |   0.3500 |  1.153265e+05 |   +0.12% |  2.45e-12 |  (pdsep_grp_th1)
+       40 |   0.3798 |  1.153265e+05 |   +0.12% |  2.88e-11 |  (pdsep_grp_th2)
+       50 |   0.9638 |  1.155452e+05 |   +0.19% |  1.25e-12 |      
+       50 |   0.9842 |  1.155452e+05 |   +0.19% |  7.41e-11 |  (pdsep_grp_copyA)
+       50 |   0.9790 |  1.155452e+05 |   +0.19% |  6.80e-11 |  (pdsep_grp_copyB)
+       50 |   0.3848 |  1.155452e+05 |   +0.19% |  4.30e-11 |  (pdsep_grp_th0)
+       50 |   0.3811 |  1.155452e+05 |   +0.19% |  3.60e-12 |  (pdsep_grp_th1)
+       50 |   0.3887 |  1.155452e+05 |   +0.19% |  4.24e-11 |  (pdsep_grp_th2)
+       60 |   0.9639 |  1.154923e+05 |   -0.05% |  2.04e-12 |      
+       60 |   0.9842 |  1.154923e+05 |   -0.05% |  1.21e-10 |  (pdsep_grp_copyA)
+       60 |   0.9763 |  1.154923e+05 |   -0.05% |  1.11e-10 |  (pdsep_grp_copyB)
+       60 |   0.3920 |  1.154923e+05 |   -0.05% |  6.34e-11 |  (pdsep_grp_th0)
+       60 |   0.3876 |  1.154923e+05 |   -0.05% |  5.31e-12 |  (pdsep_grp_th1)
+       60 |   0.3962 |  1.154923e+05 |   -0.05% |  6.24e-11 |  (pdsep_grp_th2)
+       70 |   0.9634 |  1.156638e+05 |   +0.15% |  3.32e-12 |      
+       70 |   0.9842 |  1.156638e+05 |   +0.15% |  1.96e-10 |  (pdsep_grp_copyA)
+       70 |   0.9763 |  1.156638e+05 |   +0.15% |  1.80e-10 |  (pdsep_grp_copyB)
+       70 |   0.3878 |  1.156638e+05 |   +0.15% |  9.34e-11 |  (pdsep_grp_th0)
+       70 |   0.3864 |  1.156638e+05 |   +0.15% |  7.82e-12 |  (pdsep_grp_th1)
+       70 |   0.3921 |  1.156638e+05 |   +0.15% |  9.19e-11 |  (pdsep_grp_th2)
+       80 |   0.9603 |  1.187765e+05 |   +2.69% |  5.41e-12 |      
+       80 |   0.9585 |  1.187765e+05 |   +2.69% |  3.20e-10 |  (pdsep_grp_copyA)
+       80 |   0.9580 |  1.187765e+05 |   +2.69% |  2.94e-10 |  (pdsep_grp_copyB)
+       80 |   0.3860 |  1.187765e+05 |   +2.69% |  1.38e-10 |  (pdsep_grp_th0)
+       80 |   0.3847 |  1.187765e+05 |   +2.69% |  1.15e-11 |  (pdsep_grp_th1)
+       80 |   0.3901 |  1.187765e+05 |   +2.69% |  1.35e-10 |  (pdsep_grp_th2)
+       90 |   0.8798 |  1.319261e+05 |  +11.07% |  8.80e-12 |      
+       90 |   0.9239 |  1.319261e+05 |  +11.07% |  5.20e-10 |  (pdsep_grp_copyA)
+       90 |   0.9175 |  1.319261e+05 |  +11.07% |  4.78e-10 |  (pdsep_grp_copyB)
+       90 |   0.3854 |  1.319261e+05 |  +11.07% |  2.02e-10 |  (pdsep_grp_th0)
+       90 |   0.3847 |  1.319261e+05 |  +11.07% |  1.70e-11 |  (pdsep_grp_th1)
+       90 |   0.3894 |  1.319261e+05 |  +11.07% |  1.99e-10 |  (pdsep_grp_th2)
+      100 |   0.8218 |  1.345209e+05 |   +1.97% |  1.43e-11 |      
+      100 |   0.9019 |  1.345209e+05 |   +1.97% |  8.47e-10 |  (pdsep_grp_copyA)
+      100 |   0.8942 |  1.345209e+05 |   +1.97% |  7.78e-10 |  (pdsep_grp_copyB)
+      100 |   0.3867 |  1.345209e+05 |   +1.97% |  2.98e-10 |  (pdsep_grp_th0)
+      100 |   0.3759 |  1.345209e+05 |   +1.97% |  2.50e-11 |  (pdsep_grp_th1)
+      100 |   0.3903 |  1.345209e+05 |   +1.97% |  2.93e-10 |  (pdsep_grp_th2)
+      110 |   0.7830 |  1.401670e+05 |   +4.20% |  2.33e-11 |      
+      110 |   0.8664 |  1.401670e+05 |   +4.20% |  1.38e-09 |  (pdsep_grp_copyA)
+      110 |   0.8668 |  1.401670e+05 |   +4.20% |  1.27e-09 |  (pdsep_grp_copyB)
+      110 |   0.3874 |  1.401670e+05 |   +4.20% |  4.39e-10 |  (pdsep_grp_th0)
+      110 |   0.3615 |  1.401670e+05 |   +4.20% |  3.68e-11 |  (pdsep_grp_th1)
+      110 |   0.3908 |  1.401670e+05 |   +4.20% |  4.32e-10 |  (pdsep_grp_th2)
+      120 |   0.7563 |  1.451805e+05 |   +3.58% |  3.80e-11 |      
+      120 |   0.8281 |  1.451805e+05 |   +3.58% |  2.25e-09 |  (pdsep_grp_copyA)
+      120 |   0.8422 |  1.451805e+05 |   +3.58% |  2.06e-09 |  (pdsep_grp_copyB)
+      120 |   0.3915 |  1.451805e+05 |   +3.58% |  6.46e-10 |  (pdsep_grp_th0)
+      120 |   0.3623 |  1.451805e+05 |   +3.58% |  5.41e-11 |  (pdsep_grp_th1)
+      120 |   0.3948 |  1.451805e+05 |   +3.58% |  6.36e-10 |  (pdsep_grp_th2)
+      130 |   0.7119 |  1.532943e+05 |   +5.59% |  6.18e-11 |      
+      130 |   0.7753 |  1.532943e+05 |   +5.59% |  3.66e-09 |  (pdsep_grp_copyA)
+      130 |   0.8007 |  1.532943e+05 |   +5.59% |  3.35e-09 |  (pdsep_grp_copyB)
+      130 |   0.4051 |  1.532943e+05 |   +5.59% |  9.52e-10 |  (pdsep_grp_th0)
+      130 |   0.3882 |  1.532943e+05 |   +5.59% |  7.97e-11 |  (pdsep_grp_th1)
+      130 |   0.4088 |  1.532943e+05 |   +5.59% |  9.37e-10 |  (pdsep_grp_th2)
+      140 |   0.6586 |  1.618393e+05 |   +5.57% |  1.01e-10 |      
+      140 |   0.7059 |  1.618393e+05 |   +5.57% |  5.95e-09 |  (pdsep_grp_copyA)
+      140 |   0.7624 |  1.618393e+05 |   +5.57% |  5.46e-09 |  (pdsep_grp_copyB)
+      140 |   0.4128 |  1.618393e+05 |   +5.57% |  1.40e-09 |  (pdsep_grp_th0)
+      140 |   0.4177 |  1.618393e+05 |   +5.57% |  1.17e-10 |  (pdsep_grp_th1)
+      140 |   0.4166 |  1.618393e+05 |   +5.57% |  1.38e-09 |  (pdsep_grp_th2)
+      150 |   0.6349 |  1.667789e+05 |   +3.05% |  1.64e-10 |      
+      150 |   0.6150 |  1.667789e+05 |   +3.05% |  9.68e-09 |  (pdsep_grp_copyA)
+      150 |   0.6609 |  1.667789e+05 |   +3.05% |  8.89e-09 |  (pdsep_grp_copyB)
+      150 |   0.4097 |  1.667789e+05 |   +3.05% |  2.06e-09 |  (pdsep_grp_th0)
+      150 |   0.4157 |  1.667789e+05 |   +3.05% |  1.73e-10 |  (pdsep_grp_th1)
+      150 |   0.4139 |  1.667789e+05 |   +3.05% |  2.03e-09 |  (pdsep_grp_th2)
+      160 |   0.6371 |  1.700698e+05 |   +1.97% |  2.67e-10 |      
+      160 |   0.5111 |  1.700698e+05 |   +1.97% |  1.58e-08 |  (pdsep_grp_copyA)
+      160 |   0.5435 |  1.700698e+05 |   +1.97% |  1.45e-08 |  (pdsep_grp_copyB)
+      160 |   0.4060 |  1.700698e+05 |   +1.97% |  3.04e-09 |  (pdsep_grp_th0)
+      160 |   0.4141 |  1.700698e+05 |   +1.97% |  2.54e-10 |  (pdsep_grp_th1)
+      160 |   0.4100 |  1.700698e+05 |   +1.97% |  2.99e-09 |  (pdsep_grp_th2)
+      170 |   0.6400 |  1.740599e+05 |   +2.35% |  4.34e-10 |      
+      170 |   0.4063 |  1.740599e+05 |   +2.35% |  2.57e-08 |  (pdsep_grp_copyA)
+      170 |   0.4387 |  1.740599e+05 |   +2.35% |  2.36e-08 |  (pdsep_grp_copyB)
+      170 |   0.4195 |  1.740599e+05 |   +2.35% |  4.47e-09 |  (pdsep_grp_th0)
+      170 |   0.4301 |  1.740599e+05 |   +2.35% |  3.75e-10 |  (pdsep_grp_th1)
+      170 |   0.4234 |  1.740599e+05 |   +2.35% |  4.40e-09 |  (pdsep_grp_th2)
+      180 |   0.6701 |  1.762059e+05 |   +1.23% |  7.07e-10 |      
+      180 |   0.3374 |  1.762059e+05 |   +1.23% |  4.14e-08 |  (pdsep_grp_copyA)
+      180 |   0.3617 |  1.762059e+05 |   +1.23% |  3.84e-08 |  (pdsep_grp_copyB)
+      180 |   0.4024 |  1.762059e+05 |   +1.23% |  6.59e-09 |  (pdsep_grp_th0)
+      180 |   0.4199 |  1.762059e+05 |   +1.23% |  5.52e-10 |  (pdsep_grp_th1)
+      180 |   0.4073 |  1.762059e+05 |   +1.23% |  6.48e-09 |  (pdsep_grp_th2)
+      190 |   0.6941 |  1.771249e+05 |   +0.52% |  1.15e-09 |      
+      190 |   0.2756 |  1.771249e+05 |   +0.52% |  6.10e-08 |  (pdsep_grp_copyA)
+      190 |   0.3105 |  1.771249e+05 |   +0.52% |  5.77e-08 |  (pdsep_grp_copyB)
+      190 |   0.3882 |  1.771249e+05 |   +0.52% |  9.71e-09 |  (pdsep_grp_th0)
+      190 |   0.4131 |  1.771249e+05 |   +0.52% |  8.13e-10 |  (pdsep_grp_th1)
+      190 |   0.3937 |  1.771249e+05 |   +0.52% |  9.55e-09 |  (pdsep_grp_th2)
+      200 |   0.6731 |  1.782372e+05 |   +0.63% |  1.87e-09 |      
+      200 |   0.2341 |  1.782372e+05 |   +0.63% |  8.98e-08 |  (pdsep_grp_copyA)
+      200 |   0.2505 |  1.782372e+05 |   +0.63% |  8.49e-08 |  (pdsep_grp_copyB)
+      200 |   0.3777 |  1.782372e+05 |   +0.63% |  1.43e-08 |  (pdsep_grp_th0)
+      200 |   0.4100 |  1.782372e+05 |   +0.63% |  1.20e-09 |  (pdsep_grp_th1)
+      200 |   0.3839 |  1.782372e+05 |   +0.63% |  1.41e-08 |  (pdsep_grp_th2)
+      210 |   0.6362 |  1.793829e+05 |   +0.64% |  3.05e-09 |      
+      210 |   0.1883 |  1.793829e+05 |   +0.64% |  1.32e-07 |  (pdsep_grp_copyA)
+      210 |   0.1995 |  1.793829e+05 |   +0.64% |  1.25e-07 |  (pdsep_grp_copyB)
+      210 |   0.3705 |  1.793829e+05 |   +0.64% |  2.11e-08 |  (pdsep_grp_th0)
+      210 |   0.4118 |  1.793829e+05 |   +0.64% |  1.76e-09 |  (pdsep_grp_th1)
+      210 |   0.3747 |  1.793829e+05 |   +0.64% |  2.07e-08 |  (pdsep_grp_th2)
+      220 |   0.5847 |  1.798502e+05 |   +0.26% |  4.97e-09 |      
+      220 |   0.1534 |  1.798502e+05 |   +0.26% |  1.95e-07 |  (pdsep_grp_copyA)
+      220 |   0.1613 |  1.798502e+05 |   +0.26% |  1.84e-07 |  (pdsep_grp_copyB)
+      220 |   0.3696 |  1.798502e+05 |   +0.26% |  3.10e-08 |  (pdsep_grp_th0)
+      220 |   0.3854 |  1.798502e+05 |   +0.26% |  2.60e-09 |  (pdsep_grp_th1)
+      220 |   0.3703 |  1.798502e+05 |   +0.26% |  3.05e-08 |  (pdsep_grp_th2)
+      230 |   0.5732 |  1.775021e+05 |   -1.31% |  8.10e-09 |      
+      230 |   0.1372 |  1.775021e+05 |   -1.31% |  2.87e-07 |  (pdsep_grp_copyA)
+      230 |   0.1388 |  1.775021e+05 |   -1.31% |  2.71e-07 |  (pdsep_grp_copyB)
+      230 |   0.2386 |  1.775021e+05 |   -1.31% |  4.57e-08 |  (pdsep_grp_th0)
+      230 |   0.3187 |  1.775021e+05 |   -1.31% |  3.83e-09 |  (pdsep_grp_th1)
+      230 |   0.2402 |  1.775021e+05 |   -1.31% |  4.50e-08 |  (pdsep_grp_th2)
+      240 |   0.5383 |  1.780186e+05 |   +0.29% |  1.32e-08 |      
+      240 |   0.1074 |  1.780186e+05 |   +0.29% |  4.23e-07 |  (pdsep_grp_copyA)
+      240 |   0.1154 |  1.780186e+05 |   +0.29% |  4.00e-07 |  (pdsep_grp_copyB)
+      240 |   0.1990 |  1.780186e+05 |   +0.29% |  6.73e-08 |  (pdsep_grp_th0)
+      240 |   0.2641 |  1.780186e+05 |   +0.29% |  5.64e-09 |  (pdsep_grp_th1)
+      240 |   0.2031 |  1.780186e+05 |   +0.29% |  6.62e-08 |  (pdsep_grp_th2)
+      243 |   0.0969 |  1.785525e+05 |          |  4.94e-07 | pdsep_grp_copyA
+---------------------------------------------------------------
+[INFO GPL-1016] Region 'pdsep_grp_copyA' placement finished at iteration 243
+[INFO GPL-1002] Placed Cell Area            10052.4442
+[INFO GPL-1003] Available Free Area         16809.8720
+[INFO GPL-1004] Minimum Feasible Density        0.6000 (cell_area / free_area)
+[INFO GPL-1006]   Suggested Target Densities:
+[INFO GPL-1007]     - For 90% usage of free space: 0.6645
+[INFO GPL-1008]     - For 80% usage of free space: 0.7475
+      246 |   0.0990 |  1.792819e+05 |          |  5.24e-07 | pdsep_grp_copyB
+---------------------------------------------------------------
+[INFO GPL-1016] Region 'pdsep_grp_copyB' placement finished at iteration 246
+[INFO GPL-1002] Placed Cell Area            10052.4442
+[INFO GPL-1003] Available Free Area         16808.6208
+[INFO GPL-1004] Minimum Feasible Density        0.6000 (cell_area / free_area)
+[INFO GPL-1006]   Suggested Target Densities:
+[INFO GPL-1007]     - For 90% usage of free space: 0.6645
+[INFO GPL-1008]     - For 80% usage of free space: 0.7476
+      250 |   0.4809 |  1.799722e+05 |   +1.10% |  2.15e-08 |      
+      250 |   0.1684 |  1.799722e+05 |   +1.10% |  9.91e-08 |  (pdsep_grp_th0)
+      250 |   0.3017 |  1.799722e+05 |   +1.10% |  8.30e-09 |  (pdsep_grp_th1)
+      250 |   0.1809 |  1.799722e+05 |   +1.10% |  9.76e-08 |  (pdsep_grp_th2)
+      260 |   0.4656 |  1.801534e+05 |   +0.10% |  3.50e-08 |      
+      260 |   0.1323 |  1.801534e+05 |   +0.10% |  1.46e-07 |  (pdsep_grp_th0)
+      260 |   0.1506 |  1.801534e+05 |   +0.10% |  1.22e-08 |  (pdsep_grp_th1)
+      260 |   0.1399 |  1.801534e+05 |   +0.10% |  1.44e-07 |  (pdsep_grp_th2)
+      270 |   0.3816 |  1.825951e+05 |   +1.36% |  5.70e-08 |      
+      270 |   0.1123 |  1.825951e+05 |   +1.36% |  2.15e-07 |  (pdsep_grp_th0)
+      270 |   0.2125 |  1.825951e+05 |   +1.36% |  1.80e-08 |  (pdsep_grp_th1)
+      270 |   0.1164 |  1.825951e+05 |   +1.36% |  2.12e-07 |  (pdsep_grp_th2)
+      275 |   0.0995 |  1.830687e+05 |          |  2.71e-07 | pdsep_grp_th0
+---------------------------------------------------------------
+[INFO GPL-1016] Region 'pdsep_grp_th0' placement finished at iteration 275
+[INFO GPL-1002] Placed Cell Area               78.3048
+[INFO GPL-1003] Available Free Area           367.8528
+[INFO GPL-1004] Minimum Feasible Density        0.2200 (cell_area / free_area)
+[INFO GPL-1006]   Suggested Target Densities:
+[INFO GPL-1007]     - For 90% usage of free space: 0.2365
+[INFO GPL-1008]     - For 80% usage of free space: 0.2661
+[INFO GPL-1009]     - For 50% usage of free space: 0.4257
+      277 |   0.0944 |  1.834364e+05 |          |  2.89e-07 | pdsep_grp_th2
+---------------------------------------------------------------
+[INFO GPL-1016] Region 'pdsep_grp_th2' placement finished at iteration 277
+[INFO GPL-1002] Placed Cell Area               78.3048
+[INFO GPL-1003] Available Free Area           367.8528
+[INFO GPL-1004] Minimum Feasible Density        0.2200 (cell_area / free_area)
+[INFO GPL-1006]   Suggested Target Densities:
+[INFO GPL-1007]     - For 90% usage of free space: 0.2365
+[INFO GPL-1008]     - For 80% usage of free space: 0.2661
+[INFO GPL-1009]     - For 50% usage of free space: 0.4257
+      280 |   0.3260 |  1.839161e+05 |   +0.72% |  9.10e-08 |      
+      280 |   0.2093 |  1.839161e+05 |   +0.72% |  2.65e-08 |  (pdsep_grp_th1)
+      290 |   0.2810 |  1.848536e+05 |   +0.51% |  1.34e-07 |      
+      290 |   0.1745 |  1.848536e+05 |   +0.51% |  3.91e-08 |  (pdsep_grp_th1)
+      300 |   0.2351 |  1.857570e+05 |   +0.49% |  1.97e-07 |      
+      300 |   0.1041 |  1.857570e+05 |   +0.49% |  5.76e-08 |  (pdsep_grp_th1)
+      301 |   0.0835 |  1.858463e+05 |          |  6.22e-08 | pdsep_grp_th1
+---------------------------------------------------------------
+[INFO GPL-1016] Region 'pdsep_grp_th1' placement finished at iteration 301
+[INFO GPL-1002] Placed Cell Area               78.3048
+[INFO GPL-1003] Available Free Area           367.8528
+[INFO GPL-1004] Minimum Feasible Density        0.2200 (cell_area / free_area)
+[INFO GPL-1006]   Suggested Target Densities:
+[INFO GPL-1007]     - For 90% usage of free space: 0.2365
+[INFO GPL-1008]     - For 80% usage of free space: 0.2661
+[INFO GPL-1009]     - For 50% usage of free space: 0.4257
+      310 |   0.1953 |  1.866911e+05 |   +0.50% |  2.91e-07 |      
+      320 |   0.1611 |  1.874965e+05 |   +0.43% |  4.28e-07 |      
+      330 |   0.1303 |  1.881406e+05 |   +0.34% |  6.31e-07 |      
+      340 |   0.1061 |  1.887494e+05 |   +0.32% |  9.29e-07 |      
+      343 |   0.0993 |  1.889373e+05 |          |  1.09e-06 |      
+---------------------------------------------------------------
+[INFO GPL-1001] Global placement finished at iteration 343
+[INFO GPL-1002] Placed Cell Area            31155.1613
+[INFO GPL-1003] Available Free Area         79576.3200
+[INFO GPL-1004] Minimum Feasible Density        0.4000 (cell_area / free_area)
+[INFO GPL-1006]   Suggested Target Densities:
+[INFO GPL-1007]     - For 90% usage of free space: 0.4350
+[INFO GPL-1008]     - For 80% usage of free space: 0.4894
+[INFO GPL-1009]     - For 50% usage of free space: 0.7830
+[INFO GPL-1014] Final placement area: 51494.96 (+0.00%)
+[INFO GPL-1018] Final HPWL (um): 188972.64
+Design area 49754 um^2 43% utilization.
+write_db /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/3_1_place_gp_skip_io.odb
+Elapsed time: 0:01.87[h:]min:sec. CPU time: user 1.62 sys 0.36 (105%). Peak memory: 125648KB.
+Log                       Ext     Elapsed/s Peak Memory/MB sha1sum result [0:20)
+3_1_place_gp_skip_io      .odb            1            122 8e28e6535c292ec29af8

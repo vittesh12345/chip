@@ -1,0 +1,21 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 2 thread(s).
+read_liberty /OpenROAD-flow-scripts/flow/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/sky130hd/lef/sky130_fd_sc_hd.tlef, created 13 layers, 25 vias
+[INFO ODB-0227] LEF file: /OpenROAD-flow-scripts/flow/platforms/sky130hd/lef/sky130_fd_sc_hd_merged.lef, created 441 library cells
+link_design orbit_demo
+read_sdc /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/1_2_yosys.sdc
+source /OpenROAD-flow-scripts/flow/platforms/sky130hd/setRC.tcl
+eliminate_dead_logic
+Removed 0 unused instances and 0 unused nets.
+Design area 46866 um^2 100% utilization.
+write_db /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/1_synth.odb
+write_sdc -no_timestamp /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/1_synth.sdc
+Warning: master sky130_ef_sc_hd__decap_12 has signal pins but no liberty cell
+Elapsed time: 0:00.62[h:]min:sec. CPU time: user 0.53 sys 0.07 (95%). Peak memory: 120308KB.
+Log                       Ext     Elapsed/s Peak Memory/MB sha1sum result [0:20)
+1_synth                   .odb            0            117 b4a449274e67d4879f76
+1_synth                   .sdc                             4501f02b22f7d3b6b388

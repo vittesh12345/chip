@@ -1,0 +1,34 @@
+Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+Using ABC speed script.
+Extracting clock period from SDC file: /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/clock_period.txt
+Setting clock period to 7.2
+1. Executing Liberty frontend: /OpenROAD-flow-scripts/flow/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+2. Executing Liberty frontend: /OpenROAD-flow-scripts/flow/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+3. Executing Verilog-2005 frontend: /home/user/chip/rtl/orbit_keep_reg.v
+4. Executing Verilog-2005 frontend: /home/user/chip/rtl/orbit_mac_lane.v
+5. Executing Verilog-2005 frontend: /home/user/chip/rtl/orbit_thermal_tmr.v
+6. Executing Verilog-2005 frontend: /home/user/chip/rtl/orbit_demo.v
+7. Executing Verilog-2005 frontend: /OpenROAD-flow-scripts/flow/platforms/sky130hd/cells_clkgate_hd.v
+8. Executing HIERARCHY pass (managing design hierarchy).
+9. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_demo'.
+9.1. Analyzing design hierarchy..
+9.2. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_mac_lane'.
+9.3. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_thermal_tmr'.
+9.4. Analyzing design hierarchy..
+9.5. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_keep_reg'.
+9.6. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_keep_reg'.
+9.7. Analyzing design hierarchy..
+9.8. Analyzing design hierarchy..
+10. Executing OPT_CLEAN pass (remove unused cells and wires).
+Warning: Ignoring module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 because it contains processes (run 'proc' command first).
+Warning: Ignoring module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 because it contains processes (run 'proc' command first).
+Warning: Ignoring module $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr because it contains processes (run 'proc' command first).
+Warning: Ignoring module orbit_demo because it contains processes (run 'proc' command first).
+11. Executing RTLIL backend.
+Warnings: 4 unique messages, 4 total
+End of script. Logfile hash: 5b24bcb6df, time: 0.19s, user: 0.15s, system: 0.03s, MEM: 56.59 MB peak
+Yosys 0.68+post (git sha1 UNKNOWN, Release, GNU /usr/local/bin/wrapped-cc/g++ 11.4.0)
+Time spent: 78% 4x read_liberty (0 sec), 9% 10x read_verilog (0 sec), ...
+Elapsed time: 0:00.20[h:]min:sec. CPU time: user 0.16 sys 0.03 (96%). Peak memory: 60540KB.
+Log                       Ext     Elapsed/s Peak Memory/MB sha1sum result [0:20)
+1_1_yosys_canonicalize    .rtlil          0             59 4d15e321ba04745a3ada
