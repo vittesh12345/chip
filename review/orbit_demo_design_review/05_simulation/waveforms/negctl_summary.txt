@@ -1,0 +1,30 @@
+zext_product scen1: WAVE_a_mac3 FAIL (3 of 29 checks failed)  <- target scenario: CAUGHT
+zext_product scen2: WAVE_b_backpressure FAIL (2 of 35 checks failed)
+zext_product scen3: WAVE_c_fault FAIL (1 of 42 checks failed)
+zext_product scen4: WAVE_d_thermal PASS (383 checks, 97 cycles)
+zext_product scen5: WAVE_c2_fault_sticky FAIL (1 of 50 checks failed)
+no_backpressure scen1: WAVE_a_mac3 PASS (29 checks, 11 cycles)
+no_backpressure scen2: WAVE_b_backpressure FAIL (2 of 35 checks failed)  <- target scenario: CAUGHT
+no_backpressure scen3: WAVE_c_fault PASS (42 checks, 19 cycles)
+no_backpressure scen4: WAVE_d_thermal PASS (383 checks, 97 cycles)
+no_backpressure scen5: WAVE_c2_fault_sticky PASS (50 checks, 24 cycles)
+out_valid_ungated scen1: WAVE_a_mac3 PASS (29 checks, 11 cycles)
+out_valid_ungated scen2: WAVE_b_backpressure PASS (35 checks, 21 cycles)
+out_valid_ungated scen3: WAVE_c_fault FAIL (3 of 42 checks failed)  <- target scenario: CAUGHT
+out_valid_ungated scen4: WAVE_d_thermal PASS (383 checks, 97 cycles)
+out_valid_ungated scen5: WAVE_c2_fault_sticky FAIL (3 of 50 checks failed)
+fault_not_sticky scen1: WAVE_a_mac3 PASS (29 checks, 11 cycles)
+fault_not_sticky scen2: WAVE_b_backpressure PASS (35 checks, 21 cycles)
+fault_not_sticky scen3: WAVE_c_fault PASS (42 checks, 19 cycles)
+fault_not_sticky scen4: WAVE_d_thermal PASS (383 checks, 97 cycles)
+fault_not_sticky scen5: WAVE_c2_fault_sticky FAIL (3 of 50 checks failed)  <- target scenario: CAUGHT
+throttle_every_cycle scen1: WAVE_a_mac3 PASS (29 checks, 11 cycles)
+throttle_every_cycle scen2: WAVE_b_backpressure PASS (35 checks, 21 cycles)
+throttle_every_cycle scen3: WAVE_c_fault PASS (42 checks, 19 cycles)
+throttle_every_cycle scen4: WAVE_d_thermal FAIL (12 of 383 checks failed)  <- target scenario: CAUGHT
+throttle_every_cycle scen5: WAVE_c2_fault_sticky PASS (50 checks, 24 cycles)
+copy1_no_repair scen1: WAVE_a_mac3 FAIL (1 of 29 checks failed)
+copy1_no_repair scen2: WAVE_b_backpressure PASS (35 checks, 21 cycles)
+copy1_no_repair scen3: WAVE_c_fault PASS (42 checks, 19 cycles)
+copy1_no_repair scen4: WAVE_d_thermal FAIL (92 of 383 checks failed)  <- target scenario: CAUGHT
+copy1_no_repair scen5: WAVE_c2_fault_sticky PASS (50 checks, 24 cycles)

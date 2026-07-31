@@ -1,0 +1,7 @@
+date_utc   2026-10-06T19:46:47Z
+repo_head  0495cfa6bcdab0ade4ebfada20b264c2bb30ce4e
+iverilog   Icarus Verilog version 14.0 (devel) (s20260301-500-g2e81fcccb-dirty)
+dc59d4a5730c45f4abd24a214f88abcd  /home/user/chip/rtl/orbit_keep_reg.v
+b34f737f0b470e267f4f347ab68ac6c0  /home/user/chip/rtl/orbit_mac_lane.v
+b2877bc25b9b270e69b84fb440ec5454  /home/user/chip/rtl/orbit_thermal_tmr.v
+998888fd4f2b2a07713317cab033c140  /home/user/chip/rtl/orbit_demo.v

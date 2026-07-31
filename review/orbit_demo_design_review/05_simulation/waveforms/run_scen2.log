@@ -1,0 +1,6 @@
+VCD info: dumpfile wave_b_backpressure.vcd opened for output.
+WAVE scenario 2: b_backpressure (clk period 10 ns)
+  t=50.0 ns cyc=4: reset released, therm_state NORMAL
+  t=120.0 ns cyc=11: 6 backpressure cycles done, raising out_ready
+WAVE_b_backpressure PASS (35 checks, 21 cycles)
+tb_orbit_wave.v:501: $finish called at 220000 (1ps)

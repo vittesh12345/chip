@@ -1,0 +1,70 @@
+set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee build/sim/model.log
+orbit_ref self-test PASS (38 checks)
+set -o pipefail; tabbypy3 tb/cocotb/run_random.py --jobs 2 --sources rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v --cycles 20000 --soak-max 400000 --sim icarus --out build/sim/random \
+    --seeds 1 2 3 4 5 --soak-seeds 1 2>&1 | tee build/sim/random/run.log
+# cocotb random test of orbit_demo
+
+cocotb 2.1.0.dev0+41564633, simulator icarus, Python 3.11.6 (/opt/eda/oss-cad-suite/bin/tabbypy3)
+
+| test | seed | cycles | results checked | errors | missing coverage | wall s | result |
+|---|---|---|---|---|---|---|---|
+| random_workload | 1 | 20000 | 866 | 0 | - | 3.6 | PASS |
+| random_workload | 2 | 20000 | 978 | 0 | - | 3.6 | PASS |
+| random_workload | 3 | 20000 | 976 | 0 | - | 3.3 | PASS |
+| random_workload | 4 | 20000 | 825 | 0 | - | 3.2 | PASS |
+| random_workload | 5 | 20000 | 877 | 0 | - | 3.3 | PASS |
+| wrap_soak | 1 | 149226 | 3022 | 0 | - | 24.9 | PASS |
+
+Functional coverage (event counts; * = required > 0 in the test that lists it)
+
+| event | random:1 | random:2 | random:3 | random:4 | random:5 | wrap:1 | total |
+|---|---|---|---|---|---|---|---|
+| back_to_back * | 146 | 174 | 186 | 166 | 184 | 59 | 915 |
+| backpressure_cycles * | 2347 | 3271 | 1441 | 3721 | 2748 | 373 | 13901 |
+| buffer_full_blocks_last * | 375 | 471 | 226 | 486 | 305 | 7 | 1870 |
+| buffer_full_blocks_nonlast * | 1335 | 1923 | 795 | 2264 | 1957 | 358 | 8632 |
+| clear_dropped_result * | 10 | 9 | 8 | 9 | 4 | 0 | 40 |
+| clear_fault_cycles * | 138 | 119 | 132 | 93 | 98 | 0 | 580 |
+| clear_with_transfer | 5 | 1 | 1 | 6 | 2 | 0 | 15 |
+| continue_after_last * | 343 | 390 | 374 | 355 | 336 | 3022 | 4820 |
+| cycles | 20000 | 20000 | 20000 | 20000 | 20000 | 149226 | 249226 |
+| drain_in_stop * | 5 | 10 | 12 | 15 | 7 | 0 | 49 |
+| first_restarts_sum * | 98 | 94 | 105 | 80 | 71 | 1 | 449 |
+| in_fire * | 8468 | 9355 | 9219 | 8160 | 8468 | 147364 | 191034 |
+| invalid_sensor_cycles | 555 | 300 | 150 | 746 | 525 | 0 | 2276 |
+| multi_beat_sums * | 715 | 795 | 790 | 679 | 699 | 3022 | 6700 |
+| negative_temp_cycles * | 587 | 792 | 963 | 720 | 848 | 0 | 3910 |
+| normal_at_71_79 * | 2255 | 2111 | 2214 | 1633 | 1719 | 0 | 9932 |
+| normal_hold_at_79 * | 229 | 223 | 218 | 163 | 165 | 0 | 998 |
+| out_fire * | 866 | 978 | 976 | 825 | 877 | 3022 | 7544 |
+| prod_max_min * | 135 | 137 | 136 | 143 | 148 | 176896 | 177595 |
+| prod_min_min * | 53 | 77 | 80 | 60 | 66 | 88304 | 88640 |
+| recover_at_70_from_stop * | 29 | 11 | 24 | 28 | 35 | 0 | 127 |
+| recover_at_70_from_throttle * | 58 | 52 | 32 | 39 | 27 | 6 | 214 |
+| recover_from_stop * | 72 | 135 | 172 | 126 | 84 | 1 | 590 |
+| recover_from_throttle * | 85 | 102 | 97 | 75 | 42 | 146 | 547 |
+| reset_cycles | 6 | 2 | 4 | 7 | 5 | 2 | 26 |
+| results_checked | 866 | 978 | 976 | 825 | 877 | 3022 | 7544 |
+| single_beat_sums * | 162 | 192 | 194 | 156 | 182 | 0 | 886 |
+| stop_at_95 * | 23 | 10 | 26 | 28 | 35 | 0 | 122 |
+| stop_blocked * | 3366 | 3369 | 3756 | 4519 | 4529 | 1 | 19540 |
+| stop_by_invalid * | 32 | 42 | 37 | 34 | 34 | 0 | 179 |
+| stop_by_temp * | 38 | 93 | 134 | 89 | 48 | 0 | 402 |
+| stop_hold_at_71 * | 58 | 91 | 131 | 50 | 74 | 0 | 404 |
+| stop_hysteresis_hold * | 1910 | 1901 | 2469 | 2732 | 3117 | 0 | 12129 |
+| throttle_admit * | 1729 | 1183 | 1201 | 1647 | 1167 | 1558 | 8485 |
+| throttle_at_80 * | 87 | 72 | 65 | 67 | 61 | 10 | 362 |
+| throttle_entry * | 119 | 128 | 131 | 107 | 82 | 146 | 713 |
+| throttle_hold_at_71 * | 116 | 98 | 94 | 118 | 51 | 0 | 477 |
+| throttle_hold_at_94 * | 98 | 58 | 53 | 76 | 128 | 0 | 413 |
+| throttle_hysteresis_hold * | 1240 | 955 | 971 | 1327 | 554 | 0 | 5047 |
+| throttle_phase_block * | 1871 | 1430 | 1113 | 1703 | 1287 | 1494 | 8898 |
+| wrap_neg * | 0 | 0 | 0 | 0 | 0 | 2 | 2 |
+| wrap_pos * | 0 | 0 | 0 | 0 | 0 | 2 | 2 |
+
+
+SIM_RANDOM PASS: 6 runs, 249226 cycles, 7544 results checked, 0 mismatches
+
+real	0m42.417s
+user	0m41.651s
+sys	0m0.313s

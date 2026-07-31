@@ -1,0 +1,78 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 1 thread(s).
+CORNER ff_n40C_1v95 liberty sky130_fd_sc_hd__ff_n40C_1v95.lib
+=== reg2reg max ===
+max_delay/setup group clk
+
+                                     Required   Actual
+Endpoint                                Delay    Delay    Slack
+---------------------------------------------------------------
+g_lane[0].u_lane.u_res_b/q[30]$_SDFFE_PN0P_/D (sky130_fd_sc_hd__dfxtp_1)    7.547    3.977    3.571 (MET)
+
+=== reg2reg min ===
+min_delay/hold group clk
+
+                                     Required   Actual
+Endpoint                                Delay    Delay    Slack
+---------------------------------------------------------------
+u_thermal.phase$_SDFF_PN0_/D (sky130_fd_sc_hd__dfxtp_1)    0.415    0.696    0.281 (MET)
+
+=== in2reg max ===
+max_delay/setup group clk
+
+                                     Required   Actual
+Endpoint                                Delay    Delay    Slack
+---------------------------------------------------------------
+g_lane[3].u_lane.u_res_a/q[29]$_SDFFE_PN0P_/D (sky130_fd_sc_hd__dfxtp_1)    7.605    5.330    2.276 (MET)
+
+=== in2reg min ===
+min_delay/hold group clk
+
+                                     Required   Actual
+Endpoint                                Delay    Delay    Slack
+---------------------------------------------------------------
+out_valid_q$_SDFFE_PP0P_/D (sky130_fd_sc_hd__dfxtp_1)    0.417    1.813    1.396 (MET)
+
+=== reg2out max ===
+max_delay/setup group clk
+
+                                     Required   Actual
+Endpoint                                Delay    Delay    Slack
+---------------------------------------------------------------
+in_ready (output)                       5.760    3.202    2.558 (MET)
+
+=== reg2out min ===
+min_delay/hold group clk
+
+                                     Required   Actual
+Endpoint                                Delay    Delay    Slack
+---------------------------------------------------------------
+out_data[6] (output)                   -1.440    0.969    2.409 (MET)
+
+=== in2out max ===
+max_delay/setup group clk
+
+                                     Required   Actual
+Endpoint                                Delay    Delay    Slack
+---------------------------------------------------------------
+in_ready (output)                       5.760    2.595    3.165 (MET)
+
+=== in2out min ===
+min_delay/hold group clk
+
+                                     Required   Actual
+Endpoint                                Delay    Delay    Slack
+---------------------------------------------------------------
+in_ready (output)                      -1.440    2.428    3.868 (MET)
+
+=== drv ===
+=== setup violating endpoints ===
+No paths found.
+
+=== hold violating endpoints ===
+No paths found.
+
+=== end ===

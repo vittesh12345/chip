@@ -1,0 +1,218 @@
+pin,direction,use,layer,x_um,y_um,edge,spec_port,bit,spec_meaning
+VDD,INOUT,POWER,met5,173.190,329.120,none (met5 core straps),none,,"Not in SPEC port table. DEF POWER pin: 12 horizontal met5 straps, 1.6 um wide, x 2.3-344.08 um, centres y 29.92-329.12 um, pitch 27.2 um; x_um/y_um = DEF pin origin (FIXED). No bond pad or pad cell."
+VSS,INOUT,GROUND,met5,173.190,342.720,none (met5 core straps),none,,"Not in SPEC port table. DEF GROUND pin: 13 horizontal met5 straps, 1.6 um wide, x 2.3-344.08 um, centres y 16.32-342.72 um, pitch 27.2 um; x_um/y_um = DEF pin origin (FIXED). No bond pad or pad cell."
+clk,INPUT,SIGNAL,met3,0.400,334.900,W,clk,,Clock
+rst_n,INPUT,SIGNAL,met3,0.400,310.420,W,rst_n,,"Synchronous reset, active low"
+in_valid,INPUT,SIGNAL,met3,0.400,190.740,W,in_valid,,Input beat valid
+in_ready,OUTPUT,SIGNAL,met3,0.400,189.380,W,in_ready,,Input beat accepted this cycle if in_valid is also high
+in_first,INPUT,SIGNAL,met2,192.970,0.242,S,in_first,,This beat starts a new sum (acc = a*b)
+in_last,INPUT,SIGNAL,met3,0.400,192.100,W,in_last,,"After this beat, copy every lane's sum to the output buffer"
+in_a[0],INPUT,SIGNAL,met2,185.610,0.242,S,in_a,0,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 0
+in_a[1],INPUT,SIGNAL,met2,186.530,0.242,S,in_a,1,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 1
+in_a[2],INPUT,SIGNAL,met2,187.450,0.242,S,in_a,2,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 2
+in_a[3],INPUT,SIGNAL,met2,150.650,0.242,S,in_a,3,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 3
+in_a[4],INPUT,SIGNAL,met2,145.130,0.242,S,in_a,4,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 4
+in_a[5],INPUT,SIGNAL,met2,136.850,0.242,S,in_a,5,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 5
+in_a[6],INPUT,SIGNAL,met2,129.490,0.242,S,in_a,6,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 6
+in_a[7],INPUT,SIGNAL,met2,128.570,0.242,S,in_a,7,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 7 (sign)
+in_a[8],INPUT,SIGNAL,met2,197.570,346.052,N,in_a,8,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 0
+in_a[9],INPUT,SIGNAL,met2,196.650,346.052,N,in_a,9,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 1
+in_a[10],INPUT,SIGNAL,met2,200.330,346.052,N,in_a,10,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 2
+in_a[11],INPUT,SIGNAL,met2,199.410,346.052,N,in_a,11,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 3
+in_a[12],INPUT,SIGNAL,met2,198.490,346.052,N,in_a,12,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 4
+in_a[13],INPUT,SIGNAL,met2,191.130,346.052,N,in_a,13,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 5
+in_a[14],INPUT,SIGNAL,met2,160.770,346.052,N,in_a,14,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 6
+in_a[15],INPUT,SIGNAL,met2,159.850,346.052,N,in_a,15,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 7 (sign)
+in_a[16],INPUT,SIGNAL,met3,0.400,202.980,W,in_a,16,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 0
+in_a[17],INPUT,SIGNAL,met2,205.850,346.052,N,in_a,17,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 1
+in_a[18],INPUT,SIGNAL,met2,204.930,346.052,N,in_a,18,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 2
+in_a[19],INPUT,SIGNAL,met3,0.400,219.300,W,in_a,19,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 3
+in_a[20],INPUT,SIGNAL,met3,0.400,216.580,W,in_a,20,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 4
+in_a[21],INPUT,SIGNAL,met3,0.400,215.220,W,in_a,21,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 5
+in_a[22],INPUT,SIGNAL,met3,0.400,213.860,W,in_a,22,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 6
+in_a[23],INPUT,SIGNAL,met3,0.400,212.500,W,in_a,23,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 7 (sign)
+in_a[24],INPUT,SIGNAL,met3,345.895,105.060,E,in_a,24,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 0
+in_a[25],INPUT,SIGNAL,met3,345.895,106.420,E,in_a,25,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 1
+in_a[26],INPUT,SIGNAL,met3,345.895,107.780,E,in_a,26,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 2
+in_a[27],INPUT,SIGNAL,met3,345.895,109.140,E,in_a,27,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 3
+in_a[28],INPUT,SIGNAL,met3,345.895,110.500,E,in_a,28,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 4
+in_a[29],INPUT,SIGNAL,met3,345.895,111.860,E,in_a,29,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 5
+in_a[30],INPUT,SIGNAL,met3,345.895,113.220,E,in_a,30,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 6
+in_a[31],INPUT,SIGNAL,met3,345.895,114.580,E,in_a,31,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 7 (sign)
+in_b[0],INPUT,SIGNAL,met2,188.370,0.242,S,in_b,0,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 0
+in_b[1],INPUT,SIGNAL,met2,189.290,0.242,S,in_b,1,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 1
+in_b[2],INPUT,SIGNAL,met2,190.210,0.242,S,in_b,2,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 2
+in_b[3],INPUT,SIGNAL,met2,192.050,0.242,S,in_b,3,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 3
+in_b[4],INPUT,SIGNAL,met2,148.810,0.242,S,in_b,4,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 4
+in_b[5],INPUT,SIGNAL,met2,135.010,0.242,S,in_b,5,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 5
+in_b[6],INPUT,SIGNAL,met2,130.410,0.242,S,in_b,6,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 6
+in_b[7],INPUT,SIGNAL,met2,127.650,0.242,S,in_b,7,Signed INT8 operands; lane i at [8*i +: 8] | lane 0 bit 7 (sign)
+in_b[8],INPUT,SIGNAL,met2,188.370,346.052,N,in_b,8,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 0
+in_b[9],INPUT,SIGNAL,met2,190.210,346.052,N,in_b,9,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 1
+in_b[10],INPUT,SIGNAL,met2,195.730,346.052,N,in_b,10,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 2
+in_b[11],INPUT,SIGNAL,met2,201.250,346.052,N,in_b,11,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 3
+in_b[12],INPUT,SIGNAL,met2,194.810,346.052,N,in_b,12,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 4
+in_b[13],INPUT,SIGNAL,met2,193.890,346.052,N,in_b,13,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 5
+in_b[14],INPUT,SIGNAL,met2,192.970,346.052,N,in_b,14,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 6
+in_b[15],INPUT,SIGNAL,met2,158.930,346.052,N,in_b,15,Signed INT8 operands; lane i at [8*i +: 8] | lane 1 bit 7 (sign)
+in_b[16],INPUT,SIGNAL,met3,0.400,211.140,W,in_b,16,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 0
+in_b[17],INPUT,SIGNAL,met2,203.090,346.052,N,in_b,17,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 1
+in_b[18],INPUT,SIGNAL,met2,206.770,346.052,N,in_b,18,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 2
+in_b[19],INPUT,SIGNAL,met3,0.400,205.700,W,in_b,19,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 3
+in_b[20],INPUT,SIGNAL,met3,0.400,200.260,W,in_b,20,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 4
+in_b[21],INPUT,SIGNAL,met3,0.400,208.420,W,in_b,21,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 5
+in_b[22],INPUT,SIGNAL,met3,0.400,201.620,W,in_b,22,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 6
+in_b[23],INPUT,SIGNAL,met3,0.400,209.780,W,in_b,23,Signed INT8 operands; lane i at [8*i +: 8] | lane 2 bit 7 (sign)
+in_b[24],INPUT,SIGNAL,met3,345.895,129.540,E,in_b,24,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 0
+in_b[25],INPUT,SIGNAL,met3,345.895,128.180,E,in_b,25,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 1
+in_b[26],INPUT,SIGNAL,met3,345.895,115.940,E,in_b,26,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 2
+in_b[27],INPUT,SIGNAL,met3,345.895,117.300,E,in_b,27,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 3
+in_b[28],INPUT,SIGNAL,met3,345.895,118.660,E,in_b,28,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 4
+in_b[29],INPUT,SIGNAL,met3,345.895,103.700,E,in_b,29,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 5
+in_b[30],INPUT,SIGNAL,met2,191.130,0.242,S,in_b,30,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 6
+in_b[31],INPUT,SIGNAL,met3,345.895,120.020,E,in_b,31,Signed INT8 operands; lane i at [8*i +: 8] | lane 3 bit 7 (sign)
+out_valid,OUTPUT,SIGNAL,met3,0.400,182.580,W,out_valid,,Output buffer holds a presentable result
+out_ready,INPUT,SIGNAL,met3,0.400,185.300,W,out_ready,,Consumer takes the result this cycle if out_valid is high
+out_data[0],OUTPUT,SIGNAL,met2,46.690,0.242,S,out_data,0,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 0"
+out_data[1],OUTPUT,SIGNAL,met2,54.970,0.242,S,out_data,1,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 1"
+out_data[2],OUTPUT,SIGNAL,met2,55.890,0.242,S,out_data,2,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 2"
+out_data[3],OUTPUT,SIGNAL,met2,56.810,0.242,S,out_data,3,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 3"
+out_data[4],OUTPUT,SIGNAL,met2,57.730,0.242,S,out_data,4,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 4"
+out_data[5],OUTPUT,SIGNAL,met3,0.400,168.980,W,out_data,5,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 5"
+out_data[6],OUTPUT,SIGNAL,met2,58.650,0.242,S,out_data,6,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 6"
+out_data[7],OUTPUT,SIGNAL,met2,59.570,0.242,S,out_data,7,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 7"
+out_data[8],OUTPUT,SIGNAL,met2,60.490,0.242,S,out_data,8,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 8"
+out_data[9],OUTPUT,SIGNAL,met2,62.330,0.242,S,out_data,9,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 9"
+out_data[10],OUTPUT,SIGNAL,met2,48.530,0.242,S,out_data,10,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 10"
+out_data[11],OUTPUT,SIGNAL,met2,49.450,0.242,S,out_data,11,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 11"
+out_data[12],OUTPUT,SIGNAL,met2,50.370,0.242,S,out_data,12,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 12"
+out_data[13],OUTPUT,SIGNAL,met2,51.290,0.242,S,out_data,13,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 13"
+out_data[14],OUTPUT,SIGNAL,met2,52.210,0.242,S,out_data,14,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 14"
+out_data[15],OUTPUT,SIGNAL,met3,0.400,38.420,W,out_data,15,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 15"
+out_data[16],OUTPUT,SIGNAL,met2,32.890,0.242,S,out_data,16,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 16"
+out_data[17],OUTPUT,SIGNAL,met2,53.130,0.242,S,out_data,17,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 17"
+out_data[18],OUTPUT,SIGNAL,met2,54.050,0.242,S,out_data,18,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 18"
+out_data[19],OUTPUT,SIGNAL,met2,29.210,0.242,S,out_data,19,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 19"
+out_data[20],OUTPUT,SIGNAL,met2,20.010,0.242,S,out_data,20,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 20"
+out_data[21],OUTPUT,SIGNAL,met2,10.810,0.242,S,out_data,21,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 21"
+out_data[22],OUTPUT,SIGNAL,met2,11.730,0.242,S,out_data,22,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 22"
+out_data[23],OUTPUT,SIGNAL,met3,0.400,50.660,W,out_data,23,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 23"
+out_data[24],OUTPUT,SIGNAL,met3,0.400,35.700,W,out_data,24,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 24"
+out_data[25],OUTPUT,SIGNAL,met3,0.400,53.380,W,out_data,25,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 25"
+out_data[26],OUTPUT,SIGNAL,met2,18.170,0.242,S,out_data,26,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 26"
+out_data[27],OUTPUT,SIGNAL,met3,0.400,54.740,W,out_data,27,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 27"
+out_data[28],OUTPUT,SIGNAL,met3,0.400,41.140,W,out_data,28,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 28"
+out_data[29],OUTPUT,SIGNAL,met3,0.400,69.700,W,out_data,29,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 29"
+out_data[30],OUTPUT,SIGNAL,met3,0.400,56.100,W,out_data,30,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 30"
+out_data[31],OUTPUT,SIGNAL,met3,0.400,60.180,W,out_data,31,"Result; lane i at [32*i +: 32], signed INT32 | lane 0 bit 31 (sign)"
+out_data[32],OUTPUT,SIGNAL,met2,137.770,346.052,N,out_data,32,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 0"
+out_data[33],OUTPUT,SIGNAL,met2,139.610,346.052,N,out_data,33,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 1"
+out_data[34],OUTPUT,SIGNAL,met2,131.330,346.052,N,out_data,34,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 2"
+out_data[35],OUTPUT,SIGNAL,met2,129.490,346.052,N,out_data,35,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 3"
+out_data[36],OUTPUT,SIGNAL,met2,128.570,346.052,N,out_data,36,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 4"
+out_data[37],OUTPUT,SIGNAL,met2,126.730,346.052,N,out_data,37,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 5"
+out_data[38],OUTPUT,SIGNAL,met3,0.400,275.060,W,out_data,38,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 6"
+out_data[39],OUTPUT,SIGNAL,met2,118.450,346.052,N,out_data,39,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 7"
+out_data[40],OUTPUT,SIGNAL,met3,0.400,285.940,W,out_data,40,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 8"
+out_data[41],OUTPUT,SIGNAL,met3,0.400,287.300,W,out_data,41,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 9"
+out_data[42],OUTPUT,SIGNAL,met2,138.690,346.052,N,out_data,42,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 10"
+out_data[43],OUTPUT,SIGNAL,met2,125.810,346.052,N,out_data,43,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 11"
+out_data[44],OUTPUT,SIGNAL,met2,153.410,346.052,N,out_data,44,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 12"
+out_data[45],OUTPUT,SIGNAL,met3,0.400,306.340,W,out_data,45,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 13"
+out_data[46],OUTPUT,SIGNAL,met2,122.130,346.052,N,out_data,46,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 14"
+out_data[47],OUTPUT,SIGNAL,met2,121.210,346.052,N,out_data,47,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 15"
+out_data[48],OUTPUT,SIGNAL,met2,135.930,346.052,N,out_data,48,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 16"
+out_data[49],OUTPUT,SIGNAL,met2,117.530,346.052,N,out_data,49,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 17"
+out_data[50],OUTPUT,SIGNAL,met2,120.290,346.052,N,out_data,50,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 18"
+out_data[51],OUTPUT,SIGNAL,met2,143.290,346.052,N,out_data,51,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 19"
+out_data[52],OUTPUT,SIGNAL,met2,116.610,346.052,N,out_data,52,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 20"
+out_data[53],OUTPUT,SIGNAL,met2,123.970,346.052,N,out_data,53,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 21"
+out_data[54],OUTPUT,SIGNAL,met3,0.400,304.980,W,out_data,54,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 22"
+out_data[55],OUTPUT,SIGNAL,met2,124.890,346.052,N,out_data,55,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 23"
+out_data[56],OUTPUT,SIGNAL,met2,127.650,346.052,N,out_data,56,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 24"
+out_data[57],OUTPUT,SIGNAL,met3,0.400,303.620,W,out_data,57,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 25"
+out_data[58],OUTPUT,SIGNAL,met3,0.400,290.020,W,out_data,58,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 26"
+out_data[59],OUTPUT,SIGNAL,met2,114.770,346.052,N,out_data,59,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 27"
+out_data[60],OUTPUT,SIGNAL,met2,135.010,346.052,N,out_data,60,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 28"
+out_data[61],OUTPUT,SIGNAL,met3,0.400,272.340,W,out_data,61,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 29"
+out_data[62],OUTPUT,SIGNAL,met3,0.400,281.860,W,out_data,62,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 30"
+out_data[63],OUTPUT,SIGNAL,met3,0.400,262.820,W,out_data,63,"Result; lane i at [32*i +: 32], signed INT32 | lane 1 bit 31 (sign)"
+out_data[64],OUTPUT,SIGNAL,met3,0.400,159.460,W,out_data,64,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 0"
+out_data[65],OUTPUT,SIGNAL,met3,0.400,217.940,W,out_data,65,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 1"
+out_data[66],OUTPUT,SIGNAL,met3,0.400,186.660,W,out_data,66,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 2"
+out_data[67],OUTPUT,SIGNAL,met3,0.400,188.020,W,out_data,67,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 3"
+out_data[68],OUTPUT,SIGNAL,met3,0.400,226.100,W,out_data,68,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 4"
+out_data[69],OUTPUT,SIGNAL,met3,0.400,181.220,W,out_data,69,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 5"
+out_data[70],OUTPUT,SIGNAL,met3,0.400,249.220,W,out_data,70,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 6"
+out_data[71],OUTPUT,SIGNAL,met3,0.400,183.940,W,out_data,71,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 7"
+out_data[72],OUTPUT,SIGNAL,met3,0.400,246.500,W,out_data,72,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 8"
+out_data[73],OUTPUT,SIGNAL,met3,0.400,247.860,W,out_data,73,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 9"
+out_data[74],OUTPUT,SIGNAL,met3,0.400,154.020,W,out_data,74,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 10"
+out_data[75],OUTPUT,SIGNAL,met3,0.400,251.940,W,out_data,75,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 11"
+out_data[76],OUTPUT,SIGNAL,met3,0.400,250.580,W,out_data,76,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 12"
+out_data[77],OUTPUT,SIGNAL,met3,0.400,243.780,W,out_data,77,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 13"
+out_data[78],OUTPUT,SIGNAL,met3,0.400,245.140,W,out_data,78,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 14"
+out_data[79],OUTPUT,SIGNAL,met3,0.400,224.740,W,out_data,79,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 15"
+out_data[80],OUTPUT,SIGNAL,met3,0.400,220.660,W,out_data,80,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 16"
+out_data[81],OUTPUT,SIGNAL,met3,0.400,238.340,W,out_data,81,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 17"
+out_data[82],OUTPUT,SIGNAL,met3,0.400,177.140,W,out_data,82,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 18"
+out_data[83],OUTPUT,SIGNAL,met3,0.400,194.820,W,out_data,83,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 19"
+out_data[84],OUTPUT,SIGNAL,met3,0.400,179.860,W,out_data,84,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 20"
+out_data[85],OUTPUT,SIGNAL,met3,0.400,204.340,W,out_data,85,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 21"
+out_data[86],OUTPUT,SIGNAL,met3,0.400,236.980,W,out_data,86,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 22"
+out_data[87],OUTPUT,SIGNAL,met3,0.400,173.060,W,out_data,87,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 23"
+out_data[88],OUTPUT,SIGNAL,met3,0.400,167.620,W,out_data,88,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 24"
+out_data[89],OUTPUT,SIGNAL,met3,0.400,242.420,W,out_data,89,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 25"
+out_data[90],OUTPUT,SIGNAL,met3,0.400,171.700,W,out_data,90,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 26"
+out_data[91],OUTPUT,SIGNAL,met3,0.400,207.060,W,out_data,91,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 27"
+out_data[92],OUTPUT,SIGNAL,met3,0.400,241.060,W,out_data,92,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 28"
+out_data[93],OUTPUT,SIGNAL,met3,0.400,193.460,W,out_data,93,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 29"
+out_data[94],OUTPUT,SIGNAL,met3,0.400,239.700,W,out_data,94,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 30"
+out_data[95],OUTPUT,SIGNAL,met3,0.400,178.500,W,out_data,95,"Result; lane i at [32*i +: 32], signed INT32 | lane 2 bit 31 (sign)"
+out_data[96],OUTPUT,SIGNAL,met2,61.410,0.242,S,out_data,96,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 0"
+out_data[97],OUTPUT,SIGNAL,met3,0.400,145.860,W,out_data,97,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 1"
+out_data[98],OUTPUT,SIGNAL,met3,0.400,174.420,W,out_data,98,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 2"
+out_data[99],OUTPUT,SIGNAL,met3,0.400,162.180,W,out_data,99,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 3"
+out_data[100],OUTPUT,SIGNAL,met3,0.400,166.260,W,out_data,100,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 4"
+out_data[101],OUTPUT,SIGNAL,met3,0.400,143.140,W,out_data,101,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 5"
+out_data[102],OUTPUT,SIGNAL,met3,0.400,164.900,W,out_data,102,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 6"
+out_data[103],OUTPUT,SIGNAL,met3,0.400,137.700,W,out_data,103,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 7"
+out_data[104],OUTPUT,SIGNAL,met2,47.610,0.242,S,out_data,104,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 8"
+out_data[105],OUTPUT,SIGNAL,met3,0.400,170.340,W,out_data,105,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 9"
+out_data[106],OUTPUT,SIGNAL,met3,0.400,158.100,W,out_data,106,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 10"
+out_data[107],OUTPUT,SIGNAL,met3,0.400,156.740,W,out_data,107,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 11"
+out_data[108],OUTPUT,SIGNAL,met3,0.400,129.540,W,out_data,108,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 12"
+out_data[109],OUTPUT,SIGNAL,met3,0.400,141.780,W,out_data,109,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 13"
+out_data[110],OUTPUT,SIGNAL,met3,0.400,160.820,W,out_data,110,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 14"
+out_data[111],OUTPUT,SIGNAL,met3,0.400,128.180,W,out_data,111,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 15"
+out_data[112],OUTPUT,SIGNAL,met3,0.400,155.380,W,out_data,112,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 16"
+out_data[113],OUTPUT,SIGNAL,met3,0.400,175.780,W,out_data,113,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 17"
+out_data[114],OUTPUT,SIGNAL,met3,0.400,163.540,W,out_data,114,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 18"
+out_data[115],OUTPUT,SIGNAL,met3,0.400,125.460,W,out_data,115,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 19"
+out_data[116],OUTPUT,SIGNAL,met3,0.400,124.100,W,out_data,116,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 20"
+out_data[117],OUTPUT,SIGNAL,met3,0.400,122.740,W,out_data,117,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 21"
+out_data[118],OUTPUT,SIGNAL,met3,0.400,57.460,W,out_data,118,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 22"
+out_data[119],OUTPUT,SIGNAL,met3,0.400,72.420,W,out_data,119,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 23"
+out_data[120],OUTPUT,SIGNAL,met3,0.400,64.260,W,out_data,120,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 24"
+out_data[121],OUTPUT,SIGNAL,met3,0.400,71.060,W,out_data,121,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 25"
+out_data[122],OUTPUT,SIGNAL,met3,0.400,58.820,W,out_data,122,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 26"
+out_data[123],OUTPUT,SIGNAL,met3,0.400,62.900,W,out_data,123,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 27"
+out_data[124],OUTPUT,SIGNAL,met3,0.400,65.620,W,out_data,124,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 28"
+out_data[125],OUTPUT,SIGNAL,met3,0.400,68.340,W,out_data,125,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 29"
+out_data[126],OUTPUT,SIGNAL,met3,0.400,61.540,W,out_data,126,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 30"
+out_data[127],OUTPUT,SIGNAL,met3,0.400,66.980,W,out_data,127,"Result; lane i at [32*i +: 32], signed INT32 | lane 3 bit 31 (sign)"
+temp_valid,INPUT,SIGNAL,met3,345.895,171.700,E,temp_valid,,Thermal reading is valid
+temp_c[0],INPUT,SIGNAL,met3,345.895,164.900,E,temp_c,0,Signed whole degrees Celsius
+temp_c[1],INPUT,SIGNAL,met3,345.895,166.260,E,temp_c,1,Signed whole degrees Celsius
+temp_c[2],INPUT,SIGNAL,met3,345.895,163.540,E,temp_c,2,Signed whole degrees Celsius
+temp_c[3],INPUT,SIGNAL,met3,345.895,167.620,E,temp_c,3,Signed whole degrees Celsius
+temp_c[4],INPUT,SIGNAL,met3,345.895,170.340,E,temp_c,4,Signed whole degrees Celsius
+temp_c[5],INPUT,SIGNAL,met3,345.895,168.980,E,temp_c,5,Signed whole degrees Celsius
+temp_c[6],INPUT,SIGNAL,met3,345.895,173.060,E,temp_c,6,Signed whole degrees Celsius
+temp_c[7],INPUT,SIGNAL,met3,345.895,174.420,E,temp_c,7,Signed whole degrees Celsius | bit 7 (sign)
+clear_fault,INPUT,SIGNAL,met3,345.895,196.180,E,clear_fault,,"Synchronous: clear fault, zero all lane storage, empty output buffer"
+fault,OUTPUT,SIGNAL,met3,0.400,196.180,W,fault,,"Sticky: a duplicated copy disagreed (registered, 1-cycle latency)"
+therm_state[0],OUTPUT,SIGNAL,met3,345.895,177.140,E,therm_state,0,"Voted thermal state: 0 NORMAL, 1 THROTTLE, 2 STOP, 3 unused (behaves as STOP)"
+therm_state[1],OUTPUT,SIGNAL,met3,345.895,181.220,E,therm_state,1,"Voted thermal state: 0 NORMAL, 1 THROTTLE, 2 STOP, 3 unused (behaves as STOP)"
+therm_repair,OUTPUT,SIGNAL,met3,345.895,162.180,E,therm_repair,,The three thermal copies do not all agree this cycle
+shutdown_req,OUTPUT,SIGNAL,met3,345.895,175.780,E,shutdown_req,,therm_state[1]: STOP (or the unused code 3)

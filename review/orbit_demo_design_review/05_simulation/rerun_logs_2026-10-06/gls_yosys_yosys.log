@@ -1,0 +1,1539 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)
+
+-- Running command `read_verilog rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v; synth -flatten -top orbit_demo;         stat; write_verilog -noattr build/sim/gls/yosys/orbit_demo_yosys.v' --
+
+1. Executing Verilog-2005 frontend: rtl/orbit_keep_reg.v
+Parsing Verilog input from `rtl/orbit_keep_reg.v' to AST representation.
+Generating RTLIL representation for module `\orbit_keep_reg'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/orbit_mac_lane.v
+Parsing Verilog input from `rtl/orbit_mac_lane.v' to AST representation.
+Generating RTLIL representation for module `\orbit_mac_lane'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: rtl/orbit_thermal_tmr.v
+Parsing Verilog input from `rtl/orbit_thermal_tmr.v' to AST representation.
+Generating RTLIL representation for module `\orbit_thermal_tmr'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: rtl/orbit_demo.v
+Parsing Verilog input from `rtl/orbit_demo.v' to AST representation.
+Generating RTLIL representation for module `\orbit_demo'.
+Successfully finished Verilog frontend.
+
+5. Executing SYNTH pass.
+
+5.1. Executing HIERARCHY pass (managing design hierarchy).
+
+5.1.1. Analyzing design hierarchy..
+Top module:  \orbit_demo
+Used module:     \orbit_mac_lane
+Used module:         \orbit_keep_reg
+Used module:     \orbit_thermal_tmr
+Parameter \W = 32
+
+5.1.2. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_keep_reg'.
+Parameter \W = 32
+Generating RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Parameter \W = 32
+Found cached RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Parameter \W = 32
+Found cached RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Parameter \W = 32
+Found cached RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Parameter \W = 2
+Parameter \RESET_VAL = 2'10
+
+5.1.3. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_keep_reg'.
+Parameter \W = 2
+Parameter \RESET_VAL = 2'10
+Generating RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Parameter \W = 2
+Parameter \RESET_VAL = 2'10
+Found cached RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Parameter \W = 2
+Parameter \RESET_VAL = 2'10
+Found cached RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Parameter \T_THROTTLE = 8'01010000
+Parameter \T_STOP = 8'01011111
+Parameter \T_RECOVER = 8'01000110
+
+5.1.4. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_thermal_tmr'.
+Parameter \T_THROTTLE = 8'01010000
+Parameter \T_STOP = 8'01011111
+Parameter \T_RECOVER = 8'01000110
+Generating RTLIL representation for module `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr'.
+
+5.1.5. Analyzing design hierarchy..
+Top module:  \orbit_demo
+Used module:     \orbit_mac_lane
+Used module:         $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+Used module:     $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr
+Used module:         \orbit_keep_reg
+Parameter \W = 2
+Parameter \RESET_VAL = 2'10
+Found cached RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Parameter \W = 2
+Parameter \RESET_VAL = 2'10
+Found cached RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Parameter \W = 2
+Parameter \RESET_VAL = 2'10
+Found cached RTLIL representation for module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+
+5.1.6. Analyzing design hierarchy..
+Top module:  \orbit_demo
+Used module:     \orbit_mac_lane
+Used module:         $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+Used module:     $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr
+Used module:         $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+
+5.1.7. Analyzing design hierarchy..
+Top module:  \orbit_demo
+Used module:     \orbit_mac_lane
+Used module:         $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+Used module:     $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr
+Used module:         $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+Removing unused module `\orbit_thermal_tmr'.
+Removing unused module `\orbit_keep_reg'.
+Removed 2 unused modules.
+
+5.2. Executing PROC pass (convert processes to netlists).
+
+5.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+5.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$rtl/orbit_keep_reg.v:26$65 in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Marked 3 switch rules as full_case in process $proc$rtl/orbit_demo.v:107$62 in module orbit_demo.
+Marked 1 switch rules as full_case in process $proc$rtl/orbit_thermal_tmr.v:73$84 in module $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.
+Marked 2 switch rules as full_case in process $proc$rtl/orbit_thermal_tmr.v:45$74 in module $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.
+Marked 1 switch rules as full_case in process $proc$rtl/orbit_keep_reg.v:26$67 in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Removed a total of 0 dead cases.
+
+5.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 1 redundant assignment.
+Promoted 1 assignment to connection.
+
+5.2.4. Executing PROC_INIT pass (extract init attributes).
+
+5.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+5.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~12 debug messages>
+
+5.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.$proc$rtl/orbit_keep_reg.v:26$65'.
+     1/1: $0\q[31:0]
+Creating decoders for process `\orbit_demo.$proc$rtl/orbit_demo.v:107$62'.
+     1/2: $0\out_valid_q[0:0]
+     2/2: $0\fault_q[0:0]
+Creating decoders for process `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.$proc$rtl/orbit_thermal_tmr.v:73$84'.
+     1/1: $0\phase[0:0]
+Creating decoders for process `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.$proc$rtl/orbit_thermal_tmr.v:45$74'.
+     1/2: $2\nxt[1:0]
+     2/2: $1\nxt[1:0]
+Creating decoders for process `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.$proc$rtl/orbit_keep_reg.v:26$67'.
+     1/1: $0\q[1:0]
+
+5.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.\nxt' from process `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.$proc$rtl/orbit_thermal_tmr.v:45$74'.
+
+5.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.\q' using process `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.$proc$rtl/orbit_keep_reg.v:26$65'.
+  created $dff cell `$procdff$139' with positive edge clock.
+Creating register for signal `\orbit_demo.\fault_q' using process `\orbit_demo.$proc$rtl/orbit_demo.v:107$62'.
+  created $dff cell `$procdff$140' with positive edge clock.
+Creating register for signal `\orbit_demo.\out_valid_q' using process `\orbit_demo.$proc$rtl/orbit_demo.v:107$62'.
+  created $dff cell `$procdff$141' with positive edge clock.
+Creating register for signal `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.\phase' using process `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.$proc$rtl/orbit_thermal_tmr.v:73$84'.
+  created $dff cell `$procdff$142' with positive edge clock.
+Creating register for signal `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.\q' using process `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.$proc$rtl/orbit_keep_reg.v:26$67'.
+  created $dff cell `$procdff$143' with positive edge clock.
+
+5.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+5.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 2 empty switches in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.$proc$rtl/orbit_keep_reg.v:26$65'.
+Removing empty process `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.$proc$rtl/orbit_keep_reg.v:26$65'.
+Found and cleaned up 5 empty switches in `\orbit_demo.$proc$rtl/orbit_demo.v:107$62'.
+Removing empty process `orbit_demo.$proc$rtl/orbit_demo.v:107$62'.
+Found and cleaned up 1 empty switch in `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.$proc$rtl/orbit_thermal_tmr.v:73$84'.
+Removing empty process `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.$proc$rtl/orbit_thermal_tmr.v:73$84'.
+Found and cleaned up 2 empty switches in `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.$proc$rtl/orbit_thermal_tmr.v:45$74'.
+Removing empty process `$paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.$proc$rtl/orbit_thermal_tmr.v:45$74'.
+Found and cleaned up 2 empty switches in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.$proc$rtl/orbit_keep_reg.v:26$67'.
+Removing empty process `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.$proc$rtl/orbit_keep_reg.v:26$67'.
+Cleaned up 12 empty switches.
+
+5.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+<suppressed ~1 debug messages>
+Optimizing module orbit_demo.
+<suppressed ~2 debug messages>
+Optimizing module $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.
+<suppressed ~3 debug messages>
+Optimizing module orbit_mac_lane.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+<suppressed ~1 debug messages>
+
+5.3. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000...
+Checking module orbit_demo...
+Checking module $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr...
+Checking module orbit_mac_lane...
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10...
+Found and reported 0 problems.
+
+5.4. Executing FLATTEN pass (flatten design).
+Keeping orbit_mac_lane.u_acc_a (found keep_hierarchy attribute).
+Keeping orbit_mac_lane.u_acc_b (found keep_hierarchy attribute).
+Keeping orbit_mac_lane.u_res_a (found keep_hierarchy attribute).
+Keeping orbit_mac_lane.u_res_b (found keep_hierarchy attribute).
+Keeping $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.u_copy0 (found keep_hierarchy attribute).
+Keeping $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.u_copy1 (found keep_hierarchy attribute).
+Keeping $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.u_copy2 (found keep_hierarchy attribute).
+Keeping orbit_demo.u_thermal.u_copy0 (found keep_hierarchy attribute).
+Keeping orbit_demo.u_thermal.u_copy1 (found keep_hierarchy attribute).
+Keeping orbit_demo.u_thermal.u_copy2 (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[0].u_lane.u_acc_a (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[0].u_lane.u_acc_b (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[0].u_lane.u_res_a (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[0].u_lane.u_res_b (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[1].u_lane.u_acc_a (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[1].u_lane.u_acc_b (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[1].u_lane.u_res_a (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[1].u_lane.u_res_b (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[2].u_lane.u_acc_a (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[2].u_lane.u_acc_b (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[2].u_lane.u_res_a (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[2].u_lane.u_res_b (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[3].u_lane.u_acc_a (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[3].u_lane.u_acc_b (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[3].u_lane.u_res_a (found keep_hierarchy attribute).
+Keeping orbit_demo.g_lane[3].u_lane.u_res_b (found keep_hierarchy attribute).
+Deleting now unused module $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr.
+Deleting now unused module orbit_mac_lane.
+<suppressed ~5 debug messages>
+
+5.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.6. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000...
+Checking module orbit_demo...
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10...
+Found and reported 0 problems.
+
+5.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 4 unused cells and 59 unused wires.
+<suppressed ~7 debug messages>
+
+5.8. Executing OPT pass (performing simple optimizations).
+
+5.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 142 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 129 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 126 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+<suppressed ~48 debug messages>
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 16 cells.
+
+5.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $flatten\u_thermal.$procmux$129.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 1 multiplexer ports.
+<suppressed ~73 debug messages>
+
+5.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 125 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 117 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+<suppressed ~24 debug messages>
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 8 cells.
+
+5.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 0 unused cells and 19 unused wires.
+<suppressed ~1 debug messages>
+
+5.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~56 debug messages>
+
+5.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 117 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+5.9. Executing FSM pass (extract and optimize FSM).
+
+5.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+5.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+5.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+5.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+5.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+5.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+5.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+5.10. Executing OPT pass (performing simple optimizations).
+
+5.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 117 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~56 debug messages>
+
+5.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 117 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 3 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $procdff$139 ($dff) from module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 (D = $procmux$97_Y, Q = \q, rval = 0).
+Adding EN signal on $auto$ff.cc:337:slice$149 ($sdff) from module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 (D = \d, Q = \q).
+Adding SRST signal on $procdff$140 ($dff) from module orbit_demo (D = $procmux$113_Y, Q = \fault_q, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$151 ($sdff) from module orbit_demo (D = 1'1, Q = \fault_q).
+Adding SRST signal on $procdff$141 ($dff) from module orbit_demo (D = $procmux$105_Y, Q = \out_valid_q, rval = 1'0).
+Adding EN signal on $auto$ff.cc:337:slice$157 ($sdff) from module orbit_demo (D = $procmux$105_Y, Q = \out_valid_q).
+Adding SRST signal on $flatten\u_thermal.$procdff$142 ($dff) from module orbit_demo (D = $flatten\u_thermal.$not$rtl/orbit_thermal_tmr.v:77$87_Y, Q = \u_thermal.phase, rval = 1'0).
+Adding SRST signal on $procdff$143 ($dff) from module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 (D = $procmux$134_Y, Q = \q, rval = 2'10).
+Adding EN signal on $auto$ff.cc:337:slice$168 ($sdff) from module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 (D = \d, Q = \q).
+
+5.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 11 unused cells and 11 unused wires.
+<suppressed ~14 debug messages>
+
+5.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+<suppressed ~1 debug messages>
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.10.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~41 debug messages>
+
+5.10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.10.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 116 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 115 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 114 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+<suppressed ~6 debug messages>
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 2 cells.
+
+5.10.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 0 unused cells and 2 unused wires.
+<suppressed ~1 debug messages>
+
+5.10.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.10.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.10.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~41 debug messages>
+
+5.10.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.10.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 114 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.10.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.10.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.10.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.10.23. Finished fast OPT passes. (There is nothing left to do.)
+
+5.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 2) from port B of cell orbit_demo.$flatten\u_thermal.$eq$rtl/orbit_thermal_tmr.v:77$86 ($eq).
+Removed top 1 bits (of 2) from mux cell orbit_demo.$flatten\u_thermal.$ternary$rtl/orbit_thermal_tmr.v:51$81 ($mux).
+Removed top 1 bits (of 2) from mux cell orbit_demo.$flatten\u_thermal.$ternary$rtl/orbit_thermal_tmr.v:50$79 ($mux).
+Converting cell orbit_demo.$flatten\g_lane[0].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul) from unsigned to signed.
+Removed top 8 bits (of 16) from port A of cell orbit_demo.$flatten\g_lane[0].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+Removed top 8 bits (of 16) from port B of cell orbit_demo.$flatten\g_lane[0].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+Converting cell orbit_demo.$flatten\g_lane[1].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul) from unsigned to signed.
+Removed top 8 bits (of 16) from port A of cell orbit_demo.$flatten\g_lane[1].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+Removed top 8 bits (of 16) from port B of cell orbit_demo.$flatten\g_lane[1].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+Converting cell orbit_demo.$flatten\g_lane[2].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul) from unsigned to signed.
+Removed top 8 bits (of 16) from port A of cell orbit_demo.$flatten\g_lane[2].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+Removed top 8 bits (of 16) from port B of cell orbit_demo.$flatten\g_lane[2].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+Converting cell orbit_demo.$flatten\g_lane[3].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul) from unsigned to signed.
+Removed top 8 bits (of 16) from port A of cell orbit_demo.$flatten\g_lane[3].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+Removed top 8 bits (of 16) from port B of cell orbit_demo.$flatten\g_lane[3].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+Removed top 1 bits (of 2) from wire orbit_demo.$flatten\u_thermal.$ternary$rtl/orbit_thermal_tmr.v:50$79_Y.
+Removed top 1 bits (of 2) from wire orbit_demo.$flatten\u_thermal.$ternary$rtl/orbit_thermal_tmr.v:51$81_Y.
+
+5.12. Executing PEEPOPT pass (run peephole optimizers).
+
+5.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 0 unused cells and 2 unused wires.
+<suppressed ~1 debug messages>
+
+5.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000:
+  created 0 $alu and 0 $macc cells.
+Extracting $alu and $macc cells in module orbit_demo:
+  creating $macc model for $flatten\g_lane[1].u_lane.$add$rtl/orbit_mac_lane.v:33$5 ($add).
+  creating $macc model for $flatten\g_lane[1].u_lane.$add$rtl/orbit_mac_lane.v:34$7 ($add).
+  creating $macc model for $flatten\g_lane[3].u_lane.$add$rtl/orbit_mac_lane.v:34$7 ($add).
+  creating $macc model for $flatten\g_lane[2].u_lane.$add$rtl/orbit_mac_lane.v:33$5 ($add).
+  creating $macc model for $flatten\g_lane[0].u_lane.$add$rtl/orbit_mac_lane.v:33$5 ($add).
+  creating $macc model for $flatten\g_lane[0].u_lane.$add$rtl/orbit_mac_lane.v:34$7 ($add).
+  creating $macc model for $flatten\g_lane[2].u_lane.$add$rtl/orbit_mac_lane.v:34$7 ($add).
+  creating $macc model for $flatten\g_lane[3].u_lane.$add$rtl/orbit_mac_lane.v:33$5 ($add).
+  creating $macc model for $flatten\g_lane[3].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+  creating $macc model for $flatten\g_lane[2].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+  creating $macc model for $flatten\g_lane[1].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+  creating $macc model for $flatten\g_lane[0].u_lane.$mul$rtl/orbit_mac_lane.v:25$3 ($mul).
+  creating $alu model for $macc $flatten\g_lane[3].u_lane.$add$rtl/orbit_mac_lane.v:33$5.
+  creating $alu model for $macc $flatten\g_lane[2].u_lane.$add$rtl/orbit_mac_lane.v:34$7.
+  creating $alu model for $macc $flatten\g_lane[0].u_lane.$add$rtl/orbit_mac_lane.v:34$7.
+  creating $alu model for $macc $flatten\g_lane[0].u_lane.$add$rtl/orbit_mac_lane.v:33$5.
+  creating $alu model for $macc $flatten\g_lane[2].u_lane.$add$rtl/orbit_mac_lane.v:33$5.
+  creating $alu model for $macc $flatten\g_lane[3].u_lane.$add$rtl/orbit_mac_lane.v:34$7.
+  creating $alu model for $macc $flatten\g_lane[1].u_lane.$add$rtl/orbit_mac_lane.v:34$7.
+  creating $alu model for $macc $flatten\g_lane[1].u_lane.$add$rtl/orbit_mac_lane.v:33$5.
+  creating $macc cell for $flatten\g_lane[3].u_lane.$mul$rtl/orbit_mac_lane.v:25$3: $auto$alumacc.cc:427:replace_macc$172
+  creating $macc cell for $flatten\g_lane[2].u_lane.$mul$rtl/orbit_mac_lane.v:25$3: $auto$alumacc.cc:427:replace_macc$173
+  creating $macc cell for $flatten\g_lane[1].u_lane.$mul$rtl/orbit_mac_lane.v:25$3: $auto$alumacc.cc:427:replace_macc$174
+  creating $macc cell for $flatten\g_lane[0].u_lane.$mul$rtl/orbit_mac_lane.v:25$3: $auto$alumacc.cc:427:replace_macc$175
+  creating $alu model for $flatten\u_thermal.$ge$rtl/orbit_thermal_tmr.v:46$76 ($ge): new $alu
+  creating $alu model for $flatten\u_thermal.$ge$rtl/orbit_thermal_tmr.v:50$78 ($ge): new $alu
+  creating $alu model for $flatten\u_thermal.$le$rtl/orbit_thermal_tmr.v:51$80 ($le): new $alu
+  creating $alu cell for $flatten\u_thermal.$le$rtl/orbit_thermal_tmr.v:51$80: $auto$alumacc.cc:576:replace_alu$179
+  creating $alu cell for $flatten\u_thermal.$ge$rtl/orbit_thermal_tmr.v:50$78: $auto$alumacc.cc:576:replace_alu$190
+  creating $alu cell for $flatten\u_thermal.$ge$rtl/orbit_thermal_tmr.v:46$76: $auto$alumacc.cc:576:replace_alu$205
+  creating $alu cell for $flatten\g_lane[1].u_lane.$add$rtl/orbit_mac_lane.v:33$5: $auto$alumacc.cc:576:replace_alu$220
+  creating $alu cell for $flatten\g_lane[1].u_lane.$add$rtl/orbit_mac_lane.v:34$7: $auto$alumacc.cc:576:replace_alu$223
+  creating $alu cell for $flatten\g_lane[3].u_lane.$add$rtl/orbit_mac_lane.v:34$7: $auto$alumacc.cc:576:replace_alu$226
+  creating $alu cell for $flatten\g_lane[2].u_lane.$add$rtl/orbit_mac_lane.v:33$5: $auto$alumacc.cc:576:replace_alu$229
+  creating $alu cell for $flatten\g_lane[0].u_lane.$add$rtl/orbit_mac_lane.v:33$5: $auto$alumacc.cc:576:replace_alu$232
+  creating $alu cell for $flatten\g_lane[0].u_lane.$add$rtl/orbit_mac_lane.v:34$7: $auto$alumacc.cc:576:replace_alu$235
+  creating $alu cell for $flatten\g_lane[2].u_lane.$add$rtl/orbit_mac_lane.v:34$7: $auto$alumacc.cc:576:replace_alu$238
+  creating $alu cell for $flatten\g_lane[3].u_lane.$add$rtl/orbit_mac_lane.v:33$5: $auto$alumacc.cc:576:replace_alu$241
+  created 11 $alu and 4 $macc cells.
+Extracting $alu and $macc cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10:
+  created 0 $alu and 0 $macc cells.
+
+5.15. Executing SHARE pass (SAT-based resource sharing).
+
+5.16. Executing OPT pass (performing simple optimizations).
+
+5.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 130 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~41 debug messages>
+
+5.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 130 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 0 unused cells and 3 unused wires.
+<suppressed ~1 debug messages>
+
+5.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~41 debug messages>
+
+5.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 130 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+5.17. Executing MEMORY pass.
+
+5.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+5.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+5.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+5.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+5.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+5.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+5.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+5.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+5.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.19. Executing OPT pass (performing simple optimizations).
+
+5.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+<suppressed ~7 debug messages>
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 132 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 131 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+<suppressed ~3 debug messages>
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 1 cells.
+
+5.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 0 unused cells and 8 unused wires.
+<suppressed ~1 debug messages>
+
+5.19.5. Finished fast OPT passes.
+
+5.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+5.21. Executing OPT pass (performing simple optimizations).
+
+5.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 131 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~36 debug messages>
+
+5.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+    Consolidated identical input bits for $mux cell $flatten\u_thermal.$ternary$rtl/orbit_thermal_tmr.v:53$83:
+      Old ports: A=2'10, B=2'00, Y=$flatten\u_thermal.$ternary$rtl/orbit_thermal_tmr.v:53$83_Y
+      New ports: A=1'1, B=1'0, Y=$flatten\u_thermal.$ternary$rtl/orbit_thermal_tmr.v:53$83_Y [1]
+      New connections: $flatten\u_thermal.$ternary$rtl/orbit_thermal_tmr.v:53$83_Y [0] = 1'0
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 1 changes.
+
+5.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 131 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.21.6. Executing OPT_SHARE pass.
+
+5.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+<suppressed ~1 debug messages>
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.21.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.21.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~35 debug messages>
+
+5.21.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.21.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 131 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 130 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+<suppressed ~3 debug messages>
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 1 cells.
+
+5.21.14. Executing OPT_SHARE pass.
+
+5.21.15. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.21.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+5.21.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.21.18. Rerunning OPT passes. (Maybe there is more to do..)
+
+5.21.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \orbit_demo..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+<suppressed ~35 debug messages>
+
+5.21.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+  Optimizing cells in module \orbit_demo.
+  Optimizing cells in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+Performed a total of 0 changes.
+
+5.21.21. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 130 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 1 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.21.22. Executing OPT_SHARE pass.
+
+5.21.23. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.21.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+
+5.21.25. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.21.26. Finished fast OPT passes. (There is nothing left to do.)
+
+5.22. Executing TECHMAP pass (map to technology primitives).
+
+5.22.1. Executing Verilog-2005 frontend: /opt/eda/oss-cad-suite/lib/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/eda/oss-cad-suite/lib/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+5.22.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $sdffe.
+Using extmapper simplemap for cells of type $not.
+Using template $paramod$fbc7873bff55778c0b3173955b7e4bce1d9d6834\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_and.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod$08c2d337fba0d8fba53e35b89be96dd105931d9e\_90_alu for cells of type $alu.
+Using template $paramod$82dbbf18339f9c177cf323a2d12653b430c46f4d\_90_alu for cells of type $alu.
+Using template $paramod$a175dfcf43370c480ccf353610350b0f2e691058\_90_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \in_a [7:0] * \in_b [7:0] (8x8 bits, signed)
+  add \in_a [15:8] * \in_b [15:8] (8x8 bits, signed)
+  add \in_a [23:16] * \in_b [23:16] (8x8 bits, signed)
+  add \in_a [31:24] * \in_b [31:24] (8x8 bits, signed)
+Using extmapper simplemap for cells of type $sdff.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $pmux.
+Using extmapper simplemap for cells of type $ne.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $logic_or.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000010000 for cells of type $fa.
+Using template $paramod$6df0329addda9228fcc2546de2aaf14ad26c98e1\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000100 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000100 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000111 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000111 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000010000 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~2655 debug messages>
+
+5.23. Executing OPT pass (performing simple optimizations).
+
+5.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+<suppressed ~2454 debug messages>
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 32 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 5677 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 5328 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 5230 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 5189 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 5165 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 5137 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 5113 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Computing hashes of 5101 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+<suppressed ~1728 debug messages>
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 2 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 576 cells.
+
+5.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 347 unused cells and 1132 unused wires.
+<suppressed ~348 debug messages>
+
+5.23.5. Finished fast OPT passes.
+
+5.24. Executing ABC pass (technology mapping using ABC).
+
+5.24.1. Summary of detected clock domains:
+  5 cells in clk={ }, en={ }, arst={ }, srst={ }
+  4629 cells in clk=\clk, en=\mismatch, arst={ }, srst=$auto$simple.cc:234:combine_resets$154
+  19 cells in clk=\clk, en=$auto$simple.cc:193:make_patterns_logic$163, arst={ }, srst=$auto$simple.cc:234:combine_resets$154
+  101 cells in clk=\clk, en={ }, arst={ }, srst=!$auto$simple.cc:234:combine_resets$166
+
+5.24.2. Extracting gate netlist of module `\orbit_demo' to `<abc-temp-dir>/input.blif'..
+No matching clock domain found. Not extracting any FF cells.
+
+5.24.3. Extracting gate netlist of module `\orbit_demo' to `<abc-temp-dir>/input.blif'..
+Found matching posedge clock domain: \clk, enabled by \mismatch, synchronously reset by $auto$simple.cc:234:combine_resets$154
+
+5.24.3.1. Executed ABC.
+Extracted 0 gates and 0 wires to a netlist network with 0 inputs and 0 outputs.
+Don't call ABC as there is nothing to map.
+Removing temp directory.
+
+5.24.4. Extracting gate netlist of module `\orbit_demo' to `<abc-temp-dir>/input.blif'..
+Found matching posedge clock domain: \clk, enabled by $auto$simple.cc:193:make_patterns_logic$163, synchronously reset by $auto$simple.cc:234:combine_resets$154
+
+5.24.5. Extracting gate netlist of module `\orbit_demo' to `<abc-temp-dir>/input.blif'..
+Found matching posedge clock domain: \clk, synchronously reset by !$auto$simple.cc:234:combine_resets$166
+
+5.24.6. Summary of detected clock domains:
+  32 cells in clk=\clk, en=\en, arst={ }, srst=!\rst_n
+
+5.24.7. Extracting gate netlist of module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000' to `<abc-temp-dir>/input.blif'..
+Found matching posedge clock domain: \clk, enabled by \en, synchronously reset by !\rst_n
+
+5.24.8. Summary of detected clock domains:
+  2 cells in clk=\clk, en=\en, arst={ }, srst=!\rst_n
+
+5.24.9. Extracting gate netlist of module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10' to `<abc-temp-dir>/input.blif'..
+Found matching posedge clock domain: \clk, enabled by \en, synchronously reset by !\rst_n
+
+5.24.9.1. Executed ABC.
+Extracted 4612 gates and 5195 wires to a netlist network with 582 inputs and 261 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: UC Berkeley, ABC 1.01 (compiled Sep 26 2026 05:26:38)
+ABC: abc 01> empty
+ABC: abc 01> source <abc-temp-dir>/abc.script
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+ABC: 
+ABC: YOSYS_ABC_DONE 
+
+5.24.9.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:      988
+ABC RESULTS:            ANDNOT cells:      305
+ABC RESULTS:               MUX cells:       22
+ABC RESULTS:              NAND cells:     1337
+ABC RESULTS:               NOR cells:      448
+ABC RESULTS:               NOT cells:        1
+ABC RESULTS:                OR cells:       89
+ABC RESULTS:             ORNOT cells:      103
+ABC RESULTS:              XNOR cells:      369
+ABC RESULTS:               XOR cells:      664
+ABC RESULTS:        internal signals:     4352
+ABC RESULTS:           input signals:      582
+ABC RESULTS:          output signals:      261
+Removing temp directory.
+
+5.24.9.1. Executed ABC.
+Extracted 18 gates and 29 wires to a netlist network with 11 inputs and 6 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: UC Berkeley, ABC 1.01 (compiled Sep 26 2026 05:26:38)
+ABC: abc 01> empty
+ABC: abc 01> source <abc-temp-dir>/abc.script
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+ABC: 
+ABC: YOSYS_ABC_DONE 
+
+5.24.9.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:        7
+ABC RESULTS:            ANDNOT cells:        2
+ABC RESULTS:               NOR cells:        1
+ABC RESULTS:                OR cells:        2
+ABC RESULTS:             ORNOT cells:        1
+ABC RESULTS:        internal signals:       12
+ABC RESULTS:           input signals:       11
+ABC RESULTS:          output signals:        6
+Removing temp directory.
+
+5.24.9.1. Executed ABC.
+Extracted 97 gates and 117 wires to a netlist network with 18 inputs and 8 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: UC Berkeley, ABC 1.01 (compiled Sep 26 2026 05:26:38)
+ABC: abc 01> empty
+ABC: abc 01> source <abc-temp-dir>/abc.script
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+ABC: 
+ABC: YOSYS_ABC_DONE 
+
+5.24.9.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:       10
+ABC RESULTS:            ANDNOT cells:        3
+ABC RESULTS:               MUX cells:        2
+ABC RESULTS:              NAND cells:        6
+ABC RESULTS:               NOR cells:        7
+ABC RESULTS:               NOT cells:        1
+ABC RESULTS:                OR cells:        3
+ABC RESULTS:             ORNOT cells:        2
+ABC RESULTS:        internal signals:       91
+ABC RESULTS:           input signals:       18
+ABC RESULTS:          output signals:        8
+Removing temp directory.
+
+5.24.9.1. Executed ABC.
+Extracted 0 gates and 0 wires to a netlist network with 0 inputs and 0 outputs.
+Don't call ABC as there is nothing to map.
+Removing temp directory.
+
+5.24.9.1. Executed ABC.
+Extracted 0 gates and 0 wires to a netlist network with 0 inputs and 0 outputs.
+Don't call ABC as there is nothing to map.
+Removing temp directory.
+Removing global temp directory.
+
+5.25. Executing OPT pass (performing simple optimizations).
+
+5.25.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000.
+Optimizing module orbit_demo.
+Optimizing module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10.
+
+5.25.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Computing hashes of 32 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Finding identical cells in module `\orbit_demo'.
+Computing hashes of 4400 cells of `\orbit_demo'.
+Finding duplicate cells in `\orbit_demo'.
+Finding identical cells in module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Computing hashes of 2 cells of `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Finding duplicate cells in `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Removed a total of 0 cells.
+
+5.25.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+5.25.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000..
+Finding unused cells or wires in module \orbit_demo..
+Finding unused cells or wires in module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10..
+Removed 0 unused cells and 1869 unused wires.
+<suppressed ~25 debug messages>
+
+5.25.5. Finished fast OPT passes.
+
+5.26. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `orbit_demo'. Setting top module to orbit_demo.
+
+5.26.1. Analyzing design hierarchy..
+Top module:  \orbit_demo
+Used module:     $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+Used module:     $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+
+5.26.2. Analyzing design hierarchy..
+Top module:  \orbit_demo
+Used module:     $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+Used module:     $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+Removed 0 unused modules.
+
+5.27. Printing statistics.
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+       67 wire bits
+        5 public wires
+       67 public wire bits
+        5 ports
+       67 port bits
+       32 cells
+       32   $_SDFFE_PN0P_
+
+=== orbit_demo ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     4457 wires
+     5350 wire bits
+       95 public wires
+      988 public wire bits
+       18 ports
+      215 port bits
+     4381 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+        7 wire bits
+        5 public wires
+        7 public wire bits
+        5 ports
+        7 port bits
+        2 cells
+        1   $_SDFFE_PN0P_
+        1   $_SDFFE_PN1P_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     4899 orbit_demo
+        2 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       32 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+        +----------Count including submodules.
+        | 
+     4552 wires
+     6443 wire bits
+      190 public wires
+     2081 public wire bits
+      113 ports
+     1308 port bits
+        - memories
+        - memory bits
+        - processes
+     4899 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+      515   $_SDFFE_PN0P_
+        3   $_SDFFE_PN1P_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+5.28. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000...
+Checking module orbit_demo...
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10...
+Found and reported 0 problems.
+
+6. Printing statistics.
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+       67 wire bits
+        5 public wires
+       67 public wire bits
+        5 ports
+       67 port bits
+       32 cells
+       32   $_SDFFE_PN0P_
+
+=== orbit_demo ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     4457 wires
+     5350 wire bits
+       95 public wires
+      988 public wire bits
+       18 ports
+      215 port bits
+     4381 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+        7 wire bits
+        5 public wires
+        7 public wire bits
+        5 ports
+        7 port bits
+        2 cells
+        1   $_SDFFE_PN0P_
+        1   $_SDFFE_PN1P_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     4899 orbit_demo
+        2 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       32 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+        +----------Count including submodules.
+        | 
+     4552 wires
+     6443 wire bits
+      190 public wires
+     2081 public wire bits
+      113 ports
+     1308 port bits
+        - memories
+        - memory bits
+        - processes
+     4899 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+      515   $_SDFFE_PN0P_
+        3   $_SDFFE_PN1P_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+7. Executing Verilog backend.
+
+7.1. Executing BMUXMAP pass.
+
+7.2. Executing DEMUXMAP pass.
+Dumping module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10'.
+Dumping module `$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000'.
+Dumping module `\orbit_demo'.
+
+End of script. Logfile hash: f0cf40a686, time: 1.40s, user: 0.53s, system: 0.04s, MEM: 40.59 MB peak
+Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)
+Time spent: 68% 1x abc (1 sec), 7% 24x opt_clean (0 sec), ...

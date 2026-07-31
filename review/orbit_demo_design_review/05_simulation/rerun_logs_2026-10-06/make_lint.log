@@ -1,0 +1,8 @@
+verilator --lint-only -Wall --top-module orbit_demo rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v
+- V e r i l a t i o n   R e p o r t: Verilator 5.053 devel rev v5.052-233-gf5f9ddef9 (mod)
+- Verilator: Built from 0.091 MB sources in 6 modules, into 0.065 MB in 3 C++ files needing 0.000 MB
+- Verilator: Walltime 0.025 s (elab=0.003, cvt=0.013, bld=0.000); cpu 0.025 s on 1 threads; allocated 20.195 MB
+
+real	0m0.123s
+user	0m0.082s
+sys	0m0.040s

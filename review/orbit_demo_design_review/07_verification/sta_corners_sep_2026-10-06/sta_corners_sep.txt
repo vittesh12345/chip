@@ -1,0 +1,22 @@
+Multi-corner STA of the routed orbit_demo (information only)
+
+Constraint: the committed SDC, clock period 7.2000 ns. The design was optimised by
+ORFS at the TT corner only; the other corners re-time the same routed database.
+Parasitics: ORFS OpenRCX SPEF (nominal rules) for every corner.
+
+Layout: copy-separated sky130hd run (config pd/sky130hd_sep/): build/pd_sep/results/sky130hd/orbit_demo/sep/6_final.odb, 6_final.sdc, 6_final.spef
+Liberty: tt = the ORFS platform file; the others from https://raw.githubusercontent.com/efabless/skywater-pdk-libs-sky130_fd_sc_hd/master/timing (reused from build/pd/platform/sky130hd/corners/, not re-downloaded)
+sha256: sky130_fd_sc_hd__ff_n40C_1v95.lib fb61d91c55a7f85b; sky130_fd_sc_hd__ss_100C_1v60.lib 9b24f0db3967ac67; 
+Commands: pd/sta_corners.tcl via scripts/run_pd.sh --shell, openroad -no_init -threads 1, image openroad/orfs:latest (sha256:2e5bf6fe865e), as mk/pd.mk pd-corners
+
+corner        liberty                               setup WNS  setup TNS  hold WNS  hold TNS  min period      fmax
+tt            sky130_fd_sc_hd__tt_025C_1v80.lib         0.031      0.000     0.436     0.000     7.17 ns 139.49 MHz
+ss_100C_1v60  sky130_fd_sc_hd__ss_100C_1v60.lib        -6.131  -2463.532     0.891     0.000    13.33 ns 75.01 MHz
+ff_n40C_1v95  sky130_fd_sc_hd__ff_n40C_1v95.lib         2.276      0.000     0.281     0.000     4.92 ns 203.07 MHz
+
+(ns; negative slack = violation at that corner; min period from
+ report_clock_min_period -include_port_paths)
+
+  tt: worst setup path in_a[27] (input port clocked by clk) -> g_lane[3].u_lane.u_res_a/q[29]$_SDFFE_PN0P_
+  ss_100C_1v60: worst setup path in_a[12] (input port clocked by clk) -> g_lane[1].u_lane.u_acc_a/q[31]$_SDFFE_PN0P_
+  ff_n40C_1v95: worst setup path in_b[30] (input port clocked by clk) -> g_lane[3].u_lane.u_res_a/q[29]$_SDFFE_PN0P_

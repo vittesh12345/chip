@@ -1,0 +1,8 @@
+VCD info: dumpfile wave_c_fault.vcd opened for output.
+WAVE scenario 3: c_fault (clk period 10 ns)
+  t=50.0 ns cyc=4: reset released, therm_state NORMAL
+  t=80.0 ns cyc=7: upset: g_lane[1].u_lane.u_acc_b.q[3] flipped at the falling edge
+  t=90.0 ns cyc=8: fault latched
+  t=150.0 ns cyc=14: clear_fault done
+WAVE_c_fault PASS (42 checks, 19 cycles)
+tb_orbit_wave.v:501: $finish called at 200000 (1ps)

@@ -1,0 +1,67 @@
+iverilog -g2005 -Wall -Wno-timescale -o build/sim/directed/tb.vvp tb/tb_orbit_demo.v rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v
+set -o pipefail; vvp -n build/sim/directed/tb.vvp +seed=1 | tee build/sim/directed/icarus.log
+[10000] scenario 1: reset_stop
+[260000] scenario 2: signed_edges
+[440000] scenario 3: multi_beat
+[6830000] scenario 4: first_and_last
+[6890000] scenario 5: continue_after_last
+[6960000] scenario 6: backpressure
+[11250000] scenario 7: back_to_back
+[11910000] scenario 8: throttle
+[13610000] scenario 9: stop_and_recover
+[14040000] scenario 10: drain_in_stop
+[14210000] scenario 11: negative_temps
+[14580000] scenario 12: int32_wrap
+[1335650000] scenario 13: clear_fault
+[1335870000] scenario 14: reset_midrun
+
+tb_orbit_demo summary (seed 1)
+  scenarios            14
+  cycles               133601
+  model cycle checks   133600 (mismatches 0)
+  scenario checks      107 (failed 0)
+  beats accepted       133209
+  results transferred  401 (all compared with the scoreboard)
+  literal lane checks  152
+  back-to-back results 220
+  results dropped by clear_fault/reset 2
+  errors               0
+TB_ORBIT_DEMO PASS
+tb/tb_orbit_demo.v:978: $finish called at 1336020000 (1ps)
+iverilog -g2005 -Wall -Wno-timescale  -o build/sim/gls/sky130hd_sep/tb.vvp tb/tb_orbit_demo.v build/pd_sep/results/sky130hd/orbit_demo/sep/6_final.v build/pd/gls/sky130hd/cells.v \
+    > build/sim/gls/sky130hd_sep/compile.log 2>&1 || { cat build/sim/gls/sky130hd_sep/compile.log; exit 1; }
+set -o pipefail; vvp -n build/sim/gls/sky130hd_sep/tb.vvp +seed=1 | tee build/sim/gls/sky130hd_sep/gls.log
+[10000] scenario 1: reset_stop
+[260000] scenario 2: signed_edges
+[440000] scenario 3: multi_beat
+[6830000] scenario 4: first_and_last
+[6890000] scenario 5: continue_after_last
+[6960000] scenario 6: backpressure
+[11250000] scenario 7: back_to_back
+[11910000] scenario 8: throttle
+[13610000] scenario 9: stop_and_recover
+[14040000] scenario 10: drain_in_stop
+[14210000] scenario 11: negative_temps
+[14580000] scenario 12: int32_wrap
+[1335650000] scenario 13: clear_fault
+[1335870000] scenario 14: reset_midrun
+
+tb_orbit_demo summary (seed 1)
+  scenarios            14
+  cycles               133601
+  model cycle checks   133600 (mismatches 0)
+  scenario checks      107 (failed 0)
+  beats accepted       133209
+  results transferred  401 (all compared with the scoreboard)
+  literal lane checks  152
+  back-to-back results 220
+  results dropped by clear_fault/reset 2
+  errors               0
+TB_ORBIT_DEMO PASS
+tb/tb_orbit_demo.v:978: $finish called at 1336020000 (1ps)
+sim-gls: summary identical to the RTL run
+
+real	2m3.381s
+user	2m1.630s
+sys	0m0.225s
+exit=0
