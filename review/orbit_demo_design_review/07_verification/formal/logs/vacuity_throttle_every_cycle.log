@@ -1,0 +1,50 @@
+--- rtl/orbit_thermal_tmr.v	2026-09-29 18:50:28.762938778 +0000
++++ build/formal/vacuity/throttle_every_cycle/rtl/orbit_thermal_tmr.v	2026-09-30 00:13:31.838979880 +0000
+@@ -78,7 +78,7 @@
+     end
+ 
+     assign state  = voted;
+-    assign admit  = (voted == S_NORMAL) | ((voted == S_THROTTLE) & ~phase);
++    assign admit  = (voted == S_NORMAL) | (voted == S_THROTTLE);
+     assign repair = (c0 != c1) | (c1 != c2);
+ 
+ endmodule
+
+[formal] thermal        FAIL    (expected FAIL, 1s)
+
+SBY  0:13:31 [thermal] Removing directory '/home/user/chip/build/formal/vacuity/throttle_every_cycle/run/orbit_demo_thermal'.
+SBY  0:13:31 [thermal] engine_0: smtbmc yices
+SBY  0:13:31 [thermal] base: starting process "cd build/formal/vacuity/throttle_every_cycle/run/orbit_demo_thermal/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:32 [thermal] base: finished (returncode=0)
+SBY  0:13:32 [thermal] prep: starting process "cd build/formal/vacuity/throttle_every_cycle/run/orbit_demo_thermal/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:32 [thermal] prep: finished (returncode=0)
+SBY  0:13:32 [thermal] smt2: starting process "cd build/formal/vacuity/throttle_every_cycle/run/orbit_demo_thermal/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:13:32 [thermal] smt2: finished (returncode=0)
+SBY  0:13:32 [thermal] engine_0.basecase: starting process "cd build/formal/vacuity/throttle_every_cycle/run/orbit_demo_thermal; yosys-smtbmc -s yices --presat --unroll --noprogress -t 8  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:13:32 [thermal] engine_0.induction: starting process "cd build/formal/vacuity/throttle_every_cycle/run/orbit_demo_thermal; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 8  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Trying induction in step 8..
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Trying induction in step 7..
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Trying induction in step 6..
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Trying induction in step 5..
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Trying induction in step 4..
+SBY  0:13:32 [thermal] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:13:32 [thermal] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  0:13:32 [thermal] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P6_throttle_alternates
+SBY  0:13:32 [thermal] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Trying induction in step 3..
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Trying induction in step 2..
+SBY  0:13:32 [thermal] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  0:13:32 [thermal] engine_0.induction: ##   0:00:00  Trying induction in step 1..
+SBY  0:13:32 [thermal] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  0:13:32 [thermal] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  0:13:32 [thermal] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  0:13:32 [thermal] engine_0.basecase: finished (returncode=1)
+SBY  0:13:32 [thermal] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  0:13:32 [thermal] engine_0.induction: terminating process
+SBY  0:13:32 [thermal] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:32 [thermal] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:32 [thermal] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  0:13:32 [thermal] summary: counterexample trace [basecase]: build/formal/vacuity/throttle_every_cycle/run/orbit_demo_thermal/engine_0/trace.vcd
+SBY  0:13:32 [thermal] summary:   failed assertion orbit_demo_fv.P6_throttle_alternates at orbit_demo_fv.sv:390.17-390.75 step 5
+SBY  0:13:32 [thermal] DONE (FAIL, rc=2)

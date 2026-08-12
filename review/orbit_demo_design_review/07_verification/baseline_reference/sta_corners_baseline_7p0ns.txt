@@ -1,0 +1,20 @@
+Multi-corner STA of the routed orbit_demo (information only)
+
+Constraint: the committed SDC, clock period 7.0000 ns. The design was optimised by
+ORFS at the TT corner only; the other corners re-time the same routed database.
+Parasitics: ORFS OpenRCX SPEF (nominal rules) for every corner.
+
+Liberty: tt = the ORFS platform file; the others from https://raw.githubusercontent.com/efabless/skywater-pdk-libs-sky130_fd_sc_hd/master/timing
+sha256: sky130_fd_sc_hd__ff_n40C_1v95.lib fb61d91c55a7f85b; sky130_fd_sc_hd__ss_100C_1v60.lib 9b24f0db3967ac67; 
+
+corner        liberty                               setup WNS  setup TNS  hold WNS  hold TNS  min period      fmax
+tt            sky130_fd_sc_hd__tt_025C_1v80.lib         0.066      0.000     0.437     0.000     6.93 ns 144.21 MHz
+ss_100C_1v60  sky130_fd_sc_hd__ss_100C_1v60.lib        -6.016  -2240.224     0.893     0.000    13.02 ns 76.83 MHz
+ff_n40C_1v95  sky130_fd_sc_hd__ff_n40C_1v95.lib         2.256      0.000     0.280     0.000     4.74 ns 210.80 MHz
+
+(ns; negative slack = violation at that corner; min period from
+ report_clock_min_period -include_port_paths)
+
+  tt: worst setup path in_a[29] (input port clocked by clk) -> g_lane[3].u_lane.u_res_a/q[30]$_SDFFE_PN0P_
+  ss_100C_1v60: worst setup path in_a[7] (input port clocked by clk) -> g_lane[0].u_lane.u_acc_b/q[31]$_SDFFE_PN0P_
+  ff_n40C_1v95: worst setup path in_b[29] (input port clocked by clk) -> g_lane[3].u_lane.u_res_a/q[30]$_SDFFE_PN0P_

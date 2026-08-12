@@ -1,0 +1,26 @@
+ORBIT-AI storage audit (scripts/storage_audit.py)
+netlist        build/synth/orbit_demo_synth.json
+creator        Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)
+top            orbit_demo (hierarchical: $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10, $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000)
+
+group                  copies  bits  ok/expect  D inputs across copies                 result
+acc pair lane 0             2    32   64/64     distinct per copy                      PASS
+acc pair lane 1             2    32   64/64     distinct per copy                      PASS
+acc pair lane 2             2    32   64/64     distinct per copy                      PASS
+acc pair lane 3             2    32   64/64     distinct per copy                      PASS
+result pair lane 0          2    32   64/64     distinct per copy                      PASS
+result pair lane 1          2    32   64/64     distinct per copy                      PASS
+result pair lane 2          2    32   64/64     distinct per copy                      PASS
+result pair lane 3          2    32   64/64     distinct per copy                      PASS
+thermal triple              3     2    6/6      shared by design (voted next state)    PASS
+
+audited redundant flip-flop bits  518 distinct of 518 expected
+total flip-flop bits              521 (expected 521)
+flip-flop cell types              $_SDFFE_PN0P_ x515, $_SDFFE_PN1P_ x3, $_SDFFE_PP0P_ x2, $_SDFF_PN0_ x1
+latches                           0
+unprotected flip-flop bits        3
+    fault = fault_q              $_SDFFE_PP0P_    $auto$ff.cc:337:slice$537
+    out_valid_q                  $_SDFFE_PP0P_    $auto$ff.cc:337:slice$536
+    u_thermal.phase              $_SDFF_PN0_      $auto$ff.cc:337:slice$533
+
+STORAGE_AUDIT PASS: 9/9 groups pass, 521 flip-flop bits, 3 unprotected

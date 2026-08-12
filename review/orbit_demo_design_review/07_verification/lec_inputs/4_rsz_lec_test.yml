@@ -1,0 +1,7 @@
+format: verilog
+input_paths:
+  - /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/4_before_rsz_lec.v
+  - /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/4_after_rsz_lec.v
+liberty_files:
+ - /OpenROAD-flow-scripts/flow/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+log_file: /home/user/chip/build/pd_sep/logs/sky130hd/orbit_demo/sep/4_rsz_lec_check.log

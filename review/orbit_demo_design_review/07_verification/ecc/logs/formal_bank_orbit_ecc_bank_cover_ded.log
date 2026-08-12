@@ -1,0 +1,31 @@
+SBY  1:07:25 [formal/bank/orbit_ecc_bank_cover_ded] Removing directory formal/bank/orbit_ecc_bank_cover_ded'.
+SBY  1:07:25 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: smtbmc yices
+SBY  1:07:25 [formal/bank/orbit_ecc_bank_cover_ded] base: starting process "cd formal/bank/orbit_ecc_bank_cover_ded/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  1:07:29 [formal/bank/orbit_ecc_bank_cover_ded] base: finished (returncode=0)
+SBY  1:07:29 [formal/bank/orbit_ecc_bank_cover_ded] prep: starting process "cd formal/bank/orbit_ecc_bank_cover_ded/model; yosys -ql design_prep.log design_prep.ys"
+SBY  1:07:29 [formal/bank/orbit_ecc_bank_cover_ded] prep: finished (returncode=0)
+SBY  1:07:29 [formal/bank/orbit_ecc_bank_cover_ded] smt2: starting process "cd formal/bank/orbit_ecc_bank_cover_ded/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  1:07:30 [formal/bank/orbit_ecc_bank_cover_ded] smt2: finished (returncode=0)
+SBY  1:07:30 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: starting process "cd formal/bank/orbit_ecc_bank_cover_ded; yosys-smtbmc -s yices --presat --unroll -c --noprogress -t 24  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
+SBY  1:07:30 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:00:00  Solver: yices
+SBY  1:07:31 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:00:00  Checking cover reachability in step 0..
+SBY  1:07:31 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:00:01  Checking cover reachability in step 1..
+SBY  1:07:32 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:00:02  Checking cover reachability in step 2..
+SBY  1:07:33 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:00:02  Checking cover reachability in step 3..
+SBY  1:08:33 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:01:02  waiting for solver (1 minute)
+SBY  1:12:33 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:05:02  waiting for solver (5 minutes)
+SBY  1:12:45 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:05:15  Checking cover reachability in step 4..
+SBY  1:12:48 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:05:18  Reached cover statement in step 4 at orbit_ecc_bank_fv: c_ue_read
+SBY  1:12:48 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:05:18  Writing trace to VCD file: engine_0/trace0.vcd
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:05:18  Writing trace to Verilog testbench: engine_0/trace0_tb.v
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:05:19  Writing trace to constraints file: engine_0/trace0.smtc
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:05:19  Writing trace to Yosys witness file: engine_0/trace0.yw
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: ##   0:05:19  Status: passed
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: finished (returncode=0)
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] engine_0: Status returned by engine: pass
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] summary: Elapsed clock time [H:MM:SS (secs)]: 0:05:24 (324)
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] summary: Elapsed process time [H:MM:SS (secs)]: 0:05:21 (321)
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] summary: engine_0 (smtbmc yices) returned pass
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] summary: cover trace: formal/bank/orbit_ecc_bank_cover_ded/engine_0/trace0.vcd
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] summary:   reached cover statement orbit_ecc_bank_fv.c_ue_read at orbit_ecc_bank_fv.sv:415.9-415.49 step 4
+SBY  1:12:49 [formal/bank/orbit_ecc_bank_cover_ded] DONE (PASS, rc=0)

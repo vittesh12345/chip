@@ -1,0 +1,44 @@
+--- rtl/orbit_demo.v	2026-09-29 18:50:44.562939717 +0000
++++ build/formal/vacuity/no_backpressure/rtl/orbit_demo.v	2026-09-30 00:13:26.306927456 +0000
+@@ -68,7 +68,7 @@
+     // The output buffer holds one result. Input is blocked while it is full
+     // and not being drained this cycle (this also covers non-final beats).
+     assign in_ready = admit & ~fault_q & ~mismatch & ~clear_fault &
+-                      (~out_valid_q | out_ready);
++                      1'b1;
+ 
+     wire in_fire = in_valid & in_ready;
+ 
+
+[formal] handshake      FAIL    (expected FAIL, 0s)
+
+SBY  0:13:26 [handshake] Removing directory '/home/user/chip/build/formal/vacuity/no_backpressure/run/orbit_demo_handshake'.
+SBY  0:13:26 [handshake] engine_0: smtbmc yices
+SBY  0:13:26 [handshake] base: starting process "cd build/formal/vacuity/no_backpressure/run/orbit_demo_handshake/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:26 [handshake] base: finished (returncode=0)
+SBY  0:13:26 [handshake] prep: starting process "cd build/formal/vacuity/no_backpressure/run/orbit_demo_handshake/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:26 [handshake] prep: finished (returncode=0)
+SBY  0:13:26 [handshake] smt2: starting process "cd build/formal/vacuity/no_backpressure/run/orbit_demo_handshake/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:13:26 [handshake] smt2: finished (returncode=0)
+SBY  0:13:26 [handshake] engine_0.basecase: starting process "cd build/formal/vacuity/no_backpressure/run/orbit_demo_handshake; yosys-smtbmc -s yices --presat --unroll --noprogress -t 8  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:13:26 [handshake] engine_0.induction: starting process "cd build/formal/vacuity/no_backpressure/run/orbit_demo_handshake; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 8  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:13:26 [handshake] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P4_blocked_buffer_full
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P4_blocked_out_valid
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  0:13:26 [handshake] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  0:13:26 [handshake] engine_0.basecase: finished (returncode=1)
+SBY  0:13:26 [handshake] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  0:13:26 [handshake] engine_0.induction: terminating process
+SBY  0:13:26 [handshake] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:26 [handshake] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:26 [handshake] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  0:13:26 [handshake] summary: counterexample trace [basecase]: build/formal/vacuity/no_backpressure/run/orbit_demo_handshake/engine_0/trace.vcd
+SBY  0:13:26 [handshake] summary:   failed assertion orbit_demo_fv.P4_blocked_buffer_full at orbit_demo_fv.sv:447.13-447.55
+SBY  0:13:26 [handshake] summary:   failed assertion orbit_demo_fv.P4_blocked_out_valid at orbit_demo_fv.sv:450.13-450.53
+SBY  0:13:26 [handshake] DONE (FAIL, rc=2)

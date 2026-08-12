@@ -1,0 +1,29 @@
+SBY  0:43:02 [fault_cover] engine_0: smtbmc yices
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Solver: yices
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Reached cover statement in step 2 at fi_harness: C_upset_highest_bit
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Reached cover statement in step 2 at fi_harness: C_upset_in_stop
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Reached cover statement in step 2 at fi_harness: C_upset_visible
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Reached cover statement in step 2 at fi_harness: C_upset_copy_code3
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Reached cover statement in step 2 at fi_harness: C_upset_lowest_bit
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Reached cover statement in step 3 at fi_harness: C_upset_in_normal_with_beat
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at fi_harness: C_upset_during_transfer
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at fi_harness: C_upset_in_throttle
+SBY  0:43:03 [fault_cover] engine_0: ##   0:00:00  Status: passed
+SBY  0:43:03 [fault_cover] engine_0: Status returned by engine: pass
+SBY  0:43:03 [fault_cover] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  0:43:03 [fault_cover] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:43:03 [fault_cover] summary: engine_0 (smtbmc yices) returned pass
+SBY  0:43:03 [fault_cover] summary: cover trace: fault_cover/engine_0/trace0.vcd
+SBY  0:43:03 [fault_cover] summary:   reached cover statement fi_harness.C_upset_highest_bit at fi_harness.sv:425.13-425.74 step 2
+SBY  0:43:03 [fault_cover] summary:   reached cover statement fi_harness.C_upset_in_stop at fi_harness.sv:441.13-441.81 step 2
+SBY  0:43:03 [fault_cover] summary:   reached cover statement fi_harness.C_upset_visible at fi_harness.sv:422.13-422.49 step 2
+SBY  0:43:03 [fault_cover] summary: cover trace: fault_cover/engine_0/trace1.vcd
+SBY  0:43:03 [fault_cover] summary:   reached cover statement fi_harness.C_upset_copy_code3 at fi_harness.sv:443.13-443.88 step 2
+SBY  0:43:03 [fault_cover] summary:   reached cover statement fi_harness.C_upset_lowest_bit at fi_harness.sv:424.13-424.74 step 2
+SBY  0:43:03 [fault_cover] summary: cover trace: fault_cover/engine_0/trace2.vcd
+SBY  0:43:03 [fault_cover] summary:   reached cover statement fi_harness.C_upset_in_normal_with_beat at fi_harness.sv:439.13-439.94 step 3
+SBY  0:43:03 [fault_cover] summary: cover trace: fault_cover/engine_0/trace3.vcd
+SBY  0:43:03 [fault_cover] summary:   reached cover statement fi_harness.C_upset_during_transfer at fi_harness.sv:444.13-444.70 step 4
+SBY  0:43:03 [fault_cover] summary: cover trace: fault_cover/engine_0/trace4.vcd
+SBY  0:43:03 [fault_cover] summary:   reached cover statement fi_harness.C_upset_in_throttle at fi_harness.sv:440.13-440.81 step 4
+SBY  0:43:03 [fault_cover] DONE (PASS, rc=0)

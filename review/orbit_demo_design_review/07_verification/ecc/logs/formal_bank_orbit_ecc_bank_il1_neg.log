@@ -1,0 +1,38 @@
+SBY  1:14:35 [formal/bank/orbit_ecc_bank_il1_neg] Removing directory formal/bank/orbit_ecc_bank_il1_neg'.
+SBY  1:14:35 [formal/bank/orbit_ecc_bank_il1_neg] engine_0: smtbmc bitwuzla
+SBY  1:14:35 [formal/bank/orbit_ecc_bank_il1_neg] base: starting process "cd formal/bank/orbit_ecc_bank_il1_neg/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  1:14:39 [formal/bank/orbit_ecc_bank_il1_neg] base: finished (returncode=0)
+SBY  1:14:39 [formal/bank/orbit_ecc_bank_il1_neg] prep: starting process "cd formal/bank/orbit_ecc_bank_il1_neg/model; yosys -ql design_prep.log design_prep.ys"
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] prep: finished (returncode=0)
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] smt2: starting process "cd formal/bank/orbit_ecc_bank_il1_neg/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] smt2: finished (returncode=0)
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: starting process "cd formal/bank/orbit_ecc_bank_il1_neg; yosys-smtbmc -s bitwuzla --presat --unroll --noprogress -t 4  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.induction: starting process "cd formal/bank/orbit_ecc_bank_il1_neg; yosys-smtbmc -s bitwuzla --presat --unroll -i --noprogress -t 4  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.induction: ##   0:00:00  Solver: bitwuzla
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Solver: bitwuzla
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.induction: ##   0:00:00  Trying induction in step 4..
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Checking assumptions in step 0..
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Checking assertions in step 0..
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.induction: ##   0:00:00  Trying induction in step 3..
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Checking assumptions in step 1..
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Checking assertions in step 1..
+SBY  1:14:40 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Checking assumptions in step 2..
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Checking assertions in step 2..
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Assert failed in orbit_ecc_bank_fv: orbit_ecc_bank_fv.sv:263.17-263.35 (_witness_.check_assert_orbit_ecc_bank_fv_sv_263_15019)
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.induction: ##   0:00:01  Trying induction in step 2..
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:01  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:01  Writing trace to constraints file: engine_0/trace.smtc
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:01  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: ##   0:00:01  Status: failed
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: finished (returncode=1)
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] engine_0.induction: terminating process
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:06 (6)
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:06 (6)
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] summary: engine_0 (smtbmc bitwuzla) returned FAIL for basecase
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] summary: counterexample trace [basecase]: formal/bank/orbit_ecc_bank_il1_neg/engine_0/trace.vcd
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] summary:   failed assertion orbit_ecc_bank_fv._witness_.check_assert_orbit_ecc_bank_fv_sv_263_15019 at orbit_ecc_bank_fv.sv:263.17-263.35 step 2
+SBY  1:14:41 [formal/bank/orbit_ecc_bank_il1_neg] DONE (FAIL, rc=2)
+SBY  1:14:41 The following tasks failed: ['il1_neg']

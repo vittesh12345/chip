@@ -1,0 +1,64 @@
+--- rtl/orbit_thermal_tmr.v	2026-09-29 18:50:28.762938778 +0000
++++ build/formal/vacuity/therm_copy2_frozen/rtl/orbit_thermal_tmr.v	2026-09-30 00:13:34.210479968 +0000
+@@ -64,7 +64,7 @@
+     );
+ 
+     orbit_keep_reg #(.W(2), .RESET_VAL(S_STOP)) u_copy2 (
+-        .clk(clk), .rst_n(rst_n), .en(1'b1), .d(nxt), .q(c2)
++        .clk(clk), .rst_n(rst_n), .en(1'b0), .d(nxt), .q(c2)
+     );
+ 
+     // Alternate-cycle admission while throttled. The first THROTTLE cycle
+
+[formal] dup            FAIL    (expected FAIL, 1s)
+
+SBY  0:13:34 [dup] Removing directory '/home/user/chip/build/formal/vacuity/therm_copy2_frozen/run/orbit_demo_dup'.
+SBY  0:13:34 [dup] engine_0: smtbmc yices
+SBY  0:13:34 [dup] base: starting process "cd build/formal/vacuity/therm_copy2_frozen/run/orbit_demo_dup/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:34 [dup] base: finished (returncode=0)
+SBY  0:13:34 [dup] prep: starting process "cd build/formal/vacuity/therm_copy2_frozen/run/orbit_demo_dup/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:34 [dup] prep: finished (returncode=0)
+SBY  0:13:34 [dup] smt2: starting process "cd build/formal/vacuity/therm_copy2_frozen/run/orbit_demo_dup/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:13:34 [dup] smt2: finished (returncode=0)
+SBY  0:13:34 [dup] engine_0.basecase: starting process "cd build/formal/vacuity/therm_copy2_frozen/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll --noprogress -t 6  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:13:34 [dup] engine_0.induction: starting process "cd build/formal/vacuity/therm_copy2_frozen/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 6  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 6..
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 5..
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 4..
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 3..
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 2..
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 1..
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 0..
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Temporal induction failed!
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Assert failed in orbit_demo_fv: P7_no_therm_repair
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Assert failed in orbit_demo_fv: P7_therm_copies_equal
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Writing trace to VCD file: engine_0/trace_induct.vcd
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_induct_tb.v
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Writing trace to constraints file: engine_0/trace_induct.smtc
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace_induct.yw
+SBY  0:13:34 [dup] engine_0.induction: ##   0:00:00  Status: failed
+SBY  0:13:34 [dup] engine_0.induction: finished (returncode=1)
+SBY  0:13:34 [dup] engine_0.induction: Status returned by engine for induction: FAIL
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_no_therm_repair
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P7_therm_copies_equal
+SBY  0:13:34 [dup] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  0:13:35 [dup] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  0:13:35 [dup] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  0:13:35 [dup] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  0:13:35 [dup] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  0:13:35 [dup] engine_0.basecase: finished (returncode=1)
+SBY  0:13:35 [dup] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  0:13:35 [dup] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:35 [dup] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:35 [dup] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  0:13:35 [dup] summary: engine_0 (smtbmc yices) returned FAIL for induction
+SBY  0:13:35 [dup] summary: counterexample trace [basecase]: build/formal/vacuity/therm_copy2_frozen/run/orbit_demo_dup/engine_0/trace.vcd
+SBY  0:13:35 [dup] summary:   failed assertion orbit_demo_fv.P7_no_therm_repair at orbit_demo_fv.sv:423.13-423.58 step 2
+SBY  0:13:35 [dup] summary:   failed assertion orbit_demo_fv.P7_therm_copies_equal at orbit_demo_fv.sv:425.13-425.73 step 2
+SBY  0:13:35 [dup] summary: counterexample trace [induction]: build/formal/vacuity/therm_copy2_frozen/run/orbit_demo_dup/engine_0/trace_induct.vcd
+SBY  0:13:35 [dup] summary:   failed assertion orbit_demo_fv.P7_no_therm_repair at orbit_demo_fv.sv:423.13-423.58
+SBY  0:13:35 [dup] summary:   failed assertion orbit_demo_fv.P7_therm_copies_equal at orbit_demo_fv.sv:425.13-425.73
+SBY  0:13:35 [dup] DONE (FAIL, rc=2)

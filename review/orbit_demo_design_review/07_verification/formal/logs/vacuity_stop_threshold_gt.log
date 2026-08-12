@@ -1,0 +1,47 @@
+--- rtl/orbit_thermal_tmr.v	2026-09-29 18:50:28.762938778 +0000
++++ build/formal/vacuity/stop_threshold_gt/rtl/orbit_thermal_tmr.v	2026-09-30 00:13:30.457590615 +0000
+@@ -43,7 +43,7 @@
+ 
+     reg [1:0] nxt;
+     always @* begin
+-        if (!temp_valid || t >= T_STOP) begin
++        if (!temp_valid || t > T_STOP) begin
+             nxt = S_STOP;
+         end else begin
+             case (voted)
+
+[formal] thermal        FAIL    (expected FAIL, 1s)
+
+SBY  0:13:30 [thermal] Removing directory '/home/user/chip/build/formal/vacuity/stop_threshold_gt/run/orbit_demo_thermal'.
+SBY  0:13:30 [thermal] engine_0: smtbmc yices
+SBY  0:13:30 [thermal] base: starting process "cd build/formal/vacuity/stop_threshold_gt/run/orbit_demo_thermal/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:30 [thermal] base: finished (returncode=0)
+SBY  0:13:30 [thermal] prep: starting process "cd build/formal/vacuity/stop_threshold_gt/run/orbit_demo_thermal/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:30 [thermal] prep: finished (returncode=0)
+SBY  0:13:30 [thermal] smt2: starting process "cd build/formal/vacuity/stop_threshold_gt/run/orbit_demo_thermal/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:13:30 [thermal] smt2: finished (returncode=0)
+SBY  0:13:30 [thermal] engine_0.basecase: starting process "cd build/formal/vacuity/stop_threshold_gt/run/orbit_demo_thermal; yosys-smtbmc -s yices --presat --unroll --noprogress -t 8  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:13:30 [thermal] engine_0.induction: starting process "cd build/formal/vacuity/stop_threshold_gt/run/orbit_demo_thermal; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 8  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:13:30 [thermal] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:13:30 [thermal] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  0:13:30 [thermal] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P5_h_copy0
+SBY  0:13:30 [thermal] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P5_h_copy1
+SBY  0:13:30 [thermal] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P5_h_copy2
+SBY  0:13:30 [thermal] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P5_state_matches_model
+SBY  0:13:30 [thermal] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  0:13:31 [thermal] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  0:13:31 [thermal] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  0:13:31 [thermal] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  0:13:31 [thermal] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  0:13:31 [thermal] engine_0.basecase: finished (returncode=1)
+SBY  0:13:31 [thermal] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  0:13:31 [thermal] engine_0.induction: terminating process
+SBY  0:13:31 [thermal] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:31 [thermal] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:31 [thermal] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  0:13:31 [thermal] summary: counterexample trace [basecase]: build/formal/vacuity/stop_threshold_gt/run/orbit_demo_thermal/engine_0/trace.vcd
+SBY  0:13:31 [thermal] summary:   failed assertion orbit_demo_fv.P5_h_copy0 at orbit_demo_fv.sv:357.13-357.49 step 3
+SBY  0:13:31 [thermal] summary:   failed assertion orbit_demo_fv.P5_h_copy1 at orbit_demo_fv.sv:358.13-358.49 step 3
+SBY  0:13:31 [thermal] summary:   failed assertion orbit_demo_fv.P5_h_copy2 at orbit_demo_fv.sv:359.13-359.49 step 3
+SBY  0:13:31 [thermal] summary:   failed assertion orbit_demo_fv.P5_state_matches_model at orbit_demo_fv.sv:347.13-347.68 step 3
+SBY  0:13:31 [thermal] DONE (FAIL, rc=2)

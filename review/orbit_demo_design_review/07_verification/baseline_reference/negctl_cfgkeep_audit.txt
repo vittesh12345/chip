@@ -1,0 +1,37 @@
+Storage audit of build/pd/negctl/results/sky130hd/orbit_demo/cfgkeep/1_synth_flat.v
+liberty: build/pd/platform/sky130hd/cells.lib
+leaf cells in netlist: 5130
+
+Redundant groups (SPEC section 7):
+  lane0.acc    u_acc_a / u_acc_b             64 cells (2 x 32 bits)  OK
+  lane0.res    u_res_a / u_res_b             64 cells (2 x 32 bits)  OK
+  lane1.acc    u_acc_a / u_acc_b             64 cells (2 x 32 bits)  OK
+  lane1.res    u_res_a / u_res_b             64 cells (2 x 32 bits)  OK
+  lane2.acc    u_acc_a / u_acc_b             64 cells (2 x 32 bits)  OK
+  lane2.res    u_res_a / u_res_b             64 cells (2 x 32 bits)  OK
+  lane3.acc    u_acc_a / u_acc_b             64 cells (2 x 32 bits)  OK
+  lane3.res    u_res_a / u_res_b             64 cells (2 x 32 bits)  OK
+  thermal      u_copy0 / u_copy1 / u_copy2    6 cells (3 x 2 bits)  OK
+
+Checks:
+  PASS  latches: 0 latch cells
+  PASS  flip-flop count: 521 flip-flop cells (expected 521); types: sky130_fd_sc_hd__dfxtp_1 x521
+  PASS  no unexpected flip-flops: 0 unclassified
+  PASS  group lane0.acc: 64 cells, 2 distinct copies x 32 bits
+  PASS  group lane0.res: 64 cells, 2 distinct copies x 32 bits
+  PASS  group lane1.acc: 64 cells, 2 distinct copies x 32 bits
+  PASS  group lane1.res: 64 cells, 2 distinct copies x 32 bits
+  PASS  group lane2.acc: 64 cells, 2 distinct copies x 32 bits
+  PASS  group lane2.res: 64 cells, 2 distinct copies x 32 bits
+  PASS  group lane3.acc: 64 cells, 2 distinct copies x 32 bits
+  PASS  group lane3.res: 64 cells, 2 distinct copies x 32 bits
+  PASS  group thermal: 6 cells, 3 distinct copies x 2 bits
+  PASS  single u_thermal.phase: 1 cells
+  PASS  single out_valid_q: 1 cells
+  PASS  single fault_q: 1 cells
+  PASS  distinct Q nets: 521 distinct Q nets for 521 flip-flops
+  PASS  every Q net has a load: 0 unloaded
+  PASS  clock pins connected: 0 flip-flops with tied/missing clock; 1 distinct clock-leaf nets
+  PASS  clock pins on the clock tree: 0 flip-flops whose clock net does not trace back to port 'clk' through buffers/inverters
+
+RESULT: PASS (19/19 checks passed)

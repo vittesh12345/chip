@@ -1,0 +1,11 @@
+--- rtl/orbit_mac_lane.v
++++ mutant/orbit_mac_lane.v
+@@ -56,7 +56,7 @@
+         .d(clr ? 32'd0 : acc_b_sum), .q(res_b)
+     );
+ 
+-    assign mismatch = (acc_a != acc_b) | (res_a != res_b);
++    assign mismatch = 1'b0;   // MUTANT no_compare: copy comparator removed
+     assign result   = res_a;
+ 
+ endmodule

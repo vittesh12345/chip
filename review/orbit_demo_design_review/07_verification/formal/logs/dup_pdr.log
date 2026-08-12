@@ -1,0 +1,46 @@
+SBY  0:14:16 [dup_pdr] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_dup_pdr'.
+SBY  0:14:16 [dup_pdr] engine_0: abc pdr
+SBY  0:14:16 [dup_pdr] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:14:16 [dup_pdr] base: finished (returncode=0)
+SBY  0:14:16 [dup_pdr] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:14:16 [dup_pdr] prep: finished (returncode=0)
+SBY  0:14:16 [dup_pdr] aig: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  0:14:17 [dup_pdr] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
+SBY  0:14:17 [dup_pdr] aig: finished (returncode=0)
+SBY  0:14:17 [dup_pdr] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY  0:14:17 [dup_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY  0:14:17 [dup_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY  0:14:17 [dup_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 339. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY  0:14:17 [dup_pdr] engine_0: Proved output 6 in frame 1.
+SBY  0:14:17 [dup_pdr] engine_0: Proved output 11 in frame 1.
+SBY  0:14:18 [dup_pdr] engine_0: Timing out on output  5 in frame 2 (retrying in next anytime pass).
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 0 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 1 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 2 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 3 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 4 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 5 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 7 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 8 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 9 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Proved output 10 in frame 2.
+SBY  0:14:18 [dup_pdr] engine_0: Block = 1035  Oblig =  1035  Clause =  1034  Call =  4698 (sat=77.0%)  Cex =   0  Start =  11
+SBY  0:14:18 [dup_pdr] engine_0: SAT solving =     1.13 sec ( 69.87 %)
+SBY  0:14:18 [dup_pdr] engine_0: unsat     =     0.05 sec (  3.11 %)
+SBY  0:14:18 [dup_pdr] engine_0: sat       =     1.08 sec ( 66.75 %)
+SBY  0:14:18 [dup_pdr] engine_0: Generalize  =     0.72 sec ( 44.90 %)
+SBY  0:14:18 [dup_pdr] engine_0: Push clause =     0.33 sec ( 20.58 %)
+SBY  0:14:18 [dup_pdr] engine_0: Ternary sim =     0.09 sec (  5.40 %)
+SBY  0:14:18 [dup_pdr] engine_0: Containment =     0.00 sec (  0.13 %)
+SBY  0:14:18 [dup_pdr] engine_0: CNF compute =     0.03 sec (  1.77 %)
+SBY  0:14:18 [dup_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY  0:14:18 [dup_pdr] engine_0: TOTAL       =     1.61 sec (100.00 %)
+SBY  0:14:18 [dup_pdr] engine_0: Property proved.  Time =     1.62 sec
+SBY  0:14:18 [dup_pdr] engine_0: Counter-example is not available.
+SBY  0:14:18 [dup_pdr] engine_0: finished (returncode=0)
+SBY  0:14:18 [dup_pdr] engine_0: Status returned by engine: PASS
+SBY  0:14:18 [dup_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
+SBY  0:14:18 [dup_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:02 (2)
+SBY  0:14:18 [dup_pdr] summary: engine_0 (abc pdr) returned PASS
+SBY  0:14:18 [dup_pdr] summary: engine_0 did not produce any traces
+SBY  0:14:18 [dup_pdr] DONE (PASS, rc=0)

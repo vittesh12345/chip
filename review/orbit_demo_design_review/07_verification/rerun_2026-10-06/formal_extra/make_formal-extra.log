@@ -1,0 +1,10 @@
+Tue Oct  6 18:25:46 UTC 2026
+[formal] datapath_pdr   PASS    (expected PASS, 941s)
+wrote /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/formal/summary_extra.md
+[formal] all 1 tasks passed: see /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/formal/summary_extra.md
+
+real	15m40.752s
+user	15m26.960s
+sys	0m1.351s
+rc=0
+Tue Oct  6 18:41:27 UTC 2026

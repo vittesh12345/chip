@@ -1,0 +1,97 @@
+
+9. Printing statistics.
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+       67 wire bits
+        5 public wires
+       67 public wire bits
+        5 ports
+       67 port bits
+       32 cells
+       32   $_SDFFE_PN0P_
+
+=== orbit_demo ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     4457 wires
+     5350 wire bits
+       95 public wires
+      988 public wire bits
+       18 ports
+      215 port bits
+     4381 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+        7 wire bits
+        5 public wires
+        7 public wire bits
+        5 ports
+        7 port bits
+        2 cells
+        1   $_SDFFE_PN0P_
+        1   $_SDFFE_PN1P_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     4899 orbit_demo
+        2 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       32 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+        +----------Count including submodules.
+        | 
+     4552 wires
+     6443 wire bits
+      190 public wires
+     2081 public wire bits
+      113 ports
+     1308 port bits
+        - memories
+        - memory bits
+        - processes
+     4899 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+      515   $_SDFFE_PN0P_
+        3   $_SDFFE_PN1P_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+

@@ -1,0 +1,25 @@
+[vacuity] zext_product               datapath       FAIL   CAUGHT step 3      1s  P1_h_acc_a_lane0 P1_h_acc_a_lane1 P1_h_acc_a_lane2 P1_h_acc_a_lane3
+[vacuity] first_ignored              datapath       FAIL   CAUGHT step 4      1s  P1_h_acc_a_lane0 P1_h_res_a_lane0 P1_out_valid_data_lane0
+[vacuity] result_from_old_acc        datapath       FAIL   CAUGHT step 3      0s  P1_h_res_a_lane1 P1_h_res_a_lane2 P1_out_valid_data_lane1 P1_out_valid_data_lane2
+[vacuity] clear_keeps_acc            datapath       FAIL   CAUGHT step 4      1s  P1_h_acc_a_lane2 P8_h_fresh_acc_a_lane2 P8_h_fresh_acc_b_lane2
+[vacuity] clear_keeps_fault          clear          FAIL   CAUGHT step 2      1s  P8_any_no_fault
+[vacuity] no_backpressure            handshake      FAIL   CAUGHT step 0      1s  P4_blocked_buffer_full P4_blocked_out_valid
+[vacuity] out_valid_never_cleared    handshake      FAIL   CAUGHT step 4      1s  P2_h_out_valid_q P2_out_valid_matches_model P2_valid_iff_pending
+[vacuity] out_valid_never_set        live           FAIL   CAUGHT step -      1s  P2_live_delivered
+[vacuity] stop_threshold_gt          thermal        FAIL   CAUGHT step 3      1s  P5_h_copy0 P5_h_copy1 P5_h_copy2 P5_state_matches_model
+[vacuity] recover_threshold_lt       thermal        FAIL   CAUGHT step 4      1s  P5_h_copy0 P5_h_copy1 P5_h_copy2 P5_state_matches_model
+[vacuity] throttle_every_cycle       thermal        FAIL   CAUGHT step 5      1s  P6_throttle_alternates
+[vacuity] phase_not_reset            thermal        FAIL   CAUGHT step 5      0s  P5_h_phase
+[vacuity] acc_b_clear_value          dup            FAIL   CAUGHT step 2      0s  P7_acc_copies_equal_lane0 P7_acc_copies_equal_lane1 P7_acc_copies_equal_lane2 P7_acc_copies_equal_lane3 P7_no_mismatch
+[vacuity] therm_copy2_frozen         dup            FAIL   CAUGHT step 2      1s  P7_no_therm_repair P7_therm_copies_equal
+[vacuity] zext_product_pdr           datapath_pdr   FAIL   CAUGHT step 4      7s  P1_out_valid_data_lane3 P8_fresh_sum_from_zero_lane3
+[vacuity] clear_keeps_acc_pdr        datapath_pdr   FAIL   CAUGHT step 7      6s  P8_clear_zero_acc_a_lane0 P8_clear_zero_acc_b_lane0
+[vacuity] throttle_every_cycle_pdr   thermal_pdr    FAIL   CAUGHT step 5      1s  P6_port_throttle P6_throttle_alternates
+[vacuity] no_backpressure_pdr        handshake_pdr  FAIL   CAUGHT step 0      1s  P4_blocked_buffer_full P4_blocked_out_valid
+[vacuity] phase_not_reset_pdr        thermal_pdr    FAIL   CAUGHT step 6      2s  P6_first_throttle_admits P6_port_throttle
+[vacuity] all mutants caught (see /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/formal/vacuity/vacuity.md)
+
+real	0m31.000s
+user	0m29.283s
+sys	0m3.367s
+rc=0

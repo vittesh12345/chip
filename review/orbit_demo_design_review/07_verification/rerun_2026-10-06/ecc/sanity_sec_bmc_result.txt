@@ -1,0 +1,2 @@
+OK  sanity_sec_bmc_production status=PASS expected=PASS 2672s
+rc=0

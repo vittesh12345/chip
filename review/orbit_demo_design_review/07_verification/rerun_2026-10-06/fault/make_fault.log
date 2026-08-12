@@ -1,0 +1,77 @@
+Tue Oct  6 18:24:42 UTC 2026
+python3 fault/gen_fault_copies.py --prove-depth 4 --harness fault/fi_harness.sv --rtl rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal --scenarios all 
+[fault] generated acc_a            /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/acc_a
+[fault] generated acc_b            /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/acc_b
+[fault] generated res_a            /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/res_a
+[fault] generated res_b            /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/res_b
+[fault] generated therm_c0         /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/therm_c0
+[fault] generated therm_c1         /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/therm_c1
+[fault] generated therm_c2         /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/therm_c2
+[fault] generated neg_out_valid_q  /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/neg_out_valid_q
+[fault] generated neg_product      /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/neg_product
+python3 fault/run_formal.py --dir /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal --timeout 1800 --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/results
+[fault] acc_a            prove  PASS    (expected PASS,  13.1s)
+[fault] acc_a            cover  PASS    (expected PASS,   2.1s)  8 covers reached, 0 unreached
+[fault] acc_b            prove  PASS    (expected PASS,  12.1s)
+[fault] acc_b            cover  PASS    (expected PASS,   2.2s)  8 covers reached, 0 unreached
+[fault] neg_out_valid_q  cover  PASS    (expected PASS,   1.3s)  5 covers reached, 0 unreached
+[fault] neg_out_valid_q  fire   FAIL    (expected FAIL,   0.7s)  D_out_fire_matches_ref at step 1
+[fault] neg_out_valid_q  loss   FAIL    (expected FAIL,   0.8s)  D_no_silent_loss at step 3
+[fault] neg_product      cover  PASS    (expected PASS,   1.0s)  2 covers reached, 0 unreached
+[fault] neg_product      fire   FAIL    (expected FAIL,   0.8s)  D_out_fire_matches_ref at step 3
+[fault] res_a            prove  PASS    (expected PASS,  10.4s)
+[fault] res_a            cover  PASS    (expected PASS,   2.4s)  8 covers reached, 0 unreached
+[fault] res_b            prove  PASS    (expected PASS,  15.3s)
+[fault] res_b            cover  PASS    (expected PASS,   2.4s)  8 covers reached, 0 unreached
+[fault] therm_c0         prove  PASS    (expected PASS,   9.3s)
+[fault] therm_c0         cover  PASS    (expected PASS,   1.7s)  8 covers reached, 0 unreached
+[fault] therm_c1         prove  PASS    (expected PASS,  10.8s)
+[fault] therm_c1         cover  PASS    (expected PASS,   1.6s)  8 covers reached, 0 unreached
+[fault] therm_c2         prove  PASS    (expected PASS,   7.6s)
+[fault] therm_c2         cover  PASS    (expected PASS,   1.6s)  8 covers reached, 0 unreached
+[fault] formal: 19 tasks, 0 unexpected; see /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/formal/results.md
+iverilog -g2005 -Wall -Wno-timescale -o /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/campaign/tb_seu_campaign.vvp fault/tb_seu_campaign.v rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v
+vvp -n /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/campaign/tb_seu_campaign.vvp +seed=1 +tpb=12 +tpb_unprot=200 +controls=20 +out=/tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/campaign/trials.tsv > /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/campaign/vvp.log 2>&1 || { tail -n 20 /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/campaign/vvp.log; exit 1; }
+SEU_CAMPAIGN DONE trials=6836 errors=0
+python3 fault/campaign_report.py /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/campaign/trials.tsv --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/campaign/report --min-tpb 10 --min-total 5001
+[fault] campaign check PASS bench finished without internal errors: footer: {'trials': '6836', 'errors': '0'}
+[fault] campaign check PASS fault-free controls are MASKED: 20 controls, not MASKED: none
+[fault] campaign check PASS coverage of the 521 storage bits: 521 bits covered, min 12 trials per bit (need 10), 6816 injected trials (need 5001)
+[fault] campaign check PASS acc: no escape (DETECTED, or overwritten by clear_fault in the upset cycle): 3072 trials; none escaped
+[fault] campaign check PASS acc: fault one cycle after the upset, handshakes blocked in the upset cycle: 3069 detected trials checked; exceptions: none
+[fault] campaign check PASS res: no escape (DETECTED, or overwritten by clear_fault in the upset cycle): 3072 trials; none escaped
+[fault] campaign check PASS res: fault one cycle after the upset, handshakes blocked in the upset cycle: 3067 detected trials checked; exceptions: none
+[fault] campaign check PASS therm: every upset REPAIRED, nothing else visible: 72 trials; all REPAIRED
+[fault] campaign check PASS negative control: out_valid_q upsets escape: 200 of 200 out_valid_q trials escaped
+[fault] campaign: 6836 trials, 0 checks failed; see /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/campaign/report.md
+python3 fault/gen_fault_copies.py --prove-depth 4 --harness fault/fi_harness.sv --rtl rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl --write-mutant no_compare
+[fault] mutant no_compare written to /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl
+python3 fault/gen_fault_copies.py --prove-depth 4 --harness fault/fi_harness.sv --rtl /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl/orbit_keep_reg.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl/orbit_mac_lane.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl/orbit_thermal_tmr.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl/orbit_demo.v --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/formal --scenarios acc_a,res_a --negctl
+[fault] generated acc_a            /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/formal/acc_a
+[fault] generated res_a            /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/formal/res_a
+python3 fault/run_formal.py --dir /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/formal --timeout 1800 --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/formal/results
+[fault] acc_a            prove  FAIL    (expected FAIL,   1.1s)  L_stop_in_upset_cycle at step 1
+[fault] acc_a            fire   FAIL    (expected FAIL,   0.9s)  D_out_fire_matches_ref at step 3
+[fault] res_a            prove  FAIL    (expected FAIL,   1.0s)  L_stop_in_upset_cycle at step 1
+[fault] res_a            fire   FAIL    (expected FAIL,   0.9s)  D_out_fire_matches_ref at step 3
+[fault] formal: 4 tasks, 0 unexpected; see /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/formal/results.md
+iverilog -g2005 -Wall -Wno-timescale -o /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/campaign/tb_seu_campaign.vvp fault/tb_seu_campaign.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl/orbit_keep_reg.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl/orbit_mac_lane.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl/orbit_thermal_tmr.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/rtl/orbit_demo.v
+vvp -n /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/campaign/tb_seu_campaign.vvp +seed=1 +tpb=1 +tpb_unprot=4 +controls=5 +out=/tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/campaign/trials.tsv > /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/campaign/vvp.log 2>&1 || { tail -n 20 /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/campaign/vvp.log; exit 1; }
+SEU_CAMPAIGN DONE trials=535 errors=0
+python3 fault/campaign_report.py /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/campaign/trials.tsv --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/campaign/report --min-tpb 1 --min-total 500 --expect-escape acc,res
+[fault] campaign check PASS bench finished without internal errors: footer: {'trials': '535', 'errors': '0'}
+[fault] campaign check PASS fault-free controls are MASKED: 5 controls, not MASKED: none
+[fault] campaign check PASS coverage of the 521 storage bits: 521 bits covered, min 1 trials per bit (need 1), 530 injected trials (need 500)
+[fault] campaign check PASS acc: escapes observed (negative control, protection disabled): 60 of 256 trials escaped (SDC 60, LOST 0, EXTRA 0)
+[fault] campaign check PASS res: escapes observed (negative control, protection disabled): 26 of 256 trials escaped (SDC 26, LOST 0, EXTRA 0)
+[fault] campaign check PASS therm: every upset REPAIRED, nothing else visible: 6 trials; all REPAIRED
+[fault] campaign check PASS negative control: out_valid_q upsets escape: 4 of 4 out_valid_q trials escaped
+[fault] campaign: 535 trials, 0 checks failed; see /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/negctl/campaign/report.md
+[fault] summary written to /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/summary.md
+[fault] all checks passed: see /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/formal_fault/build/fault/summary.md
+
+real	3m17.487s
+user	3m19.193s
+sys	0m5.381s
+rc=0
+Tue Oct  6 18:27:59 UTC 2026
