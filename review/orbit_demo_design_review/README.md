@@ -1,0 +1,185 @@
+# orbit_demo design review package
+
+Review package for `orbit_demo`, a standard-cell digital demonstrator: 4 signed INT8 MAC lanes, duplicated accumulator/result storage with a sticky mismatch fault-stop, and a TMR thermal FSM. It was implemented with OpenROAD-flow-scripts (ORFS) on SkyWater sky130hd. It was not fabricated. It has no analog blocks, no pad ring and no package. Written 2026-10-06. Links are relative to this file. Paths in backticks without a link (`build/...`, `reports/...`, `pd/...`, ORFS image paths) are repository, build or tool-image paths in `/home/user/chip` that are not in the package.
+
+## Design revision covered by this package
+
+| Item | Revision / identifier | Note |
+|---|---|---|
+| Design | orbit_demo (ORBIT-AI 4-lane INT8 digital demonstrator) | top module `orbit_demo`, LANES=4 |
+| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26566f0 (2026-09-29 18:54 UTC); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256) |
+| Specification | docs/SPEC.md at 26566f0 (never revised) | sha256 aef5d9fb… |
+| Concept brief | docs/orbit-ai-design-brief.pdf, "ORBIT-AI v0.1, 29 September 2026" (never revised; describes an earlier project state, see discrepancy register) | sha256 9d5f33d3… |
+| Reviewed layout | ORFS sky130hd, variant `sep` (copy-separation fences), run 2026-09-29 21:56–22:12 UTC, outputs build/pd_sep/results/sky130hd/orbit_demo/sep/ | 6_final.gds sha256 cd19afa9…; 6_final.def f5c544f3…; 6_final.v 68093c41…; 6_final.spef 014e655a… |
+| Layout configuration | pd/sky130hd_sep/{config.mk, constraint.sdc, regions.tcl} at c10c59b | The run used the ed553f8 versions; with comments stripped they are identical to c10c59b (comment-only changes) |
+| Flow / tools | ORFS docker image openroad/orfs@sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC); OpenROAD prints version "unknown"; KLayout 0.30.12 (DRC/LVS); Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
+| Process / library | SkyWater SKY130, sky130_fd_sc_hd, liberty sky130_fd_sc_hd__tt_025C_1v80 (the single corner ORFS optimised at) | — |
+| Package assembled | 2026-10-06 from repo commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Re-runs made for this package are dated 2026-10-06 |
+
+Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
+
+The heading, table and sentence above are a verbatim copy of the package revision record. Corrections to the table (see discrepancy register (09_review_notes)): the "ed553f8 versions" note is wrong for `constraint.sdc`. `ed553f8` has a 7.0 ns period, and the run read the 7.2 ns file committed after it started (D-52). The ORFS image digest is not in any log; that this image ran the flow is an ASSUMPTION (K-09). The checkout has moved past 0495cfa (D-54). At HEAD 29fdaad (2026-10-06), `git diff --name-only 0495cfa HEAD` lists only `review/` paths.
+
+## Folder contents
+
+| Folder | Contents | Key files |
+|---|---|---|
+| [01_overview/](01_overview/) | Scope (built demonstrator vs unbuilt concept chip), requirements table (24 SPEC rows, 11 brief rows) with evidence keys, process, supplies, ports, timing, power, area | [design_overview.md](01_overview/design_overview.md), [design_overview.pdf](01_overview/design_overview.pdf) |
+| [02_block_diagram/](02_block_diagram/) | Hand-drawn Graphviz block diagrams from `rtl/*.v` at 26566f0; signal paths, clock, reset, power-domain notes | [README.md](02_block_diagram/README.md), [orbit_demo_top_level.pdf](02_block_diagram/orbit_demo_top_level.pdf), [orbit_demo_block_diagram.pdf](02_block_diagram/orbit_demo_block_diagram.pdf), `.dot` sources |
+| [03_schematics/](03_schematics/) | Yosys RTL sheets (4 modules), gate-level sheets of the two kept `orbit_keep_reg` modules, synthesized netlist and LVS CDL | [README.md](03_schematics/README.md), [rtl_level/](03_schematics/rtl_level/), [gate_level/](03_schematics/gate_level/), [1_2_yosys.v.gz](03_schematics/netlists/1_2_yosys.v.gz), [6_final.cdl.gz](03_schematics/netlists/6_final.cdl.gz) |
+| [04_digital_design/](04_digital_design/) | RTL description, standalone ECC block, testbenches, tool setup, every make target; `source/` = 86 repo files | [README.md](04_digital_design/README.md), [source/rtl/](04_digital_design/source/rtl/), [source/Makefile](04_digital_design/source/Makefile), [source/docs/SPEC.md](04_digital_design/source/docs/SPEC.md) |
+| [05_simulation/](05_simulation/) | Test inventory S1-S14, published and re-run logs, VCD-derived waveforms with self-checks and negative controls | [simulation_report.md](05_simulation/simulation_report.md), [simulation_report.pdf](05_simulation/simulation_report.pdf), [published_logs/](05_simulation/published_logs/), [rerun_logs_2026-10-06/](05_simulation/rerun_logs_2026-10-06/), [orbit_demo_waveforms.pdf](05_simulation/waveforms/orbit_demo_waveforms.pdf) |
+| [06_physical_design/](06_physical_design/) | Layout database, floorplan, PDN, IO placement, copy-separation fences, KLayout views, ORFS GUI images | [README.md](06_physical_design/README.md), [physical_design.pdf](06_physical_design/physical_design.pdf), [layout_db/](06_physical_design/layout_db/), [klayout_views/](06_physical_design/klayout_views/), [orfs_images/](06_physical_design/orfs_images/), [floorplan_plot/](06_physical_design/floorplan_plot/) |
+| [07_verification/](07_verification/) | One table per check (DRC, LVS, LEC, antenna, RCX, STA, power, IR, EM, formal, fault, synthesis, mutation, ECC); ORFS logs and reports; copies of published reports; sep multi-corner STA; re-run logs | [verification_summary.md](07_verification/verification_summary.md), [verification_summary.pdf](07_verification/verification_summary.pdf), [orfs_logs/](07_verification/orfs_logs/), [orfs_reports/](07_verification/orfs_reports/), [published_reports/](07_verification/published_reports/), [sta_corners_sep_2026-10-06/](07_verification/sta_corners_sep_2026-10-06/), [rerun_2026-10-06/](07_verification/rerun_2026-10-06/), [formal_rerun_2026-10-06/](07_verification/formal_rerun_2026-10-06/), [formal/](07_verification/formal/), [fault/](07_verification/fault/), [synth/](07_verification/synth/), [ecc/](07_verification/ecc/), [mutation/](07_verification/mutation/), [gls/](07_verification/gls/), [lec_inputs/](07_verification/lec_inputs/), [lvs/](07_verification/lvs/), [baseline_reference/](07_verification/baseline_reference/) |
+| [08_pinout_packaging/](08_pinout_packaging/) | 217 DEF pins checked against the 18 RTL ports, pin table and map, external connections, gaps to a packageable die | [pinout_packaging.md](08_pinout_packaging/pinout_packaging.md), [pinout_packaging.pdf](08_pinout_packaging/pinout_packaging.pdf), [pinout.csv](08_pinout_packaging/pinout.csv), [pin_map.png](08_pinout_packaging/pin_map.png) |
+| [09_review_notes/](09_review_notes/) | Known issues K-01..K-16 by severity, trade-offs T-01..T-07, 14 questions for the reviewer, discrepancy register D-01..D-84, gaps G-01..G-38 | [review_notes.md](09_review_notes/review_notes.md), [review_notes.pdf](09_review_notes/review_notes.pdf) |
+| package root | This file; `MANIFEST.sha256` (see Manifest below) | README.md |
+
+## Where to start
+
+1. [01_overview/design_overview.md](01_overview/design_overview.md): the review notes assume its scope split (built demonstrator vs concept-chip TARGETs, `sep` vs `base` layout), so read it first.
+2. [09_review_notes/review_notes.md](09_review_notes/review_notes.md): it ranks the issues (five High: SS setup failure, single points of failure, undetected common-mode faults, BEOL-only DRC deck, no pad ring/package) and asks the 14 questions the reviewer has to decide.
+3. [07_verification/verification_summary.md](07_verification/verification_summary.md): tool, conditions and status for every check behind those issues.
+4. [06_physical_design/README.md](06_physical_design/README.md): floorplan, PDN and fences, with the layout figures.
+5. [05_simulation/simulation_report.md](05_simulation/simulation_report.md): what each simulation covers and what it does not (all zero-delay).
+6. [08_pinout_packaging/pinout_packaging.md](08_pinout_packaging/pinout_packaging.md): pins, external connections and what a packaged die would still need.
+7. [04_digital_design/README.md](04_digital_design/README.md): RTL structure and how to re-run each make target from a full checkout.
+8. [02_block_diagram/README.md](02_block_diagram/README.md) and [03_schematics/README.md](03_schematics/README.md): drawings to keep open while reading 04-07.
+
+## Status legend
+
+Every result in the package carries exactly one of these labels.
+
+| Label | Meaning |
+|---|---|
+| VERIFIED | A tool log or report in the package (or the cited repo/build path) shows it. |
+| REPRODUCED 2026-10-06 | Re-run or re-checked for this package on 2026-10-06. |
+| TARGET | A design goal or requirement, not measured. The brief's 16 tiles and 200-800 MHz are TARGETs of the unbuilt concept chip, and its 40 W is a sizing ASSUMPTION ("40 W chip sizing assumption - not an estimate", brief p.1). None of them applies to `orbit_demo`. |
+| ASSUMPTION | Taken as true without evidence (e.g. the 20 % / 1.44 ns I/O delay, the ORFS image digest). |
+| CLAIM (unverified) | Stated in a document; no log found. |
+| MISSING | Not available; the document says what would be needed. |
+| N/A | Does not apply; a one-line reason is given. |
+
+## Verification status overview
+
+Reviewed layout: sky130hd `sep`, 7.2 ns, TT optimisation only. Details and line references are in [07_verification/verification_summary.md](07_verification/verification_summary.md) (V) and [05_simulation/simulation_report.md](05_simulation/simulation_report.md) (S).
+
+| Check (tool, conditions) | Result | Status | Where |
+|---|---|---|---|
+| RTL lint: Verilator 5.053 `--lint-only -Wall`, 4 RTL files | no warning or error | REPRODUCED 2026-10-06 | [make_lint.log](05_simulation/rerun_logs_2026-10-06/make_lint.log) |
+| Directed bench, RTL: Icarus 14.0 (devel), 14 scenarios, seed 1, 133601 cycles, zero delay; Verilator 5.053 | `TB_ORBIT_DEMO PASS`, 0 errors; Verilator summary identical | REPRODUCED 2026-10-06 | [directed_icarus.log](05_simulation/rerun_logs_2026-10-06/directed_icarus.log); S1, S2 |
+| cocotb random vs `orbit_ref.py`: Icarus, seeds 1-5 x 20000 cycles + `wrap_soak` 149226 cycles | `SIM_RANDOM PASS: 6 runs, 249226 cycles, 7544 results checked, 0 mismatches` | REPRODUCED 2026-10-06 | [random_icarus_summary.md](05_simulation/rerun_logs_2026-10-06/random_icarus_summary.md); S3 |
+| Formal P1-P8, fault-free RTL: Yosys 0.69+154, SBY v0.69, Yices 2.7.0, bitwuzla 0.9.1, abc pdr; 12 tasks + `datapath_pdr` | all PASS; the code-3 parts of P4 and `P5_shutdown_req` are vacuous (code 3 unreachable fault-free) | REPRODUCED 2026-10-06 | [make_formal.log](07_verification/formal_rerun_2026-10-06/make_formal.log), [summary_extra.md](07_verification/rerun_2026-10-06/formal_extra/summary_extra.md); V 11 |
+| Formal vacuity: 19 one-line RTL mutants | 19/19 caught | REPRODUCED 2026-10-06 | [make_formal-vacuity.log](05_simulation/rerun_logs_2026-10-06/make_formal-vacuity.log) |
+| Formal fault injection on RTL copies: one upset per trace, k-induction k = 4, BMC depth 12 | 19 scenario + 4 negative-control tasks, 0 unexpected; `neg_product` shows silent data corruption | REPRODUCED 2026-10-06 | [make_fault.log](07_verification/rerun_2026-10-06/fault/make_fault.log), [formal_results.md](07_verification/rerun_2026-10-06/fault/formal_results.md); V 12.1 |
+| RTL SEU campaign: Icarus 14.0, seed=1 tpb=12 tpb_unprot=200, 6836 trials | acc/res 6144 trials, 0 escapes; thermal 72/72 repaired; `out_valid_q` 200/200 escapes; `fault_q` 0->1 200/200 false stops; `fault_q` 1->0 not measured (MISSING) | REPRODUCED 2026-10-06 | [campaign.md](07_verification/fault/campaign.md), [campaign_report.md](07_verification/rerun_2026-10-06/fault/campaign_report.md) |
+| Mutation campaign: 40 RTL mutants through lint, sim, formal-quick, fault-quick, synth; not re-run | 35/40 killed; survivors m07, m20, m22, m27 (test gaps), m21 (argued equivalent) | VERIFIED | [mutation/summary.md](07_verification/mutation/summary.md) |
+| Generic synthesis and RTL vs generic-netlist equivalence: Yosys 0.69+154, SBY + bitwuzla | `SYNTH PASS`; `EQUIV PASS`, both mutants detected | REPRODUCED 2026-10-06 | [make_synth.log](07_verification/rerun_2026-10-06/synth/make_synth.log) |
+| Storage audit, routed sep `6_final.v`, current `pd/audit_storage.py` | PASS 19/19 (521 `dfxtp_1`, 9 groups); the published report has 18/18 from the older script | REPRODUCED 2026-10-06 | [storage_audit_current_script.txt](07_verification/rerun_2026-10-06/pd_sep/storage_audit_current_script.txt), [storage_audit.txt](07_verification/published_reports/storage_audit.txt) |
+| Netlist LEC in ORFS: kepler-formal (version MISSING), `1_synth_lec.v` vs `6_final_lec.v`, 1177 outputs | "Circuits are IDENTICAL". The "4_rsz" check compares before/after `repair_timing`, not synth vs post-CTS | VERIFIED | [6_final_lec_check.log](07_verification/orfs_logs/6_final_lec_check.log) l.109, [4_rsz_lec_check.log](07_verification/orfs_logs/4_rsz_lec_check.log) l.95 |
+| RTL vs sky130-mapped netlist formal equivalence | not run | MISSING | V 13; G-10 |
+| Detailed-route DRC: TritonRoute | 0 violations; LEF58_ENCLOSURE skipped for mcon, via-via4 | VERIFIED | [5_2_route.log](07_verification/orfs_logs/5_2_route.log) l.12-21, 1007 |
+| KLayout DRC, ORFS deck `sky130hd.lydrc`, KLayout 0.30.12 | 0 markers; deck has FEOL off, no density, no fill, no latch-up rules: not a sign-off DRC | VERIFIED | [6_drc_count.rpt](07_verification/orfs_reports/6_drc_count.rpt), [6_drc.log](07_verification/orfs_logs/6_drc.log) |
+| Sign-off DRC (FEOL, density, Magic) | not run | MISSING | G-08 |
+| KLayout LVS, `sky130hd.lylvs` | "Congratulations! Netlists match."; the reference CDL comes from the same `6_final.odb` | VERIFIED | [6_lvs.log](07_verification/orfs_logs/6_lvs.log) l.652 |
+| Independent LVS (Magic + Netgen) | not run | MISSING | G-09 |
+| Antenna: OpenROAD ANT after repair | 0 net and 0 pin violations | VERIFIED | [5_2_route.log](07_verification/orfs_logs/5_2_route.log) l.1056-1059 |
+| Parasitics: OpenRCX, `rcx_patterns.rules`, one nominal corner | 6886 nets written to `6_final.spef`; no RC corners | VERIFIED | [6_report.log](07_verification/orfs_logs/6_report.log) l.16-26 |
+| STA TT: OpenSTA, `tt_025C_1v80`, 7.2 ns, I/O delay 1.44 ns (ASSUMPTION), propagated clock, OpenRCX SPEF | setup WNS +0.031 ns, hold WNS +0.436 ns, 0 violations; 139.49 MHz incl. I/O paths | VERIFIED | [6_report.json](07_verification/orfs_logs/6_report.json) l.32-33, [6_finish.rpt](07_verification/orfs_reports/6_finish.rpt) |
+| STA SS: `ss_100C_1v60`, same database and SDC, nominal SPEF | setup WNS -6.131 ns, TNS -2463.532 ns, 516 violating endpoints, min period 13.33 ns; 37 max-slew and 12 max-cap pins; hold met | REPRODUCED 2026-10-06 | [sta_corners_sep.txt](07_verification/sta_corners_sep_2026-10-06/sta_corners_sep.txt), [sta_extra_ss_100C_1v60.log](07_verification/sta_corners_sep_2026-10-06/sta_extra_ss_100C_1v60.log) |
+| STA FF: `ff_n40C_1v95`, same conditions | setup WNS +2.276 ns, hold WNS +0.281 ns | REPRODUCED 2026-10-06 | [sta_corners_sep.txt](07_verification/sta_corners_sep_2026-10-06/sta_corners_sep.txt) |
+| Max slew / cap / fanout, TT | 0 violations; no fanout limit is defined, so the fanout PASS is vacuous | VERIFIED | [6_finish.rpt](07_verification/orfs_reports/6_finish.rpt); V 7 |
+| Power: OpenSTA `report_power`, TT, 7.2 ns, default switching activity (value not reported), no VCD/SAIF | 52.1092 mW (tool estimate, not a measurement) | VERIFIED | [power_default_activity.txt](07_verification/published_reports/power_default_activity.txt), [6_report.json](07_verification/orfs_logs/6_report.json) l.49 |
+| Static IR drop: PSM, 1.80 V (platform default), same default-activity power | VDD worst 0.4539 mV, VSS worst 0.6275 mV | VERIFIED | [6_report.log](07_verification/orfs_logs/6_report.log) l.27-50 |
+| Electromigration | not run in the flow; a re-run with `-enable_em` gives currents only, with no limits applied | MISSING | [ir.log](07_verification/rerun_2026-10-06/pd_sep/ir.log); G-12 |
+| Activity-based power, dynamic IR | not run | MISSING | G-11, G-13 |
+| Directed bench on routed sep `6_final.v`: Icarus 14.0, zero delay, cell functions from TT liberty | PASS, summary identical to the RTL run | REPRODUCED 2026-10-06 | [gls_sky130hd_sep_directed.log](05_simulation/rerun_logs_2026-10-06/gls_sky130hd_sep_directed.log); S8 |
+| Post-route GLS fault campaign, sep netlist in lockstep with RTL: 30000 cycles, seed 1, zero delay | `GLS PASS`, 0 mismatches; 702 copy flips all stopped, 234 thermal flips all repaired; 518/518 bits hit | VERIFIED | [gls.log](07_verification/gls/gls.log) (= `build/pd_sep/gls/sep/gls.log`) |
+| SDF-annotated (timing) GLS, any corner | not run | MISSING | G-07 |
+| Copy separation on the routed DEF: `scripts/pdsep_separation.py` | same-bit centre min 251.17 um (target >= 20 um is a TARGET), copy-A/B FF gap 242.94 um, touching pairs 0 of 262 (baseline 13) | REPRODUCED 2026-10-06 | [separation.md](07_verification/published_reports/separation.md); [06_physical_design/README.md](06_physical_design/README.md) 4.2 |
+| Pins vs RTL ports: `parse_pins.py` on the DEF | 217 DEF pins = 215 signal bits of 18 ports + VDD/VSS | REPRODUCED 2026-10-06 | [pinout.csv](08_pinout_packaging/pinout.csv) |
+| ECC block, standalone (not in `orbit_demo` or the layout): `make ecc` | `ECC: PASS` | REPRODUCED 2026-10-06 | [make_ecc.log](07_verification/rerun_2026-10-06/ecc/make_ecc.log), [ecc/results.txt](07_verification/ecc/results.txt) |
+| Pad ring, IO/ESD cells, seal ring, package | none (0 padcells) | MISSING | [6_report.json](07_verification/orfs_logs/6_report.json) l.60; G-14 |
+| Analog / mixed-signal verification | no analog blocks | N/A | — |
+| Silicon measurement | not fabricated | N/A | — |
+
+## Missing materials and unfinished checks
+
+Consolidated from the gaps table G-01..G-38 in [09_review_notes/review_notes.md](09_review_notes/review_notes.md) section 5, which gives the evidence and what is needed for each. All are MISSING unless marked.
+
+| Area | Gap IDs | Missing items |
+|---|---|---|
+| Requirements | G-01..G-04 | Clock target, operating PVT range, supply nominal/tolerance and power budget for `orbit_demo`. Interface timing (I/O budget, drive/load, jitter/uncertainty, duty cycle). Reset protocol and power-up sequence. Temperature-sensor interface. |
+| Timing | G-05..G-07 | Multi-corner closure (SS fails). Repo-reproducible sep corner STA, other liberty corners, RC corners, OCV/derates. Timing-annotated GLS. |
+| Physical verification, equivalence | G-08..G-10 | Sign-off DRC with fill and density. Independent LVS. Formal RTL to sky130 netlist equivalence. |
+| Power and power integrity | G-11..G-13 | Activity-based and worst-corner power. EM (grid and signal). Dynamic IR, decap budget, package/bump model. |
+| Package / IO / power intent | G-14..G-17 | Pad ring, IO cells, ESD, supply pads, seal ring, package, bonding diagram, pin-to-lead map. Absolute maximum ratings, recommended operating conditions, IO DC/AC levels, ESD/latch-up ratings. Intended pin assignment. Statement of single-domain power intent. |
+| Fault coverage, radiation, statistics | G-18..G-22 | Injection on comparators, mismatch OR-tree, voter, `nxt`, `in_fire`, `clr`, clock/reset leaves, sensor/handshake inputs, MBU, the same bit in both copies, product in the campaign. `fault_q` 1->0, stickiness, the `fault -> !out_valid && !in_ready` invariant, `out_data` from copy A every cycle, code-3 behaviour. Gate-level fault injection including the 3 unprotected flops, per-flip records and a golden scoreboard. Physical basis for separation and any upset rate. Multi-seed campaign and GLS with confidence intervals. |
+| Simulation | G-23..G-25 | Line/branch/toggle coverage. cocotb random test on a netlist and mid-run reset coverage points. Netlist-level waveforms. |
+| Provenance and published evidence | G-26..G-30 | Pinned toolchain and PDK per run. RTL/TB hashes and netlist identity in formal, sim and GLS outputs. Logs for hand-run and sabotage claims. Sep directed-bench GLS, sep GLS mutant, re-published 19/19 audit and report console log in `reports/`. Full formal logs, traces, per-trial campaign data, generic netlist and full synthesis log. |
+| Documentation and design decisions | G-31..G-34 | Owner-written top-level repo README (this package README does not replace it; D-10). Revised brief and SPEC with change log. Demonstrator throughput at the closed clock. Disposition of the research-note MUST items. |
+| ECC, reference runs, presentation, silicon | G-35..G-38 | ECC integration, requirements, PDK-mapped data, wider fault model, machine-checked end-to-end proof, check-bit negative control. IHP SG13G2 sign-off (N/A for the reviewed layout). Sources for the capability matrix, story-page render inputs, artifact vs `viz/` check. Fabricated parts and bench measurement. |
+
+## Outputs that could not be generated with the available tools
+
+Host check 2026-10-06: Magic, Netgen, ngspice, Xyce and xschem are not installed, either on this host or in the ORFS image layers. There is no open_pdks / sky130A install (no `sky130A.tech`, no magicrc, no full KLayout sign-off deck). The ORFS sky130hd platform in image 2e5bf6fe865e holds `sky130hd.lydrc`, `sky130hd.lylvs`, one `rcx_patterns.rules`, the TT liberty, `sky130hd.cdl`, the cell LEF/GDS and the tech LEF. The `openroad` binary in the image contains `write_sdf`, `read_vcd` and `read_saif` (strings check).
+
+| Output | Why it is not in the package | Needed to finish | Gap |
+|---|---|---|---|
+| Sign-off DRC (FEOL, density, latch-up), metal fill | No Magic and no full sky130 deck; the ORFS deck runs BEOL + OFFGRID only; the fill step only copies the database | open_pdks sky130A at a recorded version; Magic `drc full` or the full KLayout sky130 deck on a filled `6_final.gds` | G-08 |
+| Independent LVS | No Magic extraction and no Netgen | Magic extraction + Netgen (sky130A setup) against `6_final.v` | G-09 |
+| SDF-annotated GLS | `write_sdf` and Icarus exist, but the only cell models are Yosys `read_liberty` functional models with no `specify` blocks | PDK `sky130_fd_sc_hd` Verilog models with timing; SDF per corner from `6_final.odb`/`.spef`; SDF GLS of `tb/tb_orbit_demo.v` | G-07 |
+| Extra liberty and RC corners, OCV | Only `tt_025C_1v80` (image) and `ss_100C_1v60`, `ff_n40C_1v95` (efabless `master` branch, unpinned) are on disk; one nominal RCX rules file | Liberty at a pinned PDK commit for other corners; min/max RCX rules and per-corner SPEF; derate/uncertainty spec; MCMM re-run | G-05, G-06 |
+| EM pass/fail | PSM `-enable_em` gives currents only ([ir.log](07_verification/rerun_2026-10-06/pd_sep/ir.log)); no step compares them with limits, and the currents rest on default activity (note N-4) | Activity-based currents; per-segment check against qualified sky130 limits; signal and clock net EM | G-12 |
+| Activity-based power, dynamic IR, decap | Not tool-limited: no netlist workload VCD/SAIF was produced | VCD/SAIF from a netlist simulation of a stated workload; `read_vcd`/`read_saif`; vectored PSM; decap insertion | G-11, G-13 |
+| Post-layout SPICE | No SPICE simulator and no sky130 device models on the host | open_pdks device models, a SPICE simulator, an extracted netlist with parasitics | V 16 |
+| Transistor-level schematics of the standard cells | No schematic tool or sky130 symbol library. The PDK cell CDL is only in the image and in `build/.../6_final_concat.cdl`; the package has the layout-extracted device netlist [orbit_demo_extracted.cir.gz](07_verification/lvs/orbit_demo_extracted.cir.gz) (note N-3) | Copy the PDK cell CDL with the PDK version recorded; xschem + sky130 symbols if drawings are wanted. Custom transistor sizing is N/A (standard cells only) | 03_schematics |
+| Pad ring, IO/ESD cells, seal ring, package | The platform has only a timing stub `lib/sky130_dummy_io.lib` (one cell, `sky130_fd_io__top_gpiov2`, no LEF or GDS) and `lef/sky130io_fill.lef` (2 bus-slice macros) | sky130 IO library, package choice, pad frame, decision on the 215 signal bits, DRC/LVS/STA re-run with IO cells | G-14, G-15 |
+| RTL vs sky130 netlist equivalence | Not tool-limited: eqy is in the OSS CAD Suite but no setup exists | eqy or `synth/equiv_cut.ys` with gold = RTL, gate = `1_2_yosys.v`/`6_final.v` | G-10 |
+| Tool and PDK versions of the reviewed run | Not recoverable: OpenROAD prints "unknown"; no ORFS or PDK commit logged | Re-run from a pinned image digest with versions logged | G-26 |
+| Upset rate, physical basis for separation | Outside the open flow | Beam test or TCAD/charge-sharing data for sky130 | G-21 |
+
+## How the package was built
+
+Byte-identical copies (checked 2026-10-06 with `cmp`, `diff -r`, or gunzip + `cmp` for `.gz` files):
+
+| Package path | Original | Note |
+|---|---|---|
+| [04_digital_design/source/](04_digital_design/source/) | repo files at 0495cfa | 86/86 identical to `git show 0495cfa:<path>` |
+| [06_physical_design/layout_db/](06_physical_design/layout_db/) | `build/pd_sep/results/sky130hd/orbit_demo/sep/` | GDS, DEF, SPEF, `6_final.v` gzipped; `6_final.sdc`, `clock_period.txt` as is |
+| [03_schematics/netlists/](03_schematics/netlists/), [07_verification/lvs/](07_verification/lvs/) | same results directory | `1_2_yosys.v`, `6_final.cdl`, `orbit_demo_extracted.cir`, gzipped |
+| [07_verification/orfs_logs/](07_verification/orfs_logs/) | `build/pd_sep/logs/sky130hd/orbit_demo/sep/` | 39 of 40 files (`5_1_grt.json` not copied) |
+| [07_verification/orfs_reports/](07_verification/orfs_reports/), [06_physical_design/orfs_images/](06_physical_design/orfs_images/) | `build/pd_sep/reports/sky130hd/orbit_demo/sep/` | 23 of 25 files (`drt_antennas.log`, `grt_antennas.log` not copied) |
+| [07_verification/lec_inputs/](07_verification/lec_inputs/), [07_verification/gls/](07_verification/gls/) | `build/pd_sep/objects/.../sep/`, `build/pd_sep/gls/sep/` | LEC input netlists; post-route GLS log and injection list |
+| [07_verification/published_reports/](07_verification/published_reports/) | `reports/pdsep/` | 18 of 19 files; `orbit_demo_sky130hd_sep.gds.gz` not copied (same GDS content as `layout_db/6_final.gds.gz`, sha256 cd19afa9…) |
+| [07_verification/formal/](07_verification/formal/), [fault/](07_verification/fault/), [synth/](07_verification/synth/), [ecc/](07_verification/ecc/), [mutation/](07_verification/mutation/) | `reports/{formal,fault,synth,ecc,mutation}/` | complete: 34, 36, 15, 20, 3 files |
+| [07_verification/baseline_reference/](07_verification/baseline_reference/) | `reports/pd/sky130hd/` | baseline 7.0 ns reference only; `sta_corners.txt` and `results.md` renamed |
+| [05_simulation/published_logs/](05_simulation/published_logs/) | `reports/sim/` | all 9 files |
+
+Generated for this package (inputs from the copies above or from the repo at 0495cfa):
+
+| Output | Generator (in the package unless noted) |
+|---|---|
+| KLayout views v01-v08 ([klayout_views/](06_physical_design/klayout_views/)) | [render_gds.py](06_physical_design/klayout_views/render_gds.py), KLayout 0.30.12 Python module; also reads `sky130hd.lyp` and `viz/layout.json` (repo/build only) |
+| Floorplan plot | [plot_floorplan.py](06_physical_design/floorplan_plot/plot_floorplan.py) |
+| Yosys RTL and gate-level schematics | commands in [03_schematics/README.md](03_schematics/README.md) (Yosys 0.69+154 `show`, Graphviz `dot`); gate-level `.dot` not packaged |
+| Block diagrams | hand-written `.dot` in [02_block_diagram/](02_block_diagram/); render commands in its README |
+| Waveforms and their negative control | [run_waves.sh](05_simulation/waveforms/run_waves.sh), [tb_orbit_wave.v](05_simulation/waveforms/tb_orbit_wave.v), [plot_waves.py](05_simulation/waveforms/plot_waves.py), [run_negctl.sh](05_simulation/waveforms/run_negctl.sh) |
+| Re-run logs ([05_simulation/rerun_logs_2026-10-06/](05_simulation/rerun_logs_2026-10-06/), [07_verification/formal_rerun_2026-10-06/](07_verification/formal_rerun_2026-10-06/), [07_verification/rerun_2026-10-06/](07_verification/rerun_2026-10-06/)) | make targets of [source/Makefile](04_digital_design/source/Makefile), run from the repo checkout with a scratch `BUILD`; STA/IR re-query scripts [sta.tcl](07_verification/rerun_2026-10-06/pd_sep/sta.tcl), [ir.tcl](07_verification/rerun_2026-10-06/pd_sep/ir.tcl). The logs contain scratch paths |
+| Multi-corner STA of the sep layout | [run_corners_sep.sh](07_verification/sta_corners_sep_2026-10-06/run_corners_sep.sh) (runs [pd/sta_corners.tcl](04_digital_design/source/pd/sta_corners.tcl) unmodified), [sta_corners_extra.tcl](07_verification/sta_corners_sep_2026-10-06/sta_corners_extra.tcl), [extract_supplement.py](07_verification/sta_corners_sep_2026-10-06/extract_supplement.py) |
+| Pin table, RTL port list, pin map | [parse_pins.py](08_pinout_packaging/parse_pins.py), Yosys `write_json` (command in [pinout_packaging.md](08_pinout_packaging/pinout_packaging.md)), [plot_pin_map.py](08_pinout_packaging/plot_pin_map.py) |
+| Section documents and PDFs | `.md` files written for this package; PDFs rendered by `pkgtools/md2pdf.py`, a review tool not in the package |
+
+## Manifest
+
+`MANIFEST.sha256` in the package root lists the sha256 of every file in the package. It is generated after this README, so it is not linked here. The section documents were written before it existed and record it as MISSING (D-53). If it is absent, the full sha256 values of the RTL, SPEC and brief are in [04_digital_design/README.md](04_digital_design/README.md) section 1, and those of the layout files in [06_physical_design/README.md](06_physical_design/README.md) section 1.
+
+## Notes found while writing this README
+
+These are not yet in the discrepancy register (09_review_notes).
+
+- N-1 (stale cross-references). [04_digital_design/README.md](04_digital_design/README.md) (section 6.6) and [05_simulation/simulation_report.md](05_simulation/simulation_report.md) (S11, sections 3.5 and 8) say that `reports/ecc/`, `reports/mutation/` and `reports/synth/gls_result.txt` are not in the package. [01_overview/design_overview.md](01_overview/design_overview.md) cites `reports/fault/` and `reports/formal/` as repo-only paths. Byte-identical copies are now in [07_verification/](07_verification/) under ecc/, mutation/, synth/, fault/ and formal/.
+- N-2. [05_simulation/simulation_report.md](05_simulation/simulation_report.md) sections 6-8 say the S9 re-run and a sep-netlist GLS mutant control are not in the package. They are now at [gls_rerun.log](07_verification/rerun_2026-10-06/pd_sep/gls_rerun.log) and [gls_mutant.log](07_verification/rerun_2026-10-06/pd_sep/gls_mutant.log). The mutant log does not name its netlist; 07_verification labels it as the sep netlist. The sim-mutants re-run log is still not in the package.
+- N-3. [03_schematics/README.md](03_schematics/README.md) (SC-4 and its transistor table) says `orbit_demo_extracted.cir` is not in the package. It is at [orbit_demo_extracted.cir.gz](07_verification/lvs/orbit_demo_extracted.cir.gz): 138 `.SUBCKT` (`orbit_demo` + 137 `sky130_fd_sc_hd` cells) with extracted MOSFETs. Sizes are written with a factor of 10^6 (e.g. `pfet_01v8_hvt L=150000U W=1000000U`, where 0.15 um is the sky130 minimum channel length), so they must be rescaled before use.
+- N-4. K-06, G-12 and verification section 10 say no current-density limits were applied. The tech LEF that the run read (`/OpenROAD-flow-scripts/flow/platforms/sky130hd/lef/sky130_fd_sc_hd.tlef`, [1_synth.log](07_verification/orfs_logs/1_synth.log) line 7) contains 15 `DCCURRENTDENSITY`/`ACCURRENTDENSITY` entries for mcon, met1-met5 and via-via4; for example, met1 has 2.8 mA/um average and 6.1 mA/um RMS at Tj = 90 C (lines 118-119). It also has `MAXIMUMDENSITY 70` and `DENSITYCHECKWINDOW 700 700` for met1-met4 (lines 120-121, 165-166, 206-207, 247-248). These values were read from the image copy (ASSUMPTION: same file as the run). Nothing compared the currents or the metal density against them, so the EM and density checks stay MISSING.
+- N-5. [06_physical_design/README.md](06_physical_design/README.md) calls `07_verification/orfs_logs/` byte-identical to the build log directory but does not say that `5_1_grt.json` was left out (see How the package was built). The copied files are identical.

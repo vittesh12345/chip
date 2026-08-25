@@ -1,0 +1,54 @@
+digraph "$paramod&#9586;orbit_keep_reg&#9586;W=s32'00000000000000000000000000000010&#9586;RESET_VAL=2'10" {
+label="$paramod&#9586;orbit_keep_reg&#9586;W=s32'00000000000000000000000000000010&#9586;RESET_VAL=2'10";
+rankdir="LR";
+remincross=true;
+n1 [ shape=diamond, label="_3_", color="black", fontcolor="black"];
+n2 [ shape=diamond, label="_2_", color="black", fontcolor="black"];
+n3 [ shape=diamond, label="_1_", color="black", fontcolor="black"];
+n4 [ shape=diamond, label="_0_", color="black", fontcolor="black"];
+n5 [ shape=octagon, label="q", color="black", fontcolor="black"];
+n6 [ shape=octagon, label="d", color="black", fontcolor="black"];
+n7 [ shape=octagon, label="en", color="black", fontcolor="black"];
+n8 [ shape=octagon, label="rst_n", color="black", fontcolor="black"];
+n9 [ shape=octagon, label="clk", color="black", fontcolor="black"];
+{ rank="source"; n6; n7; n8; n9;}
+{ rank="sink"; n5;}
+c13 [ shape=record, label="{{<p10> CLK|<p11> D}|q[1]$_SDFFE_PN1P_\nsky130_fd_sc_hd__dfxtp_1|{<p12> Q}}",  ];
+x0 [ shape=record, style=rounded, label="<s0> 0:0 - 1:1 ", color="black", fontcolor="black" ];
+c13:p12:e -> x0:w [arrowhead=odiamond, arrowtail=odiamond, dir=both, color="black", fontcolor="black", label=""];
+c14 [ shape=record, label="{{<p10> CLK|<p11> D}|q[0]$_SDFFE_PN0P_\nsky130_fd_sc_hd__dfxtp_1|{<p12> Q}}",  ];
+x1 [ shape=record, style=rounded, label="<s0> 0:0 - 0:0 ", color="black", fontcolor="black" ];
+c14:p12:e -> x1:w [arrowhead=odiamond, arrowtail=odiamond, dir=both, color="black", fontcolor="black", label=""];
+c18 [ shape=record, label="{{<p15> A|<p16> B}|_7_\nsky130_fd_sc_hd__nand2_1|{<p17> Y}}",  ];
+c22 [ shape=record, label="{{<p19> A0|<p20> A1|<p21> S}|_6_\nsky130_fd_sc_hd__mux2i_1|{<p17> Y}}",  ];
+x2 [ shape=record, style=rounded, label="<s0> 1:1 - 0:0 ", color="black", fontcolor="black" ];
+x2:e -> c22:p20:w [arrowhead=odiamond, arrowtail=odiamond, dir=both, color="black", fontcolor="black", label=""];
+x3 [ shape=record, style=rounded, label="<s0> 1:1 - 0:0 ", color="black", fontcolor="black" ];
+x3:e -> c22:p19:w [arrowhead=odiamond, arrowtail=odiamond, dir=both, color="black", fontcolor="black", label=""];
+c24 [ shape=record, label="{{<p15> A|<p23> B_N}|_5_\nsky130_fd_sc_hd__nor2b_1|{<p17> Y}}",  ];
+c25 [ shape=record, label="{{<p19> A0|<p20> A1|<p21> S}|_4_\nsky130_fd_sc_hd__mux2i_1|{<p17> Y}}",  ];
+x4 [ shape=record, style=rounded, label="<s0> 0:0 - 0:0 ", color="black", fontcolor="black" ];
+x4:e -> c25:p20:w [arrowhead=odiamond, arrowtail=odiamond, dir=both, color="black", fontcolor="black", label=""];
+x5 [ shape=record, style=rounded, label="<s0> 0:0 - 0:0 ", color="black", fontcolor="black" ];
+x5:e -> c25:p19:w [arrowhead=odiamond, arrowtail=odiamond, dir=both, color="black", fontcolor="black", label=""];
+c25:p17:e -> n1:w [color="black", fontcolor="black", label=""];
+n1:e -> c24:p15:w [color="black", fontcolor="black", label=""];
+c22:p17:e -> n2:w [color="black", fontcolor="black", label=""];
+n2:e -> c18:p16:w [color="black", fontcolor="black", label=""];
+c18:p17:e -> n3:w [color="black", fontcolor="black", label=""];
+n3:e -> c13:p11:w [color="black", fontcolor="black", label=""];
+c24:p17:e -> n4:w [color="black", fontcolor="black", label=""];
+n4:e -> c14:p11:w [color="black", fontcolor="black", label=""];
+x0:s0:e -> n5:w [color="black", fontcolor="black", label=""];
+x1:s0:e -> n5:w [color="black", fontcolor="black", label=""];
+n5:e -> x3:s0:w [color="black", fontcolor="black", label=""];
+n5:e -> x5:s0:w [color="black", fontcolor="black", label=""];
+n6:e -> x2:s0:w [color="black", fontcolor="black", label=""];
+n6:e -> x4:s0:w [color="black", fontcolor="black", label=""];
+n7:e -> c22:p21:w [color="black", fontcolor="black", label=""];
+n7:e -> c25:p21:w [color="black", fontcolor="black", label=""];
+n8:e -> c18:p15:w [color="black", fontcolor="black", label=""];
+n8:e -> c24:p23:w [color="black", fontcolor="black", label=""];
+n9:e -> c13:p10:w [color="black", fontcolor="black", label=""];
+n9:e -> c14:p10:w [color="black", fontcolor="black", label=""];
+}
