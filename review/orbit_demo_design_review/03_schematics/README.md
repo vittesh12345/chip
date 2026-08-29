@@ -7,34 +7,37 @@ This folder holds machine-generated schematic views of the RTL and of the synthe
 | Item | Revision / identifier | Note |
 |---|---|---|
 | Design | orbit_demo (ORBIT-AI 4-lane INT8 digital demonstrator) | top module `orbit_demo`, LANES=4 |
-| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26566f0 (2026-09-29 18:54 UTC); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256) |
+| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26566f0 (2026-09-29 18:54 UTC); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256 at the package root) |
 | Specification | docs/SPEC.md at 26566f0 (never revised) | sha256 aef5d9fb… |
 | Concept brief | docs/orbit-ai-design-brief.pdf, "ORBIT-AI v0.1, 29 September 2026" (never revised; describes an earlier project state, see discrepancy register) | sha256 9d5f33d3… |
 | Reviewed layout | ORFS sky130hd, variant `sep` (copy-separation fences), run 2026-09-29 21:56–22:12 UTC, outputs build/pd_sep/results/sky130hd/orbit_demo/sep/ | 6_final.gds sha256 cd19afa9…; 6_final.def f5c544f3…; 6_final.v 68093c41…; 6_final.spef 014e655a… |
-| Layout configuration | pd/sky130hd_sep/{config.mk, constraint.sdc, regions.tcl} at c10c59b | The run used the ed553f8 versions; with comments stripped they are identical to c10c59b (comment-only changes) |
-| Flow / tools | ORFS docker image openroad/orfs@sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC); OpenROAD prints version "unknown"; KLayout 0.30.12 (DRC/LVS); Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
+| Layout configuration | pd/sky130hd_sep/config.mk and regions.tcl at c10c59b; constraint.sdc at 21917cf (`set clk_period 7.2`) | The run (21:56 UTC) used config.mk/regions.tcl as in ed553f8, identical to c10c59b once comments are stripped. It used the working-tree constraint.sdc with period 7.2 ns, which was committed in 21917cf at 22:00 UTC and is byte-identical to the flow copy build/pd_sep/sdc/sky130hd/sep.sdc. ed553f8's constraint.sdc has a 7.0 ns period, so a rebuild must not use it |
+| Flow / tools | ORFS docker image tag openroad/orfs:latest; the only local image is sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC, before the run). Linking the run to this digest is an ASSUMPTION: the run logged no digest. OpenROAD prints version "unknown". KLayout 0.30.12 (DRC/LVS). Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
 | Process / library | SkyWater SKY130, sky130_fd_sc_hd, liberty sky130_fd_sc_hd__tt_025C_1v80 (the single corner ORFS optimised at) | — |
-| Package assembled | 2026-10-06 from repo commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Re-runs made for this package are dated 2026-10-06 |
+| Package assembled | 2026-10-06; design inputs copied from the repository tree at commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Every later commit on the branch changes only review/ or is empty (git diff --name-only 0495cfa..HEAD outside review/ is empty). Re-runs made for this package are dated 2026-10-06 |
 
 Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
 
+`MANIFEST.sha256`, named in the RTL row, is not at the package root (checked 2026-10-06): MISSING, register D-53. The full hashes are in [../04_digital_design/README.md](../04_digital_design/README.md) section 1.
+
 ## Contents
 
-| Folder | Sheets | Files | Source | Drawing tool |
+| Folder / file | Sheets | Files | Source | Drawing tool |
 |---|---|---|---|---|
-| [rtl_level/](rtl_level/) | 4 (one per module) | 16 | rtl/*.v at 26566f0 | Yosys 0.69+154 `show`, after `proc; opt -purge` |
-| [gate_level/](gate_level/) | 2 (one per kept `orbit_keep_reg` parameterisation) | 4 | build/pd_sep/results/sky130hd/orbit_demo/sep/1_2_yosys.v | Yosys 0.69+154 `show` |
+| [rtl_level/](rtl_level/) | 4 (one per module) | 16 (.rtl.json, .dot, .svg, .pdf x 4) | rtl/*.v at 26566f0 | Yosys 0.69+154 `show`, after `proc; opt -purge; clean` |
+| [gate_level/](gate_level/) | 2 (one per kept `orbit_keep_reg` parameterisation) | 6 (.dot, .svg, .pdf x 2) | build/pd_sep/results/sky130hd/orbit_demo/sep/1_2_yosys.v | Yosys 0.69+154 `show` |
 | [netlists/](netlists/) | — | 2 | sep run results | OpenROAD / ORFS Yosys |
+| [gen_schematics.sh](gen_schematics.sh) | — | 1 | regeneration script for all rtl_level/ and gate_level/ files | bash; calls Yosys and Graphviz `dot` |
 
-All eight PDFs open and are non-empty. Each has 1 page; page sizes are listed below. Checked with pypdf 6.19.0 on 2026-10-06. Status: REPRODUCED 2026-10-06.
+All six PDFs open and are non-empty. Each has 1 page; page sizes are listed below. Checked with pypdf 6.19.0 on 2026-10-06. Status: REPRODUCED 2026-10-06.
 
 ## rtl_level/
 
 These are Yosys 0.69+154 (git 30d62572e-dirty, oss-cad-suite 2026-09-28) `show` sheets, one sheet per RTL module.
 
-- **How each sheet was made.** Each module was elaborated as its own top with `hierarchy -top <module>; proc; opt -purge`. Hierarchy is kept, not flattened, so each submodule instance appears as one box with its instance name. The `.dot` is the Yosys `show` export. The `.rtl.json` is the Yosys netlist (`write_json`) of the same elaboration and includes the definitions of the submodules it instantiates.
+- **How each sheet was made.** Each module was elaborated as its own top with `read_verilog -sv; hierarchy -top <module>; proc; opt -purge; clean`. Hierarchy is kept, not flattened, so each submodule instance appears as one box with its instance name. The `.dot` is the Yosys `show` export. The `.rtl.json` is the Yosys netlist (`write_json`) of the same elaboration and includes the definitions of the submodules it instantiates.
 - **SVG and PDF.** These are Graphviz renders of the `.dot`, made with the `dot` bundled in oss-cad-suite (Graphviz 2.43.20190912, cairo 1.18.4). This is the same step that `show -format svg|pdf` performs.
-- **Reproduction.** On 2026-10-06, all four `.dot` and all four `.rtl.json` files regenerated byte-identically with the commands below. The SVGs are byte-identical to `dot -Tsvg` of the packaged `.dot`. The PDFs match `dot -Tpdf` in page size and extracted text; only the metadata bytes differ. Status: REPRODUCED 2026-10-06.
+- **Reproduction.** On 2026-10-06, the commands below (the RTL part of [gen_schematics.sh](gen_schematics.sh)) regenerated all four `.dot`, `.rtl.json` and `.svg` files byte-identically. The PDFs match the packaged ones in page size and extracted text; only the metadata bytes differ. Status: REPRODUCED 2026-10-06. The order of the commands matters: with `write_json` before `show`, the JSON is still identical, but the node numbering in the `.dot` (and so the SVG) changes.
 
 | Sheet (module as top) | Cells on sheet | Sub-instances (boxes) | Flip-flop cells | PDF page (pt) | .rtl.json / .dot / .svg / .pdf (bytes) |
 |---|---|---|---|---|---|
@@ -60,14 +63,17 @@ Notes for reading the sheets:
 Regenerate from the repo root (`/home/user/chip`) with oss-cad-suite on `PATH`:
 
 ```
-for m in orbit_demo orbit_mac_lane orbit_thermal_tmr orbit_keep_reg; do
-  yosys -q -p "read_verilog rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v; \
-    hierarchy -top $m; proc; opt -purge; write_json $m.rtl.json; \
-    show -format dot -colors 1 -width -signed -stretch -prefix $m.rtl_schematic $m"
-  dot -Tsvg $m.rtl_schematic.dot -o $m.rtl_schematic.svg
-  dot -Tpdf $m.rtl_schematic.dot -o $m.rtl_schematic.pdf
+RTL="rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v"
+for M in orbit_keep_reg orbit_mac_lane orbit_thermal_tmr orbit_demo; do
+  yosys -q -p "read_verilog -sv $RTL; hierarchy -top $M; proc; opt -purge; clean; \
+    show -format dot -prefix $M.rtl_schematic -width -signed -stretch -colors 1 $M; \
+    write_json $M.rtl.json"
+  dot -Tpdf $M.rtl_schematic.dot -o $M.rtl_schematic.pdf
+  dot -Tsvg $M.rtl_schematic.dot -o $M.rtl_schematic.svg
 done
 ```
+
+`bash review/orbit_demo_design_review/03_schematics/gen_schematics.sh [OUT]` runs the same commands and the gate-level commands below, writing into `OUT` (default: this folder). It also writes a temporary `/tmp/gl.ys`.
 
 The `src` attributes in the JSON hold repo-relative paths (`rtl/orbit_thermal_tmr.v:21.1-84.10`), so the command must run from the repo root to reproduce the files byte for byte.
 
@@ -114,7 +120,7 @@ dot -Tsvg gl_w32.dot -o orbit_keep_reg_W32_acc_res_copy_gate_schematic.svg
 dot -Tpdf gl_w32.dot -o orbit_keep_reg_W32_acc_res_copy_gate_schematic.pdf
 ```
 
-On 2026-10-06 this produced `.dot` files byte-identical to the ones used for the packaged sheets. The SVGs are byte-identical to the packaged SVGs, and the PDFs have the same page size and text. The `.dot` sources of the gate-level sheets are not in the package; regenerate them with the commands above. Status: REPRODUCED 2026-10-06.
+On 2026-10-06 this produced `.dot` files byte-identical to the packaged gate-level `.dot` sources (added to gate_level/ in commit 0477235). The SVGs are byte-identical to the packaged SVGs, and the PDFs have the same page size and text. [gen_schematics.sh](gen_schematics.sh) gives the same files. Status: REPRODUCED 2026-10-06.
 
 ![orbit_keep_reg W2 thermal copy, gate level](gate_level/orbit_keep_reg_W2_thermal_copy_gate_schematic.svg)
 
@@ -147,13 +153,13 @@ So the storage cells (flip-flop, enable mux and reset gate of every redundant bi
 
 - **Origin.** Written by OpenROAD from `6_final.odb`: the header reads "CDL Netlist generated by OpenROAD", and the log is [../07_verification/orfs_logs/6_cdl.log](../07_verification/orfs_logs/6_cdl.log).
 - **Contents.** One `.SUBCKT orbit_demo` with 217 terminals: 215 signal bits plus `VDD` and `VSS`. It has 7794 `X` instances, all `sky130_fd_sc_hd__*` masters: 6250 logic cells (the same count as 6_final.v), 20 `diode_2` and 1524 `tapvpwrvgnd_1`. Fill cells, which have no devices, are not listed. This was counted on 2026-10-06.
-- **LVS run.** KLayout 0.30.12 with the ORFS deck `platforms/sky130hd/lvs/sky130hd.lylvs` extracted 6_final.gds. It compared the result against `6_final_concat.cdl`, which is `6_final.cdl` with `platforms/sky130hd/cdl/sky130hd.cdl` appended (build/pd_sep/make_pd_sep.out:7244-7250). Result: `INFO : Congratulations! Netlists match.` ([../07_verification/orfs_logs/6_lvs.log](../07_verification/orfs_logs/6_lvs.log):652). Status: VERIFIED.
+- **LVS run.** KLayout 0.30.12 with the ORFS deck `platforms/sky130hd/lvs/sky130hd.lylvs` extracted 6_final.gds (extracted netlist: [../07_verification/lvs/orbit_demo_extracted.cir.gz](../07_verification/lvs/orbit_demo_extracted.cir.gz)). It compared the result against `6_final_concat.cdl`, which is `6_final.cdl` with `platforms/sky130hd/cdl/sky130hd.cdl` appended (build/pd_sep/make_pd_sep.out:7244-7250; console log not in the package). Result: `INFO : Congratulations! Netlists match.` ([../07_verification/orfs_logs/6_lvs.log](../07_verification/orfs_logs/6_lvs.log):652). Status: VERIFIED.
 - **Limitation.** The CDL and the GDS come from the same OpenROAD database, so this LVS confirms the stream-out but is not an independent reference. See discrepancy register (09_review_notes).
 
 ### 1_2_yosys.v
 
 - **Structure.** Three modules: the two kept `orbit_keep_reg` parameterisations, and `orbit_demo`, into which `orbit_mac_lane` and `orbit_thermal_tmr` are flattened. The kept instances are named `g_lane[i].u_lane.u_acc_a` and so on.
-- **Size.** 5130 cells: 3464 local to `orbit_demo` + 16 x 103 + 3 x 6. Area 46866.1984 um^2, including 521 `dfxtp_1` ([synth_stat.txt](../07_verification/orfs_reports/synth_stat.txt):72, :107). Status: VERIFIED.
+- **Size.** 5130 cells: 3464 local to `orbit_demo` + 16 x 103 + 3 x 6. Area 46866.1984 um^2, including 521 `dfxtp_1` ([synth_stat.txt](../07_verification/orfs_reports/synth_stat.txt):156 for the area, :107 for the `dfxtp_1` count). Status: VERIFIED.
 - **Baseline comparison.** The file is byte-identical to the baseline run's synthesized netlist build/pd/results/sky130hd/orbit_demo/base/1_2_yosys.v (md5 166b150a…), even though the baseline used `-D 7` (build/pd/logs/sky130hd/orbit_demo/base/1_2_yosys.log:4). Checked 2026-10-06. Status: REPRODUCED 2026-10-06.
 
 ## Transistor sizes, component values, bias
@@ -163,8 +169,9 @@ So the storage cells (flip-flop, enable mux and reset gate of every redundant bi
 | Transistor sizes (W/L) | N/A | No custom transistor-level circuit exists. Every device sits inside a `sky130_fd_sc_hd` standard cell: all 7794 CDL instances and all 6250 6_final.v instances are `sky130_fd_sc_hd__*` masters. |
 | Component values (R, C) | N/A | There are no discrete or custom passive components. |
 | Bias currents / references | N/A | There are no analog blocks, bias generators or references. |
-| Cell drive strength | Encoded in the cell name suffix | `_0`, `_1`, `_2`, `_4`, `_6`, `_8`, `_12`, `_16` (e.g. `dfxtp_1`, `buf_12`, `clkbuf_16`). The suffix counts in 6_final.v are: `_1` 4516, `_4` 1135, `_2` 304, `_6` 98, `_0` 95, `_16` 59, `_8` 22, `_12` 21 (6250 total). Counted 2026-10-06; REPRODUCED 2026-10-06. |
-| Standard-cell transistor-level netlists | MISSING from the package | They are not in the git-tracked repo or in this package. They exist in the ORFS image as `/OpenROAD-flow-scripts/flow/platforms/sky130hd/cdl/sky130hd.cdl`, and in the untracked build tree as `build/pd_sep/objects/sky130hd/orbit_demo/sep/6_final_concat.cdl` (437 `sky130_fd_sc_hd` subcircuits with `nfet_01v8` / `pfet_01v8_hvt` W/L; e.g. `mux2i_1` nfet w=0.65 l=0.15, pfet w=1.0 l=0.15). The KLayout LVS-extracted device netlist is `build/pd_sep/results/sky130hd/orbit_demo/sep/orbit_demo_extracted.cir` (also untracked). To include them, copy these files into the package and record the PDK / open_pdks version, which the logs do not record. |
+| Cell drive strength | REPRODUCED 2026-10-06 | Encoded in the cell name suffix: `_0`, `_1`, `_2`, `_4`, `_6`, `_8`, `_12`, `_16` (e.g. `dfxtp_1`, `buf_12`, `clkbuf_16`). The suffix counts in 6_final.v are: `_1` 4516, `_4` 1135, `_2` 304, `_6` 98, `_0` 95, `_16` 59, `_8` 22, `_12` 21 (6250 total; counted 2026-10-06). |
+| Extracted device netlist of the reviewed layout | VERIFIED | [../07_verification/lvs/orbit_demo_extracted.cir.gz](../07_verification/lvs/orbit_demo_extracted.cir.gz): KLayout LVS extraction of 6_final.gds ("Extracted by KLayout on : 29/09/2026 22:11"); gunzip output identical to `build/pd_sep/results/sky130hd/orbit_demo/sep/orbit_demo_extracted.cir` (cmp, 2026-10-06). 138 `.SUBCKT` (`orbit_demo` + 137 `sky130_fd_sc_hd` cells), 1133 MOSFET lines. Device W/L carry a factor of 10^6: `L=150000U` is a 0.15 um device. |
+| Standard-cell library transistor netlist (CDL) | MISSING from the package | Not git-tracked and not in this package. It exists in the ORFS image as `/OpenROAD-flow-scripts/flow/platforms/sky130hd/cdl/sky130hd.cdl`, and in the untracked build tree inside `build/pd_sep/objects/sky130hd/orbit_demo/sep/6_final_concat.cdl` (437 `sky130_fd_sc_hd` subcircuits with `nfet_01v8` / `pfet_01v8_hvt` W/L; e.g. `mux2i_1` nfet w=0.65 l=0.15, pfet w=1.0 l=0.15). The PDK / open_pdks version is not recorded in the logs (MISSING). To include them, copy 6_final_concat.cdl into the package and record the PDK version. |
 
 ## Discrepancies and notes
 
@@ -173,6 +180,6 @@ See discrepancy register (09_review_notes) in [../09_review_notes/](../09_review
 | ID | Observation | Evidence | Severity |
 |---|---|---|---|
 | SC-1 | The W32 gate-level sheet shows 7 `en`/`rst_n` fan-out buffers per copy (112 in total) that are not in the routed netlist. 5 `buf_4` and 6 `conb_1` cells inside the kept instances exist only in the routed netlist. The storage cells are unchanged. | Comparison table above; 3_3_place_gp.log:10; 2_1_floorplan.log:31 | low |
-| SC-2 | The gate-level `.dot` sources are not packaged; only SVG and PDF are. | `ls gate_level/` | low |
+| SC-2 | Resolved in commit 0477235: the gate-level `.dot` sources and the generator [gen_schematics.sh](gen_schematics.sh) are now in the package (before, only SVG and PDF were). | `ls gate_level/`; regeneration check above | resolved |
 | SC-3 | Two Yosys versions are involved. The layout netlist was synthesized by ORFS Yosys 0.68+post; the schematics were drawn with Yosys 0.69+154. | 1_2_yosys.v line 1; rtl_level/*.rtl.json `creator` | info |
-| SC-4 | Standard-cell transistor netlists do exist in the untracked `build/` tree (6_final_concat.cdl, orbit_demo_extracted.cir), but they are not git-tracked and not in the package. | file listing of build/pd_sep | info |
+| SC-4 | The standard-cell library CDL (inside `build/pd_sep/objects/sky130hd/orbit_demo/sep/6_final_concat.cdl`) is not git-tracked and not in the package, and the PDK version is not recorded. The extracted device netlist is in the package ([../07_verification/lvs/orbit_demo_extracted.cir.gz](../07_verification/lvs/orbit_demo_extracted.cir.gz)). | file listing of build/pd_sep; `git ls-files` | info |
