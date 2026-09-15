@@ -33,14 +33,14 @@ Notes on the revision table (checked 2026-10-06):
   | [docs/SPEC.md](source/docs/SPEC.md) | aef5d9fb92d6e69bfa58735e44a93beea0279aebe354eb6319a35d513aaed828 |
   | [docs/orbit-ai-design-brief.pdf](source/docs/orbit-ai-design-brief.pdf) | 9d5f33d344249985d82660f6ad6e4358444c143d210eb9c8254c2747c36d8069 |
 
-- The checkout HEAD has moved past 0495cfa while this package was written; 0495cfa is an ancestor. As stated in the table's "Package assembled" note, `git diff --name-only 0495cfa HEAD` lists only `review/` paths (last checked at HEAD 0477235), so every file in `source/` is the same at 0495cfa and at HEAD (section 2). See discrepancy register D-54.
+- The checkout HEAD has moved past 0495cfa while this package was written; 0495cfa is an ancestor. As stated in the table's "Package assembled" note, `git diff --name-only 0495cfa HEAD` lists only `review/` paths (last checked 2026-10-06 at HEAD de1890d), so every file in `source/` is the same at 0495cfa and at HEAD (section 2). See discrepancy register D-54.
 - [pd/sky130hd_sep/constraint.sdc](source/pd/sky130hd_sep/constraint.sdc) (`set clk_period 7.2`, line 19) is byte-identical to the SDC that the reviewed run read, `build/pd_sep/sdc/sky130hd/sep.sdc` (cmp, 2026-10-06). The `ed553f8` version of this file has `set clk_period 7` (table row "Layout configuration"; register D-52).
 
 ## 2. Contents of `source/`
 
 `source/` holds byte-identical copies of `rtl/`, `tb/`, `formal/`, `fault/`, `synth/`, `model/`, `mk/`, `pd/`, the `Makefile`, `requirements-tools.txt`, 8 of the 15 files in `scripts/` and 2 of the 5 files in `docs/`, at the package revision.
 
-Copy check, REPRODUCED 2026-10-06. Each of the 86 files under `source/` was compared with `cmp` against (a) `/home/user/chip/<path>` in the working tree, (b) `git show 0495cfa:<path>` and (c) `git show HEAD:<path>` (HEAD = 47c7af9; repeated at 54745f7 and 0477235). Result: 86 of 86 identical in all comparisons, none missing. All 86 are git-tracked. Within the copied directories (`rtl tb formal fault synth model mk pd`), no tracked file was left out.
+Copy check, REPRODUCED 2026-10-06. Each of the 86 files under `source/` was compared with `cmp` against (a) `/home/user/chip/<path>` in the working tree, (b) `git show 0495cfa:<path>` and (c) `git show HEAD:<path>` (HEAD = 47c7af9; repeated at 54745f7, 0477235 and de1890d). Result: 86 of 86 identical in all comparisons, none missing. All 86 are git-tracked. Within the copied directories (`rtl tb formal fault synth model mk pd`), no tracked file was left out.
 
 | Path in `source/` | Files | Contents |
 |---|---|---|
