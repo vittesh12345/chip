@@ -1,0 +1,10 @@
+[formal] thermal        PASS    (expected PASS, 1s)
+[formal] dup            PASS    (expected PASS, 1s)
+[formal] handshake      PASS    (expected PASS, 1s)
+[formal] datapath       PASS    (expected PASS, 3s)
+[formal] clear          PASS    (expected PASS, 0s)
+[formal] product        PASS    (expected PASS, 6s)
+[formal] cover          PASS    (expected PASS, 4s)
+[formal] wrap           PASS    (expected PASS, 1s)
+wrote /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/spec_rtl/build/formal/summary_quick.md
+[formal] all 8 tasks passed: see /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/spec_rtl/build/formal/summary_quick.md
