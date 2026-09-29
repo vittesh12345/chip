@@ -1,0 +1,43 @@
+SBY 20:15:21 [wrap] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_wrap'.
+SBY 20:15:21 [wrap] engine_0: smtbmc yices
+SBY 20:15:21 [wrap] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_wrap/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 20:15:21 [wrap] base: finished (returncode=0)
+SBY 20:15:21 [wrap] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_wrap/model; yosys -ql design_prep.log design_prep.ys"
+SBY 20:15:22 [wrap] prep: finished (returncode=0)
+SBY 20:15:22 [wrap] smt2: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_wrap/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY 20:15:22 [wrap] smt2: finished (returncode=0)
+SBY 20:15:22 [wrap] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_wrap; yosys-smtbmc -s yices --presat --unroll -c --noprogress -t 8  --append 0 --dump-vcd engine_0/trace%.vcd --dump-yw engine_0/trace%.yw --dump-vlogtb engine_0/trace%_tb.v --dump-smtc engine_0/trace%.smtc model/design_smt2.smt2"
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Solver: yices
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Checking cover reachability in step 0..
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Checking cover reachability in step 1..
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Reached cover statement in step 2 at orbit_demo_fv: C20_wrap_pos_to_neg
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace0.vcd
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace0_tb.v
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace0.smtc
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace0.yw
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Reached cover statement in step 2 at orbit_demo_fv: C22_wrap_all_lanes
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace1.vcd
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace1_tb.v
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace1.smtc
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace1.yw
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Checking cover reachability in step 2..
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Reached cover statement in step 2 at orbit_demo_fv: C21_wrap_neg_to_pos
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace2.vcd
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace2_tb.v
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace2.smtc
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace2.yw
+SBY 20:15:22 [wrap] engine_0: ##   0:00:00  Status: passed
+SBY 20:15:22 [wrap] engine_0: finished (returncode=0)
+SBY 20:15:22 [wrap] engine_0: Status returned by engine: pass
+SBY 20:15:22 [wrap] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 20:15:22 [wrap] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY 20:15:22 [wrap] summary: engine_0 (smtbmc yices) returned pass
+SBY 20:15:22 [wrap] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_wrap/engine_0/trace0.vcd
+SBY 20:15:22 [wrap] summary:   reached cover statement orbit_demo_fv.C20_wrap_pos_to_neg at orbit_demo_fv.sv:627.13-627.82 step 2
+SBY 20:15:22 [wrap] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_wrap/engine_0/trace1.vcd
+SBY 20:15:22 [wrap] summary:   reached cover statement orbit_demo_fv.C22_wrap_all_lanes at orbit_demo_fv.sv:631.13-631.66 step 2
+SBY 20:15:22 [wrap] summary: cover trace: /home/user/chip/build/formal/full/run/orbit_demo_wrap/engine_0/trace2.vcd
+SBY 20:15:22 [wrap] summary:   reached cover statement orbit_demo_fv.C21_wrap_neg_to_pos at orbit_demo_fv.sv:629.13-629.83 step 2
+SBY 20:15:22 [wrap] DONE (PASS, rc=0)

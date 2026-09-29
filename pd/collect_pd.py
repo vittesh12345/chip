@@ -47,6 +47,10 @@ def section(rpt, title):
     return m.group(1).strip() if m else None
 
 
+def scale(v, k):
+    return None if v is None else v * k
+
+
 def fmt(v, unit="", nd=3):
     if v is None:
         return "n/a"
@@ -169,34 +173,50 @@ def main():
                f"{gds} ({os.path.getsize(gds) / 1e6:.1f} MB)" if os.path.isfile(gds) else "no 6_final.gds")
 
     # --- numbers -------------------------------------------------------------
+    flog = read(os.path.join(logs, "2_1_floorplan.log")) or ""
+    die = re.search(r'Die BBox:\s*\(\s*([0-9.]+)\s+([0-9.]+)\s*\)\s*\(\s*([0-9.]+)\s+([0-9.]+)\s*\)', flog)
+    core = re.search(r'Core BBox:\s*\(\s*([0-9.]+)\s+([0-9.]+)\s*\)\s*\(\s*([0-9.]+)\s+([0-9.]+)\s*\)', flog)
+    dims = lambda m: (f"{float(m.group(3)) - float(m.group(1)):.3f} x {float(m.group(4)) - float(m.group(2)):.3f}"
+                      if m else None)
+    n_all = f("design__instance__count")
+    n_std = f("design__instance__count__stdcell")
+    n_tap = f("design__instance__count__class:tap_cell") or 0
+    n_fill = f("design__instance__count__class:fill_cell") or 0
+    a_tap = f("design__instance__area__class:tap_cell") or 0.0
     nums = {
         "clock period (ns)": period,
         "fmax from final STA (MHz)": (f("timing__fmax") or 0) / 1e6 if f("timing__fmax") else None,
         "setup WNS (ns)": setup_ws, "setup TNS (ns)": setup_tns,
         "hold WNS (ns)": hold_ws, "hold TNS (ns)": hold_tns,
-        "clock skew setup (ns)": f("clock__skew__setup"),
+        "clock skew (ns)": f("clock__skew__setup"),
+        "die size (um)": dims(die), "core size (um)": dims(core),
         "die area (um^2)": f("design__die__area"), "core area (um^2)": f("design__core__area"),
-        "std-cell area incl. fill/tap/buffers (um^2)": f("design__instance__area__stdcell"),
-        "utilization (cell area / core area)": f("design__instance__utilization"),
-        "instance count (incl. tap/fill-free physical cells)": f("design__instance__count"),
-        "synthesis cell area (um^2)": syn.get("synth__design__instance__area__stdcell"),
-        "synthesis cell count": syn.get("synth__design__instance__count__stdcell"),
-        "IO pins": f("design__io"),
-        "power total (W, default activity)": f("power__total"),
-        "power internal (W)": f("power__internal__total"),
-        "power switching (W)": f("power__switching__total"),
-        "power leakage (W)": f("power__leakage__total"),
+        "cell area excl. fill, incl. tap cells (um^2)": f("design__instance__area__stdcell"),
+        "cell area excl. fill and tap cells (um^2)": (f("design__instance__area__stdcell") or 0) - a_tap,
+        "utilization (cell area excl. fill / core area)": f("design__instance__utilization"),
+        "instances, all (incl. fill/decap and tap)": n_all,
+        "instances excl. fill and tap": (n_std - n_tap) if n_std is not None else None,
+        "fill/decap cells": n_fill, "tap cells": n_tap,
+        "flip-flop cells (ORFS class sequential_cell)": f("design__instance__count__class:sequential_cell"),
+        "synthesis: cell count": syn.get("synth__design__instance__count__stdcell"),
+        "synthesis: cell area (um^2)": syn.get("synth__design__instance__area__stdcell"),
+        "IO pins (incl. VDD/VSS)": f("design__io"),
+        "power total (mW, default-activity estimate)": scale(f("power__total"), 1e3),
+        "power internal (mW)": scale(f("power__internal__total"), 1e3),
+        "power switching (mW)": scale(f("power__switching__total"), 1e3),
+        "power leakage (uW)": scale(f("power__leakage__total"), 1e6),
         "routed wirelength (um)": drt.get("detailedroute__route__wirelength"),
         "vias": drt.get("detailedroute__route__vias"),
         "detailed-route DRC errors": drc_err,
         "antenna violating nets": ant_nets,
-        "IR drop VDD worst (V)": f("design_powergrid__drop__worst__net:VDD__corner:default"),
+        "IR drop VDD worst (mV, same activity)": scale(f("design_powergrid__drop__worst__net:VDD__corner:default"), 1e3),
+        "IR drop VSS worst (mV, same activity)": scale(f("design_powergrid__drop__worst__net:VSS__corner:default"), 1e3),
     }
 
-    # Cell usage from the final report log (report_cell_usage).
+    # Cell usage from the final report log (report_cell_usage), up to its Total line.
     rlog = read(os.path.join(logs, "6_report.log")) or ""
     usage = None
-    mu = re.search(r'(Cell type report:.*?)(?:\n\s*\n|\Z)', rlog, re.S)
+    mu = re.search(r'(Cell type report:.*?\n\s*Total[^\n]*)', rlog, re.S)
     if mu:
         usage = mu.group(1).rstrip()
 

@@ -1,59 +1,81 @@
-# SymbiYosys jobs for the fault-free orbit_demo (see formal/orbit_demo_fv.sv).
+# SymbiYosys jobs for the fault-free orbit_demo (harness: formal/orbit_demo_fv.sv).
 #
-# This is a template: mk/formal.mk substitutes the RTL file names for the
-# RTL_FILES placeholder in [script] and appends the [files] entries (the RTL from $(RTL_DIR) and the
-# harness), then runs one task per make target, so failures stay isolated.
+# Template: formal/gen_sby.sh puts the RTL file names in place of the RTL_FILES
+# placeholder in [script] and appends the RTL ($(RTL) in mk/formal.mk) and the
+# harness to [files]. mk/formal.mk runs one task per target, so failures stay
+# isolated.
 #
-# Tasks
-#   thermal      P5, P6           prove, k-induction, smtbmc yices
-#   dup          P7               prove, k-induction, smtbmc yices
-#   handshake    P2, P3, P4 (+P5..P7 as helpers)       prove, smtbmc yices
-#   datapath     P1, P8 (+P7 as helper)                prove, smtbmc yices
-#   thermal_pdr  P5, P6           prove, abc pdr (independent engine cross-check)
-#   dup_pdr      P7               prove, abc pdr
-#   cover        covers from reset                     cover, smtbmc yices
-#   wrap         INT32 wraparound covers from a consistent arbitrary state,
-#                with every assertion group checked along the traces
+# Task           Properties                                   Mode / engine
+# thermal        P5, P6 (+ helpers)                           prove, k-induction, smtbmc yices
+# dup            P7                                           prove, k-induction, smtbmc yices
+# handshake      P2, P3, P4 (+ P5-P7 and helpers)             prove, k-induction, smtbmc yices
+# datapath       P1, P8 (+ P7 and helpers)                    prove, k-induction, smtbmc yices
+# product        P1 lemma: SPEC product formula equals        prove, smtbmc bitwuzla
+#                sign * (|a| * |b|) for all a, b
+# thermal_pdr    P5, P6 without helper invariants             prove, abc pdr
+# dup_pdr        P7                                           prove, abc pdr
+# handshake_pdr  P2, P3, P4 without helper invariants         prove, abc pdr
+# datapath_pdr   P1, P8 without helper invariants             prove, abc pdr (slow, see summary)
+# live           P2 liveness, fair consumer                   live, aiger suprove
+# cover          reachability covers from reset               cover, smtbmc yices
+# wrap           INT32 wraparound covers from a consistent    cover, smtbmc yices
+#                arbitrary state; all assertions checked
 #
-# The prove depths are the k of k-induction and also the base-case BMC depth.
-# They are chosen larger than strictly needed for induction so that the base
-# case alone catches the short counterexamples used by `make formal-vacuity`.
+# The smtbmc prove depth is the k of k-induction and also the base-case BMC
+# depth. It is larger than induction needs so that the base case alone finds
+# the short counterexamples of `make formal-vacuity` (a failed induction step
+# alone would only give status UNKNOWN).
 
-# Task tags: prv = prove with smtbmc, pdr = prove with abc pdr, cov = cover,
-# g_thermal / g_dup = property group shared by the smtbmc and pdr tasks.
+# Tags: prv = smtbmc yices prove, prv_bw = smtbmc bitwuzla prove,
+#       pdr = abc pdr prove, lv = liveness, cov = cover.
 [tasks]
-thermal     prv g_thermal
-dup         prv g_dup
-handshake   prv
-datapath    prv
-thermal_pdr pdr g_thermal
-dup_pdr     pdr g_dup
-cover       cov
-wrap        cov
+thermal       prv
+dup           prv
+handshake     prv
+datapath      prv
+product       prv_bw
+thermal_pdr   pdr
+dup_pdr       pdr
+handshake_pdr pdr
+datapath_pdr  pdr
+live          lv
+cover         cov
+wrap          cov
 
 [options]
 prv: mode prove
+prv_bw: mode prove
 pdr: mode prove
+lv: mode live
 cov: mode cover
 thermal: depth 8
 dup: depth 6
 handshake: depth 8
 datapath: depth 6
+product: depth 1
 cover: depth 24
 wrap: depth 8
 wrap: cover_assert on
 
 [engines]
 prv: smtbmc yices
-cov: smtbmc yices
+prv_bw: smtbmc bitwuzla
 pdr: abc pdr
+lv: aiger suprove
+cov: smtbmc yices
 
 [script]
 read_verilog -formal @RTL_FILES@
-g_thermal: read_verilog -formal -sv -DFV_THERMAL orbit_demo_fv.sv
-g_dup: read_verilog -formal -sv -DFV_DUP orbit_demo_fv.sv
+thermal: read_verilog -formal -sv -DFV_THERMAL orbit_demo_fv.sv
+dup: read_verilog -formal -sv -DFV_DUP orbit_demo_fv.sv
 handshake: read_verilog -formal -sv -DFV_HANDSHAKE -DFV_THERMAL -DFV_DUP orbit_demo_fv.sv
 datapath: read_verilog -formal -sv -DFV_DATAPATH -DFV_DUP orbit_demo_fv.sv
+product: read_verilog -formal -sv -DFV_PRODUCT orbit_demo_fv.sv
+thermal_pdr: read_verilog -formal -sv -DFV_THERMAL -DFV_NO_HELPERS orbit_demo_fv.sv
+dup_pdr: read_verilog -formal -sv -DFV_DUP orbit_demo_fv.sv
+handshake_pdr: read_verilog -formal -sv -DFV_HANDSHAKE -DFV_NO_HELPERS orbit_demo_fv.sv
+datapath_pdr: read_verilog -formal -sv -DFV_DATAPATH -DFV_NO_HELPERS orbit_demo_fv.sv
+live: read_verilog -formal -sv -DFV_LIVE orbit_demo_fv.sv
 cover: read_verilog -formal -sv -DFV_COVER orbit_demo_fv.sv
 wrap: read_verilog -formal -sv -DFV_FREE_START -DFV_WRAP -DFV_DATAPATH -DFV_HANDSHAKE -DFV_THERMAL -DFV_DUP orbit_demo_fv.sv
 # Hierarchical references: flatten must run right after proc (no opt before

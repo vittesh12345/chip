@@ -1,0 +1,17 @@
+SBY 20:14:53 [live] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_live'.
+SBY 20:14:53 [live] engine_0: aiger suprove
+SBY 20:14:53 [live] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_live/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 20:14:53 [live] base: finished (returncode=0)
+SBY 20:14:53 [live] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_live/model; yosys -ql design_prep.log design_prep.ys"
+SBY 20:14:53 [live] prep: finished (returncode=0)
+SBY 20:14:53 [live] aig: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_live/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY 20:14:54 [live] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
+SBY 20:14:54 [live] aig: finished (returncode=0)
+SBY 20:14:54 [live] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_live; suprove +simple_liveness model/design_aiger.aig"
+SBY 20:15:19 [live] engine_0: finished (returncode=0)
+SBY 20:15:19 [live] engine_0: Status returned by engine: PASS
+SBY 20:15:19 [live] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:25 (25)
+SBY 20:15:19 [live] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:14 (14)
+SBY 20:15:19 [live] summary: engine_0 (aiger suprove) returned PASS
+SBY 20:15:19 [live] summary: engine_0 did not produce any traces
+SBY 20:15:19 [live] DONE (PASS, rc=0)

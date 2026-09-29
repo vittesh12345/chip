@@ -422,9 +422,11 @@ def group_stats(recs):
 # ---------------------------------------------------------------------------
 # Stats from reports
 # ---------------------------------------------------------------------------
-def parse_pd_summary(path):
-    """Tolerant parse of reports/pd/summary.md (format owned by the pd area)."""
-    if not path or not os.path.exists(path):
+def parse_pd_summary(paths):
+    """Tolerant parse of the pd area's summary (format owned by the pd area).
+    `paths` is a comma-separated list; the first existing file is used."""
+    path = next((p for p in (paths or "").split(",") if p and os.path.exists(p)), None)
+    if not path:
         return {}
     res = {}
     txt = open(path).read()
@@ -447,15 +449,15 @@ def parse_pd_summary(path):
                 else:
                     res["clock_period_ns"] = v
                 res["clock"] = val_txt.strip() if len(cells) > 1 else ln.split(":", 1)[-1].strip()
-        if "wns" not in res and re.search(r"\bwns\b|worst negative slack|setup slack", low):
+        if "wns_ns" not in res and "hold" not in low and re.search(r"\bwns\b|worst negative slack|setup slack", low):
             v = num(val_txt if len(cells) > 1 else ln.split(":", 1)[-1])
             if v is not None:
                 res["wns_ns"] = v
-        if "area_um2" not in res and re.search(r"(design|cell|instance|std.?cell)\s*area", low):
+        if "area_um2" not in res and "synth" not in low and re.search(r"(design|cell|instance|std.?cell)\s*area", low):
             v = num(val_txt if len(cells) > 1 else ln.split(":", 1)[-1])
             if v is not None:
                 res["area_um2"] = v
-        if "cell_count" not in res and re.search(r"(cell|instance)\s*count|#\s*cells|number of cells", low):
+        if "cell_count" not in res and "synth" not in low and re.search(r"(cell|instance)\s*count|#\s*cells|number of cells", low):
             v = num(val_txt if len(cells) > 1 else ln.split(":", 1)[-1])
             if v is not None:
                 res["cell_count"] = int(v)
@@ -487,7 +489,11 @@ def orfs_metrics(gds_path):
         if "finish__design__instance__area__stdcell" in j:
             m["area_um2"] = round(float(j["finish__design__instance__area__stdcell"]), 2)
         if "finish__design__instance__count__stdcell" in j:
-            m["cell_count"] = int(j["finish__design__instance__count__stdcell"])
+            # ORFS counts tap cells as standard cells (fill cells are not);
+            # report logic cells, i.e. without taps, like the pd summary does.
+            taps = int(j.get("finish__design__instance__count__class:tap_cell", 0) or 0)
+            m["cell_count"] = int(j["finish__design__instance__count__stdcell"]) - taps
+            m["tap_cells"] = taps
         if "finish__design__instance__utilization" in j:
             m["utilization"] = round(float(j["finish__design__instance__utilization"]), 4)
         if "finish__design__die__area" in j:
@@ -712,7 +718,8 @@ def main():
     ap.add_argument("--tech-lef", required=True)
     ap.add_argument("--cell-lef", required=True)
     ap.add_argument("--lyt", default=None, help="KLayout .lyt with the layer map (verification)")
-    ap.add_argument("--pd-summary", default="reports/pd/summary.md")
+    ap.add_argument("--pd-summary", default="reports/pd/summary.md,reports/pd/sky130hd/results.md",
+                    help="comma-separated candidates; the first existing file supplies clock/WNS/area/cells")
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--glb", default=None)
     ap.add_argument("--glb-budget-mb", type=float, default=9.5,
@@ -728,6 +735,8 @@ def main():
                     help="total layout.bin budget; front-end layers are cut to a detail window above it")
     ap.add_argument("--fe-window", default=None, help="x0,y0,x1,y1 um: explicit front-end detail window")
     ap.add_argument("--label", default=None, help="data label shown in the page")
+    ap.add_argument("--pd-config", default="pd/sky130hd/config.mk",
+                    help="pd flow configuration, only read to report placement constraints")
     args = ap.parse_args()
 
     t_start = _dt.datetime.now(_dt.timezone.utc)
@@ -930,19 +939,25 @@ def main():
     # --- stats -----------------------------------------------------------
     pd_sum = parse_pd_summary(args.pd_summary)
     orfs = orfs_metrics(args.gds)
+    # Values from the ORFS run that produced this GDS win (same provenance as
+    # the geometry); the pd area's summary only fills gaps.
     stats = {
-        "clock_period_ns": pd_sum.get("clock_period_ns", orfs.get("clock_period_ns")),
-        "wns_ns": pd_sum.get("wns_ns", orfs.get("wns_ns")),
-        "area_um2": pd_sum.get("area_um2", orfs.get("area_um2")),
-        "cell_count": pd_sum.get("cell_count", orfs.get("cell_count")),
+        "clock_period_ns": orfs.get("clock_period_ns", pd_sum.get("clock_period_ns")),
+        "wns_ns": orfs.get("wns_ns", pd_sum.get("wns_ns")),
+        "area_um2": orfs.get("area_um2", pd_sum.get("area_um2")),
+        "cell_count": orfs.get("cell_count", pd_sum.get("cell_count")),
         "utilization": orfs.get("utilization"),
+        "tap_cells": orfs.get("tap_cells"),
+        "cell_count_note": "standard cells excluding fill/decap and tap cells",
         "components_in_def": len(defd["components"]),
         "flip_flops": len(recs),
         "sources": {
             "pd_summary": pd_sum.get("source"),
             "orfs_metrics": orfs.get("source"),
             "sdc": orfs.get("clock_source"),
-            "note": "reports/pd/summary.md values win; ORFS 6_report.json / 6_final.sdc of the same run fill gaps",
+            "note": ("ORFS 6_report.json / 6_final.sdc of the run that wrote the GDS win; the pd summary "
+                     "only fills values they lack"),
+            "pd_summary_values": {k: v for k, v in pd_sum.items() if k != "source"} or None,
         },
     }
 
@@ -995,6 +1010,7 @@ def main():
         },
     }
     meta["redundancy"]["summary"] = summarize_redundancy(groups)
+    meta["redundancy"]["placement_constraints_note"] = placement_constraint_note(args.pd_config)
 
     # --- GLB -------------------------------------------------------------
     if args.glb:
@@ -1056,6 +1072,22 @@ def main():
         write_redundancy_md(args.redundancy_report, meta, groups)
         log(f"wrote {args.redundancy_report}")
     return 0
+
+
+def placement_constraint_note(path):
+    """Say whether the pd configuration asks the placer to separate anything."""
+    if not path or not os.path.exists(path):
+        return "The pd configuration was not available to check for placement constraints."
+    txt = open(path).read()
+    code = "\n".join(l.split("#", 1)[0] for l in txt.splitlines())
+    hits = sorted(set(re.findall(r"(?i)\b(fence|region|keep.?out|blockage|create_group|group_place|"
+                                 r"PLACE_SITE|MACRO_PLACE|min.?spacing)\w*", code)))
+    rel = os.path.relpath(path)
+    if not hits:
+        return (f"The pd configuration ({rel}, read when this report was generated) sets no region, fence, "
+                "keep-out or spacing constraint, so nothing asked the placer to keep copies apart.")
+    return (f"The pd configuration ({rel}) mentions {', '.join(hits)}; check whether those settings "
+            "target the redundant copies before reading the distances below as intended separation.")
 
 
 def _klayout_version():
@@ -1131,9 +1163,10 @@ def write_redundancy_md(path, meta, groups):
                     f"(minimum gap {s['same_bit_gap_um_min']:.2f} µm).")
         L.append(txt)
         L.append("")
-        L.append("The placer was not given any constraint to keep redundant copies apart (no region, "
-                 "fence or spacing constraint in the flow), so the copies are placed by wirelength and timing only: "
-                 "both copies share the same adder inputs and compare logic, which pulls them together. "
+        L.append(meta["redundancy"].get("placement_constraints_note", "") + " "
+                 "The copies are therefore where wirelength and timing put them. Bit i of copy A and bit i of "
+                 "copy B feed the same comparator and are fed from the same shared product, which likely pulls "
+                 "them towards each other. "
                  "The concept brief asks for redundant state to be separated physically; this layout does not do that. "
                  "Where same-bit copies abut, one particle track or a charge-sharing event could upset both copies of "
                  "a bit, which the duplicate-and-compare scheme would not detect if both flip the same way "

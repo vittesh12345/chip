@@ -177,12 +177,15 @@ def leaf_cells(modules, top):
 # --------------------------------------------------------------------------
 def classify(path):
     """Map a flip-flop instance path to (group, copy, bit) or None."""
-    # A kept orbit_keep_reg copy is "<instance>/q[<bit>]<yosys suffix>".
-    m = re.match(r'^g_lane\[(\d)\]\.u_lane\.(u_(?:acc|res)_[ab])/q\[(\d+)\]', path)
+    # A kept orbit_keep_reg copy is "<instance>/q[<bit>]<yosys suffix>". A
+    # netlist in which the copies were flattened (no keep_hierarchy) names the
+    # same bits "<instance>.q[<bit>]..."; accept both so that such a netlist
+    # fails on the merged copies themselves, not on naming.
+    m = re.match(r'^g_lane\[(\d)\]\.u_lane\.(u_(?:acc|res)_[ab])[/.]q\[(\d+)\]', path)
     if m:
         lane, reg, bit = int(m.group(1)), m.group(2), int(m.group(3))
         return (f"lane{lane}.{reg[2:5]}", reg, bit)
-    m = re.match(r'^u_thermal\.(u_copy[012])/q\[(\d+)\]', path)
+    m = re.match(r'^u_thermal\.(u_copy[012])[/.]q\[(\d+)\]', path)
     if m:
         return ("thermal", m.group(1), int(m.group(2)))
     for s in SINGLE_FFS:

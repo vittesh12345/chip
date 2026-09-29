@@ -12,8 +12,10 @@
 // edge. Zero-delay simulation: this checks function, not timing (timing is
 // covered by OpenSTA in the ORFS flow).
 //
-// Every INJ_EVERY cycles one redundant storage bit (all 518, in turn) is
-// inverted in both models at the falling edge (SPEC section 7). The netlist
+// Every INJ_EVERY cycles one redundant storage bit is inverted in both models
+// at the falling edge (SPEC section 7): the 512 duplicated bits in turn, and
+// every fourth injection one of the 6 thermal-copy bits, so that all 518 are
+// hit in the default run. The netlist
 // must then behave exactly like the RTL, and additionally:
 //   duplicated copy : out_valid = in_ready = 0 in that cycle, fault = 1 after
 //                     the next edge (the stop the SPEC promises);
@@ -22,7 +24,7 @@
 // If synthesis had merged two copies into one flip-flop, the flipped cell
 // would drive both "copies" and these checks (and the lockstep compare) fail.
 //
-// Plusargs: +cycles=N (default 25000), +seed=S (default 1).
+// Plusargs: +cycles=N (default 30000), +seed=S (default 1).
 // Prints "GLS PASS" or "GLS FAIL"; $finish either way.
 
 `timescale 1ns / 1ps
@@ -31,7 +33,7 @@
 module tb_gls;
 
     localparam integer LANES     = 4;
-    localparam integer INJ_EVERY = 40;
+    localparam integer INJ_EVERY = 32;
 
     reg                clk = 1'b0;
     reg                rst_n = 1'b0;
@@ -147,7 +149,9 @@ module tb_gls;
     // ------------------------------------------------------------------
     // Main loop: drive after the falling edge, check before the rising edge.
     // ------------------------------------------------------------------
-    integer inj_k = 0;
+    integer k_now;
+    integer n_bits_hit = 0;
+    reg     seen [0:N_REDUNDANT_BITS-1];
     integer pending = 0;        // 0 none, 1 dup injected this cycle, 2 tmr injected this cycle
     integer after = 0;          // 1 in the cycle following an injection
     integer after_kind = 0;
@@ -158,8 +162,9 @@ module tb_gls;
 
     initial begin
         if (!$value$plusargs("seed=%d", seed)) seed = 1;
-        if (!$value$plusargs("cycles=%d", cycles)) cycles = 25000;
+        if (!$value$plusargs("cycles=%d", cycles)) cycles = 30000;
         for (i = 0; i < 4; i = i + 1) n_state[i] = 0;
+        for (i = 0; i < N_REDUNDANT_BITS; i = i + 1) seen[i] = 1'b0;
         $display("GLS: %0d cycles, seed %0d, %0d redundant bits, injection every %0d cycles",
                  cycles, seed, N_REDUNDANT_BITS, INJ_EVERY);
 
@@ -192,10 +197,18 @@ module tb_gls;
             pending = 0;
             if (rst_n && !clear_fault && cyc > 20 && (cyc % INJ_EVERY) == 0 && !r_fault) begin
                 state_before = r_state;
-                flip_copy(inj_k);
-                pending = flip_kind(inj_k) ? 2 : 1;
+                // Every fourth injection hits one of the N_TMR_BITS thermal
+                // copies (in turn), the others walk through the duplicated
+                // bits, so both kinds are injected many times.
+                if ((n_inj_dup + n_inj_tmr) % 4 == 3) begin
+                    k_now = N_DUP_BITS + (n_inj_tmr % N_TMR_BITS);
+                end else begin
+                    k_now = n_inj_dup % N_DUP_BITS;
+                end
+                flip_copy(k_now);
+                if (!seen[k_now]) begin seen[k_now] = 1'b1; n_bits_hit = n_bits_hit + 1; end
+                pending = flip_kind(k_now) ? 2 : 1;
                 if (pending == 1) n_inj_dup = n_inj_dup + 1; else n_inj_tmr = n_inj_tmr + 1;
-                inj_k = (inj_k + 1) % N_REDUNDANT_BITS;
             end
 
             // --- check just before the rising edge -----------------------
@@ -234,16 +247,15 @@ module tb_gls;
                  n_in_fire, n_out_fire, n_results_nonzero, n_resets, n_clears);
         $display("coverage: cycles NORMAL %0d, THROTTLE %0d, STOP %0d, code3 %0d; throttle-blocked beats %0d",
                  n_state[0], n_state[1], n_state[2], n_state[3], n_throttle_block);
-        $display("injections: %0d duplicated-copy flips (%0d stopped), %0d thermal-copy flips (%0d repaired), %0d of %0d bits",
-                 n_inj_dup, n_dup_stop_ok, n_inj_tmr, n_tmr_repair_ok,
-                 (n_inj_dup + n_inj_tmr < N_REDUNDANT_BITS) ? n_inj_dup + n_inj_tmr : N_REDUNDANT_BITS,
-                 N_REDUNDANT_BITS);
+        $display("injections: %0d duplicated-copy flips (%0d stopped), %0d thermal-copy flips (%0d repaired); %0d of %0d redundant bits hit",
+                 n_inj_dup, n_dup_stop_ok, n_inj_tmr, n_tmr_repair_ok, n_bits_hit, N_REDUNDANT_BITS);
 
         // The run must actually have exercised the design.
         check_that(n_out_fire > 500 && n_results_nonzero > 400, "too few results transferred");
         check_that(n_state[0] > 1000 && n_state[1] > 500 && n_state[2] > 500, "thermal states not all visited");
         check_that(n_throttle_block > 50, "throttling never blocked a beat");
-        check_that(n_inj_dup + n_inj_tmr >= N_REDUNDANT_BITS, "not every redundant bit was injected");
+        check_that(n_bits_hit == N_REDUNDANT_BITS, "not every redundant bit was injected");
+        check_that(n_dup_stop_ok == n_inj_dup && n_tmr_repair_ok == n_inj_tmr, "an injection had no effect");
 
         if (errors == 0) $display("GLS PASS: %0d cycles, 0 mismatches", cycles);
         else             $display("GLS FAIL: %0d errors", errors);

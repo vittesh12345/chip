@@ -10,6 +10,10 @@
 #   out          full-chip PNG (required)
 #   detail_out   optional zoomed PNG, a square window at the centre of the die
 #   detail_frac  width of that window as a fraction of the die (default 0.12)
+#   highlight    optional JSON list of {"name", "box": [x0, y0, x1, y1]} (um):
+#                these cells are outlined in both images and the detail window
+#                is centred on them instead of the die centre (and widened if
+#                needed so that all of them are inside it)
 #   width        image width in pixels (default 1600)
 #   hide         comma separated GDS layer numbers to hide (default "81,235":
 #                the sky130 areaid markers, e.g. areaid.standardc over every
@@ -56,6 +60,24 @@ bbox = top.dbbox()
 print(f"render_layout: top cell {top.name}, bbox {bbox.left:.2f} {bbox.bottom:.2f} "
       f"{bbox.right:.2f} {bbox.top:.2f} um ({bbox.width():.2f} x {bbox.height():.2f})")
 
+# Optional highlighted cells (e.g. the thermal TMR flip-flops).
+marks = []
+hl = globals().get("highlight", "")
+if hl:
+    import json
+    for item in json.load(open(hl)):
+        x0, y0, x1, y1 = item["box"]
+        mk = pya.Marker(view)
+        mk.set(pya.DBox(x0, y0, x1, y1))
+        mk.color = 0x00ff00
+        mk.frame_color = 0x00ff00
+        mk.line_width = 4
+        mk.vertex_size = 0
+        mk.dither_pattern = 1
+        # Keep a reference: a Marker disappears when its Python object dies.
+        marks.append((item["name"], pya.DBox(x0, y0, x1, y1), mk))
+    print(f"render_layout: highlighted {len(marks)} cells from {hl}")
+
 # Full chip, square-ish image with the die aspect ratio.
 height = max(1, int(width * bbox.height() / max(bbox.width(), 1e-9)))
 view.zoom_box(bbox.enlarged(bbox.width() * 0.01, bbox.height() * 0.01))
@@ -65,6 +87,18 @@ print(f"render_layout: wrote {out} ({width}x{height})")
 if detail_out:
     c = bbox.center()
     half = 0.5 * detail_frac * min(bbox.width(), bbox.height())
+    if marks:
+        # Centre on the highlighted cells and make the window large enough to
+        # show all of them with a small margin.
+        u = pya.DBox()
+        for _n, b, _m in marks:
+            u = u + b
+        c = u.center()
+        half = max(half, 0.5 * max(u.width(), u.height()) + 4.0)
+    # Keep the window inside the die.
+    cx = min(max(c.x, bbox.left + half), bbox.right - half)
+    cy = min(max(c.y, bbox.bottom + half), bbox.top - half)
+    c = pya.DPoint(cx, cy)
     win = pya.DBox(c.x - half, c.y - half, c.x + half, c.y + half)
     view.zoom_box(win)
     view.save_image_with_options(detail_out, width, width, 0, 2, 0, pya.DBox(), False)

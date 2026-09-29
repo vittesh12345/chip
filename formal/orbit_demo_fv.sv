@@ -8,9 +8,10 @@
 // INT32 wraparound job, see below). Reset and clear_fault stay free later on.
 //
 // Reference model: written from SPEC sections 3, 4 and 6, not from the RTL.
-// Where a different formulation is available it is used on purpose: the
-// product is formed as sign * (|a| * |b|) instead of a signed multiply, and
-// the thresholds are the SPEC constants, not the DUT parameters. The model
+// It uses the SPEC constants, not the DUT parameters, and whole-vector state
+// instead of the RTL's copies and enables. The product is the SPEC formula,
+// which the `product` task proves equal to an independent sign * (|a|*|b|)
+// formulation for every operand pair. The model
 // follows the DUT's port handshakes (in_fire / out_fire), like a scoreboard,
 // and separately predicts in_ready and out_valid, which are asserted equal.
 //
@@ -27,9 +28,13 @@
 //   FV_DUP        P7 fault-free invariants (no fault, no repair, copies equal)
 //   FV_HANDSHAKE  P2 no loss / duplication, P3 backpressure, P4 in_ready
 //   FV_DATAPATH   P1 exact results, P8 clear_fault
+//   FV_PRODUCT    P1 lemma: SPEC product formula == sign-magnitude product
+//   FV_LIVE       P2 liveness: an accepted result is eventually delivered
 //   FV_COVER      reachability covers from reset
 //   FV_WRAP       INT32 wraparound covers (use with FV_FREE_START)
-// Groups also contain the helper invariants that make their induction close.
+// Groups also contain the helper invariants (labels *_h_*) that make their
+// k-induction close. -DFV_NO_HELPERS disables them; the abc pdr tasks use it
+// to show that the port-level properties hold without hand-written helpers.
 
 `default_nettype none
 
@@ -161,19 +166,34 @@ module orbit_demo_fv (
         end
     endfunction
 
-    // Exact signed INT8 x INT8 product, sign-extended to 32 bits, formed as
-    // sign * (|a| * |b|). |-128| = 128 needs 9 bits; |a*b| <= 16384.
+    // Exact signed INT8 x INT8 product, sign-extended to 32 bits: the SPEC
+    // section 3 formula p = sext32(signed8(a) * signed8(b)). The model uses
+    // this form; the `product` task (FV_PRODUCT) proves it equal to the
+    // independent sign-magnitude form below for all 2^16 operand pairs.
+    // (Using the sign-magnitude form directly in the sequential proofs makes
+    // the solver re-prove multiplier equivalence in every unrolled step.)
     function [31:0] spec_prod;
+        input [7:0] a;
+        input [7:0] b;
+        reg signed [15:0] p;
+        begin
+            p         = $signed(a) * $signed(b);
+            spec_prod = {{16{p[15]}}, p};
+        end
+    endfunction
+
+    // sign * (|a| * |b|). |-128| = 128 needs 9 bits; |a*b| <= 16384.
+    function [31:0] spec_prod_mag;
         input [7:0] a;
         input [7:0] b;
         reg   [8:0]  mag_a;
         reg   [8:0]  mag_b;
         reg   [17:0] mag_p;
         begin
-            mag_a     = a[7] ? (9'd256 - {1'b0, a}) : {1'b0, a};
-            mag_b     = b[7] ? (9'd256 - {1'b0, b}) : {1'b0, b};
-            mag_p     = mag_a * mag_b;
-            spec_prod = (a[7] ^ b[7]) ? (32'd0 - {14'd0, mag_p}) : {14'd0, mag_p};
+            mag_a         = a[7] ? (9'd256 - {1'b0, a}) : {1'b0, a};
+            mag_b         = b[7] ? (9'd256 - {1'b0, b}) : {1'b0, b};
+            mag_p         = mag_a * mag_b;
+            spec_prod_mag = (a[7] ^ b[7]) ? (32'd0 - {14'd0, mag_p}) : {14'd0, mag_p};
         end
     endfunction
 
@@ -185,7 +205,7 @@ module orbit_demo_fv (
     reg [2:0]          m_seq_in;    // accepted in_last beats (mod 8)
     reg [2:0]          m_seq_out;   // results delivered, or discarded by reset/clear (mod 8)
     reg                m_fresh;     // no beat accepted since the last reset / clear_fault
-    reg                m_fresh_clr; // ... and that was a clear_fault, not a reset (for a cover)
+    reg                m_fresh_clr; // ... and that was a clear_fault that discarded a nonzero sum (cover)
     reg [LANES-1:0]    m_ovf;       // per lane: current sum has wrapped (signed overflow)
     reg [LANES-1:0]    m_buf_ovf;   // per lane: buffered result has wrapped
 
@@ -241,7 +261,7 @@ module orbit_demo_fv (
                 m_buf     <= {32*LANES{1'b0}};
                 m_seq_out <= m_seq_in;
                 m_fresh   <= 1'b1;
-                m_fresh_clr <= 1'b1;
+                m_fresh_clr <= (m_acc != {32*LANES{1'b0}});
                 m_ovf     <= {LANES{1'b0}};
                 m_buf_ovf <= {LANES{1'b0}};
             end else begin
@@ -321,13 +341,20 @@ module orbit_demo_fv (
             P5_state_matches_model: assert (therm_state == m_therm);
             P5_never_code3:         assert (therm_state != 2'd3);
             P5_shutdown_req:        assert (shutdown_req == therm_state[1]);
-            // Helpers: the three copies and the phase follow the model.
+        end
+    end
+
+`ifndef FV_NO_HELPERS
+    // Helpers: the three copies and the phase follow the model.
+    always @* begin
+        if (f_past_valid) begin
             P5_h_copy0: assert (h_c0 == m_therm);
             P5_h_copy1: assert (h_c1 == m_therm);
             P5_h_copy2: assert (h_c2 == m_therm);
             P5_h_phase: assert (h_phase == m_phase);
         end
     end
+`endif
 
     always @(posedge clk) begin
         if (f_past_valid) begin
@@ -423,7 +450,6 @@ module orbit_demo_fv (
             // Handshake outputs equal the SPEC section 4 prediction.
             P4_in_ready_matches_model:  assert (in_ready == m_in_ready);
             P2_out_valid_matches_model: assert (out_valid == m_valid);
-            P2_h_out_valid_q:           assert (h_out_valid_q == m_valid);
 
             // P2: at most one accepted result is outstanding (a second one
             // would have overwritten the first), it is the one presented, and
@@ -438,6 +464,14 @@ module orbit_demo_fv (
             end
         end
     end
+
+`ifndef FV_NO_HELPERS
+    always @* begin
+        if (f_past_valid) begin
+            P2_h_out_valid_q: assert (h_out_valid_q == m_valid);
+        end
+    end
+`endif
 
     // P3: a presented, unconsumed result stays presented and unchanged.
     always @(posedge clk) begin
@@ -463,14 +497,6 @@ module orbit_demo_fv (
             if (out_valid) begin \
                 P1_out_valid_data_lane``L: assert (out_data[32*L +: 32] == m_buf[32*L +: 32]); \
             end \
-            /* Helpers: DUT storage equals the model. */ \
-            P1_h_acc_a_lane``L: assert (h_acc_a[32*L +: 32] == m_acc[32*L +: 32]); \
-            P1_h_res_a_lane``L: assert (h_res_a[32*L +: 32] == m_buf[32*L +: 32]); \
-            /* P8 helper: no beat since reset / clear_fault -> sums are 0. */ \
-            if (m_fresh) begin \
-                P8_h_fresh_acc_a_lane``L: assert (h_acc_a[32*L +: 32] == 32'd0); \
-                P8_h_fresh_acc_b_lane``L: assert (h_acc_b[32*L +: 32] == 32'd0); \
-            end \
         end \
     end \
     always @(posedge clk) begin \
@@ -492,6 +518,27 @@ module orbit_demo_fv (
     `FV_DP_LANE(3)
 `undef FV_DP_LANE
 
+`ifndef FV_NO_HELPERS
+`define FV_DP_LANE_HELPERS(L) \
+    always @* begin \
+        if (f_past_valid) begin \
+            /* DUT storage equals the model. */ \
+            P1_h_acc_a_lane``L: assert (h_acc_a[32*L +: 32] == m_acc[32*L +: 32]); \
+            P1_h_res_a_lane``L: assert (h_res_a[32*L +: 32] == m_buf[32*L +: 32]); \
+            /* No beat since reset / clear_fault -> both sums are 0. */ \
+            if (m_fresh) begin \
+                P8_h_fresh_acc_a_lane``L: assert (h_acc_a[32*L +: 32] == 32'd0); \
+                P8_h_fresh_acc_b_lane``L: assert (h_acc_b[32*L +: 32] == 32'd0); \
+            end \
+        end \
+    end
+    `FV_DP_LANE_HELPERS(0)
+    `FV_DP_LANE_HELPERS(1)
+    `FV_DP_LANE_HELPERS(2)
+    `FV_DP_LANE_HELPERS(3)
+`undef FV_DP_LANE_HELPERS
+`endif
+
     always @(posedge clk) begin
         if (f_past_valid && $past(rst_n) && $past(clear_fault)) begin
             // P8: after clear_fault, fault = 0 and out_valid = 0.
@@ -501,6 +548,42 @@ module orbit_demo_fv (
         if (f_past_valid && f_fresh_chk) begin
             P8_fresh_result_valid: assert (out_valid);
         end
+    end
+`endif
+
+    // ------------------------------------------------------------------
+    // P2 liveness: every accepted result is eventually delivered
+    // ------------------------------------------------------------------
+`ifdef FV_LIVE
+    // One accepted in_last result, chosen by the solver through the free
+    // f_pick, is watched until it is delivered (out_fire) or discarded by
+    // clear_fault / reset (SPEC section 5). Under a consumer that raises
+    // out_ready infinitely often the watch must always end. Together with the
+    // safety part of P2 (at most one outstanding result, every out_fire
+    // delivers it) this gives "exactly one out_fire per accepted in_last".
+    (* anyseq *) wire f_pick;
+    reg f_watch;
+    always @(posedge clk) begin
+        if (!rst_n || clear_fault)
+            f_watch <= 1'b0;
+        else if (f_watch && out_fire)
+            f_watch <= 1'b0;
+        else if (!f_watch && in_fire && in_last && f_pick)
+            f_watch <= 1'b1;
+    end
+
+    P2_live_fair_consumer: assume property (s_eventually out_ready);
+    P2_live_delivered:     assert property (s_eventually !f_watch);
+`endif
+
+    // ------------------------------------------------------------------
+    // P1 lemma: the model's product formula is the true signed product
+    // ------------------------------------------------------------------
+`ifdef FV_PRODUCT
+    // in_a / in_b are free in every cycle, so this covers all 2^16 pairs.
+    // The four lanes use the same function, so one lane is enough.
+    always @* begin
+        P1_product_formula: assert (spec_prod(in_a[7:0], in_b[7:0]) == spec_prod_mag(in_a[7:0], in_b[7:0]));
     end
 `endif
 
@@ -518,9 +601,9 @@ module orbit_demo_fv (
             C05_stop_by_invalid:     cover (therm_state == S_STOP && $past(therm_state) != S_STOP &&
                                             $past(rst_n) && !$past(temp_valid));
             C06_recover_from_stop:   cover (therm_state == S_NORMAL && $past(therm_state) == S_STOP &&
-                                            $past(rst_n) && f_past_valid);
+                                            $past(rst_n));
             C07_recover_from_throttle: cover (therm_state == S_NORMAL && $past(therm_state) == S_THROTTLE);
-            C08_clear_then_result:   cover (out_fire && f_fresh_chk && f_fresh_clr);
+            C08_clear_then_result:   cover (out_fire && f_fresh_chk && f_fresh_clr && out_data[31:0] != 32'd0);
             C09_throttle_blocks:     cover (therm_state == S_THROTTLE && in_valid && !in_ready &&
                                             !clear_fault && !out_valid);
             C10_backpressure_then_fire: cover (out_fire && $past(out_valid && !out_ready) &&

@@ -1,0 +1,147 @@
+SBY 19:49:45 [datapath_pdr] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_datapath_pdr'.
+SBY 19:49:45 [datapath_pdr] engine_0: abc pdr
+SBY 19:49:45 [datapath_pdr] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_datapath_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 19:49:45 [datapath_pdr] base: finished (returncode=0)
+SBY 19:49:45 [datapath_pdr] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_datapath_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY 19:49:45 [datapath_pdr] prep: finished (returncode=0)
+SBY 19:49:45 [datapath_pdr] aig: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_datapath_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY 19:49:47 [datapath_pdr] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
+SBY 19:49:47 [datapath_pdr] aig: finished (returncode=0)
+SBY 19:49:47 [datapath_pdr] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_datapath_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY 19:49:47 [datapath_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY 19:49:47 [datapath_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY 19:49:47 [datapath_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 719. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY 19:49:48 [datapath_pdr] engine_0: Timing out on output  0 in frame 2 (retrying in next anytime pass).
+SBY 19:49:48 [datapath_pdr] engine_0: Timing out on output  1 in frame 2 (retrying in next anytime pass).
+SBY 19:49:48 [datapath_pdr] engine_0: Timing out on output  2 in frame 2 (retrying in next anytime pass).
+SBY 19:49:48 [datapath_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
+SBY 19:49:48 [datapath_pdr] engine_0: Timing out on output  4 in frame 2 (retrying in next anytime pass).
+SBY 19:49:48 [datapath_pdr] engine_0: Timing out on output  5 in frame 2 (retrying in next anytime pass).
+SBY 19:49:48 [datapath_pdr] engine_0: Timing out on output  6 in frame 2 (retrying in next anytime pass).
+SBY 19:49:49 [datapath_pdr] engine_0: Timing out on output  7 in frame 2 (retrying in next anytime pass).
+SBY 19:49:50 [datapath_pdr] engine_0: Timing out on output 26 in frame 2 (retrying in next anytime pass).
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 8 in frame 2.
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 9 in frame 2.
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 10 in frame 2.
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 11 in frame 2.
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 12 in frame 2.
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 13 in frame 2.
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 23 in frame 2.
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 24 in frame 2.
+SBY 19:49:50 [datapath_pdr] engine_0: Proved output 25 in frame 2.
+SBY 19:49:51 [datapath_pdr] engine_0: Proved output 14 in frame 3.
+SBY 19:49:51 [datapath_pdr] engine_0: Proved output 15 in frame 3.
+SBY 19:49:51 [datapath_pdr] engine_0: Proved output 17 in frame 3.
+SBY 19:49:51 [datapath_pdr] engine_0: Timing out on output 27 in frame 4 (retrying in next anytime pass).
+SBY 19:49:51 [datapath_pdr] engine_0: Timing out on output 28 in frame 4 (retrying in next anytime pass).
+SBY 19:49:52 [datapath_pdr] engine_0: Timing out on output 29 in frame 4 (retrying in next anytime pass).
+SBY 19:49:52 [datapath_pdr] engine_0: Timing out on output 30 in frame 4 (retrying in next anytime pass).
+SBY 19:49:52 [datapath_pdr] engine_0: Proved output 16 in frame 4.
+SBY 19:49:52 [datapath_pdr] engine_0: Proved output 18 in frame 4.
+SBY 19:49:52 [datapath_pdr] engine_0: Proved output 19 in frame 4.
+SBY 19:49:52 [datapath_pdr] engine_0: Proved output 20 in frame 4.
+SBY 19:49:52 [datapath_pdr] engine_0: Proved output 21 in frame 4.
+SBY 19:49:52 [datapath_pdr] engine_0: Proved output 22 in frame 4.
+SBY 19:49:53 [datapath_pdr] engine_0: Timing out on output  0 in frame 2 (retrying in next anytime pass).
+SBY 19:49:53 [datapath_pdr] engine_0: Timing out on output  1 in frame 2 (retrying in next anytime pass).
+SBY 19:49:53 [datapath_pdr] engine_0: Timing out on output  2 in frame 2 (retrying in next anytime pass).
+SBY 19:49:54 [datapath_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
+SBY 19:49:54 [datapath_pdr] engine_0: Timing out on output  4 in frame 2 (retrying in next anytime pass).
+SBY 19:49:54 [datapath_pdr] engine_0: Timing out on output  5 in frame 2 (retrying in next anytime pass).
+SBY 19:49:54 [datapath_pdr] engine_0: Timing out on output  6 in frame 2 (retrying in next anytime pass).
+SBY 19:49:54 [datapath_pdr] engine_0: Timing out on output  7 in frame 2 (retrying in next anytime pass).
+SBY 19:49:56 [datapath_pdr] engine_0: Timing out on output 26 in frame 4 (retrying in next anytime pass).
+SBY 19:49:56 [datapath_pdr] engine_0: Timing out on output 27 in frame 4 (retrying in next anytime pass).
+SBY 19:49:56 [datapath_pdr] engine_0: Timing out on output 28 in frame 4 (retrying in next anytime pass).
+SBY 19:49:56 [datapath_pdr] engine_0: Timing out on output 29 in frame 4 (retrying in next anytime pass).
+SBY 19:49:57 [datapath_pdr] engine_0: Timing out on output 30 in frame 4 (retrying in next anytime pass).
+SBY 19:49:57 [datapath_pdr] engine_0: All outputs solved or timed out in frame 5.
+SBY 19:49:59 [datapath_pdr] engine_0: Timing out on output  0 in frame 2 (retrying in next anytime pass).
+SBY 19:49:59 [datapath_pdr] engine_0: Timing out on output  1 in frame 2 (retrying in next anytime pass).
+SBY 19:49:59 [datapath_pdr] engine_0: Timing out on output  2 in frame 2 (retrying in next anytime pass).
+SBY 19:50:00 [datapath_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
+SBY 19:50:00 [datapath_pdr] engine_0: Timing out on output  5 in frame 2 (retrying in next anytime pass).
+SBY 19:50:01 [datapath_pdr] engine_0: Timing out on output  6 in frame 2 (retrying in next anytime pass).
+SBY 19:50:01 [datapath_pdr] engine_0: Timing out on output  7 in frame 2 (retrying in next anytime pass).
+SBY 19:50:03 [datapath_pdr] engine_0: Timing out on output  4 in frame 3 (retrying in next anytime pass).
+SBY 19:50:04 [datapath_pdr] engine_0: Timing out on output 26 in frame 4 (retrying in next anytime pass).
+SBY 19:50:05 [datapath_pdr] engine_0: Timing out on output 29 in frame 4 (retrying in next anytime pass).
+SBY 19:50:06 [datapath_pdr] engine_0: Timing out on output 30 in frame 4 (retrying in next anytime pass).
+SBY 19:50:06 [datapath_pdr] engine_0: Proved output 27 in frame 4.
+SBY 19:50:06 [datapath_pdr] engine_0: Proved output 28 in frame 4.
+SBY 19:50:12 [datapath_pdr] engine_0: Timing out on output  0 in frame 3 (retrying in next anytime pass).
+SBY 19:50:13 [datapath_pdr] engine_0: Timing out on output  1 in frame 3 (retrying in next anytime pass).
+SBY 19:50:13 [datapath_pdr] engine_0: Timing out on output  2 in frame 3 (retrying in next anytime pass).
+SBY 19:50:13 [datapath_pdr] engine_0: Timing out on output  3 in frame 3 (retrying in next anytime pass).
+SBY 19:50:14 [datapath_pdr] engine_0: Timing out on output  4 in frame 3 (retrying in next anytime pass).
+SBY 19:50:15 [datapath_pdr] engine_0: Timing out on output  5 in frame 3 (retrying in next anytime pass).
+SBY 19:50:16 [datapath_pdr] engine_0: Timing out on output  6 in frame 3 (retrying in next anytime pass).
+SBY 19:50:16 [datapath_pdr] engine_0: Timing out on output  7 in frame 3 (retrying in next anytime pass).
+SBY 19:50:19 [datapath_pdr] engine_0: Timing out on output 26 in frame 4 (retrying in next anytime pass).
+SBY 19:50:20 [datapath_pdr] engine_0: Proved output 29 in frame 4.
+SBY 19:50:21 [datapath_pdr] engine_0: Proved output 30 in frame 31 (converged).
+SBY 19:50:26 [datapath_pdr] engine_0: Timing out on output  0 in frame 3 (retrying in next anytime pass).
+SBY 19:50:28 [datapath_pdr] engine_0: Timing out on output  1 in frame 3 (retrying in next anytime pass).
+SBY 19:50:29 [datapath_pdr] engine_0: Timing out on output  2 in frame 3 (retrying in next anytime pass).
+SBY 19:50:31 [datapath_pdr] engine_0: Timing out on output  3 in frame 3 (retrying in next anytime pass).
+SBY 19:50:33 [datapath_pdr] engine_0: Timing out on output  4 in frame 3 (retrying in next anytime pass).
+SBY 19:50:34 [datapath_pdr] engine_0: Timing out on output  5 in frame 3 (retrying in next anytime pass).
+SBY 19:50:36 [datapath_pdr] engine_0: Timing out on output  6 in frame 3 (retrying in next anytime pass).
+SBY 19:50:37 [datapath_pdr] engine_0: Timing out on output  7 in frame 3 (retrying in next anytime pass).
+SBY 19:50:42 [datapath_pdr] engine_0: Proved output 26 in frame 4.
+SBY 19:50:45 [datapath_pdr] engine_0: All outputs solved or timed out in frame 6.
+SBY 19:50:53 [datapath_pdr] engine_0: Timing out on output  0 in frame 3 (retrying in next anytime pass).
+SBY 19:50:56 [datapath_pdr] engine_0: Timing out on output  1 in frame 3 (retrying in next anytime pass).
+SBY 19:51:00 [datapath_pdr] engine_0: Timing out on output  2 in frame 3 (retrying in next anytime pass).
+SBY 19:51:03 [datapath_pdr] engine_0: Timing out on output  3 in frame 3 (retrying in next anytime pass).
+SBY 19:51:08 [datapath_pdr] engine_0: Timing out on output  5 in frame 3 (retrying in next anytime pass).
+SBY 19:51:19 [datapath_pdr] engine_0: Timing out on output  4 in frame 4 (retrying in next anytime pass).
+SBY 19:51:29 [datapath_pdr] engine_0: Timing out on output  6 in frame 5 (retrying in next anytime pass).
+SBY 19:51:35 [datapath_pdr] engine_0: Timing out on output  7 in frame 6 (retrying in next anytime pass).
+SBY 19:51:38 [datapath_pdr] engine_0: All outputs solved or timed out in frame 7.
+SBY 19:52:07 [datapath_pdr] engine_0: Timing out on output  0 in frame 6 (retrying in next anytime pass).
+SBY 19:52:11 [datapath_pdr] engine_0: Timing out on output  1 in frame 6 (retrying in next anytime pass).
+SBY 19:52:22 [datapath_pdr] engine_0: Timing out on output  3 in frame 6 (retrying in next anytime pass).
+SBY 19:53:02 [datapath_pdr] engine_0: Timing out on output  2 in frame 9 (retrying in next anytime pass).
+SBY 19:53:42 [datapath_pdr] engine_0: Timing out on output  6 in frame 12 (retrying in next anytime pass).
+SBY 19:53:51 [datapath_pdr] engine_0: Timing out on output  7 in frame 13 (retrying in next anytime pass).
+SBY 19:53:59 [datapath_pdr] engine_0: Timing out on output  5 in frame 14 (retrying in next anytime pass).
+SBY 19:54:07 [datapath_pdr] engine_0: Timing out on output  4 in frame 15 (retrying in next anytime pass).
+SBY 19:54:13 [datapath_pdr] engine_0: All outputs solved or timed out in frame 16.
+SBY 19:57:37 [datapath_pdr] engine_0: Timing out on output  2 in frame 25 (retrying in next anytime pass).
+SBY 19:57:38 [datapath_pdr] engine_0: Timing out on output  3 in frame 25 (retrying in next anytime pass).
+SBY 19:58:59 [datapath_pdr] engine_0: Timing out on output  0 in frame 31 (retrying in next anytime pass).
+SBY 19:59:28 [datapath_pdr] engine_0: Timing out on output  1 in frame 33 (retrying in next anytime pass).
+SBY 19:59:56 [datapath_pdr] engine_0: Timing out on output  7 in frame 35 (retrying in next anytime pass).
+SBY 20:01:37 [datapath_pdr] engine_0: Timing out on output  4 in frame 43 (retrying in next anytime pass).
+SBY 20:01:38 [datapath_pdr] engine_0: Timing out on output  6 in frame 43 (retrying in next anytime pass).
+SBY 20:01:39 [datapath_pdr] engine_0: Proved output 1 in frame 43.
+SBY 20:01:39 [datapath_pdr] engine_0: Proved output 5 in frame 43.
+SBY 20:01:57 [datapath_pdr] engine_0: All outputs solved or timed out in frame 45.
+SBY 20:04:30 [datapath_pdr] engine_0: Proved output 3 in frame 43.
+SBY 20:04:30 [datapath_pdr] engine_0: Proved output 7 in frame 43.
+SBY 20:05:06 [datapath_pdr] engine_0: Proved output 2 in frame 50.
+SBY 20:05:06 [datapath_pdr] engine_0: Proved output 6 in frame 50.
+SBY 20:05:15 [datapath_pdr] engine_0: Proved output 0 in frame 52.
+SBY 20:05:15 [datapath_pdr] engine_0: Proved output 4 in frame 52.
+SBY 20:05:23 [datapath_pdr] engine_0: All outputs solved or timed out in frame 54.
+SBY 20:05:23 [datapath_pdr] engine_0: Block = 6200  Oblig = 19144  Clause = 12227  Call =575696 (sat=83.5%)  Cex =   0  Start =1824
+SBY 20:05:23 [datapath_pdr] engine_0: SAT solving =   704.85 sec ( 75.28 %)
+SBY 20:05:23 [datapath_pdr] engine_0: unsat     =   159.13 sec ( 17.00 %)
+SBY 20:05:23 [datapath_pdr] engine_0: sat       =   545.72 sec ( 58.28 %)
+SBY 20:05:23 [datapath_pdr] engine_0: Generalize  =   179.45 sec ( 19.17 %)
+SBY 20:05:23 [datapath_pdr] engine_0: Push clause =   549.70 sec ( 58.71 %)
+SBY 20:05:23 [datapath_pdr] engine_0: Ternary sim =    20.62 sec (  2.20 %)
+SBY 20:05:23 [datapath_pdr] engine_0: Containment =     9.45 sec (  1.01 %)
+SBY 20:05:23 [datapath_pdr] engine_0: CNF compute =    12.58 sec (  1.34 %)
+SBY 20:05:23 [datapath_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY 20:05:23 [datapath_pdr] engine_0: TOTAL       =   936.30 sec (100.00 %)
+SBY 20:05:23 [datapath_pdr] engine_0: Property proved.  Time =   936.38 sec
+SBY 20:05:23 [datapath_pdr] engine_0: Counter-example is not available.
+SBY 20:05:23 [datapath_pdr] engine_0: finished (returncode=0)
+SBY 20:05:23 [datapath_pdr] engine_0: Status returned by engine: PASS
+SBY 20:05:23 [datapath_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:15:38 (938)
+SBY 20:05:23 [datapath_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:15:06 (906)
+SBY 20:05:23 [datapath_pdr] summary: engine_0 (abc pdr) returned PASS
+SBY 20:05:23 [datapath_pdr] summary: engine_0 did not produce any traces
+SBY 20:05:23 [datapath_pdr] DONE (PASS, rc=0)
