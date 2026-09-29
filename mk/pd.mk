@@ -27,7 +27,8 @@
 # the production RTL (RTL_DIR=rtl), so a run against a modified RTL copy never
 # overwrites the evidence.
 #
-# Not in TEST_TARGETS: one ORFS run takes about 6 minutes with PD_CORES=2.
+# Not in TEST_TARGETS: one ORFS run takes 7-13 minutes with PD_CORES=2 (more
+# with DRC/LVS), and `make pd` needs Docker.
 
 PD_IMAGE         ?= openroad/orfs:latest
 PD_PLATFORM      ?= sky130hd
