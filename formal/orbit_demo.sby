@@ -1,0 +1,70 @@
+# SymbiYosys jobs for the fault-free orbit_demo (see formal/orbit_demo_fv.sv).
+#
+# This is a template: mk/formal.mk substitutes the RTL file names for the
+# RTL_FILES placeholder in [script] and appends the [files] entries (the RTL from $(RTL_DIR) and the
+# harness), then runs one task per make target, so failures stay isolated.
+#
+# Tasks
+#   thermal      P5, P6           prove, k-induction, smtbmc yices
+#   dup          P7               prove, k-induction, smtbmc yices
+#   handshake    P2, P3, P4 (+P5..P7 as helpers)       prove, smtbmc yices
+#   datapath     P1, P8 (+P7 as helper)                prove, smtbmc yices
+#   thermal_pdr  P5, P6           prove, abc pdr (independent engine cross-check)
+#   dup_pdr      P7               prove, abc pdr
+#   cover        covers from reset                     cover, smtbmc yices
+#   wrap         INT32 wraparound covers from a consistent arbitrary state,
+#                with every assertion group checked along the traces
+#
+# The prove depths are the k of k-induction and also the base-case BMC depth.
+# They are chosen larger than strictly needed for induction so that the base
+# case alone catches the short counterexamples used by `make formal-vacuity`.
+
+# Task tags: prv = prove with smtbmc, pdr = prove with abc pdr, cov = cover,
+# g_thermal / g_dup = property group shared by the smtbmc and pdr tasks.
+[tasks]
+thermal     prv g_thermal
+dup         prv g_dup
+handshake   prv
+datapath    prv
+thermal_pdr pdr g_thermal
+dup_pdr     pdr g_dup
+cover       cov
+wrap        cov
+
+[options]
+prv: mode prove
+pdr: mode prove
+cov: mode cover
+thermal: depth 8
+dup: depth 6
+handshake: depth 8
+datapath: depth 6
+cover: depth 24
+wrap: depth 8
+wrap: cover_assert on
+
+[engines]
+prv: smtbmc yices
+cov: smtbmc yices
+pdr: abc pdr
+
+[script]
+read_verilog -formal @RTL_FILES@
+g_thermal: read_verilog -formal -sv -DFV_THERMAL orbit_demo_fv.sv
+g_dup: read_verilog -formal -sv -DFV_DUP orbit_demo_fv.sv
+handshake: read_verilog -formal -sv -DFV_HANDSHAKE -DFV_THERMAL -DFV_DUP orbit_demo_fv.sv
+datapath: read_verilog -formal -sv -DFV_DATAPATH -DFV_DUP orbit_demo_fv.sv
+cover: read_verilog -formal -sv -DFV_COVER orbit_demo_fv.sv
+wrap: read_verilog -formal -sv -DFV_FREE_START -DFV_WRAP -DFV_DATAPATH -DFV_HANDSHAKE -DFV_THERMAL -DFV_DUP orbit_demo_fv.sv
+# Hierarchical references: flatten must run right after proc (no opt before
+# it) and the keep_hierarchy attribute of orbit_keep_reg must be removed so
+# that the (* hierconn *) wires of the harness get connected.
+hierarchy -top orbit_demo_fv
+proc
+setattr -mod -unset keep_hierarchy
+flatten
+# Fail if any harness wire (e.g. a mistyped hierconn path) is left undriven.
+check -assert
+prep -top orbit_demo_fv
+
+[files]
