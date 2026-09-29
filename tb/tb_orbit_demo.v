@@ -5,7 +5,7 @@
 // gate-level netlist whose top module is orbit_demo with the same ports
 // (make sim-gls SIM_GLS_SRCS="<netlist> <cell models>").
 //
-// Three independent layers of checking:
+// Three layers of checking:
 //   1. A cycle-accurate reference model written from docs/SPEC.md sections 3, 4
 //      and 6 predicts in_ready, out_valid, out_data, therm_state, shutdown_req,
 //      fault (always 0 here) and therm_repair (always 0 here) in every cycle.
@@ -99,6 +99,7 @@ module tb_orbit_demo;
             rnd32 = prng;
         end
     endfunction
+
     reg [8*24-1:0] scen;              // current scenario name
     integer n_cycles, n_model_checks, n_model_err;
     integer n_scen_checks, n_scen_err, n_errors;
@@ -634,7 +635,6 @@ module tb_orbit_demo;
         tick;
         held = s_out_data;
         for (k = 0; k < 50; k = k + 1) begin
-            // out_ready glitches low-high are not allowed here; keep it low
             tick;
             if (!(s_out_valid === 1'b1 && s_out_data === held && s_in_ready === 1'b0 && s_in_fire === 1'b0))
                 good = 1'b0;

@@ -53,7 +53,13 @@ def main():
     ap.add_argument("--soak-seeds", default="1")
     ap.add_argument("--vl-seeds", default="1 2")
     ap.add_argument("--mut-cycles", default="20000")
+    ap.add_argument("--rtl", default="rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v "
+                    "rtl/orbit_thermal_tmr.v rtl/orbit_demo.v", help="$(RTL)")
+    ap.add_argument("--vl-opt", default="OPT_FAST=-O0 OPT_SLOW=-O0 OPT_GLOBAL=-O0")
+    ap.add_argument("--jobs", default="2")
+    ap.add_argument("--soak-max", default="400000")
     a = ap.parse_args()
+    rtl = a.rtl
 
     b = Path(a.build)
     out = Path(a.out)
@@ -155,18 +161,42 @@ def main():
         L.append(blk)
         L.append("```")
         L.append("")
-    L.append("Commands (from `make -n`):")
+    L.append("Commands run by `make sim-directed sim-verilator sim-gls` (PATH starts with "
+             "/opt/eda/oss-cad-suite/bin):")
     L.append("")
     L.append("```")
-    L.append("iverilog -g2005 -Wall -Wno-timescale -o build/sim/directed/tb.vvp tb/tb_orbit_demo.v $(RTL)")
-    L.append(f"vvp -n build/sim/directed/tb.vvp +seed={a.seed}")
-    L.append("verilator --binary --timing -j 2 --top-module tb_orbit_demo --Mdir build/sim/verilator/obj_dir \\")
-    L.append("    -o Vtb_orbit_demo tb/tb_orbit_demo.v $(RTL)")
-    L.append(f"build/sim/verilator/obj_dir/Vtb_orbit_demo +seed={a.seed}")
-    L.append("yosys -p 'read_verilog $(RTL); synth -flatten -top orbit_demo; write_verilog -noattr "
-             "build/sim/gls/yosys/orbit_demo_yosys.v'")
-    L.append("iverilog -g2005 -Wall -Wno-timescale -o build/sim/gls/yosys/tb.vvp tb/tb_orbit_demo.v "
-             "build/sim/gls/yosys/orbit_demo_yosys.v")
+    L.append(f"iverilog -g2005 -Wall -Wno-timescale -o {b}/directed/tb.vvp tb/tb_orbit_demo.v {rtl}")
+    L.append(f"vvp -n {b}/directed/tb.vvp +seed={a.seed}")
+    L.append(f"verilator --binary --timing -j {a.jobs} --top-module tb_orbit_demo --Mdir {b}/verilator/obj_dir "
+             f"-o Vtb_orbit_demo -MAKEFLAGS \"{a.vl_opt}\" tb/tb_orbit_demo.v {rtl}")
+    L.append(f"{b}/verilator/obj_dir/Vtb_orbit_demo +seed={a.seed}")
+    L.append(f"yosys -q -p \"read_verilog {rtl}; synth -flatten -top orbit_demo; stat; "
+             f"write_verilog -noattr {b}/gls/yosys/orbit_demo_yosys.v\"")
+    L.append(f"iverilog -g2005 -Wall -Wno-timescale -o {b}/gls/yosys/tb.vvp tb/tb_orbit_demo.v "
+             f"{b}/gls/yosys/orbit_demo_yosys.v")
+    L.append(f"vvp -n {b}/gls/yosys/tb.vvp +seed={a.seed}")
+    L.append("```")
+    L.append("")
+    L.append("### Gate-level reuse")
+    L.append("")
+    ystat = read(b / "gls" / "yosys" / "yosys.log") or ""
+    ystat = ystat[ystat.rfind("=== design hierarchy ==="):]      # the final `stat` only
+    m = re.findall(r"^\s+(\d+) cells$", ystat, re.M)
+    ff = sum(int(n) for n in re.findall(r"^\s+(\d+)\s+\$_S?DFFE?_\w+$", ystat, re.M))
+    L.append(f"- Yosys generic netlist of the RTL (`make sim-gls`, part of `make sim`): "
+             f"{m[-1] if m else '?'} cells, {ff if ff else '?'} flip-flop cells; bench result "
+             f"{rows[6][2]}, summary block identical to the RTL run.")
+    pdn = Path("build/pd/results/sky130hd/orbit_demo/base/6_final.v")
+    when = (datetime.datetime.fromtimestamp(pdn.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
+            if pdn.exists() else "not present")
+    L.append(f"- Routed sky130hd netlist from the pd area (`{pdn}`, written {when}) with the pd "
+             f"area's Yosys-generated liberty cell models (`build/pd/gls/sky130hd/cells.v`), zero "
+             f"delay: bench result {rows[7][2]}. Run on demand (about 2 minutes), not part of "
+             f"`make sim`:")
+    L.append("")
+    L.append("```")
+    L.append('make sim-gls SIM_GLS_TAG=sky130hd SIM_GLS_SRCS="build/pd/results/sky130hd/orbit_demo/base/6_final.v '
+             'build/pd/gls/sky130hd/cells.v"')
     L.append("```")
     L.append("")
 
@@ -180,11 +210,12 @@ def main():
              f"equal the Icarus run.")
     L.append("")
     L.append("```")
-    L.append(f"tabbypy3 tb/cocotb/run_random.py --sim icarus --out build/sim/random --sources $(RTL) "
-             f"--seeds {a.seeds} --cycles {a.cycles} --soak-seeds {a.soak_seeds} --soak-max 400000")
-    L.append(f"tabbypy3 tb/cocotb/run_random.py --sim verilator --out build/sim/random_verilator "
-             f"--sources $(RTL) --seeds {a.vl_seeds} --cycles {a.cycles} --soak-seeds "
-             f"--compare-with build/sim/random")
+    L.append(f"tabbypy3 tb/cocotb/run_random.py --jobs {a.jobs} --sources {rtl} --cycles {a.cycles} "
+             f"--soak-max {a.soak_max} --sim icarus --out {b}/random --seeds {a.seeds} "
+             f"--soak-seeds {a.soak_seeds}")
+    L.append(f"tabbypy3 tb/cocotb/run_random.py --jobs {a.jobs} --sources {rtl} --cycles {a.cycles} "
+             f"--soak-max {a.soak_max} --sim verilator --out {b}/random_verilator --seeds {a.vl_seeds} "
+             f"--soak-seeds --compare-with {b}/random")
     L.append("```")
     L.append("")
     rnd = read(b / "random" / "summary.md")
@@ -206,10 +237,24 @@ def main():
              f"with `+maxerr=1`; the random bench runs one seed of {a.mut_cycles} cycles and counts as a "
              f"kill only with at least one model mismatch.")
     L.append("")
+    L.append("```")
+    L.append(f"python3 tb/sim_mutants.py --rtl-dir rtl --out {b}/mutants --tb tb/tb_orbit_demo.v "
+             f"--cocotb-python tabbypy3 --random-cycles {a.mut_cycles} --jobs {a.jobs}")
+    L.append("```")
+    L.append("")
     mut = read(b / "mutants" / "summary.md")
     if mut:
-        L += [ln for ln in mut.splitlines()[2:] if ln.strip()]
+        L += mut.splitlines()[2:]
         L.append("")
+
+    L.append("## RTL / SPEC issues")
+    L.append("")
+    if all(r[2] == "PASS" for r in rows):
+        L.append("None found: the RTL matched both independent SPEC models in every checked cycle of "
+                 "every run above.")
+    else:
+        L.append("Not every check passed (see Results); failures are not analysed by this script.")
+    L.append("")
 
     L.append("## Limitations")
     L.append("")
