@@ -23,7 +23,7 @@
 //        select exactly one of them with -DFI_CHK_FIRE / -DFI_CHK_LOSS)
 //   L_*  duplicated lane storage: detection and fault-stop (FI_CLASS_LANE)
 //   T_*  thermal copy: masking and repair (FI_CLASS_THERM)
-//   H_*  helper invariants that make k-induction close (off with FI_NO_HELPERS)
+//   H_*  helper invariants that make k-induction close (proven, not assumed)
 //   C_*  covers (FI_COVER_TASK; the assertions are then not compiled)
 //
 // Internal signals are read through Yosys `hierconn` wires, as in
@@ -328,7 +328,6 @@ module fi_harness (
         end
     end
 
-`ifndef FI_NO_HELPERS
     always @* begin
         if (f_past_valid) begin
             // The reference is fault free (SPEC section 5; formal area P7).
@@ -344,7 +343,6 @@ module fi_harness (
             end
         end
     end
-`endif
 `endif
 `endif
 
@@ -386,7 +384,6 @@ module fi_harness (
         end
     end
 
-`ifndef FI_NO_HELPERS
     always @* begin
         if (f_past_valid) begin
             H_ref_copies_equal: assert (s_r[127:0] == s_r[255:128] && s_r[383:256] == s_r[511:384] &&
@@ -396,7 +393,6 @@ module fi_harness (
             end
         end
     end
-`endif
 `endif
 `endif
 
