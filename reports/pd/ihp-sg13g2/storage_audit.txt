@@ -32,5 +32,6 @@ Checks:
   PASS  distinct Q nets: 521 distinct Q nets for 521 flip-flops
   PASS  every Q net has a load: 0 unloaded
   PASS  clock pins connected: 0 flip-flops with tied/missing clock; 66 distinct clock-leaf nets
+  PASS  clock pins on the clock tree: 0 flip-flops whose clock net does not trace back to port 'clk' through buffers/inverters
 
-RESULT: PASS (18/18 checks passed)
+RESULT: PASS (19/19 checks passed)
