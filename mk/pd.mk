@@ -4,13 +4,17 @@
 #   make pd          full ORFS run of $(RTL) at the committed clock period
 #                    (pd/<platform>/constraint.sdc): synthesis .. detailed route,
 #                    final report, GDS, KLayout DRC and LVS; then pd-report,
-#                    pd-gls and pd-negctl. Exits non-zero if any check fails.
+#                    pd-gls, pd-gls-mutant and pd-negctl. Exits non-zero if any
+#                    check fails.
 #   make pd-report   re-extract and re-check the reports of an existing run
 #                    (timing, DRC, LVS, LEC, antenna, storage audit of the
 #                    routed netlist, layout images, compressed GDS, and the
 #                    measured physical separation of the redundant copies).
 #   make pd-gls      post-route gate-level simulation: routed netlist vs RTL in
 #                    lockstep, with a flip injected into every redundant bit.
+#   make pd-gls-mutant  sanity check of the GLS harness: one AND2 cell of the
+#                    routed netlist becomes an OR2; the lockstep compare must
+#                    report a MISMATCH (otherwise the GLS PASS is vacuous).
 #   make pd-negctl   controls: without the RTL attribute, SYNTH_KEEP_MODULES
 #                    alone must keep every copy (audit PASS); without both the
 #                    thermal copies merge and the storage audit must FAIL.
@@ -39,11 +43,14 @@ PD_TIMEOUT       ?= 3600
 PD_PERIOD        ?=
 PD_VARIANT       ?= base
 PD_FLOW_TARGETS  ?= all drc lvs
-# A NOT_RUN result counts as a failure for these checks in pd-report.
-PD_REQUIRE       ?= drc,lvs
+# A NOT_RUN result counts as a failure for these checks in pd-report
+# (substring of the check name: KLayout DRC, KLayout LVS, the two kepler-formal
+# LEC checks). pd-ihp overrides this (no LVS and a vacuous LEC there).
+PD_REQUIRE       ?= drc,lvs,lec
 PD_SWEEP_PERIODS ?= 20 10 8 7 6.5 6
 PD_GLS_CYCLES    ?= 30000
 PD_GLS_SEED      ?= 1
+PD_GLS_MUT_CYCLES ?= 3000
 
 PD_WORK       := $(BUILD)/pd
 PD_SWEEP_WORK := $(PD_WORK)/sweep
@@ -76,6 +83,13 @@ PD_CORNER_ihp-sg13g2  := sg13g2_stdcell_typ_1p20V_25C.lib (typical, 25 C, 1.20 V
 PD_IMGW_ihp-sg13g2    := 800
 PD_PUBGDS_ihp-sg13g2  := no
 
+# GLS mutant (pd-gls-mutant): a cell type of the routed netlist and a
+# replacement with the same pins but a different function.
+PD_MUT_FROM_sky130hd  := sky130_fd_sc_hd__and2_1
+PD_MUT_TO_sky130hd    := sky130_fd_sc_hd__or2_1
+PD_MUT_FROM_ihp-sg13g2 := sg13g2_and2_1
+PD_MUT_TO_ihp-sg13g2  := sg13g2_or2_1
+
 # Extra sky130_fd_sc_hd corners for pd-corners (not shipped in the ORFS image).
 PD_CORNER_URL  ?= https://raw.githubusercontent.com/efabless/skywater-pdk-libs-sky130_fd_sc_hd/master/timing
 PD_XCORNERS    ?= ss_100C_1v60 ff_n40C_1v95
@@ -83,11 +97,12 @@ PD_XCORNERS    ?= ss_100C_1v60 ff_n40C_1v95
 PD_RUN = scripts/run_pd.sh --work $(PD_WORK) --platform $(PD_PLATFORM) \
          --cores $(PD_CORES) --timeout $(PD_TIMEOUT) --image $(PD_IMAGE)
 
-.PHONY: pd pd-flow pd-report pd-gls pd-negctl pd-sweep pd-corners pd-ihp pd-clean
+.PHONY: pd pd-flow pd-report pd-gls pd-gls-mutant pd-negctl pd-sweep pd-corners pd-ihp pd-clean
 
 pd: pd-flow
 	$(MAKE) --no-print-directory pd-report
 	$(MAKE) --no-print-directory pd-gls
+	$(MAKE) --no-print-directory pd-gls-mutant
 	$(MAKE) --no-print-directory pd-negctl
 	@echo "pd: all checks passed ($(PD_PLATFORM), $(PD_VARIANT))"
 
@@ -155,6 +170,26 @@ pd-gls: $(PD_PLAT_DIR)/cells.lib
 	    | tee $(PD_GLS_DIR)/gls.log
 	@if [ -n "$(PD_PUBLISH)" ]; then mkdir -p $(PD_PUB_DIR) && cp $(PD_GLS_DIR)/gls.log $(PD_PUB_DIR)/gls.log; fi
 	@grep -q "^GLS PASS" $(PD_GLS_DIR)/gls.log
+
+# Negative control for pd-gls: the same testbench on a one-cell mutant of the
+# routed netlist (first AND2 -> OR2) must report a lockstep MISMATCH. Only a
+# MISMATCH line counts: the short run also fails its coverage checks, which
+# must not be mistaken for detection. Uses the files prepared by pd-gls.
+pd-gls-mutant:
+	@test -f $(PD_GLS_DIR)/orbit_demo_gl.v -a -f $(PD_GLS_DIR)/cells.v || { echo "pd-gls-mutant: run make pd-gls first"; exit 1; }
+	@mkdir -p $(PD_GLS_DIR)/mutant
+	python3 pd/gls/mutate_netlist.py --netlist $(PD_GLS_DIR)/orbit_demo_gl.v --out $(PD_GLS_DIR)/mutant/orbit_demo_gl.v \
+	    --from $(PD_MUT_FROM_$(PD_PLATFORM)) --to $(PD_MUT_TO_$(PD_PLATFORM)) | tee $(PD_GLS_DIR)/mutant/gls_mutant.log
+	cp $(PD_GLS_DIR)/gl_inject.vh $(PD_GLS_DIR)/mutant/
+	iverilog -g2005 -o $(PD_GLS_DIR)/mutant/tb_gls.vvp -I $(PD_GLS_DIR)/mutant pd/gls/tb_gls.v $(RTL) \
+	    $(PD_GLS_DIR)/mutant/orbit_demo_gl.v $(PD_GLS_DIR)/cells.v
+	vvp -n $(PD_GLS_DIR)/mutant/tb_gls.vvp +cycles=$(PD_GLS_MUT_CYCLES) +seed=$(PD_GLS_SEED) \
+	    | grep -E "^(MISMATCH|GLS)" >> $(PD_GLS_DIR)/mutant/gls_mutant.log || true
+	@if grep -q "^MISMATCH" $(PD_GLS_DIR)/mutant/gls_mutant.log; then \
+	    echo "pd-gls-mutant: PASS (mutant detected: $$(grep -m1 '^MISMATCH' $(PD_GLS_DIR)/mutant/gls_mutant.log | cut -d: -f1))"; \
+	    echo "pd-gls-mutant: PASS" >> $(PD_GLS_DIR)/mutant/gls_mutant.log; \
+	    if [ -n "$(PD_PUBLISH)" ]; then mkdir -p $(PD_PUB_DIR) && head -8 $(PD_GLS_DIR)/mutant/gls_mutant.log > $(PD_PUB_DIR)/gls_mutant.log; fi; \
+	else echo "pd-gls-mutant: FAIL (the mutated netlist was not detected by the GLS compare)"; exit 1; fi
 
 # Controls for the keep mechanism and the storage audit. The RTL is copied
 # with the keep_hierarchy attribute line removed and ORFS synthesis is run

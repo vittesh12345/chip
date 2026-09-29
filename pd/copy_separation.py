@@ -58,6 +58,14 @@ def main():
         if m:
             copies[("thermal", int(m.group(2)))][m.group(1)] = xy
 
+    # Every bit must have all its copies (2 for acc/res, 3 thermal) placed;
+    # a missing copy would otherwise be measured as a smaller group, or crash.
+    incomplete = [f"{k[0]} bit {k[1]}: copies {sorted(cp)}" for k, cp in sorted(copies.items())
+                  if len(cp) != (3 if k[0] == "thermal" else 2)]
+    if incomplete:
+        print("copy_separation: bits with missing copies: " + "; ".join(incomplete[:8]), file=sys.stderr)
+        return 1
+
     dist = defaultdict(list)  # group kind -> [(d, key)]
     for key, cp in copies.items():
         pts = list(cp.values())

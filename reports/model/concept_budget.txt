@@ -1,0 +1,108 @@
+ORBIT-AI v0.1 concept budget (model/concept_budget.py)
+========================================================================
+Calculated bounds from the brief's stated assumptions. No measurement,
+benchmark, power estimate or thermal simulation is represented here.
+
+Assumptions
+------------------------------------------------------------------------
+  tiles x array               16 x 32 x 32 = 16384 INT8 MACs
+  ops per MAC                 2
+  clock range                 200 MHz - 800 MHz (no timing measurement)
+  local SRAM                  32 MiB usable, 2 MiB per tile, SECDED 64+8
+  external memory             16 GiB+ at 256 GB/s (decimal GB)
+  power allocation            40 W (sizing allocation, not an estimate)
+  die-to-radiator resistance  0.5 K/W
+  radiator                    emissivity 0.9, sigma 5.670374419e-08 W/m2/K4, 0 K view
+  thermal thresholds          recover 70 C, throttle 80 C, stop 95 C
+  local input per tile        64 bytes/cycle (32 row + 32 column INT8 operands)
+  matrix-vector intensity     2 ops per weight byte (one MAC per byte)
+
+Compute
+------------------------------------------------------------------------
+  clock         peak TOPS      protected      throttled   TOPS/W @40W*
+  200 MHz          6.5536         3.2768         3.2768         0.1638
+  400 MHz         13.1072         6.5536         6.5536         0.3277
+  600 MHz         19.6608         9.8304         9.8304         0.4915
+  800 MHz         26.2144        13.1072        13.1072         0.6554
+  * allocation-derived: peak bound / 40 W allocation. Not measured, not an
+    efficiency estimate. Protected = fully duplicated execution (1/2);
+    throttled = alternate-cycle admission (1/2).
+
+Memory
+------------------------------------------------------------------------
+  raw SRAM bits for 32 MiB usable      36.00 MiB (+12.5% check bits, before spares)
+  local input bandwidth @ 800 MHz      51.2 GB/s per tile, 819.2 GB/s for 16 tiles
+  local / external bandwidth ratio     3.2 x
+  matrix-vector ceiling @ 256 GB/s     0.512 TOPS (1.95% of the 800 MHz peak)
+  ops per external byte for peak       102.4 @ 800 MHz, 25.6 @ 200 MHz
+  time to stream 16 GiB once           0.067 s at 256 GB/s
+
+Roofline (external bandwidth 256 GB/s; attainable = min(peak, I x BW))
+------------------------------------------------------------------------
+  ops/byte I         TOPS @ 200 MHz   TOPS @ 800 MHz
+  0.5                        0.1280           0.1280
+  1                          0.2560           0.2560
+  2                          0.5120           0.5120
+  4                          1.0240           1.0240
+  8                          2.0480           2.0480
+  16                         4.0960           4.0960
+  32                  6.5536 (peak)           8.1920
+  64                  6.5536 (peak)          16.3840
+  102.4               6.5536 (peak)   26.2144 (peak)
+  128                 6.5536 (peak)   26.2144 (peak)
+  256                 6.5536 (peak)   26.2144 (peak)
+  512                 6.5536 (peak)   26.2144 (peak)
+
+Radiator and junction (lumped, steady state, 40 W allocation)
+------------------------------------------------------------------------
+  radiator      m2 per kW  m2 per 100 kW   junction C        state
+  300 K            2.4191         241.91        46.85       NORMAL
+  320 K            1.8687         186.87        66.85       NORMAL
+  350 K            1.3058         130.58        96.85         STOP
+  junction rise over radiator: 20.0 K
+  hottest radiator keeping the junction below throttle (80 C): 333.15 K
+  hottest radiator keeping the junction below stop (95 C):     348.15 K
+  Emitting area only: excludes sunlight, Earth IR/albedo, view factor,
+  gradients, ageing and margin.
+
+4-lane demonstrator (rtl/orbit_demo.v)
+------------------------------------------------------------------------
+  RTL parameters read: LANES=4, T_RECOVER=70, T_STOP=95, T_THROTTLE=80
+  lanes 4, 2 ops per MAC, one beat per cycle in NORMAL; clock: parameter (command line)
+  clock               peak GOPS   throttled GOPS
+  50.000 MHz             0.4000           0.2000
+  100.000 MHz            0.8000           0.4000
+  200.000 MHz            1.6000           0.8000
+  Duplicated storage shares one product per lane, so all lanes are useful;
+  a mismatch stops the design (no replay). STOP admits nothing.
+
+Brief figures checked at the brief's printed precision
+------------------------------------------------------------------------
+  page figure                                                  brief        model result
+  2    dense INT8 TOPS at 200 MHz                               6.55         6.55 agrees
+  2    dense INT8 TOPS at 800 MHz                              26.21        26.21 agrees
+  1    dense INT8 TOPS at 200 MHz (cover)                       6.55         6.55 agrees
+  1    dense INT8 TOPS at 800 MHz (cover)                       26.2         26.2 agrees
+  2    usable SRAM MiB = tiles x 2 MiB                            32           32 agrees
+  2    raw SRAM MiB with 64+8 SECDED                              36           36 agrees
+  2    local input GB/s per tile at 800 MHz                     51.2         51.2 agrees
+  2    local input GB/s, 16 tiles at 800 MHz                   819.2        819.2 agrees
+  2    matrix-vector ceiling TOPS at 256 GB/s, 2 ops/byte      0.512        0.512 agrees
+  2    ops per external byte for the 800 MHz peak              102.4        102.4 agrees
+  3    emitting area m2 per kW at 300 K                         2.42         2.42 agrees
+  3    emitting area m2 per 100 kW at 300 K                      242          242 agrees
+  3    emitting area m2 per kW at 320 K                         1.87         1.87 agrees
+  3    emitting area m2 per 100 kW at 320 K                      187          187 agrees
+  3    emitting area m2 per kW at 350 K                         1.31         1.31 agrees
+  3    emitting area m2 per 100 kW at 350 K                      131          131 agrees
+  3    junction rise over radiator, C (40 W x 0.5 K/W)            20           20 agrees
+  3    junction C with a 320 K radiator                        66.85        66.85 agrees
+  3    junction C with a 350 K radiator                        96.85        96.85 agrees
+
+  Qualitative claims:
+  agrees    350 K radiator junction is above the 95 C stop threshold (p.3)
+  agrees    fully duplicated work halves useful peak (p.2)
+  agrees    2 MiB per tile x 16 tiles equals the 32 MiB usable (p.2)
+  agrees    local traffic (819.2 GB/s) exceeds the 256 GB/s external bandwidth (p.2)
+
+RESULT: all 19 published figures and 4 qualitative claims follow from the stated assumptions.

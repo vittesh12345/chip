@@ -189,11 +189,22 @@ module orbit_ecc_bank #(
         end
     endgenerate
 
+`ifdef ORBIT_ECC_UPSET
+    // Verification only (never defined for synthesis): an upset mask that is
+    // XORed into the array at every clock edge. It is deliberately undriven
+    // here; the formal harness (formal/ecc/orbit_ecc_bank_fv.sv) reads it
+    // through a hierconn wire, SymbiYosys makes it a free input, and the
+    // harness constrains it to the upset model it wants.
+    wire [DEPTH*ROW_W-1:0] upset;
+`else
+    wire [DEPTH*ROW_W-1:0] upset = {DEPTH*ROW_W{1'b0}};
+`endif
+
     always @(posedge clk) begin
         if (!rst_n)
             cells <= {DEPTH*ROW_W{1'b0}};   // all-zero rows are valid codewords
         else
-            cells <= cells_nxt;             // fault-injection copies add an upset here
+            cells <= cells_nxt ^ upset;     // upset is constant 0 outside verification
     end
 
     always @(posedge clk) begin
