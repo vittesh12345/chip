@@ -1,142 +1,238 @@
 # ORBIT-AI Die Explorer (3D layout viewer)
 
-> **Next build step (labeled, detailed model):** follow the design guide in
-> `docs/research/labeled-chip-models.md`, in particular its "Implementation
-> brief" section. The user asked for that research ("look into examples of
-> labeled chips and parts and understand how to make a model"). If the file
-> does not exist yet, a research workflow is still writing it: wait for it
-> (check every few minutes, up to ~30 minutes) before designing the labels.
-> Replace this note with a short "Design references" line once done.
+Design references: `docs/research/labeled-chip-models.md` (survey of labeled
+chip models and the implementation brief this viewer follows).
 
-An interactive 3D view of the routed `orbit_demo` silicon layout, built from
+An interactive, labeled 3D view of the routed `orbit_demo` layout, built from
 the real GDS and DEF that OpenROAD-flow-scripts writes for the SkyWater
-sky130hd open PDK. It is the 4-lane INT8 demonstrator, not the 16-tile
-ORBIT-AI concept chip, and nothing in it is radiation-qualified.
+sky130hd open PDK. It shows the **copy-separated placement** of the pdsep
+area (placement fences keep copy A, copy B and the three thermal copies
+apart). It is the 4-lane INT8 demonstrator, not the 16-tile ORBIT-AI concept
+chip, and nothing in it is radiation-qualified.
 
 | File | What it is |
 |---|---|
-| `viz/index.html` | The viewer page (three.js). Written as claude.ai Artifact content: no doctype/html/head/body tags; it loads `./layout.json` and `./layout.bin` with relative URLs. |
-| `viz/layout.bin`, `viz/layout.json` | Generated layout data (committed so the page can be published as is). |
-| `reports/viz/orbit_demo_sky130hd_3d.glb` | Portable 3D model (binary glTF) of the metal stack for Blender and other glTF viewers. |
-| `reports/viz/redundancy_placement.md` | Measured placement of the redundant storage copies. |
-| `reports/viz/viewer_*.png`, `glb_preview.png` | Headless renders of the page and of the GLB. |
-| `scripts/viz_gds_to_3d.py` | GDS/DEF/LEF to `layout.bin` + `layout.json` + GLB + redundancy report. |
+| `viz/index.html` | The viewer page (three.js 0.170.0). Written as claude.ai Artifact content: no doctype/html/head/body tags, starts with `<title>`; loads `./layout.json` and `./layout.b64.txt` with relative URLs. |
+| `viz/layout.json`, `viz/layout.b64.txt` | Generated, committed page data (the publishable set). The binary geometry is stored as base64 text because Artifacts serve text files, not `.bin`. |
+| `viz/layout.bin` | Optional raw copy for local use (`VIZ_FLAGS=--write-bin`); git-ignored, never published. |
+| `reports/viz/orbit_demo_sky130hd_3d_full.glb` | Detailed portable model: all 16 drawn layers for the whole die + named parts, pins, fences (Draco). |
+| `reports/viz/orbit_demo_sky130hd_3d.glb` | Smaller uncompressed-geometry model: met1-met5 and vias + the same parts/pins/fences (KHR_mesh_quantization). |
+| `reports/viz/redundancy_placement.md` | Before/after placement of the redundant storage copies. |
+| `reports/viz/viewer_*.png`, `glb_preview_*.png` | Headless renders of the page and of both GLBs. |
+| `scripts/viz_gds_to_3d.py` | GDS/DEF/LEF to page data + GLBs + redundancy report. |
+| `scripts/viz_parts.py` | Part attribution (every placed cell to a named part), pins, power straps, rows. |
 | `scripts/viz_shots.py` | Serves the page locally and takes the screenshots (Playwright + Chromium). |
 | `mk/viz.mk` | Make targets. |
 
 ## Regenerate
 
 ```sh
-make viz          # data + GLB + redundancy report from the newest routed orbit_demo
-make viz-shots    # screenshots into reports/viz/
+make viz          # page data + both GLBs + redundancy report
+make viz-shots    # screenshots and GLB previews into reports/viz/
 make viz-serve    # open http://localhost:8765/ in a browser
 ```
 
-`make viz` reads the pd area's production run,
-`$(BUILD)/pd/results/sky130hd/orbit_demo/base/6_final.{gds,def}` (`VIZ_PD_VARIANT`,
-default `base` like the pd area's `PD_VARIANT`); if that does not exist yet it
-takes the newest `6_final.gds` under `$(BUILD)/pd/results/sky130hd/orbit_demo/*/`
-(sweep and negative-control runs live elsewhere and are never picked). The viz
-targets only read the pd area. Override with
-`make viz VIZ_GDS=path/6_final.gds VIZ_DEF=path/6_final.def`.
+`make viz` reads the separated run of the pdsep area,
+`$(BUILD)/pd_sep/results/sky130hd/orbit_demo/sep/6_final.{gds,def}`, its fence
+labels `reports/pdsep/regions.json` and its stats `reports/pdsep/summary.md`.
+If that run does not exist it falls back to the pd area's baseline
+`$(BUILD)/pd/results/sky130hd/orbit_demo/base/` and prints a NOTE. The
+baseline DEF is also read (`--baseline-def`) so the page and the report show
+before/after copy distances. Override with
+`make viz VIZ_GDS=path/6_final.gds VIZ_DEF=path/6_final.def`. The viz targets
+only read the pd/pdsep areas.
 
-Run it again after every new pd run: the committed `viz/layout.*` describe
-whichever run they were generated from. `inputs` in `layout.json` names the
-GDS/DEF with their file times and SHA-256 (`gds_mtime_utc`, `gds_sha256`, ...),
-`generated_utc` is when the conversion ran, and the page footer shows both.
-The committed data comes from the pd area's production run
-`build/pd/results/sky130hd/orbit_demo/base/` (GDS written 2026-09-29 20:10 UTC;
-clock 7 ns, setup WNS +0.066 ns, 6,166 logic cells plus 1,524 tap and 10,468
-fill/decap cells, 346.3 x 346.3 µm die, 721,667 drawn rectangles).
-
-Design stats (clock, WNS, area, cell count, utilisation) come from the ORFS
-run that wrote the GDS (`logs/.../6_report.json` and `results/.../6_final.sdc`),
-so they always match the geometry; the pd area's summary
-(`reports/pd/summary.md` or `reports/pd/sky130hd/results.md`, whichever exists)
-only fills gaps and is recorded under `stats.sources`.
+The committed data comes from `build/pd_sep/results/sky130hd/orbit_demo/sep/`
+(GDS written 2026-09-29 22:09 UTC; clock 7.2 ns, setup WNS +0.031 ns, 6,270
+logic cells, 346.3 x 346.3 µm die, 750,439 drawn rectangles, 18,175 placed
+components). `inputs` in `layout.json` records the GDS/DEF paths, file times
+and SHA-256; the page footer shows them. Design stats come from the ORFS run
+that wrote the GDS (`logs/.../6_report.json`, `results/.../6_final.sdc`).
 
 First use creates a Python venv in `build/viz/venv` from `viz/requirements.txt`
-(klayout 0.30.12, numpy 2.4.6, playwright 1.56.0 on Python 3.11) and copies the
-platform files it needs out of the ORFS image (`openroad/orfs:latest`) into
-`build/viz/platform/`: `sky130_fd_sc_hd.tlef`, `sky130_fd_sc_hd_merged.lef`,
-`sky130hd.lyt`, `sky130hd.lyp`. Nothing needs the container at view time.
+(klayout, numpy, playwright, trimesh, pygltflib), installs
+`@gltf-transform/cli@4.5.1` from npm into `build/viz/node/` (Draco compression
+of the detailed GLB) and copies the platform files out of the ORFS image
+(`openroad/orfs:latest`) into `build/viz/platform/`. Nothing needs the
+container at view time.
 
-`make viz-gcd` routes the stock ORFS sky130hd `gcd` design into
-`build/viz/gcd_run/` (development data only; it has no redundant storage).
+Screenshots run Chromium headless with SwiftShader (software WebGL), so
+`make viz-shots` takes several minutes. The harness wraps `viz/index.html`
+unmodified like the Artifact host does (with `<meta charset="utf-8">`), under a
+Content-Security-Policy modelled on the Artifact sandbox. Build machines
+often cannot reach the CDNs, so Playwright request routing answers the page's
+CDN URLs with byte-identical local copies (three.js 0.170.0 from the npm
+registry tarball, the IBM Plex fonts; cached in `build/viz/vendor-cache/`);
+`--cdn` uses the real CDNs. It exits non-zero on a host outside the
+allowlist, a CSP violation, a page error, a viewer error state, horizontal
+overflow, overlapping labels, failed picking or a GLB that does not load.
 
-Screenshots run Chromium headless with SwiftShader (software WebGL); a frame
-of the full die takes from about a second to tens of seconds depending on
-machine load, and `make viz-shots` takes several minutes. The harness loads
-`viz/index.html` unmodified, wrapped like the Artifact host wraps it, under a
-Content-Security-Policy modelled on the Artifact sandbox (scripts only from
-the three allowed CDNs, styles and fonts only from Google Fonts, data only
-from the page's own origin). Build machines often cannot reach the CDNs, so
-Playwright request routing answers the page's own CDN URLs with byte-identical
-copies (three.js 0.170.0 from the npm registry tarball, the IBM Plex files
-from Google Fonts, cached in `build/viz/vendor-cache/`); `--cdn` uses the real
-CDNs instead. It logs every host the page contacts and exits non-zero on a
-host outside the allowlist, a CSP violation, a page error, a viewer error
-state or horizontal overflow. `make viz-serve` (local viewing only) rewrites
-its copy of the page to the local three.js/font files instead.
+Shots (1440x900 unless noted): `viewer_iso` (whole die, labels), `viewer_top`,
+`viewer_lowangle` (layer colours, layers spread), `viewer_lane` (zoomed on
+lane 0 copy A: per-register labels), `viewer_inspector` (a picked cell's
+tooltip), `viewer_parts` (Parts mode, lane 2 focused), `viewer_section`
+(cross-section at x = 173 µm with the layer callout), `viewer_redundancy`
+(flip-flops by copy, fences), `viewer_redundancy_lane0` (same-bit lines),
+`viewer_dark`, `viewer_phone` / `viewer_phone_dark` (390x844, full page),
+`glb_preview_full` / `glb_preview_portable` (the GLBs in three.js GLTFLoader).
 
-Shots: `viewer_iso`, `viewer_top`, `viewer_lowangle` (layers spread),
-`viewer_redundancy` (all flip-flops by copy), `viewer_redundancy_lane0`
-(accumulator lane 0 with same-bit lines, top view), `viewer_dark`,
-`viewer_dark_redundancy` (1440x900), `viewer_phone`, `viewer_phone_dark`
-(390x844, full page) and `glb_preview` (the GLB loaded with three.js
-GLTFLoader).
+## What the page shows
+
+* **Colour by**: Layers (real layer colours), Parts (cell footprints coloured
+  by part; layers up to met1 replaced by the footprints, upper metal faint),
+  Lanes, Copies (copy A / copy B / thermal 0-2 / unprotected / shared).
+* **3D labels**: HTML labels anchored to 3D points, re-projected every frame
+  with 1 px leader lines; a layout pass (at most every 120 ms while moving,
+  once at rest) places them greedily by priority with 4 px padding, avoiding
+  each other and the HUD, with a budget of 15 labels (8 under 600 px) plus up
+  to 40 register labels. Detail tiers by zoom (projected px per µm): tier 0
+  (whole die) = fence regions, Lane 0-3 datapaths, pin-edge badges, clock
+  root, layer-stack callout, compact shared parts; tier 1 = every compact
+  part and the pin buses; tier 2 = spread parts and individual register
+  labels (`L0 acc_a[5]`, `th1[0]`, ...). Parts spread over the whole die
+  (clock tree, port and repair buffers) are list-only until zoomed. Labels
+  toggle with **Labels**; clicking a label focuses its part.
+* **Layer-stack callout** at the die corner nearest the camera (met5 ... nwell
+  with z ranges in µm, one leader per layer); with the section on it points
+  at the cut.
+* **Parts panel**: every part with colour chip, cell count, cell area (µm²)
+  and flip-flop bits; groups fold (folded by default on phones); the box
+  shows/hides a part, the name or Focus flies the camera to it and dims
+  everything else. "inferred" marks parts named from netlist cones.
+* **Fences**: the five DEF REGIONS drawn as dashed, tinted outlines labeled
+  "Copy A region", "Copy B region", "Thermal copy 0/1/2 region".
+* **Picking**: hover (mouse) or tap (touch) any standard cell; a 10 µm bin grid
+  over the footprints finds it. The tooltip shows the hierarchy crumb,
+  instance name, master with a plain-language description and equation
+  (all 143 masters of this run are decoded, see `FIXED_DESC` in
+  `scripts/viz_parts.py`), drive strength, register group/copy/bit, the
+  decoded Yosys cell suffix, the part and how it was attributed, what net cone
+  a buffer serves, and the cell size, position and orientation. Click pins it.
+* **IO pins** (DEF PINS, coloured by signal family, grouped into buses with
+  compressed bit ranges such as `in_a[23:19,16]`), **power grid** (DEF
+  SPECIALNETS VDD/VSS: met1 follow-pin rails, met4/met5 straps, DRC fill),
+  **cell rows** (125 rows, 2.72 µm) and **fill cells** are toggles.
+* **Cross-section**: a clipping plane across x or y with a position slider,
+  "Section view" camera and "Keep other half"; the layer callout labels the
+  layers at the cut.
+* **Redundant storage**: baseline vs separated numbers side by side, the
+  flip-flop highlight by copy, a per-group table (click a row to draw lines
+  between same-bit copies) and the list of what is still shared.
+* Stats strip (clock, WNS, cells, flip-flops, rectangles), sky130 /
+  not-radiation-qualified notice, provenance footer. Light and dark themes
+  come only from CSS tokens on `:root` (the WebGL clear colour too);
+  reduced motion disables camera animation; below 820 px the panel stacks
+  under the canvas.
+
+## Part attribution
+
+`scripts/viz_parts.py` assigns **every** DEF component to exactly one part.
+Deterministic, in two steps:
+
+1. **Instance names and masters.** The flow keeps the RTL hierarchy in the
+   names of the kept `orbit_keep_reg` copies and of CTS/resizer/physical
+   cells: `g_lane[i].u_lane.u_{acc,res}_{a,b}` flip-flops -> Lane i /
+   Accumulator|Result A|B, the same prefix on `mux2i`/`nor2b` gates -> Lane i /
+   Load mux A|B; `u_thermal.u_copyK` -> Thermal / Copy K; `u_thermal.phase`,
+   `out_valid_q`, `fault_q`; `clkbuf_*`/`clkload*` -> Clock tree;
+   `input*`/`output*` -> IO port buffers; `place*`, `rebuffer*`, `wire*`,
+   `split*`, `clone*` -> Timing-repair buffers; `hold*` or `dlygate`/`dlymetal`
+   masters -> Hold-fix delay cells; `ANTENNA_*`, `tapvpwrvgnd`, `decap`,
+   `fill` masters -> physical parts.
+2. **Netlist cones for the anonymous `_NNNN_` cells** (synthesis flattened the
+   multipliers, adders, comparators and control). Connectivity comes from the
+   DEF NETS section, pin directions from the cell LEF. For every net two bit
+   sets are propagated over the acyclic combinational graph (flip-flops and
+   clock nets stop the cones): *fwd* = the register groups (via D) and output
+   ports it reaches, *bwd* = the register groups (via Q) and input ports in its
+   fan-in. The first matching rule names the cell:
+   a. fwd only lane-i copy-A registers -> Adder A; only copy B -> Adder B;
+      also cells fed only by one copy's Q (the accumulate feedback);
+   b. fwd both copies of lane i and bwd only lane-i operand bytes of
+      `in_a`/`in_b` -> Lane i / Multiplier (shared by both copies);
+   c. bwd both copies of one lane, no control inputs -> Lane i / Mismatch
+      comparator; several lanes -> Mismatch OR tree / fault_q;
+   d. bwd only thermal copies -> Thermal voter; fwd into thermal copies/phase
+      or bwd `temp_*` -> Thermal next-state logic;
+   e. bwd only `rst_n` -> Reset distribution (also resizer buffers that carry
+      only `rst_n`);
+   f. fwd several lanes or the `out_valid_q`/`fault_q`/`in_ready`/`out_valid`
+      logic -> Handshake / out_valid_q / enables;
+   g. anything else -> Other logic.
+   Named buffers keep their step-1 part; their cone result is stored as
+   `serves` and shown in the inspector ("Buffers a net of: Lane 0 / Adder A").
+
+Result for the committed data (18,175 components, 6,250 logic + 11,925
+physical-only cells; **0 left in Other logic**):
+
+| Part (per lane, lanes 0-3) | Cells | Source |
+|---|---|---|
+| Multiplier | 196-198 | netlist cone |
+| Adder A / Adder B | 271-281 / 272-279 | netlist cone |
+| Accumulator A, B, Result A, B | 32 each (32 FF bits) | instance name |
+| Load mux A / B | 128-129 | instance name |
+| Mismatch comparator | 54-58 | netlist cone |
+
+| Shared part | Cells | Source |
+|---|---|---|
+| Thermal copy 0 / 1 / 2 | 8 each (2 FF) | instance name |
+| Thermal voter / next-state / phase flop | 3 / 18 / 1 | cone / cone / name |
+| Mismatch OR tree / fault_q | 144 (1 FF) | cone (+ name for fault_q) |
+| Handshake / out_valid_q / enables | 14 (1 FF) | cone (+ name) |
+| Reset distribution | 6 | cone |
+| Clock tree | 96 | name prefix |
+| IO port buffers | 214 | name prefix |
+| Timing-repair buffers | 976 | name prefix |
+| Antenna diodes | 20 | name prefix |
+| Well taps / fill | 1,524 / 10,381 | master |
+| Hold-fix, tie, decap cells | 0 | (none in this run) |
+
+The cone parts are **inferred** (marked so in the page and the GLB extras):
+the counts depend on how synthesis shared logic, and a cell used by two
+functions goes to the first matching rule. The timing-repair buffers are a
+large, die-wide part because the resizer names them by prefix only; their
+`serves` field says which datapath net each one buffers. The clock tree and
+port/repair buffers spread over the whole die, so their labels are shown
+only when zoomed in or selected.
 
 ## Data format
 
-### layout.bin
+### layout.b64.txt (base64 of the binary block)
 
-Little-endian.
+Little-endian after base64 decoding (the page uses `atob`; `format.encoding`
+is `"base64"`, `format.bin_bytes` the decoded size).
 
 | Offset | Size | Content |
 |---|---|---|
-| 0 | 8 | ASCII `ORBITVZ1` |
+| 0 | 8 | ASCII `ORBITVZ2` |
 | 8 | 4 | uint32: number of layers |
-| 12 | 4 | uint32: format version (1) |
-| per layer | `count * 4 * sizeof(dtype)` | rectangles, at `layers[i].offset` (4-byte aligned) |
+| 12 | 4 | uint32: format version |
+| per layer | `count * 4 * 2` | uint16 rectangles `x0,y0,x1,y1` at `layers[i].offset` |
+| cells | | `cells.rect_offset`: uint16 x4 per placed cell; `master_offset`, `part_offset`, `serves_offset`: uint8 per cell |
+| power | | `power.rect_offset`: uint16 x4 per VDD/VSS wire; `attr_offset`: uint8 layer index + 16 for VSS |
 
-Each rectangle is four unsigned integers `x0, y0, x1, y1` in grid units
-relative to the die lower-left corner: `x_um = x * format.grid_um` (plus
-`format.origin_um` for absolute DEF coordinates). `format.dtype` is `uint16`
-when the die fits in 65,535 grid steps. sky130's manufacturing grid is 5 nm,
-but the orbit_demo die is 346.3 µm wide, which does not fit 16 bits at 5 nm,
-so the pipeline uses a 10 nm grid (coordinates rounded by at most 5 nm) and
-falls back to `uint32` only for dies wider than 655 µm. The page uploads these
-arrays to the GPU as they are (one instanced attribute per layer).
-
-Rectangles come from KLayout: all shapes of a GDS layer are flattened from
-the top cell, and the smaller of three decompositions is kept: the merged
-region cut into horizontal slabs, into vertical slabs, or the original
-shapes (boxes kept, other polygons sliced). No non-rectangular shapes occur
-in sky130hd; if any did, their bounding box would be used and counted in
-`non_rect_as_bbox`. Slab decomposition leaves some 5 nm slivers that round to
-zero width or height on the 10 nm grid; they draw nothing and are dropped
-(`degenerate_dropped` per layer: 350 poly, 150 li1 and 20 met1 slabs for the
-committed data).
-
-Checked independently during review: rebuilding each layer from
-`layout.bin` and XOR-ing it with KLayout's merged GDS layer leaves only
-slivers narrower than 12 nm on all 16 layers (the rounding), and the union
-area equals the GDS area to within 0.03%.
+Coordinates are grid units relative to the die lower-left corner:
+`x_um = x * format.grid_um` (10 nm; the 346.3 µm die does not fit 16 bits at
+sky130's 5 nm grid, so values are rounded by at most 5 nm). Layer rectangles
+come from KLayout (all shapes of a GDS layer flattened; the smaller of the
+merged horizontal slabs, vertical slabs or original boxes is kept). Cell boxes
+are DEF `PLACED` origin + LEF `SIZE`.
 
 ### layout.json
 
-Main keys: `format` (above), `design`, `die_um` / `core_um` (µm, relative to
-the die origin; core = bounding box of the DEF placement rows),
-`stack_top_um`, `layers[]` (`name`, `gds` layer/datatype, `kind`, `color`,
-`z_um`, `thickness_um`, `z_source`, `thickness_source`, `approximate`,
-`count`, `offset`, `bytes`, decomposition details incl. `degenerate_dropped`,
-`layer_map_check`),
-`z_sources`, `dropped_layers`, `fe_detail_window_um` (null when every layer
-is complete), `stats` (clock, WNS, area, cell count and where each came from),
-`redundancy` (`groups` with the distance numbers, `flops` with every
-flip-flop's name, group, copy, bit index and placed box in µm, `summary`,
-`method`), `glb`, `inputs` (paths, plus `gds_mtime_utc` / `def_mtime_utc` and
-`gds_sha256` / `def_sha256` to identify the pd run) and `tools`.
+`format`, `design`, `die_um`, `core_um`, `stack_top_um`, `layers[]` (name,
+GDS layer/datatype, colour, z, thickness and their sources, count, offset),
+`stats` (clock, WNS, area, cells, with sources), `redundancy` (`groups` with
+distances, `flops` with every flip-flop's name, group, copy, bit and box,
+`summary`, and `baseline` with the same numbers for the unconstrained run),
+`cells` (names, masters, `master_info` descriptions, orientations and the
+binary offsets), `parts` (`list` with id, name, group, lane, kind, category,
+source, cells, area, FF bits, bbox/core/centroid/anchor; `kinds` colours;
+`counts`; `method`), `pins` (every DEF pin with layer, box, side, bus and
+family; `groups` per bus and edge; `sides` counts), `power`, `rows`,
+`regions` (fence boxes, labels, member counts, separation numbers,
+unconstrained common-mode list), `glb` (paths, sizes, node names), `inputs`,
+`tools`.
 
 ## Layers and heights
 
@@ -190,82 +286,91 @@ models dielectrics, so nothing between the layers is drawn.
   die outline instead) and the router's blockage layer 236/0. The exact list
   for the current data is `dropped_layers` in `layout.json`.
 * **Front-end detail**: kept for the whole die. The pipeline has a payload
-  budget (`--bin-budget-mb`, default 7 MB); above it, diff/tap/poly/licon1/li1/mcon
+  budget (`--bin-budget-mb`, default 8 MB); above it, diff/tap/poly/licon1/li1/mcon
   are cut to a detail window around the core centre and the window is drawn on
-  the die. For the current orbit_demo run the whole die fits (721,667
-  rectangles, 5.8 MB of `layout.bin`; page + data about 5.9 MB), so nothing
-  is cut.
+  the die. For the current orbit_demo run the whole die fits (750,439 rectangles), so nothing is cut.
 * **Colours** loosely follow the KLayout/Magic sky130 conventions (poly red,
   diff green, li1 lilac, met1 blue, met2 pink, met3 teal, met4 amber, met5
   copper); they are not the PDK's `.lyp` stipples.
 
-## The GLB
+## The GLBs
 
-`reports/viz/orbit_demo_sky130hd_3d.glb`: every rectangle of met1-met5 and
-via-via4 as a closed box, one named mesh and material per layer (`met1`,
-`via`, ...), plus a `die_substrate` slab (1 µm thick, display only). A box
-that collapses on the 10 nm quantization step is skipped (one met1 and one
-met3 box for the committed data).
-Axes: +X = layout x, +Y = up, -Z = layout y; origin at the die centre;
-1 unit = 1 µm; heights are true scale (the stack is 6.6 µm on a 346 µm die,
-so it looks flat until you scale Y or zoom in; `--glb-z-scale` bakes in an
-exaggeration).
+Both files share one node tree (names are `[A-Za-z0-9_]`, at most 63 bytes):
 
-To stay near 10 MB with all 148,652 boxes (10,114,064 bytes, 9.6 MiB) it uses
-`KHR_mesh_quantization` (int16 positions on a 10 nm step, the node scale
-converts back to µm) and one shared index buffer. For the committed file the
-Khronos glTF validator (gltf-validator 2.0.0-dev.3.10) reports 0 errors,
-warnings, infos and hints; trimesh 5.1.0 and pygltflib 1.16.5 load it
-(10 named meshes, bounds ±173.15 µm in x/z and -1 to 6.57 µm in y); and
-`make viz-shots` loads it with three.js GLTFLoader
-(`reports/viz/glb_preview.png`, rendered with a ×4 vertical scale). Blender's
-glTF importer and three.js/Babylon.js based web viewers support the
-extension; Blender and Windows 3D Viewer were not tried here, and a viewer
-without `KHR_mesh_quantization` support refuses the file.
-`make viz VIZ_FLAGS=--glb-core` writes a plain glTF with float32 positions and
-no extensions instead (14,872,400 bytes for the same content, also 0
-validator issues). li1, mcon, poly,
-diff/tap and licon1 are left out of the GLB to keep it small (they are in the
-web viewer).
+```
+orbit_demo_sky130hd
+  Die_Substrate
+  Layers        nwell diff tap poly licon1 li1 mcon met1 via met2 via2 met3 via3 met4 via4 met5
+  Parts
+    Lane_0 .. Lane_3     LaneN_Multiplier, LaneN_Adder_A, LaneN_Adder_B, LaneN_Accumulator_A/B,
+                         LaneN_Result_A/B, LaneN_Load_mux_A/B, LaneN_Mismatch_comparator
+    Thermal_TMR          Thermal_Copy_0/1/2, Thermal_Voter, Thermal_Next_state_logic,
+                         Thermal_Throttle_phase_flop
+    Shared_control       Mismatch_OR_tree_fault_q, Handshake_out_valid_q_enables, Reset_distribution_rst_n
+    Physical             Clock_tree, IO_port_buffers, Timing_repair_buffers, Antenna_diodes,
+                         Well_tap_cells, Fill_cells
+  Pins          Pins_in_a, Pins_in_b, Pins_out_data, Pins_clk, Pins_rst_n, Pins_temp_c,
+                Pins_handshake, Pins_fault, Pins_thermal_status
+  Regions       Region_Copy_A, Region_Copy_B, Region_Thermal_copy_0/1/2
+```
+
+Part nodes hold one box per placed cell footprint (z -0.2 to 0 µm, a thin tile
+under the layout, display only), with the part's colour as material and
+`extras` (`display_name` such as "Lane 0 / Accumulator A", part id, cell
+count, area, FF bits, source, label anchor). Pins are markers at their DEF pin
+shapes (drawn from the pin layer to 1 µm above the stack); regions are 0.8 µm
+outline walls. The root node's extras state units and axes.
+
+**Units: 1 unit = 1 µm.** Axes: +X = layout x, +Y = up, -Z = layout y; origin
+at the die centre; z = 0 at the substrate surface; heights are true scale
+(the stack is 6.57 µm on a 346 µm die; scale Y in the viewer to exaggerate).
+No exaggerated variant is written by default (`--glb-z-scale` bakes one in).
+
+| File | Content | Encoding | Size |
+|---|---|---|---|
+| `orbit_demo_sky130hd_3d_full.glb` | all 16 layers, 768,850 boxes, whole die + parts/pins/regions | `KHR_draco_mesh_compression` via `@gltf-transform/cli` (uncompressed it would exceed 40 MB) | 9.2 MB |
+| `orbit_demo_sky130hd_3d.glb` | met1-met5 + vias (190,165 boxes) + parts/pins/regions | `KHR_mesh_quantization` int16 positions, 10 nm step | 12.8 MB |
+
+Verified: the Khronos validator (`gltf-transform validate`) reports 0 errors
+and 0 warnings for both (the Draco file lists its compressed buffer views as
+"unused", which is expected); pygltflib loads both (98 / 91 nodes); trimesh
+loads the portable file (bounds ±173 µm, -1.2 to 7.6 µm; trimesh cannot
+decode Draco); and `make viz-shots` loads both with three.js GLTFLoader (+
+DRACOLoader), finds every expected node with `getObjectByName` and renders
+`glb_preview_full.png` / `glb_preview_portable.png`. Blender's glTF importer
+supports both extensions; it was not run here.
 
 ## Redundant storage
 
 Flip-flops are the DEF components whose master matches
-`sky130_fd_sc_hd__{,e,s,se}df*`. Their group and copy come from the instance
-names that ORFS keeps from the RTL hierarchy (docs/SPEC.md section 7), for
-example `g_lane\[0\].u_lane.u_acc_a/q\[5\]$_SDFFE_PN0P_`; the bit index is
-the last `[n]` after the copy name, or else the one in the Q net name. The cell
-box is the DEF `PLACED` origin plus the LEF `SIZE`. For every duplicated or
-triplicated group the pipeline reports the centroid distance between copies
-and the minimum/median/maximum distance between the same bit in different
-copies (centre to centre and edge to edge), plus how many same-bit pairs sit
-in touching cells. On other designs (such as `gcd`) no groups are found and
-the page says so.
+`sky130_fd_sc_hd__{,e,s,se}df*`; their group, copy and bit come from the
+instance names (docs/SPEC.md section 7). For each duplicated or triplicated
+group the pipeline reports centroid distances and min/median/max same-bit
+distances (centre to centre and edge to edge) and touching same-bit pairs,
+for this layout and for the baseline DEF. For the committed data:
 
-For the committed data the numbers agree with the pd area's independent
-measurement (`reports/pd/sky130hd/copy_separation.txt`: closest same-bit
-copies 2.76 µm centre to centre, thermal 5.52 µm).
+| Measure | Baseline | Separated |
+|---|---|---|
+| Closest same-bit pair, acc/res A vs B | 2.76 µm | 251.18 µm |
+| Closest same-bit pair, thermal | 5.52 µm | 97.92 µm |
+| Same-bit pairs in touching cells | 13 of 262 | 0 of 262 |
+| Smallest gap, any copy A vs copy B flip-flop | 0.00 µm | 242.94 µm |
+| Copy centroid distance, acc/res | 17.3-46.3 µm | 288.3-296.0 µm |
 
-The pipeline also reads `pd/sky130hd/config.mk` (only to look for region,
-fence, keep-out or spacing settings) and says in the report whether anything
-asked the placer to separate copies. For the committed data nothing did, so
-the distances are simply where timing and wirelength put the copies. See
-`reports/viz/redundancy_placement.md` for the numbers and their reading.
+These match the pdsep area's own measurements (`reports/pdsep/separation.md`).
+The fences do not separate the clock and reset trees, the shared multipliers,
+the comparators/OR tree, the thermal voter, the ports, or the unprotected
+phase/out_valid_q/fault_q flops; distances are geometry, not an upset-rate
+model. See `reports/viz/redundancy_placement.md`.
 
 ## Viewer notes
 
-* One instanced mesh per layer; the rectangle array is a per-instance vertex
-  attribute and the vertex shader builds each box, so the vertical scale and
-  layer spread are uniform changes. It renders on demand (no idle loop),
-  caps the pixel ratio at 2, and skips camera animation when the system asks
-  for reduced motion. There is no auto-rotation.
-* Hovering a highlighted flip-flop shows its instance name, group, copy and
-  bit (mouse only; `make viz-shots` checks this once). Choosing one group,
-  or clicking its row in the table, draws lines between the same bits of
-  its copies and moves the camera in on that group (keeping the viewing
-  direction); choosing "All flip-flops" returns to the preset view.
-* The left-edge ruler hides when the camera is within about 17° of the die
-  plane, where its labels would be seen edge-on across the stack.
-* Arrow keys pan when the 3D view has keyboard focus.
-* WebGL 2 is required; the page says so if it is missing, and it shows a
-  readable error if `layout.json`/`layout.bin` fail to load or do not match.
+* One instanced mesh per layer (the rectangle array is a per-instance
+  attribute; the vertex shader builds each box), one instanced mesh for all
+  18,175 cell footprints coloured through a 256-entry part texture, so colour
+  mode, selection and show/hide are texture/uniform changes. Renders on
+  demand, caps the pixel ratio at 2.
+* Harness hooks: `window.orbitViz` (`setView`, `setMode`, `focusPart`,
+  `focusLane`, `selectGroup`, `pickAt`, `labels`, `cellScreen`, ...).
+* WebGL 2 is required; the page says so if it is missing, and shows a readable
+  error if the data fail to load or do not match.

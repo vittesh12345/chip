@@ -1493,8 +1493,7 @@ function layoutLabels() {
         tries.push([ox + (vx >= 0 ? 0 : -w) - (Math.abs(vx) < 0.4 ? w / 2 : 0), oy + (vy >= 0 ? 0 : -h) - (Math.abs(vy) < 0.4 ? h / 2 : 0)]);
       }
     } else if (d.stack) {
-      const L = 60;
-      tries.push([-L - w, 12], [L, 12], [L, -h / 2], [-L - w, -h / 2], [L, -h - 10], [-L - w, -h - 10], [L, 10], [-L - w, 10], [2 * L, -h / 2], [-2 * L - w, -h / 2]);
+      for (const L of [110, 60, 180]) tries.push([-L - w, 12], [L, 12], [L, -h / 2], [-L - w, -h / 2], [L, -h - 10], [-L - w, -h - 10]);
     } else {
       for (const r of [18, 38, 64]) {
         tries.push([r, -h - r * 0.6], [-w - r, -h - r * 0.6], [r, r * 0.6], [-w - r, r * 0.6], [-w / 2, -h - r], [-w / 2, r], [r + 4, -h / 2], [-w - r - 4, -h / 2]);
@@ -1542,7 +1541,8 @@ function positionLabels() {
         const a = project(at[0], at[1], (L.z0 + L.z1) / 2);
         const ry = y + r.offsetTop + r.offsetHeight / 2;
         const rx = right ? x : x + d.w;
-        html += '<line x1="' + rx.toFixed(1) + '" y1="' + ry.toFixed(1) + '" x2="' + a.x.toFixed(1) + '" y2="' + a.y.toFixed(1) + '" style="stroke-opacity:.55"/>';
+        html += '<line x1="' + rx.toFixed(1) + '" y1="' + ry.toFixed(1) + '" x2="' + a.x.toFixed(1) + '" y2="' + a.y.toFixed(1) + '" style="stroke-opacity:.8"/>';
+        html += '<circle cx="' + a.x.toFixed(1) + '" cy="' + a.y.toFixed(1) + '" r="1.6"/>';
       }
       continue;
     }
@@ -1634,7 +1634,7 @@ function fillTip(rec) {
   const y = describeYosys(rec.name);
   if (y) h += '<div class="row m">' + esc(y) + '</div>';
   h += '<div class="row m">Part: ' + esc(p.name) + (rec.flop || /^(g_lane|u_thermal|out_valid_q|fault_q)/.test(rec.name) ? ' (from the instance name)' : p.source === 'netlist-cone' ? ' (inferred from netlist cones)' : p.source === 'instance-name' ? ' (from the instance name)' : ' (from the ' + p.source.replace('-', ' ') + ')') + '</div>';
-  if (rec.serves && rec.serves.id !== p.id) h += '<div class="row m">Buffers a net of: ' + esc(rec.serves.name) + '</div>';
+  if (rec.serves && rec.serves.id !== p.id) h += '<div class="row m">' + (/buf|inv|dly/.test(rec.master) ? 'Buffers a net of: ' : 'Drives logic of: ') + esc(rec.serves.name) + '</div>';
   const [x0, y0, x1, y1] = rec.box;
   h += '<div class="row m">' + fx(x1 - x0, 2) + ' × ' + fx(y1 - y0, 2) + ' µm (' + fx((x1 - x0) * (y1 - y0), 2) + ' µm²) at (' + fx(x0, 2) + ', ' + fx(y0, 2) + ') µm · ' + esc(rec.orient) + '</div>';
   tip.innerHTML = h;

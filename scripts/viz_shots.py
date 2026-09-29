@@ -3,20 +3,24 @@
 
 viz/index.html is written as claude.ai Artifact page content (no doctype,
 html/head/body tags); the Artifact host wraps it in a skeleton. This script
-wraps it the same way into --site-dir, copies layout.json/layout.bin next to
+wraps it the same way into --site-dir, copies layout.json/layout.b64.txt next to
 it, serves the folder over HTTP and either keeps serving (--serve) or drives
 the preinstalled Chromium with Playwright to write screenshots:
 
-  viewer_iso.png               desktop 1440x900, light theme, isometric first frame
+  viewer_iso.png               desktop 1440x900, light, isometric, labels (tier 0)
   viewer_top.png               top view
-  viewer_lowangle.png          low-angle view with the layers spread apart
-  viewer_redundancy.png        flip-flops highlighted by copy (all groups)
+  viewer_lowangle.png          layer colours, low angle, layers spread apart
+  viewer_lane.png              zoomed on lane 0 copy A: per-register labels (tier 2)
+  viewer_inspector.png         a clicked (pinned) cell's inspector tooltip
+  viewer_parts.png             Parts mode, lane 2 focused, parts panel
+  viewer_section.png           cross-section at mid-die with the layer callout
+  viewer_redundancy.png        flip-flops highlighted by copy, fence regions
   viewer_redundancy_lane0.png  lane-0 accumulator A/B with same-bit lines, top view
   viewer_dark.png              dark theme, isometric
-  viewer_dark_redundancy.png   dark theme, flip-flops highlighted
   viewer_phone.png             390x844 phone layout, light (full page)
   viewer_phone_dark.png        390x844 phone layout, dark (full page)
-  glb_preview.png              the exported GLB loaded with three.js GLTFLoader
+  glb_preview_full.png         the detailed (Draco) GLB loaded with three.js GLTFLoader
+  glb_preview_portable.png     the portable metals GLB loaded with three.js GLTFLoader
 
 For screenshots the page is loaded unmodified, with its CDN URLs, under a
 Content-Security-Policy modelled on the Artifact sandbox; CDN requests are
@@ -434,8 +438,9 @@ def main():
     problems = []
     written = []
 
-    def shot(page, name, full_page=False):
-        page.mouse.move(2, 2)
+    def shot(page, name, full_page=False, move=True):
+        if move:
+            page.mouse.move(2, 2)
         path = os.path.join(args.out_dir, name + ".png")
         page.screenshot(path=path, full_page=full_page, timeout=600000)
         written.append(path)
@@ -515,6 +520,7 @@ def main():
                 # picking: the inspector must name the cell under the pointer
                 n = page.evaluate("window.orbitViz.cellCount()")
                 ok = tried = 0
+                best = None
                 for i in range(0, n, max(1, n // 400)):
                     pt = page.evaluate(f"window.orbitViz.cellScreen({i})")
                     if not (40 < pt["x"] < 1000 and 60 < pt["y"] < 860) or pt["name"].startswith("FILLER"):
@@ -522,15 +528,22 @@ def main():
                     r = page.evaluate(f"window.orbitViz.pickAt({pt['x']}, {pt['y']})")
                     tried += 1
                     ok += bool(r and r["name"] == pt["name"])
+                    free = page.evaluate(f"document.elementFromPoint({pt['x']}, {pt['y']}) === document.getElementById('gl')")
+                    if r and r["name"] == pt["name"] and free and (best is None or "mux2i" in r["master"]):
+                        best = pt
                     if tried >= 20:
                         break
                 print(f"viz_shots: picking: {ok} of {tried} cells identified at their projected centres")
                 if tried and ok < tried - 1:
                     problems.append(f"picking: only {ok} of {tried} cells identified")
+                if best:
+                    # a real click pins the inspector on that cell (mouse clicks pin it in the page)
+                    page.mouse.click(best["x"], best["y"])
+                    time.sleep(0.5)
                 if tried:
                     tip = page.inner_text("#tip")
                     print("viz_shots: inspector:", " | ".join(tip.split("\n")))
-                    shot(page, "viewer_inspector")
+                    shot(page, "viewer_inspector", move=False)
                     page.keyboard.press("Escape")
             if want("viewer_parts"):
                 page.evaluate("window.orbitViz.focusLane(2)")
