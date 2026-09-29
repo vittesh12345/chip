@@ -1,0 +1,38 @@
+# Proof step of the synth-area equivalence check (see synth/equiv_cut.ys).
+# gold_gate.il holds the RTL (module gold) and the synthesized netlist (module
+# gate), both with every flip-flop cut into a free input (Q) and an output (D).
+# The outputs are split into partitions, one task each, so the four lane
+# datapaths (8x8 multiplier + two 32-bit adders each) are proven separately
+# and in parallel; together the tasks cover every output exactly once.
+# Depth 1: the check is purely combinational.
+
+[tasks]
+lane0
+lane1
+lane2
+lane3
+ctrl
+
+[options]
+mode bmc
+depth 1
+
+[engines]
+smtbmc bitwuzla
+
+[script]
+read_rtlil gold_gate.il
+# lane<i>: every output of g_lane[i] plus that lane's slice of out_data.d;
+# ctrl: everything else. '?' stands for the brackets of g_lane[i] in patterns.
+lane0: delete -output o:* o:*g_lane?0?.* %d o:out_data_lane0.d %d
+lane1: delete -output o:* o:*g_lane?1?.* %d o:out_data_lane1.d %d
+lane2: delete -output o:* o:*g_lane?2?.* %d o:out_data_lane2.d %d
+lane3: delete -output o:* o:*g_lane?3?.* %d o:out_data_lane3.d %d
+ctrl:  delete -output o:*g_lane?* o:out_data_lane*
+opt_clean
+select -assert-min 1 o:*
+miter -equiv -flatten -make_assert gold gate miter
+hierarchy -top miter
+
+[files]
+gold_gate.il

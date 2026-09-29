@@ -146,7 +146,7 @@ pd-sep-mechanism:
 	    PDSEP_IN_SDC=$(abspath $(PDSEP_MECH_DIR))/2_floorplan.sdc REPORTS_DIR=$(abspath $(PDSEP_MECH_DIR)) \
 	    openroad -no_init -threads $(PDSEP_CORES) -exit $(CURDIR)/scripts/pdsep_mechanism_test.tcl' \
 	    > $(PDSEP_MECH_DIR)/mechanism_test.log 2>&1
-	grep -E "^MECH|pdsep: region" $(PDSEP_MECH_DIR)/mechanism_test.log | tee $(PDSEP_MECH_DIR)/mechanism_test.txt
+	grep -E "^MECH|pdsep: region|WARNING DPL|ERROR DPL" $(PDSEP_MECH_DIR)/mechanism_test.log | tee $(PDSEP_MECH_DIR)/mechanism_test.txt
 	@rm -f $(PDSEP_MECH_DIR)/3_2_place_iop.odb
 	@if [ -n "$(PDSEP_PUBLISH)" ]; then mkdir -p $(PDSEP_PUBLISH) && cp $(PDSEP_MECH_DIR)/mechanism_test.txt $(PDSEP_PUBLISH)/; fi
 

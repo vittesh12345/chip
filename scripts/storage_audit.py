@@ -186,10 +186,10 @@ def audit(path, top_name, lanes, expect_ff_bits, expect_unprot, clock_name):
         tops = [m for m, v in modules.items()
                 if str(v.get("attributes", {}).get("top", "0")).strip("0") != ""]
         if len(tops) != 1:
-            raise SystemExit("storage_audit: cannot identify the top module (use --top)")
+            raise ValueError("cannot identify the top module (use --top)")
         top_name = tops[0]
     if top_name not in modules:
-        raise SystemExit("storage_audit: top module %r not in %s" % (top_name, path))
+        raise ValueError("top module %r not in the netlist" % top_name)
 
     flat = FlatNetlist(modules, top_name)
     R = flat.rep
@@ -301,7 +301,7 @@ def audit(path, top_name, lanes, expect_ff_bits, expect_unprot, clock_name):
             d_note = "shared by design (voted next state)" if shared == width else \
                      "%d/%d bits shared (voted next state)" % (shared, width)
         if len(known) < width:
-            d_note += ", %d/%d bits checkable" % (len(known), width)
+            d_note = "not checkable (%d/%d bits have flops)" % (len(known), width)
         ok = len(errors) == gerr_before
         group_rows.append((gname, len(copies), width, n_ok_bits, len(copies) * width, d_note, ok))
 
@@ -357,7 +357,9 @@ def audit(path, top_name, lanes, expect_ff_bits, expect_unprot, clock_name):
     passed = sum(1 for r in group_rows if r[6])
     lines.append("STORAGE_AUDIT %s: %d/%d groups pass, %d flip-flop bits, %d unprotected"
                  % ("PASS" if not errors else "FAIL", passed, len(group_rows), total_ff, len(unprot)))
-    return not errors, "\n".join(lines) + "\n"
+    info = {"groups": group_rows, "total_ff": total_ff, "ff_types": dict(ff_types),
+            "unprotected": unprot, "latches": latches, "errors": errors}
+    return not errors, "\n".join(lines) + "\n", info
 
 
 def main():
@@ -376,7 +378,7 @@ def main():
     expect_ff = args.expect_ff_bits if args.expect_ff_bits >= 0 else None
     expect_un = [s for s in args.expect_unprotected.split(",") if s] or None
     try:
-        ok, text = audit(args.netlist, args.top, args.lanes, expect_ff, expect_un, args.clock)
+        ok, text, _ = audit(args.netlist, args.top, args.lanes, expect_ff, expect_un, args.clock)
     except (OSError, ValueError, KeyError) as exc:
         print("storage_audit: cannot audit %s: %s" % (args.netlist, exc), file=sys.stderr)
         return 2

@@ -1,0 +1,95 @@
+{
+  "platform": "sky130hd",
+  "variant": "sep",
+  "checks": [
+    {
+      "name": "setup timing",
+      "result": "PASS",
+      "detail": "period 7.200 ns: setup WNS 0.031 ns, TNS 0 ns"
+    },
+    {
+      "name": "hold timing",
+      "result": "PASS",
+      "detail": "hold WNS 0.436 ns, TNS 0 ns"
+    },
+    {
+      "name": "max slew/cap/fanout",
+      "result": "PASS",
+      "detail": "violations: slew 0, cap 0, fanout 0"
+    },
+    {
+      "name": "detailed-route DRC",
+      "result": "PASS",
+      "detail": "TritonRoute DRC errors after the last iteration: 0"
+    },
+    {
+      "name": "antenna",
+      "result": "PASS",
+      "detail": "violating nets 0, pins 0, repair diodes 20"
+    },
+    {
+      "name": "KLayout DRC",
+      "result": "PASS",
+      "detail": "0 markers (6_drc.lyrdb, ORFS deck sky130hd.lydrc)"
+    },
+    {
+      "name": "KLayout LVS",
+      "result": "PASS",
+      "detail": "netlists match"
+    },
+    {
+      "name": "LEC synth vs post-CTS repair",
+      "result": "PASS",
+      "detail": "kepler-formal: Circuits are IDENTICAL, 1177 compared outputs"
+    },
+    {
+      "name": "LEC synth vs final",
+      "result": "PASS",
+      "detail": "kepler-formal: Circuits are IDENTICAL, 1177 compared outputs"
+    },
+    {
+      "name": "storage audit (6_final.v)",
+      "result": "PASS",
+      "detail": "521 flip-flop cells; RESULT: PASS (18/18 checks passed)"
+    },
+    {
+      "name": "final GDS written",
+      "result": "PASS",
+      "detail": "build/pd_sep/results/sky130hd/orbit_demo/sep/6_final.gds (8.2 MB)"
+    }
+  ],
+  "numbers": {
+    "clock period (ns)": 7.2,
+    "fmax from final STA (MHz)": 139.49,
+    "setup WNS (ns)": 0.0310081,
+    "setup TNS (ns)": 0,
+    "hold WNS (ns)": 0.435959,
+    "hold TNS (ns)": 0,
+    "clock skew (ns)": 0.0538434,
+    "die size (um)": "346.295 x 346.295",
+    "core size (um)": "341.780 x 340.000",
+    "die area (um^2)": 119920,
+    "core area (um^2)": 116205,
+    "cell area excl. fill, incl. tap cells (um^2)": 62299.8,
+    "cell area excl. fill and tap cells (um^2)": 60392.97,
+    "utilization (cell area excl. fill / core area)": 0.536118,
+    "instances, all (incl. fill/decap and tap)": 18175,
+    "instances excl. fill and tap": 6270,
+    "fill/decap cells": 10381,
+    "tap cells": 1524,
+    "flip-flop cells (ORFS class sequential_cell)": 521,
+    "synthesis: cell count": 5130,
+    "synthesis: cell area (um^2)": 46866.2,
+    "IO pins (incl. VDD/VSS)": 217,
+    "power total (mW, default-activity estimate)": 52.1092,
+    "power internal (mW)": 26.3633,
+    "power switching (mW)": 25.7459,
+    "power leakage (uW)": 0.0279317,
+    "routed wirelength (um)": 244368,
+    "vias": 45501,
+    "detailed-route DRC errors": 0,
+    "antenna violating nets": 0,
+    "IR drop VDD worst (mV, same activity)": 0.453888,
+    "IR drop VSS worst (mV, same activity)": 0.627544
+  }
+}

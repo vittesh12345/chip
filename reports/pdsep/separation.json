@@ -1,0 +1,1407 @@
+{
+ "results": {
+  "baseline": {
+   "def": "build/pd/results/sky130hd/orbit_demo/base/6_final.def",
+   "measure": {
+    "groups": {
+     "acc_lane0": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 17.2814671437533,
+        "same_bit_centre_min_um": 3.5620780451865333,
+        "same_bit_centre_median_um": 24.665573508030285,
+        "same_bit_centre_max_um": 82.11698971589253,
+        "same_bit_gap_min_um": 0.0,
+        "same_bit_touching": 1,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       }
+      }
+     },
+     "acc_lane1": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 26.91682094899025,
+        "same_bit_centre_min_um": 2.7586228448267516,
+        "same_bit_centre_median_um": 30.68728115167312,
+        "same_bit_centre_max_um": 91.87205015672612,
+        "same_bit_gap_min_um": 0.0,
+        "same_bit_touching": 3,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       }
+      }
+     },
+     "acc_lane2": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 46.20363926835878,
+        "same_bit_centre_min_um": 2.871375976774866,
+        "same_bit_centre_median_um": 55.15587683478115,
+        "same_bit_centre_max_um": 116.97447242881668,
+        "same_bit_gap_min_um": 0.0,
+        "same_bit_touching": 1,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       }
+      }
+     },
+     "acc_lane3": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 29.532581186928116,
+        "same_bit_centre_min_um": 6.100098359862726,
+        "same_bit_centre_median_um": 30.82616369966437,
+        "same_bit_centre_max_um": 111.2778450546199,
+        "same_bit_gap_min_um": 0.0,
+        "same_bit_touching": 1,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       }
+      }
+     },
+     "res_lane0": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 24.106534383855347,
+        "same_bit_centre_min_um": 2.871375976774893,
+        "same_bit_centre_median_um": 24.516687224435255,
+        "same_bit_centre_max_um": 119.82930693282006,
+        "same_bit_gap_min_um": 0.0,
+        "same_bit_touching": 3,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       }
+      }
+     },
+     "res_lane1": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 32.33242751697782,
+        "same_bit_centre_min_um": 7.429481812347346,
+        "same_bit_centre_median_um": 27.85935413331462,
+        "same_bit_centre_max_um": 130.03688246032354,
+        "same_bit_gap_min_um": 2.719999999999999,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       }
+      }
+     },
+     "res_lane2": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 46.33460963469962,
+        "same_bit_centre_min_um": 2.7586228448267724,
+        "same_bit_centre_median_um": 53.080672329410135,
+        "same_bit_centre_max_um": 128.0516895632385,
+        "same_bit_gap_min_um": 0.0,
+        "same_bit_touching": 2,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       }
+      }
+     },
+     "res_lane3": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 33.43445519431452,
+        "same_bit_centre_min_um": 4.576111886744017,
+        "same_bit_centre_median_um": 30.72158972659352,
+        "same_bit_centre_max_um": 185.0611661046153,
+        "same_bit_gap_min_um": 0.0,
+        "same_bit_touching": 1,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       }
+      }
+     },
+     "thermal": {
+      "copies": {
+       "0": 2,
+       "1": 2,
+       "2": 2
+      },
+      "pairs": {
+       "0-1": {
+        "bits": 2,
+        "centroid_um": 8.75844735098637,
+        "same_bit_centre_min_um": 5.517245689653487,
+        "same_bit_centre_median_um": 9.25862284482675,
+        "same_bit_centre_max_um": 13.000000000000014,
+        "same_bit_gap_min_um": 2.719999999999999,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 2.719999999999999,
+        "min_edge_gap_any_cell_um": 0.0
+       },
+       "0-2": {
+        "bits": 2,
+        "centroid_um": 5.494433546781676,
+        "same_bit_centre_min_um": 5.744736721556509,
+        "same_bit_centre_median_um": 5.825485358121908,
+        "same_bit_centre_max_um": 5.906233994687306,
+        "same_bit_gap_min_um": 0.0,
+        "same_bit_touching": 1,
+        "min_edge_gap_any_ff_um": 0.0,
+        "min_edge_gap_any_cell_um": 0.0
+       },
+       "1-2": {
+        "bits": 2,
+        "centroid_um": 11.034491379306973,
+        "same_bit_centre_min_um": 10.967169188081302,
+        "same_bit_centre_median_um": 11.483126243200191,
+        "same_bit_centre_max_um": 11.99908329831908,
+        "same_bit_gap_min_um": 8.159999999999997,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 8.159999999999997,
+        "min_edge_gap_any_cell_um": 2.719999999999999
+       }
+      }
+     }
+    },
+    "n_redundant_ff": 518,
+    "duplicate_bits": [],
+    "copyA_vs_copyB_min_edge_gap_um": 0.0,
+    "regions": {},
+    "region_gaps_um": {},
+    "nonmember_cells_fully_inside_regions": 0,
+    "nonmember_cells_straddling_region_edge": 0,
+    "nonmember_straddling_kinds": {},
+    "nonmember_inside_kinds": {},
+    "nonmember_overlaps_by_region": {},
+    "group_members_placed": 0,
+    "group_member_ffs": 0,
+    "group_member_violations": [],
+    "nonmember_logic_cells_in_regions": 0,
+    "copy_region_occupancy": {
+     "acc_lane0.A": {},
+     "acc_lane0.B": {},
+     "acc_lane1.A": {},
+     "acc_lane1.B": {},
+     "acc_lane2.A": {},
+     "acc_lane2.B": {},
+     "acc_lane3.A": {},
+     "acc_lane3.B": {},
+     "res_lane0.A": {},
+     "res_lane0.B": {},
+     "res_lane1.A": {},
+     "res_lane1.B": {},
+     "res_lane2.A": {},
+     "res_lane2.B": {},
+     "res_lane3.A": {},
+     "res_lane3.B": {},
+     "thermal.0": {},
+     "thermal.1": {},
+     "thermal.2": {}
+    }
+   },
+   "die_um": [
+    0.0,
+    0.0,
+    346.295,
+    346.295
+   ],
+   "core_um": [
+    2.3,
+    2.72,
+    344.08,
+    342.72
+   ]
+  },
+  "separated": {
+   "def": "build/pd_sep/results/sky130hd/orbit_demo/sep/6_final.def",
+   "measure": {
+    "groups": {
+     "acc_lane0": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 290.97860557092514,
+        "same_bit_centre_min_um": 262.67408322862764,
+        "same_bit_centre_median_um": 291.54648078842024,
+        "same_bit_centre_max_um": 329.99940424188645,
+        "same_bit_gap_min_um": 255.3,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 243.79999999999998,
+        "min_edge_gap_any_cell_um": 233.99591876782807
+       }
+      }
+     },
+     "acc_lane1": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 289.00230674901195,
+        "same_bit_centre_min_um": 254.8506700010812,
+        "same_bit_centre_median_um": 289.0979180261873,
+        "same_bit_centre_max_um": 327.974867939603,
+        "same_bit_gap_min_um": 247.2940662450274,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 243.40079950567133,
+        "min_edge_gap_any_cell_um": 236.50257334752195
+       }
+      }
+     },
+     "acc_lane2": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 292.94546992638516,
+        "same_bit_centre_min_um": 252.55464755177243,
+        "same_bit_centre_median_um": 293.5846242544324,
+        "same_bit_centre_max_um": 323.1933619367823,
+        "same_bit_gap_min_um": 245.18,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 244.26,
+        "min_edge_gap_any_cell_um": 241.7449573414097
+       }
+      }
+     },
+     "acc_lane3": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 288.3201768874156,
+        "same_bit_centre_min_um": 253.36526991677454,
+        "same_bit_centre_median_um": 288.5378678682433,
+        "same_bit_centre_max_um": 327.3426394468035,
+        "same_bit_gap_min_um": 245.88083292522015,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 243.34,
+        "min_edge_gap_any_cell_um": 225.80992006552768
+       }
+      }
+     },
+     "res_lane0": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 292.44631709298375,
+        "same_bit_centre_min_um": 261.86716709049267,
+        "same_bit_centre_median_um": 290.87846553516033,
+        "same_bit_centre_max_um": 329.00120911631916,
+        "same_bit_gap_min_um": 254.43816144595922,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 244.50219221921103,
+        "min_edge_gap_any_cell_um": 241.97528799445618
+       }
+      }
+     },
+     "res_lane1": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 290.02676231039436,
+        "same_bit_centre_min_um": 251.1747280281199,
+        "same_bit_centre_median_um": 295.42145099438335,
+        "same_bit_centre_max_um": 324.5850427854001,
+        "same_bit_gap_min_um": 243.8,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 243.40079950567133,
+        "min_edge_gap_any_cell_um": 241.96
+       }
+      }
+     },
+     "res_lane2": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 295.9627653628916,
+        "same_bit_centre_min_um": 255.81784769636386,
+        "same_bit_centre_median_um": 295.7064929904643,
+        "same_bit_centre_max_um": 331.2446733156625,
+        "same_bit_gap_min_um": 248.41489166312076,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 243.583106967622,
+        "min_edge_gap_any_cell_um": 237.04049358706627
+       }
+      }
+     },
+     "res_lane3": {
+      "copies": {
+       "A": 32,
+       "B": 32
+      },
+      "pairs": {
+       "A-B": {
+        "bits": 32,
+        "centroid_um": 293.3502492814956,
+        "same_bit_centre_min_um": 251.17472802811986,
+        "same_bit_centre_median_um": 293.70462383264055,
+        "same_bit_centre_max_um": 332.22022816198296,
+        "same_bit_gap_min_um": 243.79999999999998,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 242.94091462740485,
+        "min_edge_gap_any_cell_um": 242.88000000000002
+       }
+      }
+     },
+     "thermal": {
+      "copies": {
+       "0": 2,
+       "1": 2,
+       "2": 2
+      },
+      "pairs": {
+       "0-1": {
+        "bits": 2,
+        "centroid_um": 100.73483260521164,
+        "same_bit_centre_min_um": 97.92000000000002,
+        "same_bit_centre_median_um": 100.82443193557606,
+        "same_bit_centre_max_um": 103.7288638711521,
+        "same_bit_gap_min_um": 95.19999999999999,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 92.53604054637309,
+        "min_edge_gap_any_cell_um": 89.75999999999999
+       },
+       "0-2": {
+        "bits": 2,
+        "centroid_um": 206.72115155445516,
+        "same_bit_centre_min_um": 206.72000000000003,
+        "same_bit_centre_median_um": 206.72230308966613,
+        "same_bit_centre_max_um": 206.72460617933226,
+        "same_bit_gap_min_um": 204.0,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 201.30575451288027,
+        "min_edge_gap_any_cell_um": 198.56
+       },
+       "1-2": {
+        "bits": 2,
+        "centroid_um": 106.1438118780365,
+        "same_bit_centre_min_um": 103.62171201056276,
+        "same_bit_centre_median_um": 106.21085600528139,
+        "same_bit_centre_max_um": 108.8,
+        "same_bit_gap_min_um": 100.64000000000001,
+        "same_bit_touching": 0,
+        "min_edge_gap_any_ff_um": 97.92000000000002,
+        "min_edge_gap_any_cell_um": 92.47999999999999
+       }
+      }
+     }
+    },
+    "n_redundant_ff": 518,
+    "duplicate_bits": [],
+    "copyA_vs_copyB_min_edge_gap_um": 242.94091462740485,
+    "regions": {
+     "pdsep_copyA": {
+      "type": "FENCE",
+      "boxes_um": [
+       [
+        2.3,
+        2.72,
+        52.44,
+        342.72
+       ]
+      ]
+     },
+     "pdsep_copyB": {
+      "type": "FENCE",
+      "boxes_um": [
+       [
+        293.94,
+        2.72,
+        344.08,
+        342.72
+       ]
+      ]
+     },
+     "pdsep_th0": {
+      "type": "FENCE",
+      "boxes_um": [
+       [
+        161.92,
+        272.0,
+        184.92,
+        288.32
+       ]
+      ]
+     },
+     "pdsep_th1": {
+      "type": "FENCE",
+      "boxes_um": [
+       [
+        161.92,
+        165.92,
+        184.92,
+        182.24
+       ]
+      ]
+     },
+     "pdsep_th2": {
+      "type": "FENCE",
+      "boxes_um": [
+       [
+        161.92,
+        57.12,
+        184.92,
+        73.44
+       ]
+      ]
+     }
+    },
+    "region_gaps_um": {
+     "pdsep_copyA|pdsep_copyB": 241.5,
+     "pdsep_copyA|pdsep_th0": 109.47999999999999,
+     "pdsep_copyA|pdsep_th1": 109.47999999999999,
+     "pdsep_copyA|pdsep_th2": 109.47999999999999,
+     "pdsep_copyB|pdsep_th0": 109.02000000000001,
+     "pdsep_copyB|pdsep_th1": 109.02000000000001,
+     "pdsep_copyB|pdsep_th2": 109.02000000000001,
+     "pdsep_th0|pdsep_th1": 89.75999999999999,
+     "pdsep_th0|pdsep_th2": 198.56,
+     "pdsep_th1|pdsep_th2": 92.47999999999999
+    },
+    "nonmember_cells_fully_inside_regions": 2,
+    "nonmember_cells_straddling_region_edge": 107,
+    "nonmember_straddling_kinds": {
+     "clkbuf_16": 43,
+     "clkdlybuf4s50_1": 22,
+     "clkbuf_8": 12,
+     "clkbuf_1": 11,
+     "buf_4": 5,
+     "bufinv_16": 2,
+     "a211oi_4": 1,
+     "a21oi_1": 1,
+     "a21oi_2": 1,
+     "xnor2_2": 1,
+     "inv_1": 1,
+     "a211o_1": 1,
+     "xor2_1": 1,
+     "a22o_1": 1,
+     "nand4_1": 1,
+     "xnor3_1": 1,
+     "clkinv_4": 1,
+     "inv_6": 1
+    },
+    "nonmember_inside_kinds": {
+     "diode_2": 2
+    },
+    "nonmember_overlaps_by_region": {
+     "pdsep_copyA": [
+      {
+       "inst": "clkbuf_leaf_12_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_14_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_17_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_2_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_4_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_5_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_7_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_0_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.9
+      },
+      {
+       "inst": "clkbuf_leaf_11_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.9
+      },
+      {
+       "inst": "clkbuf_leaf_13_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.9
+      },
+      {
+       "inst": "clkbuf_leaf_16_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.9
+      },
+      {
+       "inst": "clkbuf_leaf_18_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.9
+      },
+      {
+       "inst": "clkbuf_leaf_19_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.9
+      },
+      {
+       "inst": "clkbuf_leaf_48_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.9
+      },
+      {
+       "inst": "clkbuf_leaf_8_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.9
+      },
+      {
+       "inst": "clkload13",
+       "master": "bufinv_16",
+       "origin_inside": true,
+       "overlap_um2": 22.522,
+       "overlap_fraction": 0.75
+      },
+      {
+       "inst": "clkbuf_leaf_1_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 15.014,
+       "overlap_fraction": 0.6
+      },
+      {
+       "inst": "clkbuf_leaf_6_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.5
+      },
+      {
+       "inst": "clkload10",
+       "master": "clkbuf_8",
+       "origin_inside": true,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.909
+      },
+      {
+       "inst": "clkload16",
+       "master": "clkbuf_8",
+       "origin_inside": true,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.909
+      },
+      {
+       "inst": "clkload3",
+       "master": "clkbuf_8",
+       "origin_inside": true,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.909
+      },
+      {
+       "inst": "clkbuf_leaf_49_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 11.261,
+       "overlap_fraction": 0.45
+      },
+      {
+       "inst": "input76",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output100",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output122",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output130",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output132",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output171",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output186",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output195",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output198",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output206",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "clkload15",
+       "master": "bufinv_16",
+       "origin_inside": true,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.25
+      },
+      {
+       "inst": "output111",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.75
+      },
+      {
+       "inst": "output115",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.75
+      },
+      {
+       "inst": "output147",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.75
+      },
+      {
+       "inst": "output98",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.75
+      },
+      {
+       "inst": "place1885",
+       "master": "buf_4",
+       "origin_inside": true,
+       "overlap_um2": 6.256,
+       "overlap_fraction": 0.833
+      },
+      {
+       "inst": "clkload8",
+       "master": "clkbuf_8",
+       "origin_inside": true,
+       "overlap_um2": 5.005,
+       "overlap_fraction": 0.364
+      },
+      {
+       "inst": "output108",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 5.005,
+       "overlap_fraction": 0.5
+      },
+      {
+       "inst": "output114",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 5.005,
+       "overlap_fraction": 0.5
+      },
+      {
+       "inst": "output188",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 3.754,
+       "overlap_fraction": 0.375
+      },
+      {
+       "inst": "ANTENNA_18",
+       "master": "diode_2",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 1.0
+      },
+      {
+       "inst": "clkbuf_leaf_20_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.1
+      },
+      {
+       "inst": "clkload11",
+       "master": "clkbuf_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload2",
+       "master": "clkbuf_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload4",
+       "master": "clkbuf_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload5",
+       "master": "clkbuf_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload6",
+       "master": "inv_6",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.286
+      },
+      {
+       "inst": "output107",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.25
+      },
+      {
+       "inst": "output169",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.25
+      },
+      {
+       "inst": "output183",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.25
+      },
+      {
+       "inst": "clkbuf_leaf_50_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 1.251,
+       "overlap_fraction": 0.05
+      }
+     ],
+     "pdsep_copyB": [
+      {
+       "inst": "clkbuf_leaf_23_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_25_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_28_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_30_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_31_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_32_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_34_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_36_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_37_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_38_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_40_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_41_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_43_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_44_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_45_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "clkbuf_leaf_39_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 21.27,
+       "overlap_fraction": 0.85
+      },
+      {
+       "inst": "clkbuf_leaf_29_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 17.517,
+       "overlap_fraction": 0.7
+      },
+      {
+       "inst": "clkbuf_leaf_46_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.5
+      },
+      {
+       "inst": "clkload0",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.5
+      },
+      {
+       "inst": "clkload21",
+       "master": "clkbuf_8",
+       "origin_inside": false,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.909
+      },
+      {
+       "inst": "clkload22",
+       "master": "clkbuf_8",
+       "origin_inside": false,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.909
+      },
+      {
+       "inst": "clkload23",
+       "master": "clkbuf_8",
+       "origin_inside": false,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.909
+      },
+      {
+       "inst": "clkload30",
+       "master": "clkbuf_8",
+       "origin_inside": false,
+       "overlap_um2": 12.512,
+       "overlap_fraction": 0.909
+      },
+      {
+       "inst": "clkbuf_leaf_26_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 11.261,
+       "overlap_fraction": 0.45
+      },
+      {
+       "inst": "clkload24",
+       "master": "clkbuf_8",
+       "origin_inside": false,
+       "overlap_um2": 10.01,
+       "overlap_fraction": 0.727
+      },
+      {
+       "inst": "clkload25",
+       "master": "clkbuf_8",
+       "origin_inside": false,
+       "overlap_um2": 10.01,
+       "overlap_fraction": 0.727
+      },
+      {
+       "inst": "output217",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": false,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "output220",
+       "master": "clkdlybuf4s50_1",
+       "origin_inside": false,
+       "overlap_um2": 8.758,
+       "overlap_fraction": 0.875
+      },
+      {
+       "inst": "clkbuf_leaf_27_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.3
+      },
+      {
+       "inst": "clkload39",
+       "master": "clkinv_4",
+       "origin_inside": false,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.857
+      },
+      {
+       "inst": "clkbuf_2_3__f_clk",
+       "master": "clkbuf_16",
+       "origin_inside": false,
+       "overlap_um2": 5.005,
+       "overlap_fraction": 0.2
+      },
+      {
+       "inst": "clkload20",
+       "master": "clkbuf_8",
+       "origin_inside": false,
+       "overlap_um2": 5.005,
+       "overlap_fraction": 0.364
+      },
+      {
+       "inst": "clkload33",
+       "master": "clkbuf_8",
+       "origin_inside": false,
+       "overlap_um2": 3.754,
+       "overlap_fraction": 0.273
+      },
+      {
+       "inst": "ANTENNA_6",
+       "master": "diode_2",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 1.0
+      },
+      {
+       "inst": "_4471_",
+       "master": "inv_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload26",
+       "master": "clkbuf_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload28",
+       "master": "clkbuf_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload32",
+       "master": "clkbuf_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload34",
+       "master": "clkbuf_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload35",
+       "master": "clkbuf_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload36",
+       "master": "clkbuf_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "clkload37",
+       "master": "clkbuf_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.667
+      }
+     ],
+     "pdsep_th0": [
+      {
+       "inst": "_6363_",
+       "master": "xor2_1",
+       "origin_inside": true,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.857
+      },
+      {
+       "inst": "_6587_",
+       "master": "a22o_1",
+       "origin_inside": false,
+       "overlap_um2": 7.507,
+       "overlap_fraction": 0.857
+      },
+      {
+       "inst": "place1641",
+       "master": "buf_4",
+       "origin_inside": false,
+       "overlap_um2": 5.005,
+       "overlap_fraction": 0.667
+      },
+      {
+       "inst": "_6786_",
+       "master": "xnor3_1",
+       "origin_inside": false,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.111
+      },
+      {
+       "inst": "place1782",
+       "master": "buf_4",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.333
+      }
+     ],
+     "pdsep_th1": [
+      {
+       "inst": "clkbuf_0_clk",
+       "master": "clkbuf_16",
+       "origin_inside": true,
+       "overlap_um2": 23.773,
+       "overlap_fraction": 0.95
+      },
+      {
+       "inst": "_6324_",
+       "master": "a211o_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.286
+      },
+      {
+       "inst": "_6741_",
+       "master": "nand4_1",
+       "origin_inside": false,
+       "overlap_um2": 1.251,
+       "overlap_fraction": 0.2
+      }
+     ],
+     "pdsep_th2": [
+      {
+       "inst": "rebuffer2153",
+       "master": "buf_4",
+       "origin_inside": false,
+       "overlap_um2": 6.256,
+       "overlap_fraction": 0.833
+      },
+      {
+       "inst": "_4057_",
+       "master": "a21oi_2",
+       "origin_inside": false,
+       "overlap_um2": 5.005,
+       "overlap_fraction": 0.571
+      },
+      {
+       "inst": "_4058_",
+       "master": "xnor2_2",
+       "origin_inside": false,
+       "overlap_um2": 3.754,
+       "overlap_fraction": 0.231
+      },
+      {
+       "inst": "_4056_",
+       "master": "a21oi_1",
+       "origin_inside": true,
+       "overlap_um2": 2.502,
+       "overlap_fraction": 0.5
+      },
+      {
+       "inst": "_4027_",
+       "master": "a211oi_4",
+       "origin_inside": true,
+       "overlap_um2": 1.251,
+       "overlap_fraction": 0.062
+      },
+      {
+       "inst": "place1819",
+       "master": "buf_4",
+       "origin_inside": false,
+       "overlap_um2": 1.251,
+       "overlap_fraction": 0.167
+      }
+     ]
+    },
+    "group_members_placed": 1560,
+    "group_member_ffs": 518,
+    "group_member_violations": [],
+    "nonmember_logic_cells_in_regions": 109,
+    "copy_region_occupancy": {
+     "acc_lane0.A": {
+      "pdsep_copyA": 32
+     },
+     "acc_lane0.B": {
+      "pdsep_copyB": 32
+     },
+     "acc_lane1.A": {
+      "pdsep_copyA": 32
+     },
+     "acc_lane1.B": {
+      "pdsep_copyB": 32
+     },
+     "acc_lane2.A": {
+      "pdsep_copyA": 32
+     },
+     "acc_lane2.B": {
+      "pdsep_copyB": 32
+     },
+     "acc_lane3.A": {
+      "pdsep_copyA": 32
+     },
+     "acc_lane3.B": {
+      "pdsep_copyB": 32
+     },
+     "res_lane0.A": {
+      "pdsep_copyA": 32
+     },
+     "res_lane0.B": {
+      "pdsep_copyB": 32
+     },
+     "res_lane1.A": {
+      "pdsep_copyA": 32
+     },
+     "res_lane1.B": {
+      "pdsep_copyB": 32
+     },
+     "res_lane2.A": {
+      "pdsep_copyA": 32
+     },
+     "res_lane2.B": {
+      "pdsep_copyB": 32
+     },
+     "res_lane3.A": {
+      "pdsep_copyA": 32
+     },
+     "res_lane3.B": {
+      "pdsep_copyB": 32
+     },
+     "thermal.0": {
+      "pdsep_th0": 2
+     },
+     "thermal.1": {
+      "pdsep_th1": 2
+     },
+     "thermal.2": {
+      "pdsep_th2": 2
+     }
+    }
+   },
+   "die_um": [
+    0.0,
+    0.0,
+    346.295,
+    346.295
+   ],
+   "core_um": [
+    2.3,
+    2.72,
+    344.08,
+    342.72
+   ]
+  }
+ },
+ "check": "separated",
+ "check_failures": [],
+ "targets": {
+  "same_bit_centre_min_um": 20.0,
+  "min_edge_gap_um": 10.0,
+  "thermal_region_gap_um": 10.0
+ }
+}

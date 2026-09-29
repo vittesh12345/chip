@@ -48,8 +48,9 @@ export TNS_END_PERCENT = 100
 # placement region (odb dbRegion + dbGroup) per copy: copy A of every
 # accumulator/result pair, copy B, and each of the three thermal copies.
 # Global placement, detailed placement and every later re-legalisation (CTS,
-# repair) keep the members inside; non-members are kept from being placed in
-# a fence (a few straddle a fence edge; measured in the report).
+# repair) keep the members inside; non-members are kept from lying fully
+# inside a fence but can still overlap one, many by most of their width
+# (clock-tree leaf buffers, port buffers; counted in the report).
 #
 # PDSEP_FLOORPLAN selects the region arrangement defined in regions.tcl.
 # ENABLE_DPO=0: improve_placement does not keep the placement legal with the

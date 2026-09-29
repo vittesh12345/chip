@@ -19,8 +19,8 @@
 // first cycle. Reset and clear_fault stay free later on.
 //
 // Property groups (per SymbiYosys task):
-//   D_*  data integrity at the ports, all scenarios (the negative scenarios
-//        select exactly one of them with -DFI_CHK_FIRE / -DFI_CHK_LOSS)
+//   D_*  data integrity at the ports, all scenarios (the negative tasks
+//        select exactly one of them: -DFI_SELECT -DFI_CHK_FIRE / _LOSS)
 //   L_*  duplicated lane storage: detection and fault-stop (FI_CLASS_LANE)
 //   T_*  thermal copy: masking and repair (FI_CLASS_THERM)
 //   H_*  helper invariants that make k-induction close (proven, not assumed)
@@ -34,9 +34,13 @@
 
 `include "fi_scenario.vh"
 
+// Property selection: by default every D check and the L / T group of the
+// scenario class (FI_FULL). -DFI_SELECT compiles only the D checks named with
+// -DFI_CHK_* (negative tasks); -DFI_COVER_TASK only the covers.
 `ifdef FI_COVER_TASK
-`elsif FI_CLASS_NEG
+`elsif FI_SELECT
 `else
+`define FI_FULL
 `define FI_CHK_FIRE
 `define FI_CHK_LOSS
 `define FI_CHK_WRONG
@@ -271,7 +275,7 @@ module fi_harness (
     end
 `endif
 
-`ifndef FI_COVER_TASK
+`ifdef FI_FULL
 `ifdef FI_CLASS_LANE
     // ------------------------------------------------------------------
     // L: an upset in one copy of accumulator / result storage
@@ -346,7 +350,7 @@ module fi_harness (
 `endif
 `endif
 
-`ifndef FI_COVER_TASK
+`ifdef FI_FULL
 `ifdef FI_CLASS_THERM
     // ------------------------------------------------------------------
     // T: an upset in one thermal state copy
@@ -400,10 +404,17 @@ module fi_harness (
     // ------------------------------------------------------------------
     // Covers: the upset situations the proofs talk about are reachable
     // ------------------------------------------------------------------
-    reg f_had_fault = 1'b0;
+    // Trackers start after the reset cycle (the state before it is arbitrary).
+    reg         f_had_fault  = 1'b0;   // fault_f has been 1
+    reg         f_had_fire_f = 1'b0;   // the copy has transferred a result
+    reg [127:0] f_last_f;              // ... the last one it transferred
     always @(posedge clk) begin
-        if (fault_f)
+        if (f_past_valid && fault_f)
             f_had_fault <= 1'b1;
+        if (f_past_valid && out_fire_f) begin
+            f_had_fire_f <= 1'b1;
+            f_last_f     <= out_data_f;
+        end
     end
 
     always @(posedge clk) begin
@@ -432,8 +443,18 @@ module fi_harness (
             C_upset_copy_code3:          cover (fi_vis && (s_f & FI_TMASK) == FI_TMASK);
             C_upset_during_transfer:     cover (fi_vis && out_fire_f);
 `endif
-`ifdef FI_CLASS_NEG
-            C_result_transferred:  cover (out_fire_f && fi_seen);
+`ifdef FI_SCN_neg_out_valid_q
+            // The copy transfers the result it has already transferred once
+            // more (duplicate), while the reference transfers nothing ...
+            C_duplicate_result: cover (rst_n && out_fire_f && !out_fire_r && f_had_fire_f &&
+                                       out_data_f == f_last_f);
+            // ... or silently drops a result the reference transfers.
+            C_lost_result:      cover (rst_n && out_fire_r && !out_valid_f && !stopped_f);
+`endif
+`ifdef FI_SCN_neg_product
+            // Both transfer a result, with different data, and nothing stops.
+            C_wrong_result:     cover (rst_n && out_fire_f && out_fire_r && out_data_f != out_data_r &&
+                                       !stopped_f);
 `endif
         end
     end
