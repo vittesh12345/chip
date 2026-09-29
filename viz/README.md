@@ -33,11 +33,13 @@ targets only read the pd area. Override with
 `make viz VIZ_GDS=path/6_final.gds VIZ_DEF=path/6_final.def`.
 
 Run it again after every new pd run: the committed `viz/layout.*` describe
-whichever run they were generated from (`inputs` and `generated_utc` in
-`layout.json`, and the footer of the page, name it). The committed data comes
-from the pd area's production run `build/pd/results/sky130hd/orbit_demo/base/`
-(clock 7 ns, setup WNS +0.066 ns, 6,166 logic cells plus 1,524 tap and 10,468
-fill/decap cells, 346.3 x 346.3 µm die, 722,187 drawn rectangles).
+whichever run they were generated from. `inputs` in `layout.json` names the
+GDS/DEF with their file times and SHA-256 (`gds_mtime_utc`, `gds_sha256`, ...),
+`generated_utc` is when the conversion ran, and the page footer shows both.
+The committed data comes from the pd area's production run
+`build/pd/results/sky130hd/orbit_demo/base/` (GDS written 2026-09-29 20:10 UTC;
+clock 7 ns, setup WNS +0.066 ns, 6,166 logic cells plus 1,524 tap and 10,468
+fill/decap cells, 346.3 x 346.3 µm die, 721,667 drawn rectangles).
 
 Design stats (clock, WNS, area, cell count, utilisation) come from the ORFS
 run that wrote the GDS (`logs/.../6_report.json` and `results/.../6_final.sdc`),
@@ -54,12 +56,27 @@ platform files it needs out of the ORFS image (`openroad/orfs:latest`) into
 `make viz-gcd` routes the stock ORFS sky130hd `gcd` design into
 `build/viz/gcd_run/` (development data only; it has no redundant storage).
 
-Screenshots run Chromium headless with SwiftShader (software WebGL), so each
-frame of the full die takes 10-40 s. Build machines often cannot reach the
-CDNs, so the harness serves the same pinned three.js release from the npm
-registry tarball and the Google Fonts files locally (`--cdn` keeps the CDN
-URLs). The published page itself loads three.js 0.170.0 from
-`cdn.jsdelivr.net/npm/` and the IBM Plex fonts from Google Fonts.
+Screenshots run Chromium headless with SwiftShader (software WebGL); a frame
+of the full die takes from about a second to tens of seconds depending on
+machine load, and `make viz-shots` takes several minutes. The harness loads
+`viz/index.html` unmodified, wrapped like the Artifact host wraps it, under a
+Content-Security-Policy modelled on the Artifact sandbox (scripts only from
+the three allowed CDNs, styles and fonts only from Google Fonts, data only
+from the page's own origin). Build machines often cannot reach the CDNs, so
+Playwright request routing answers the page's own CDN URLs with byte-identical
+copies (three.js 0.170.0 from the npm registry tarball, the IBM Plex files
+from Google Fonts, cached in `build/viz/vendor-cache/`); `--cdn` uses the real
+CDNs instead. It logs every host the page contacts and exits non-zero on a
+host outside the allowlist, a CSP violation, a page error, a viewer error
+state or horizontal overflow. `make viz-serve` (local viewing only) rewrites
+its copy of the page to the local three.js/font files instead.
+
+Shots: `viewer_iso`, `viewer_top`, `viewer_lowangle` (layers spread),
+`viewer_redundancy` (all flip-flops by copy), `viewer_redundancy_lane0`
+(accumulator lane 0 with same-bit lines, top view), `viewer_dark`,
+`viewer_dark_redundancy` (1440x900), `viewer_phone`, `viewer_phone_dark`
+(390x844, full page) and `glb_preview` (the GLB loaded with three.js
+GLTFLoader).
 
 ## Data format
 
@@ -88,7 +105,15 @@ the top cell, and the smaller of three decompositions is kept: the merged
 region cut into horizontal slabs, into vertical slabs, or the original
 shapes (boxes kept, other polygons sliced). No non-rectangular shapes occur
 in sky130hd; if any did, their bounding box would be used and counted in
-`non_rect_as_bbox`.
+`non_rect_as_bbox`. Slab decomposition leaves some 5 nm slivers that round to
+zero width or height on the 10 nm grid; they draw nothing and are dropped
+(`degenerate_dropped` per layer: 350 poly, 150 li1 and 20 met1 slabs for the
+committed data).
+
+Checked independently during review: rebuilding each layer from
+`layout.bin` and XOR-ing it with KLayout's merged GDS layer leaves only
+slivers narrower than 12 nm on all 16 layers (the rounding), and the union
+area equals the GDS area to within 0.03%.
 
 ### layout.json
 
@@ -96,12 +121,14 @@ Main keys: `format` (above), `design`, `die_um` / `core_um` (µm, relative to
 the die origin; core = bounding box of the DEF placement rows),
 `stack_top_um`, `layers[]` (`name`, `gds` layer/datatype, `kind`, `color`,
 `z_um`, `thickness_um`, `z_source`, `thickness_source`, `approximate`,
-`count`, `offset`, `bytes`, decomposition details, `layer_map_check`),
+`count`, `offset`, `bytes`, decomposition details incl. `degenerate_dropped`,
+`layer_map_check`),
 `z_sources`, `dropped_layers`, `fe_detail_window_um` (null when every layer
 is complete), `stats` (clock, WNS, area, cell count and where each came from),
 `redundancy` (`groups` with the distance numbers, `flops` with every
 flip-flop's name, group, copy, bit index and placed box in µm, `summary`,
-`method`), `glb`, `inputs` and `tools`.
+`method`), `glb`, `inputs` (paths, plus `gds_mtime_utc` / `def_mtime_utc` and
+`gds_sha256` / `def_sha256` to identify the pd run) and `tools`.
 
 ## Layers and heights
 
@@ -157,7 +184,7 @@ models dielectrics, so nothing between the layers is drawn.
 * **Front-end detail**: kept for the whole die. The pipeline has a payload
   budget (`--bin-budget-mb`, default 7 MB); above it, diff/tap/poly/licon1/li1/mcon
   are cut to a detail window around the core centre and the window is drawn on
-  the die. For the current orbit_demo run the whole die fits (722,187
+  the die. For the current orbit_demo run the whole die fits (721,667
   rectangles, 5.8 MB of `layout.bin`; page + data about 5.9 MB), so nothing
   is cut.
 * **Colours** loosely follow the KLayout/Magic sky130 conventions (poly red,
@@ -167,23 +194,29 @@ models dielectrics, so nothing between the layers is drawn.
 ## The GLB
 
 `reports/viz/orbit_demo_sky130hd_3d.glb`: every rectangle of met1-met5 and
-via-via4 as a closed box, one named mesh and material per layer
-(`met1`, `via`, ...), plus a `die_substrate` slab (1 µm thick, display only).
+via-via4 as a closed box, one named mesh and material per layer (`met1`,
+`via`, ...), plus a `die_substrate` slab (1 µm thick, display only). A box
+that collapses on the 10 nm quantization step is skipped (one met1 and one
+met3 box for the committed data).
 Axes: +X = layout x, +Y = up, -Z = layout y; origin at the die centre;
 1 unit = 1 µm; heights are true scale (the stack is 6.6 µm on a 346 µm die,
 so it looks flat until you scale Y or zoom in; `--glb-z-scale` bakes in an
 exaggeration).
 
-To stay near 10 MB with all 148,674 boxes (10.1 MB, 9.6 MiB) it uses
+To stay near 10 MB with all 148,652 boxes (10,114,064 bytes, 9.6 MiB) it uses
 `KHR_mesh_quantization` (int16 positions on a 10 nm step, the node scale
-converts back to µm) and one shared index buffer. The Khronos glTF validator (gltf-validator
-2.0.0-dev.3.10, run during development) reports no errors, warnings or infos,
-and `make viz-shots` loads it with three.js GLTFLoader
-(`reports/viz/glb_preview.png`, rendered with a ×4 vertical scale); Blender's
+converts back to µm) and one shared index buffer. For the committed file the
+Khronos glTF validator (gltf-validator 2.0.0-dev.3.10) reports 0 errors,
+warnings, infos and hints; trimesh 5.1.0 and pygltflib 1.16.5 load it
+(10 named meshes, bounds ±173.15 µm in x/z and -1 to 6.57 µm in y); and
+`make viz-shots` loads it with three.js GLTFLoader
+(`reports/viz/glb_preview.png`, rendered with a ×4 vertical scale). Blender's
 glTF importer and three.js/Babylon.js based web viewers support the
-extension. A viewer without `KHR_mesh_quantization` support refuses the file:
-`make viz VIZ_FLAGS=--glb-core` writes a plain glTF with float positions
-instead (about 14.9 MB for the same content). li1, mcon, poly,
+extension; Blender and Windows 3D Viewer were not tried here, and a viewer
+without `KHR_mesh_quantization` support refuses the file.
+`make viz VIZ_FLAGS=--glb-core` writes a plain glTF with float32 positions and
+no extensions instead (14,872,400 bytes for the same content, also 0
+validator issues). li1, mcon, poly,
 diff/tap and licon1 are left out of the GLB to keep it small (they are in the
 web viewer).
 
@@ -221,7 +254,10 @@ the distances are simply where timing and wirelength put the copies. See
 * Hovering a highlighted flip-flop shows its instance name, group, copy and
   bit (mouse only; `make viz-shots` checks this once). Choosing one group,
   or clicking its row in the table, draws lines between the same bits of
-  its copies.
+  its copies and moves the camera in on that group (keeping the viewing
+  direction); choosing "All flip-flops" returns to the preset view.
+* The left-edge ruler hides when the camera is within about 17° of the die
+  plane, where its labels would be seen edge-on across the stack.
 * Arrow keys pan when the 3D view has keyboard focus.
 * WebGL 2 is required; the page says so if it is missing, and it shows a
   readable error if `layout.json`/`layout.bin` fail to load or do not match.

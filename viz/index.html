@@ -93,6 +93,7 @@
   color-scheme: dark;
 }
 
+[hidden] { display: none !important; }
 html, body { height: 100%; }
 body {
   background: var(--bg);
@@ -241,7 +242,7 @@ button {
 }
 button:hover { border-color: var(--accent); }
 button[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
-button:focus-visible, input:focus-visible, select:focus-visible, label.layer:focus-within {
+button:focus-visible, input:focus-visible, select:focus-visible, label.layer:has(input:focus-visible) {
   outline: 2px solid var(--accent); outline-offset: 2px;
 }
 .linkish { border: 0; background: none; padding: 2px 4px; color: var(--accent-ink); font-size: 12px; }
@@ -255,6 +256,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, label.layer:foc
 
 /* layer list */
 .layers { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.layers:empty { display: none; }
 .layer-group { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--well); padding: 4px 10px; }
 label.layer {
   display: grid;
@@ -529,7 +531,7 @@ async function loadData() {
 
 // ---------------------------------------------------------------- scene
 const state = { exag: 3, gap: 0, highlight: false, dim: true, group: 'all', view: 'iso', solo: null };
-let meta, renderer, scene, camera, controls, layerObjs = [], dieSize, center, flopMesh, flopList = [], pairLines, rulers, slab, dieOutline, feWindow;
+let meta, renderer, scene, camera, controls, layerObjs = [], dieSize, center, flopMesh, flopList = [], pairLines, rulers, rulersY, slab, dieOutline, feWindow;
 let hemi, sun;
 
 function layerRank(layers) {
@@ -661,31 +663,35 @@ function textSprite(text, color, h) {
 function buildRulers(dw, dh) {
   if (rulers) { scene.remove(rulers); rulers.traverse((o) => { if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } if (o.geometry) o.geometry.dispose(); }); }
   rulers = new THREE.Group();
+  rulersY = new THREE.Group();   // left-edge ruler: hidden when seen edge-on (low camera)
   const color = cssVar('--ruler');
   const step = niceStep(dieSize);
   const tick = dieSize * 0.012;
-  const pts = [];
+  const pts = [], ptsY = [];
   const lab = dieSize * 0.024;
   const gap = dieSize * 0.03;
+  const lastX = Math.floor((dw + 1e-6) / step) * step;
   for (let v = 0; v <= dw + 1e-6; v += step) {
     const x = v - dw / 2;
     pts.push(new THREE.Vector3(x, -dh / 2, 0), new THREE.Vector3(x, -dh / 2 - tick, 0));
-    const s = textSprite(v === 0 ? '0' : String(+v.toFixed(2)), color, lab);
-    s.position.set(x, -dh / 2 - gap - lab * 0.3, 0);
+    // the unit rides on the last tick, so it stays inside the die's width
+    const t = (v === 0 ? '0' : String(+v.toFixed(2))) + (Math.abs(v - lastX) < 1e-6 ? ' µm' : '');
+    const s = textSprite(t, color, lab);
+    // just below the substrate slab, so low views show them on the stage, not on the slab face
+    s.position.set(x, -dh / 2 - gap - lab * 0.3, -Math.max(dieSize * 0.012, 1) - lab * 0.55);
     rulers.add(s);
   }
   for (let v = step; v <= dh + 1e-6; v += step) {
     const y = v - dh / 2;
-    pts.push(new THREE.Vector3(-dw / 2, y, 0), new THREE.Vector3(-dw / 2 - tick, y, 0));
+    ptsY.push(new THREE.Vector3(-dw / 2, y, 0), new THREE.Vector3(-dw / 2 - tick, y, 0));
     const s = textSprite(String(+v.toFixed(2)), color, lab);
     s.position.set(-dw / 2 - gap - s.scale.x / 2, y, 0);
-    rulers.add(s);
+    rulersY.add(s);
   }
-  const unitLabel = textSprite('µm', color, lab);
-  unitLabel.position.set(dw / 2 + gap + unitLabel.scale.x / 2, -dh / 2 - gap - lab * 0.3, 0);
-  rulers.add(unitLabel);
-  const lines = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: new THREE.Color(color) }));
-  rulers.add(lines);
+  const mat = () => new THREE.LineBasicMaterial({ color: new THREE.Color(color) });
+  rulers.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), mat()));
+  rulersY.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(ptsY), mat()));
+  rulers.add(rulersY);
   scene.add(rulers);
 }
 
@@ -851,8 +857,8 @@ function viewPose(name) {
   // pad: extra room for the rulers, as fractions of the die (left, right, front, back)
   let az, el, margin, target, pad;
   if (name === 'top') {
-    az = -90; el = 89.9; margin = 0.94; pad = [0.1, 0.06, 0.07, 0];
-    target = new THREE.Vector3(-0.02 * S, -0.035 * S, 0);
+    az = -90; el = 89.9; margin = 0.94; pad = [0.1, 0.06, 0.07, 0.07];
+    target = new THREE.Vector3(-0.02 * S, 0, 0);
   } else if (name === 'low') {
     az = -90; el = 7; margin = 0.96; pad = [0.02, 0.02, 0.02, 0];
     target = new THREE.Vector3(0, 0, zc);
@@ -865,10 +871,32 @@ function viewPose(name) {
   const dist = fitDistance(dir, target, margin, pad);
   return { pos: dir.multiplyScalar(dist).add(target), target };
 }
-function setView(name, animate = true) {
+function markView(name) {
   state.view = name;
   document.querySelectorAll('[data-view]').forEach((b) => { if (b.dataset.view !== 'reset') b.setAttribute('aria-pressed', String(b.dataset.view === name)); });
+}
+function setView(name, animate = true) {
+  markView(name);
   const { pos, target } = viewPose(name);
+  flyTo(pos, target, animate);
+}
+// Keep the current viewing direction and move in on the highlighted flip-flops.
+function frameFlops() {
+  if (!flopList.length) return;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const f of flopList) {
+    x0 = Math.min(x0, f.box[0]); y0 = Math.min(y0, f.box[1]);
+    x1 = Math.max(x1, f.box[2]); y1 = Math.max(y1, f.box[3]);
+  }
+  const [, , dw, dh] = meta.die_um;
+  const target = new THREE.Vector3((x0 + x1) / 2 - dw / 2, (y0 + y1) / 2 - dh / 2, stackTopDisplay() * 0.5);
+  const span = Math.max(x1 - x0, y1 - y0, 40);
+  const dir = camera.position.clone().sub(controls.target).normalize();
+  const dist = span / (1.3 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * Math.min(1, camera.aspect));
+  markView('group');
+  flyTo(dir.multiplyScalar(dist).add(target), target, true);
+}
+function flyTo(pos, target, animate = true) {
   if (!animate || reduceMotion.matches) {
     tween = null;
     camera.position.copy(pos);
@@ -902,6 +930,7 @@ function frame(now) {
   const tweening = stepTween(now);
   const moved = controls.update();
   const d = camera.position.distanceTo(controls.target);
+  if (rulersY) rulersY.visible = Math.abs(camera.position.z - controls.target.z) > d * 0.3;
   camera.near = Math.max(d / 2000, 0.01);
   camera.far = d * 20 + dieSize * 4;
   camera.updateProjectionMatrix();
@@ -1082,7 +1111,10 @@ function fillPanel() {
   srcs.innerHTML = '';
   const add = (html) => { const p = document.createElement('p'); p.innerHTML = html; srcs.appendChild(p); };
   const esc = (t) => String(t == null ? '' : t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  add('Geometry: <code>' + esc(meta.inputs.gds) + '</code> with placement from <code>' + esc(meta.inputs.def) + '</code>, generated ' + esc(meta.generated_utc) + '.');
+  const when = (t) => (t ? String(t).replace('T', ' ').replace(/:\d\dZ$/, ' UTC') : null);
+  const gdsWhen = when(meta.inputs.gds_mtime_utc);
+  add('Geometry: <code>' + esc(meta.inputs.gds) + '</code>' + (gdsWhen ? ' (written ' + esc(gdsWhen) + ')' : '') +
+      ' with placement from <code>' + esc(meta.inputs.def) + '</code>; converted ' + esc(when(meta.generated_utc)) + '.');
   add('Heights: routing thickness from the sky130hd tech LEF; layer z from the open_pdks Magic tech file (the tech LEF has no HEIGHT); vias span between their metals. Coordinates are rounded to a ' + esc(Math.round(meta.format.grid_um * 1000)) + ' nm grid.');
   const dropped = (meta.dropped_layers || []).map((d) => (d.name !== '?' ? d.name : '') + ' ' + d.gds.join('/'));
   if (dropped.length) {
@@ -1092,12 +1124,16 @@ function fillPanel() {
   add('Scale: 1 scene unit = 1 µm horizontally; heights are multiplied by the vertical scale.');
 }
 
-function selectGroup(id, focus) {
+function selectGroup(id, focus = true) {
   state.group = id;
   document.querySelectorAll('#r-table tbody tr').forEach((tr) => tr.classList.toggle('sel', tr.dataset.group === id));
   if (!state.highlight) { state.highlight = true; $('r-on').checked = true; }
   updateFlops();
   applyVisibility();
+  if (focus) {
+    if (id === 'all') setView(state.view === 'group' ? 'iso' : state.view);
+    else frameFlops();
+  }
 }
 
 function wireControls() {
@@ -1135,7 +1171,7 @@ async function main() {
   try {
     data = await loadData();
   } catch (e) {
-    showError(e.message || 'The layout could not be loaded.', 'Regenerate the data with make viz and serve the viz/ folder over HTTP (make viz-serve); opening index.html from disk blocks the data files.', e.detail || '');
+    showError(e.message || 'The layout could not be loaded.', 'This page reads layout.json and layout.bin from the same folder. Reload to try again. In a local checkout, run make viz to write them and make viz-serve to open the page; browsers block these files when index.html is opened straight from disk.', e.detail || '');
     return;
   }
   meta = data.meta;

@@ -640,6 +640,10 @@ def write_glb(path, meshes, extras, quantize_um=None):
 
     zscale = extras.get("z_scale", 1.0)
     for name, rgba, rects, z0, z1, metallic in meshes:
+        if quantize_um and rects.shape[0]:
+            # boxes that collapse to zero width/height on the quantization step
+            qa = np.rint(rects / quantize_um)
+            rects = rects[(qa[:, 2] > qa[:, 0]) & (qa[:, 3] > qa[:, 1])]
         mat = {"name": name, "pbrMetallicRoughness": {
             "baseColorFactor": [round(v, 5) for v in rgba],
             "metallicFactor": metallic, "roughnessFactor": 0.55}}
@@ -896,6 +900,14 @@ def main():
         rel[:, 3] -= oy / dbu
         q = rel / grid_dbu
         qi = np.rint(q)
+        # Slab decomposition can leave 5 nm slivers (half a 10 nm grid step);
+        # rounded, they have zero width or height and draw nothing. Drop them
+        # here so the GLB (built from layer_rects below) skips them too.
+        keep = (qi[:, 2] > qi[:, 0]) & (qi[:, 3] > qi[:, 1])
+        degenerate = int(a.shape[0] - keep.sum())
+        if degenerate:
+            a, q, qi = a[keep], q[keep], qi[keep]
+            layer_rects[name] = a
         offgrid = int(np.count_nonzero(np.abs(q - qi) > 1e-6))
         offgrid_total += offgrid
         lim = np.iinfo(dtype).max
@@ -916,7 +928,7 @@ def main():
             "gds_shapes": layer_meta[name]["shapes"], "decomposition": layer_meta[name]["method"],
             "non_rect_as_bbox": layer_meta[name]["nonrect"],
             "clipped_to_detail_window": name in fe_clipped, "clipped_rects": fe_clipped.get(name, 0),
-            "off_grid_rounded": offgrid,
+            "off_grid_rounded": offgrid, "degenerate_dropped": degenerate,
         })
         chunks.append(data)
         off += len(data)
@@ -976,7 +988,10 @@ def main():
         "platform": "sky130hd (SkyWater SKY130 open PDK, sky130_fd_sc_hd)",
         "generated_utc": t_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "inputs": {"gds": rel(args.gds), "def": rel(args.def_path), "tech_lef": rel(args.tech_lef),
-                   "cell_lef": rel(args.cell_lef), "layer_map": rel(args.lyt)},
+                   "cell_lef": rel(args.cell_lef), "layer_map": rel(args.lyt),
+                   # which pd run this is: file times and a content hash of the inputs
+                   "gds_mtime_utc": _mtime_utc(args.gds), "def_mtime_utc": _mtime_utc(args.def_path),
+                   "gds_sha256": _sha256(args.gds), "def_sha256": _sha256(args.def_path)},
         "tools": {"klayout_python": getattr(kdb, "__version__", None) or _klayout_version(),
                   "numpy": np.__version__, "python": sys.version.split()[0]},
         "die_um": [0.0, 0.0, round(die_w, 4), round(die_h, 4)],
@@ -1088,6 +1103,20 @@ def placement_constraint_note(path):
                 "keep-out or spacing constraint, so nothing asked the placer to keep copies apart.")
     return (f"The pd configuration ({rel}) mentions {', '.join(hits)}; check whether those settings "
             "target the redundant copies before reading the distances below as intended separation.")
+
+
+def _mtime_utc(path):
+    t = _dt.datetime.fromtimestamp(os.path.getmtime(path), _dt.timezone.utc)
+    return t.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _sha256(path):
+    import hashlib
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for blk in iter(lambda: f.read(1 << 20), b""):
+            h.update(blk)
+    return h.hexdigest()
 
 
 def _klayout_version():
