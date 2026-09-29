@@ -13,7 +13,6 @@ point (see REQUIRED in test_orbit_random.py) was never hit.
 
 import argparse
 import json
-import os
 import sys
 import time
 import xml.etree.ElementTree as ET

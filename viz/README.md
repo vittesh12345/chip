@@ -1,5 +1,13 @@
 # ORBIT-AI Die Explorer (3D layout viewer)
 
+> **Next build step (labeled, detailed model):** follow the design guide in
+> `docs/research/labeled-chip-models.md`, in particular its "Implementation
+> brief" section. The user asked for that research ("look into examples of
+> labeled chips and parts and understand how to make a model"). If the file
+> does not exist yet, a research workflow is still writing it: wait for it
+> (check every few minutes, up to ~30 minutes) before designing the labels.
+> Replace this note with a short "Design references" line once done.
+
 An interactive 3D view of the routed `orbit_demo` silicon layout, built from
 the real GDS and DEF that OpenROAD-flow-scripts writes for the SkyWater
 sky130hd open PDK. It is the 4-lane INT8 demonstrator, not the 16-tile

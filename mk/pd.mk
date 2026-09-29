@@ -11,8 +11,9 @@
 #                    measured physical separation of the redundant copies).
 #   make pd-gls      post-route gate-level simulation: routed netlist vs RTL in
 #                    lockstep, with a flip injected into every redundant bit.
-#   make pd-negctl   negative control: synthesis without keep_hierarchy must
-#                    merge the thermal copies and the storage audit must FAIL.
+#   make pd-negctl   controls: without the RTL attribute, SYNTH_KEEP_MODULES
+#                    alone must keep every copy (audit PASS); without both the
+#                    thermal copies merge and the storage audit must FAIL.
 #   make pd-sweep    clock-period sweep, one full ORFS run per period in
 #                    PD_SWEEP_PERIODS (informational).
 #   make pd-corners  re-time the routed design at other sky130 corners
@@ -149,26 +150,36 @@ pd-gls: $(PD_PLAT_DIR)/cells.lib
 	@if [ -n "$(PD_PUBLISH)" ]; then mkdir -p $(PD_PUB_DIR) && cp $(PD_GLS_DIR)/gls.log $(PD_PUB_DIR)/gls.log; fi
 	@grep -q "^GLS PASS" $(PD_GLS_DIR)/gls.log
 
-# Negative control for the storage audit. The RTL is copied with the
-# keep_hierarchy attribute line removed, SYNTH_KEEP_MODULES is cleared, and ORFS
-# synthesis is run. Yosys then merges the three thermal copies (identical D
-# inputs); the audit of that netlist must FAIL on the thermal group, which
-# shows the audit of the real run is not vacuous.
+# Controls for the keep mechanism and the storage audit. The RTL is copied
+# with the keep_hierarchy attribute line removed and ORFS synthesis is run
+# twice on the copy:
+#   cfgkeep : SYNTH_KEEP_MODULES from config.mk still applies -> the audit must
+#             PASS (the ORFS setting alone keeps every copy);
+#   nokeep  : SYNTH_KEEP_MODULES cleared as well -> Yosys merges the three
+#             thermal copies (identical D inputs) and the audit must FAIL on
+#             the thermal group, which shows the audit is not vacuous.
 PD_NEG_RTL = $(addprefix $(PD_NEG_WORK)/rtl/,$(notdir $(RTL)))
+PD_NEG_RUN = scripts/run_pd.sh --work $(PD_NEG_WORK) --platform $(PD_PLATFORM) --cores $(PD_CORES) \
+             --timeout $(PD_TIMEOUT) --image $(PD_IMAGE) --rtl "$(PD_NEG_RTL)"
+PD_NEG_NET = $(PD_NEG_WORK)/results/$(PD_PLATFORM)/$(TOP)
 pd-negctl: $(PD_PLAT_DIR)/cells.lib
 	@mkdir -p $(PD_NEG_WORK)/rtl $(PD_OUT)
 	@for f in $(RTL); do sed '/^(\* keep_hierarchy \*)$$/d' $$f > $(PD_NEG_WORK)/rtl/$$(basename $$f); done
 	@echo "pd-negctl: keep_hierarchy attribute lines: original $$(cat $(RTL) | grep -c '^(\* keep_hierarchy \*)$$'), copy $$(cat $(PD_NEG_RTL) | grep -c '^(\* keep_hierarchy \*)$$')"
-	scripts/run_pd.sh --work $(PD_NEG_WORK) --platform $(PD_PLATFORM) --cores $(PD_CORES) \
-	    --timeout $(PD_TIMEOUT) --image $(PD_IMAGE) --rtl "$(PD_NEG_RTL)" --variant nokeep \
-	    --var SYNTH_KEEP_MODULES= -- synth > $(PD_NEG_WORK)/run.log 2>&1 || { tail -20 $(PD_NEG_WORK)/run.log; exit 1; }
-	@rc=0; python3 pd/audit_storage.py --netlist $(PD_NEG_WORK)/results/$(PD_PLATFORM)/$(TOP)/nokeep/1_synth_lec.v \
-	    --liberty $(PD_PLAT_DIR)/cells.lib --report $(PD_OUT)/negctl_nokeep_audit.txt > /dev/null || rc=$$?; \
-	grep -E "thermal|flip-flop count|RESULT" $(PD_OUT)/negctl_nokeep_audit.txt; \
-	if [ -n "$(PD_PUBLISH)" ]; then mkdir -p $(PD_PUB_DIR) && cp $(PD_OUT)/negctl_nokeep_audit.txt $(PD_PUB_DIR)/; fi; \
-	if [ $$rc -ne 0 ] && grep -q "FAIL  group thermal" $(PD_OUT)/negctl_nokeep_audit.txt; then \
-	    echo "pd-negctl: PASS (without keep_hierarchy the thermal copies merge and the audit detects it)"; \
-	else echo "pd-negctl: FAIL (the no-keep netlist did not produce the expected audit failure)"; exit 1; fi
+	$(PD_NEG_RUN) --variant cfgkeep -- synth > $(PD_NEG_WORK)/run_cfgkeep.log 2>&1 || { tail -20 $(PD_NEG_WORK)/run_cfgkeep.log; exit 1; }
+	$(PD_NEG_RUN) --variant nokeep --var SYNTH_KEEP_MODULES= -- synth > $(PD_NEG_WORK)/run_nokeep.log 2>&1 || { tail -20 $(PD_NEG_WORK)/run_nokeep.log; exit 1; }
+	@rc1=0; rc2=0; \
+	python3 pd/audit_storage.py --netlist $(PD_NEG_NET)/cfgkeep/1_synth_lec.v --liberty $(PD_PLAT_DIR)/cells.lib \
+	    --report $(PD_OUT)/negctl_cfgkeep_audit.txt > /dev/null || rc1=$$?; \
+	python3 pd/audit_storage.py --netlist $(PD_NEG_NET)/nokeep/1_synth_lec.v --liberty $(PD_PLAT_DIR)/cells.lib \
+	    --report $(PD_OUT)/negctl_nokeep_audit.txt > /dev/null || rc2=$$?; \
+	echo "cfgkeep (no RTL attribute, SYNTH_KEEP_MODULES set):"; grep -E "flip-flop count|RESULT" $(PD_OUT)/negctl_cfgkeep_audit.txt; \
+	echo "nokeep (no RTL attribute, SYNTH_KEEP_MODULES cleared):"; grep -E "group thermal|flip-flop count|RESULT" $(PD_OUT)/negctl_nokeep_audit.txt; \
+	if [ -n "$(PD_PUBLISH)" ]; then mkdir -p $(PD_PUB_DIR) && \
+	    cp $(PD_OUT)/negctl_cfgkeep_audit.txt $(PD_OUT)/negctl_nokeep_audit.txt $(PD_PUB_DIR)/; fi; \
+	if [ $$rc1 -eq 0 ] && [ $$rc2 -ne 0 ] && grep -q "FAIL  group thermal" $(PD_OUT)/negctl_nokeep_audit.txt; then \
+	    echo "pd-negctl: PASS (SYNTH_KEEP_MODULES alone keeps all copies; without any keep the thermal copies merge and the audit detects it)"; \
+	else echo "pd-negctl: FAIL (cfgkeep audit rc=$$rc1, expected 0; nokeep audit rc=$$rc2, expected a thermal-group failure)"; exit 1; fi
 
 # Clock-period sweep: every point is a complete run up to the final report
 # (no GDS), in its own variant p<period>ns under $(PD_SWEEP_WORK).
