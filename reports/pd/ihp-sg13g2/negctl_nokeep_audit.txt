@@ -1,6 +1,6 @@
-Storage audit of build/pd/negctl/results/sky130hd/orbit_demo/nokeep/1_synth_flat.v
-liberty: build/pd/platform/sky130hd/cells.lib
-leaf cells in netlist: 5239
+Storage audit of build/pd/negctl/results/ihp-sg13g2/orbit_demo/nokeep/1_synth_flat.v
+liberty: build/pd/platform/ihp-sg13g2/cells.lib
+leaf cells in netlist: 7785
 
 Redundant groups (SPEC section 7):
   lane0.acc    u_acc_a / u_acc_b             64 cells (2 x 32 bits)  OK
@@ -15,7 +15,7 @@ Redundant groups (SPEC section 7):
 
 Checks:
   PASS  latches: 0 latch cells
-  FAIL  flip-flop count: 517 flip-flop cells (expected 521); types: sky130_fd_sc_hd__dfxtp_1 x517
+  FAIL  flip-flop count: 517 flip-flop cells (expected 521); types: sg13g2_dfrbpq_1 x517
   PASS  no unexpected flip-flops: 0 unclassified
   PASS  group lane0.acc: 64 cells, 2 distinct copies x 32 bits
   PASS  group lane0.res: 64 cells, 2 distinct copies x 32 bits

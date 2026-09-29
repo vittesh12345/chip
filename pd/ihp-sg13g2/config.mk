@@ -27,3 +27,9 @@ export CORE_ASPECT_RATIO      = 1
 export PLACE_DENSITY_LB_ADDON = 0.20
 export PLACE_PINS_ARGS        = -min_distance 2 -min_distance_in_tracks
 export TNS_END_PERCENT        = 100
+
+# As in the ORFS ihp-sg13g2 example designs: metal density fill (the
+# sg13g2_minimal.lydrc deck checks global metal density, which an unfilled
+# block fails) and the CTS buffer distance used by riscv32i/ibex.
+export USE_FILL         = 1
+export CTS_BUF_DISTANCE = 60

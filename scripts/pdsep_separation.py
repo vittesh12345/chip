@@ -265,22 +265,30 @@ def measure(d):
             if not r or not any(b[0] >= x0 - 1e-6 and b[1] >= y0 - 1e-6 and b[2] <= x1 + 1e-6 and b[3] <= y1 + 1e-6
                                 for x0, y0, x1, y1 in r["boxes"]):
                 viol.append(f"{gn}: {m} at {b} outside region {g['region']}")
-    # non-members whose box overlaps a region (informational: fences keep them out)
+    # non-member logic cells vs the fences (informational): fully inside a fence, or straddling its edge
     member_set = {m for g in d["groups"].values() for m in g["members"]}
-    intr = 0
+    inside_n, straddle_n = 0, 0
+    straddle_kinds = defaultdict(int)
     if regs:
         for n, c in cells.items():
             if n in member_set:
                 continue
-            b = c["box"]
             if c["master"].startswith(("sky130_fd_sc_hd__tap", "sky130_fd_sc_hd__fill", "sky130_fd_sc_hd__decap",
-                                       "sky130_ef_sc_hd__decap", "sky130_fd_sc_hd__diode")):
+                                       "sky130_ef_sc_hd__decap")):
                 continue
-            for r in regs.values():
-                if any(b[0] < x1 - 1e-6 and b[2] > x0 + 1e-6 and b[1] < y1 - 1e-6 and b[3] > y0 + 1e-6
-                       for x0, y0, x1, y1 in r["boxes"]):
-                    intr += 1
-                    break
+            b = c["box"]
+            for rn, r in regs.items():
+                for x0, y0, x1, y1 in r["boxes"]:
+                    if b[0] < x1 - 1e-6 and b[2] > x0 + 1e-6 and b[1] < y1 - 1e-6 and b[3] > y0 + 1e-6:
+                        if b[0] >= x0 - 1e-6 and b[2] <= x1 + 1e-6 and b[1] >= y0 - 1e-6 and b[3] <= y1 + 1e-6:
+                            inside_n += 1
+                        else:
+                            straddle_n += 1
+                            straddle_kinds[c["master"].replace("sky130_fd_sc_hd__", "")] += 1
+    intr = inside_n + straddle_n
+    res["nonmember_cells_fully_inside_regions"] = inside_n
+    res["nonmember_cells_straddling_region_edge"] = straddle_n
+    res["nonmember_straddling_kinds"] = dict(sorted(straddle_kinds.items(), key=lambda kv: -kv[1]))
     res["group_members_placed"] = members
     res["group_member_ffs"] = member_ffs
     res["group_member_violations"] = viol
@@ -419,7 +427,9 @@ def write_md(results, out, check_label, fails):
          lambda m: f"{sum(p['same_bit_touching'] for p in all_pairs(m))} of {sum(p['bits'] for p in all_pairs(m))}"),
         ("placement regions in the DEF", lambda m: str(len(m["regions"]))),
         ("group members outside their region", lambda m: str(len(m["group_member_violations"])) if m["regions"] else "n/a"),
-        ("non-member logic cells overlapping a region", lambda m: str(m["nonmember_logic_cells_in_regions"]) if m["regions"] else "n/a"),
+        ("non-member cells fully inside a fence / straddling a fence edge (excl. fill, tap)",
+         lambda m: f"{m['nonmember_cells_fully_inside_regions']} / {m['nonmember_cells_straddling_region_edge']}"
+         if m["regions"] else "n/a"),
     ]
     for name, fn in q:
         L.append(f"| {name} | " + " | ".join(agg(lab, fn) for lab in labels) + " |")
@@ -453,6 +463,10 @@ ROLE_LABEL = {
 }
 
 
+ROLE_COLOR = {"copyA": "#00d0ff", "copyB": "#ff40c0", "th0": "#ffe000", "th1": "#60ff60", "th2": "#ff8c00"}
+ROLE_SHORT = {"copyA": "COPY A", "copyB": "COPY B", "th0": "TMR copy 0", "th1": "TMR copy 1", "th2": "TMR copy 2"}
+
+
 def role_of(region_name):
     m = re.search(r'(copyA|copyB|th[012])$', region_name or "")
     return m.group(1) if m else None
@@ -469,7 +483,8 @@ def regions_json(d, m, path, def_path):
         gname = grp_of_region.get(rn)
         members = d["groups"].get(gname, {}).get("members", [])
         nff = sum(1 for x in members if x in cells and "__df" in cells[x]["master"])
-        regs.append({"name": rn, "group": gname, "role": role, "label": ROLE_LABEL.get(role, rn),
+        regs.append({"name": rn, "group": gname, "role": role, "short_label": ROLE_SHORT.get(role, rn),
+                     "label": ROLE_LABEL.get(role, rn), "color": ROLE_COLOR.get(role, "#ffffff"),
                      "type": r["type"], "box": list(r["boxes"][0]) if r["boxes"] else None,
                      "boxes": [list(b) for b in r["boxes"]], "members": len(members), "flip_flops": nff})
     role_region = {x["role"]: x["name"] for x in regs}

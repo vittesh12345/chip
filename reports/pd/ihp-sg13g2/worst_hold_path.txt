@@ -1,0 +1,71 @@
+Startpoint: u_thermal.phase$_SDFF_PN0_
+            (rising edge-triggered flip-flop clocked by clk)
+Endpoint: u_thermal.phase$_SDFF_PN0_
+          (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+Fanout     Cap    Slew   Delay    Time   Description
+-----------------------------------------------------------------------------
+                          0.00    0.00   clock clk (rise edge)
+                          0.00    0.00   clock source latency
+     1    0.07    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.03    0.01    0.01 ^ clkbuf_0_clk/A (sg13g2_buf_16)
+     2    0.05    0.03    0.07    0.08 ^ clkbuf_0_clk/X (sg13g2_buf_16)
+                                         clknet_0_clk (net)
+                  0.03    0.00    0.09 ^ clkbuf_1_1_0_clk/A (sg13g2_buf_16)
+     2    0.05    0.03    0.07    0.15 ^ clkbuf_1_1_0_clk/X (sg13g2_buf_16)
+                                         clknet_1_1_0_clk (net)
+                  0.03    0.01    0.16 ^ clkbuf_2_3_0_clk/A (sg13g2_buf_16)
+     2    0.06    0.03    0.07    0.23 ^ clkbuf_2_3_0_clk/X (sg13g2_buf_16)
+                                         clknet_2_3_0_clk (net)
+                  0.03    0.01    0.24 ^ clkbuf_3_6_0_clk/A (sg13g2_buf_16)
+     2    0.06    0.03    0.07    0.31 ^ clkbuf_3_6_0_clk/X (sg13g2_buf_16)
+                                         clknet_3_6_0_clk (net)
+                  0.03    0.00    0.31 ^ clkbuf_4_13_0_clk/A (sg13g2_buf_16)
+     4    0.09    0.04    0.08    0.39 ^ clkbuf_4_13_0_clk/X (sg13g2_buf_16)
+                                         clknet_4_13_0_clk (net)
+                  0.04    0.01    0.39 ^ clkbuf_leaf_36_clk/A (sg13g2_buf_16)
+     8    0.04    0.02    0.07    0.47 ^ clkbuf_leaf_36_clk/X (sg13g2_buf_16)
+                                         clknet_leaf_36_clk (net)
+                  0.02    0.00    0.47 ^ u_thermal.phase$_SDFF_PN0_/CLK (sg13g2_dfrbpq_1)
+     2    0.01    0.04    0.18    0.64 ^ u_thermal.phase$_SDFF_PN0_/Q (sg13g2_dfrbpq_1)
+                                         u_thermal.phase (net)
+                  0.04    0.00    0.64 ^ _12936_/B (sg13g2_nor4_1)
+     1    0.00    0.03    0.05    0.69 v _12936_/Y (sg13g2_nor4_1)
+                                         _00002_ (net)
+                  0.03    0.00    0.69 v u_thermal.phase$_SDFF_PN0_/D (sg13g2_dfrbpq_1)
+                                  0.69   data arrival time
+
+                          0.00    0.00   clock clk (rise edge)
+                          0.00    0.00   clock source latency
+     1    0.07    0.00    0.00    0.00 ^ clk (in)
+                                         clk (net)
+                  0.03    0.01    0.01 ^ clkbuf_0_clk/A (sg13g2_buf_16)
+     2    0.05    0.03    0.07    0.08 ^ clkbuf_0_clk/X (sg13g2_buf_16)
+                                         clknet_0_clk (net)
+                  0.03    0.00    0.09 ^ clkbuf_1_1_0_clk/A (sg13g2_buf_16)
+     2    0.05    0.03    0.07    0.15 ^ clkbuf_1_1_0_clk/X (sg13g2_buf_16)
+                                         clknet_1_1_0_clk (net)
+                  0.03    0.01    0.16 ^ clkbuf_2_3_0_clk/A (sg13g2_buf_16)
+     2    0.06    0.03    0.07    0.23 ^ clkbuf_2_3_0_clk/X (sg13g2_buf_16)
+                                         clknet_2_3_0_clk (net)
+                  0.03    0.01    0.24 ^ clkbuf_3_6_0_clk/A (sg13g2_buf_16)
+     2    0.06    0.03    0.07    0.31 ^ clkbuf_3_6_0_clk/X (sg13g2_buf_16)
+                                         clknet_3_6_0_clk (net)
+                  0.03    0.00    0.31 ^ clkbuf_4_13_0_clk/A (sg13g2_buf_16)
+     4    0.09    0.04    0.08    0.39 ^ clkbuf_4_13_0_clk/X (sg13g2_buf_16)
+                                         clknet_4_13_0_clk (net)
+                  0.04    0.01    0.39 ^ clkbuf_leaf_36_clk/A (sg13g2_buf_16)
+     8    0.04    0.02    0.07    0.47 ^ clkbuf_leaf_36_clk/X (sg13g2_buf_16)
+                                         clknet_leaf_36_clk (net)
+                  0.02    0.00    0.47 ^ u_thermal.phase$_SDFF_PN0_/CLK (sg13g2_dfrbpq_1)
+                          0.00    0.47   clock reconvergence pessimism
+                         -0.04    0.43   library hold time
+                                  0.43   data required time
+-----------------------------------------------------------------------------
+                                  0.43   data required time
+                                 -0.69   data arrival time
+-----------------------------------------------------------------------------
+                                  0.26   slack (MET)

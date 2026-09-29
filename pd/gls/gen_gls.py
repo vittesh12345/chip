@@ -30,6 +30,8 @@ def main():
     ap.add_argument("--netlist", required=True)
     ap.add_argument("--out-dir", required=True)
     ap.add_argument("--state", default="IQ", help="name of the flip-flop state reg in the cell models")
+    ap.add_argument("--liberty", help="liberty file: only cells with an ff group count as flip-flops "
+                    "(needed where the flow adds other cells with derived names, e.g. tie cells)")
     a = ap.parse_args()
 
     text = open(a.netlist, encoding="utf-8").read()
@@ -40,8 +42,13 @@ def main():
     with open(os.path.join(a.out_dir, "orbit_demo_gl.v"), "w") as f:
         f.write(re.sub(r'^module\s+orbit_demo\s*\(', 'module orbit_demo_gl (', text, count=1, flags=re.M))
 
-    # Every flip-flop-looking instance: "<celltype> \<escaped name> (".
+    # Every instance with an escaped name: "<celltype> \<escaped name> (".
     insts = re.findall(r'^\s*(\S+)\s+\\(\S+)\s+\(', text, re.M)
+    if a.liberty:
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+        from audit_storage import liberty_sequential_cells
+        ffs, _latches = liberty_sequential_cells(a.liberty)
+        insts = [(ct, nm) for (ct, nm) in insts if ct in ffs]
     names = [nm for (_ct, nm) in insts]
 
     def find(prefix):

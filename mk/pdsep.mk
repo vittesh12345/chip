@@ -16,6 +16,9 @@
 #                        reports/pdsep/ for the production RTL.
 #   make pd-sep-gls      post-route gate-level simulation of the separated
 #                        netlist with the pd area's harness (pd/gls/, read-only).
+#   make pd-sep-mechanism  empirical test of the fence mechanism on the pd area's
+#                        unconstrained baseline database (global/detailed placement
+#                        honour the fences, improve_placement does not).
 #
 # Not in TEST_TARGETS: one ORFS run takes 15-25 minutes with PDSEP_CORES=2.
 
@@ -47,7 +50,10 @@ PDSEP_ORFS     := /OpenROAD-flow-scripts/flow
 PDSEP_RUN = scripts/run_pd_sep.sh --work $(PDSEP_WORK) --cores $(PDSEP_CORES) \
             --timeout $(PDSEP_TIMEOUT) --image $(PDSEP_IMAGE)
 
-.PHONY: pd-sep pd-sep-flow pd-sep-report pd-sep-gls pd-sep-clean
+PDSEP_BASE_RESULTS ?= $(BUILD)/pd/results/sky130hd/$(TOP)/base
+PDSEP_MECH_DIR     := $(PDSEP_WORK)/report/mechanism
+
+.PHONY: pd-sep pd-sep-flow pd-sep-report pd-sep-gls pd-sep-mechanism pd-sep-clean
 
 pd-sep: pd-sep-flow
 	$(MAKE) --no-print-directory pd-sep-gls
@@ -97,7 +103,8 @@ pd-sep-report: $(PDSEP_PLAT)/cells.lib $(PDSEP_PLAT)/cells.lef $(PDSEP_PLAT)/sky
 	    --out $(PDSEP_OUT)/$(TOP)_sky130hd_sep.png || rc=1; \
 	gzip -9 -n -c $(PDSEP_RESULTS)/6_final.gds > $(PDSEP_OUT)/$(TOP)_sky130hd_sep.gds.gz; \
 	python3 scripts/pdsep_summary.py --work $(PDSEP_WORK) --variant $(PDSEP_VARIANT) --out-dir $(PDSEP_OUT) \
-	    --base-checks $(PDSEP_BASE_CHECKS) --gls $(PDSEP_GLS_DIR)/gls.log || rc=1; \
+	    --base-checks $(PDSEP_BASE_CHECKS) --gls $(PDSEP_GLS_DIR)/gls.log \
+	    --mechanism $(PDSEP_MECH_DIR)/mechanism_test.txt || rc=1; \
 	if [ -n "$(PDSEP_PUBLISH)" ]; then \
 	    mkdir -p $(PDSEP_PUBLISH); \
 	    for f in summary.md regions.json separation.md separation.json checks.json results.md \
@@ -107,6 +114,7 @@ pd-sep-report: $(PDSEP_PLAT)/cells.lib $(PDSEP_PLAT)/cells.lef $(PDSEP_PLAT)/sky
 	        if [ -f $(PDSEP_OUT)/$$f ]; then cp $(PDSEP_OUT)/$$f $(PDSEP_PUBLISH)/; fi; \
 	    done; \
 	    cp $(PDSEP_WORK)/reports/sky130hd/$(TOP)/$(PDSEP_VARIANT)/pdsep_regions.txt $(PDSEP_PUBLISH)/ 2>/dev/null || true; \
+	    cp $(PDSEP_MECH_DIR)/mechanism_test.txt $(PDSEP_PUBLISH)/ 2>/dev/null || true; \
 	    gz=$(PDSEP_OUT)/$(TOP)_sky130hd_sep.gds.gz; \
 	    if [ $$(stat -c %s $$gz) -lt 5000000 ]; then cp $$gz $(PDSEP_PUBLISH)/; \
 	    else echo "pd-sep-report: $$gz is over 5 MB, not published"; fi; \
@@ -127,6 +135,20 @@ pd-sep-gls: $(PDSEP_PLAT)/cells.lib
 	    | tee $(PDSEP_GLS_DIR)/gls.log
 	@if [ -n "$(PDSEP_PUBLISH)" ]; then mkdir -p $(PDSEP_PUBLISH) && cp $(PDSEP_GLS_DIR)/gls.log $(PDSEP_PUBLISH)/gls.log; fi
 	@grep -q "^GLS PASS" $(PDSEP_GLS_DIR)/gls.log
+
+# Mechanism test: fences added to the baseline's pin-placed database, then the
+# ORFS placement steps; every step's containment is measured (MECH lines).
+pd-sep-mechanism:
+	@test -f $(PDSEP_BASE_RESULTS)/3_2_place_iop.odb || { echo "pd-sep-mechanism: no baseline run in $(PDSEP_BASE_RESULTS)"; exit 1; }
+	@mkdir -p $(PDSEP_MECH_DIR)
+	cp $(PDSEP_BASE_RESULTS)/3_2_place_iop.odb $(PDSEP_BASE_RESULTS)/2_floorplan.sdc $(PDSEP_MECH_DIR)/
+	set -o pipefail; $(PDSEP_RUN) --shell 'PDSEP_IN_ODB=$(abspath $(PDSEP_MECH_DIR))/3_2_place_iop.odb \
+	    PDSEP_IN_SDC=$(abspath $(PDSEP_MECH_DIR))/2_floorplan.sdc REPORTS_DIR=$(abspath $(PDSEP_MECH_DIR)) \
+	    openroad -no_init -threads $(PDSEP_CORES) -exit $(CURDIR)/scripts/pdsep_mechanism_test.tcl' \
+	    > $(PDSEP_MECH_DIR)/mechanism_test.log 2>&1
+	grep -E "^MECH|pdsep: region" $(PDSEP_MECH_DIR)/mechanism_test.log | tee $(PDSEP_MECH_DIR)/mechanism_test.txt
+	@rm -f $(PDSEP_MECH_DIR)/3_2_place_iop.odb
+	@if [ -n "$(PDSEP_PUBLISH)" ]; then mkdir -p $(PDSEP_PUBLISH) && cp $(PDSEP_MECH_DIR)/mechanism_test.txt $(PDSEP_PUBLISH)/; fi
 
 pd-sep-clean:
 	rm -rf $(PDSEP_WORK)/results $(PDSEP_WORK)/logs $(PDSEP_WORK)/objects $(PDSEP_WORK)/reports \

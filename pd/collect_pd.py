@@ -127,10 +127,12 @@ def main():
     if cnt is not None:
         n_drc = int(cnt.strip() or 0)
         txt = read(lyrdb) or ""
-        for cat in re.findall(r'<item>\s*<tags>[^<]*</tags>\s*<category>([^<]*)</category>', txt):
+        for cat in re.findall(r'<item>.*?<category>([^<]*)</category>', txt, re.S):
             drc_categories[cat.strip("'")] = drc_categories.get(cat.strip("'"), 0) + 1
+        deck = re.search(r"<generator>drc: script='([^']+)'", txt)
         check_bool("KLayout DRC", n_drc == 0,
-                   f"{n_drc} markers ({os.path.basename(lyrdb)}, sky130hd.lydrc from ORFS)"
+                   f"{n_drc} markers ({os.path.basename(lyrdb)}, ORFS deck "
+                   f"{os.path.basename(deck.group(1)) if deck else 'unknown'})"
                    + ("; " + ", ".join(f"{k}: {v}" for k, v in sorted(drc_categories.items())) if drc_categories else ""))
     else:
         check("KLayout DRC", "NOT_RUN", "6_drc.lyrdb not produced (run the ORFS 'drc' target)")
@@ -150,9 +152,17 @@ def main():
         log = read(os.path.join(logs, f"{step}_lec_check.log"))
         if log is None:
             check(label, "NOT_RUN", f"{step}_lec_check.log missing (LEC_CHECK off?)")
-        else:
-            ok = "Circuits are IDENTICAL" in log
-            check_bool(label, ok, "kepler-formal: " + ("Circuits are IDENTICAL" if ok else "not identical / error"))
+            continue
+        pos = re.findall(r'size of POs in circuit \d: (\d+)', log)
+        n_out = min(int(x) for x in pos) if pos else None
+        if "vacuously equivalent" in log or n_out == 0:
+            # e.g. a platform whose REMOVE_CELLS_FOR_LEC strips every standard
+            # cell: kepler-formal then compares nothing.
+            check(label, "NOT_RUN", "kepler-formal compared 0 outputs (vacuous miter); not a real equivalence check")
+            continue
+        ok = "Circuits are IDENTICAL" in log
+        check_bool(label, ok, "kepler-formal: " + ("Circuits are IDENTICAL" if ok else "not identical / error")
+                   + (f", {n_out} compared outputs" if n_out else ""))
 
     # --- storage audit of the routed netlist -------------------------------
     audit_rpt = os.path.join(a.out, "storage_audit.txt")

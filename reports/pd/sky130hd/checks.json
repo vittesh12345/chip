@@ -30,7 +30,7 @@
     {
       "name": "KLayout DRC",
       "result": "PASS",
-      "detail": "0 markers (6_drc.lyrdb, sky130hd.lydrc from ORFS)"
+      "detail": "0 markers (6_drc.lyrdb, ORFS deck sky130hd.lydrc)"
     },
     {
       "name": "KLayout LVS",
@@ -40,12 +40,12 @@
     {
       "name": "LEC synth vs post-CTS repair",
       "result": "PASS",
-      "detail": "kepler-formal: Circuits are IDENTICAL"
+      "detail": "kepler-formal: Circuits are IDENTICAL, 1177 compared outputs"
     },
     {
       "name": "LEC synth vs final",
       "result": "PASS",
-      "detail": "kepler-formal: Circuits are IDENTICAL"
+      "detail": "kepler-formal: Circuits are IDENTICAL, 1177 compared outputs"
     },
     {
       "name": "storage audit (6_final.v)",

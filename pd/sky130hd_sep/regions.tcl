@@ -9,14 +9,19 @@
 #       instances inside its dbRegion box; the region areas are blocked for
 #       the top-level cells with dummy instances.
 #   detailed_placement (place, CTS, CTS repair, global-route repair):
-#       dpl legalises every group member inside its region and keeps every
-#       non-member out (the region acts as a fence), and check_placement
-#       fails on any cell in the wrong region.
-#   improve_placement (DPO) does NOT honour regions (measured: it moved 47 of
-#       1560 members out); config.mk therefore sets ENABLE_DPO=0.
+#       dpl legalises every group member fully inside its region (a member
+#       pushed out is pulled back in) and keeps non-members from being placed
+#       inside it; a non-member may still straddle a fence edge with part of
+#       its width (measured: clock-tree and repair buffers next to the copy
+#       fences). check_placement reports a member in the wrong region.
+#   improve_placement (DPO) does NOT keep the placement legal with regions
+#       (measured: with these fences it leaves overlapping and off-site cells
+#       and check_placement fails; with INCLUSIVE regions it moved 47 of 1560
+#       members out of their region); config.mk therefore sets ENABLE_DPO=0.
 #
-# The mechanism was checked empirically before use (see reports/pdsep/summary.md)
-# and the result is re-measured from the routed DEF by scripts/pdsep_separation.py.
+# The mechanism was tested empirically before use (scripts/pdsep_mechanism_test.tcl,
+# make pd-sep-mechanism) and the result is re-measured from the routed DEF by
+# scripts/pdsep_separation.py.
 #
 # Groups (instance paths are the flat-link names that keep the orbit_keep_reg
 # hierarchy, e.g. g_lane[2].u_lane.u_res_b/q[7]$_SDFFE_PN0P_). Each group holds
@@ -30,9 +35,18 @@
 # control, clock tree, port buffers) is unconstrained and may go anywhere
 # outside the fences.
 #
+# Region type EXCLUSIVE is written to DEF as a FENCE. OpenROAD's placers treat
+# INCLUSIVE regions the same way for the members; EXCLUSIVE states the intent.
+#
 # Floorplan variants (PDSEP_FLOORPLAN, default in config.mk). Boxes are in um
 # relative to the lower-left corner of the core; "W"/"H" are the core width and
 # height, and every box edge is snapped to the site grid / row boundaries.
+#   edges : copy A in a 50 um strip along the left core edge, copy B along the
+#           right edge (about 240 um apart); the three thermal copies stacked in
+#           the centre column, 23 x 16.3 um each, about 100 um apart; shared
+#           logic in between.
+#   mid   : the same with the copy strips 55 um in from the core edges (about
+#           130 um apart), leaving the outer columns to port buffers and logic.
 
 set ::pdsep_variant [expr {[info exists ::env(PDSEP_FLOORPLAN)] && $::env(PDSEP_FLOORPLAN) ne "" ? $::env(PDSEP_FLOORPLAN) : "edges"}]
 set ::pdsep_rtype [expr {[info exists ::env(PDSEP_REGION_TYPE)] && $::env(PDSEP_REGION_TYPE) ne "" ? $::env(PDSEP_REGION_TYPE) : "EXCLUSIVE"}]

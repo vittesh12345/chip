@@ -1,0 +1,195 @@
+
+17. Printing statistics.
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       11        -       11        - wires
+       13        -       13        - wire bits
+        5        -        5        - public wires
+        7        -        7        - public wire bits
+        5        -        5        - ports
+        7        -        7        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+        8  157.853        8  157.853 cells
+        1    9.072        1    9.072   sg13g2_and2_1
+        2   97.978        2   97.978   sg13g2_dfrbpq_1
+        1   18.144        1   18.144   sg13g2_mux2_1
+        1    7.258        1    7.258   sg13g2_nand2_1
+        1    9.072        1    9.072   sg13g2_nand2b_1
+        1    9.072        1    9.072   sg13g2_nand3_1
+        1    7.258        1    7.258   sg13g2_tiehi
+
+   Chip area for module '$paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10': 157.852800
+     of which used for sequential elements: 97.977600 (62.07%)
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+       78        -       78        - wires
+      140        -      140        - wire bits
+        5        -        5        - public wires
+       67        -       67        - public wire bits
+        5        -        5        - ports
+       67        -       67        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+      105 2.66E+03      105 2.66E+03 cells
+       32  290.304       32  290.304   sg13g2_and2_1
+        3   21.773        3   21.773   sg13g2_buf_1
+        4   181.44        4   181.44   sg13g2_buf_16
+        1    9.072        1    9.072   sg13g2_buf_2
+       32 1.57E+03       32 1.57E+03   sg13g2_dfrbpq_1
+       30   544.32       30   544.32   sg13g2_mux2_1
+        2   39.917        2   39.917   sg13g2_mux2_2
+        1    7.258        1    7.258   sg13g2_tiehi
+
+   Chip area for module '$paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000': 2661.724800
+     of which used for sequential elements: 1567.641600 (58.90%)
+
+=== orbit_demo ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+     8206        -     6925        - wires
+     9401        -     7122        - wire bits
+      509        -      414        - public wires
+     1704        -      611        - public wire bits
+      113        -       18        - ports
+     1308        -      215        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+     8228 1.07E+05     6524 6.39E+04 cells
+      152 1.93E+03      152 1.93E+03   sg13g2_a21o_1
+      471 4.27E+03      471 4.27E+03   sg13g2_a21oi_1
+        4   58.061        4   58.061   sg13g2_a21oi_2
+      119 1.73E+03      119 1.73E+03   sg13g2_a221oi_1
+      216 2.34E+03      216 2.34E+03   sg13g2_a22oi_1
+      700   6350.4      185  1678.32   sg13g2_and2_1
+       54  685.843       54  685.843   sg13g2_and3_1
+       23   333.85       23   333.85   sg13g2_and4_1
+      699 5.07E+03      651 4.72E+03   sg13g2_buf_1
+       65   2948.4        1    45.36   sg13g2_buf_16
+      165  1496.88      149 1.35E+03   sg13g2_buf_2
+       45  653.184       45  653.184   sg13g2_buf_4
+       14  330.221       14  330.221   sg13g2_buf_8
+      521 2.55E+04        3  146.966   sg13g2_dfrbpq_1
+      310 1.69E+03      310 1.69E+03   sg13g2_inv_1
+        1    7.258        1    7.258   sg13g2_inv_2
+        2   21.773        2   21.773   sg13g2_inv_4
+      580 1.05E+04       97 1.76E+03   sg13g2_mux2_1
+       32  638.669        -        -   sg13g2_mux2_2
+        1   38.102        1   38.102   sg13g2_mux4_1
+      671  4869.85      668 4.85E+03   sg13g2_nand2_1
+        6   65.318        6   65.318   sg13g2_nand2_2
+      166 1.51E+03      163 1.48E+03   sg13g2_nand2b_1
+      213 1.93E+03      210  1905.12   sg13g2_nand3_1
+       60  762.048       60  762.048   sg13g2_nand3b_1
+      153 1.67E+03      153 1.67E+03   sg13g2_nand4_1
+      691 5.02E+03      691 5.02E+03   sg13g2_nor2_1
+      114 1.03E+03      114 1.03E+03   sg13g2_nor2b_1
+      188 1.71E+03      188 1.71E+03   sg13g2_nor3_1
+        1    16.33        1    16.33   sg13g2_nor3_2
+      116 1.26E+03      116 1.26E+03   sg13g2_nor4_1
+        3   65.318        3   65.318   sg13g2_nor4_2
+      560  5080.32      560  5080.32   sg13g2_o21ai_1
+       95   861.84       95   861.84   sg13g2_or2_1
+       52  660.442       52  660.442   sg13g2_or3_1
+       18  261.274       18  261.274   sg13g2_or4_1
+       20  145.152        1    7.258   sg13g2_tiehi
+      729 1.06E+04      729 1.06E+04   sg13g2_xnor2_1
+      198  2874.01      198  2874.01   sg13g2_xor2_1
+       19 4.31E+04       19        - submodules
+        3  473.558        3        -   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16 4.26E+04       16        -   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+   Chip area for module '\orbit_demo': 107008.776000
+     of which used for sequential elements: 25523.164800 (23.85%)
+
+=== design hierarchy ===
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+     8228 1.07E+05     6524 6.39E+04 orbit_demo
+        8  157.853        8  157.853 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+      105 2.66E+03      105 2.66E+03 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+        +----------------------------Count including submodules.
+        |        +-------------------Area including submodules.
+        |        |        +----------Local count, excluding submodules.
+        |        |        |        +-Local area, excluding submodules.
+        |        |        |        | 
+     8206        -     6925        - wires
+     9401        -     7122        - wire bits
+      509        -      414        - public wires
+     1704        -      611        - public wire bits
+      113        -       18        - ports
+     1308        -      215        - port bits
+        -        -        -        - memories
+        -        -        -        - memory bits
+        -        -        -        - processes
+     8228 1.07E+05     6524 6.39E+04 cells
+      152 1.93E+03      152 1.93E+03   sg13g2_a21o_1
+      471 4.27E+03      471 4.27E+03   sg13g2_a21oi_1
+        4   58.061        4   58.061   sg13g2_a21oi_2
+      119 1.73E+03      119 1.73E+03   sg13g2_a221oi_1
+      216 2.34E+03      216 2.34E+03   sg13g2_a22oi_1
+      700   6350.4      185  1678.32   sg13g2_and2_1
+       54  685.843       54  685.843   sg13g2_and3_1
+       23   333.85       23   333.85   sg13g2_and4_1
+      699 5.07E+03      651 4.72E+03   sg13g2_buf_1
+       65   2948.4        1    45.36   sg13g2_buf_16
+      165  1496.88      149 1.35E+03   sg13g2_buf_2
+       45  653.184       45  653.184   sg13g2_buf_4
+       14  330.221       14  330.221   sg13g2_buf_8
+      521 2.55E+04        3  146.966   sg13g2_dfrbpq_1
+      310 1.69E+03      310 1.69E+03   sg13g2_inv_1
+        1    7.258        1    7.258   sg13g2_inv_2
+        2   21.773        2   21.773   sg13g2_inv_4
+      580 1.05E+04       97 1.76E+03   sg13g2_mux2_1
+       32  638.669        -        -   sg13g2_mux2_2
+        1   38.102        1   38.102   sg13g2_mux4_1
+      671  4869.85      668 4.85E+03   sg13g2_nand2_1
+        6   65.318        6   65.318   sg13g2_nand2_2
+      166 1.51E+03      163 1.48E+03   sg13g2_nand2b_1
+      213 1.93E+03      210  1905.12   sg13g2_nand3_1
+       60  762.048       60  762.048   sg13g2_nand3b_1
+      153 1.67E+03      153 1.67E+03   sg13g2_nand4_1
+      691 5.02E+03      691 5.02E+03   sg13g2_nor2_1
+      114 1.03E+03      114 1.03E+03   sg13g2_nor2b_1
+      188 1.71E+03      188 1.71E+03   sg13g2_nor3_1
+        1    16.33        1    16.33   sg13g2_nor3_2
+      116 1.26E+03      116 1.26E+03   sg13g2_nor4_1
+        3   65.318        3   65.318   sg13g2_nor4_2
+      560  5080.32      560  5080.32   sg13g2_o21ai_1
+       95   861.84       95   861.84   sg13g2_or2_1
+       52  660.442       52  660.442   sg13g2_or3_1
+       18  261.274       18  261.274   sg13g2_or4_1
+       20  145.152        1    7.258   sg13g2_tiehi
+      729 1.06E+04      729 1.06E+04   sg13g2_xnor2_1
+      198  2874.01      198  2874.01   sg13g2_xor2_1
+       19 4.31E+04       19        - submodules
+        3  473.558        3        -   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16 4.26E+04       16        -   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+   Chip area for top module '\orbit_demo': 107008.776000
+     of which used for sequential elements: 25523.164800 (23.85%)
+
