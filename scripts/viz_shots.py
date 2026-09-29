@@ -603,7 +603,13 @@ def main():
             if want(name):
                 ctx, page, logs = open_page(390, 844, scheme=scheme, dpr=2, mobile=True)
                 check_labels(page, name, problems, 8)
-                shot(page, name, full_page=True)
+                # Full-page capture repeats the composited WebGL layer at the bottom on
+                # mobile emulation, so grow the viewport to the page height instead
+                # (the stage is capped at 620 px, so its size does not change).
+                full_h = page.evaluate("document.documentElement.scrollHeight")
+                page.set_viewport_size({"width": 390, "height": full_h})
+                settle(page)
+                shot(page, name)
                 problems.extend(f"phone {scheme} console {l}" for l in logs)
                 ctx.close()
 
