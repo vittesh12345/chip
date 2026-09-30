@@ -16,7 +16,8 @@
 #   il1_neg   `sec` with INTERLEAVE 1: must FAIL (an adjacent 2-bit upset is a
 #             double error without interleaving) - negative control
 #   sec_bmc   the `sec` harness as a BMC from reset (depth 6). Used only by the
-#             negative control on a bank without scrub write-back
+#             negative controls on a bank without scrub write-back and on a
+#             bank with swapped read-side ways
 #             (make ecc-formal-neg): a broken design must give a real
 #             counterexample from reset, not merely a failed induction step
 #             (which the depth-2 `sec` prove reports as UNKNOWN).

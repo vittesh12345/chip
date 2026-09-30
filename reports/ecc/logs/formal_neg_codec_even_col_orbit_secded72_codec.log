@@ -1,35 +1,35 @@
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] Removing directory formal/neg/codec_even_col/orbit_secded72_codec'.
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0: smtbmc bitwuzla
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] base: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] base: finished (returncode=0)
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] prep: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec/model; yosys -ql design_prep.log design_prep.ys"
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] prep: finished (returncode=0)
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] smt2: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec/model; yosys -ql design_smt2.log design_smt2.ys"
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] smt2: finished (returncode=0)
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec; yosys-smtbmc -s bitwuzla --presat --unroll --noprogress -t 1  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec; yosys-smtbmc -s bitwuzla --presat --unroll -i --noprogress -t 1  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:00  Solver: bitwuzla
-SBY  0:17:57 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: ##   0:00:00  Solver: bitwuzla
-SBY  0:17:58 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:00  Checking assumptions in step 0..
-SBY  0:17:58 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: ##   0:00:00  Trying induction in step 1..
-SBY  0:17:59 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  Checking assertions in step 0..
-SBY  0:17:59 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  BMC failed!
-SBY  0:17:59 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  Assert failed in orbit_secded72_fv: s2_flags
-SBY  0:17:59 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  Assert failed in orbit_secded72_fv: s2_no_flip
-SBY  0:17:59 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  Writing trace to VCD file: engine_0/trace.vcd
-SBY  0:17:59 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: ##   0:00:02  Trying induction in step 0..
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:02  Writing trace to Verilog testbench: engine_0/trace_tb.v
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:02  Writing trace to constraints file: engine_0/trace.smtc
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:02  Writing trace to Yosys witness file: engine_0/trace.yw
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:02  Status: failed
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: finished (returncode=1)
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: Status returned by engine for basecase: FAIL
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: terminating process
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:02 (2)
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] summary: engine_0 (smtbmc bitwuzla) returned FAIL for basecase
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] summary: counterexample trace [basecase]: formal/neg/codec_even_col/orbit_secded72_codec/engine_0/trace.vcd
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] summary:   failed assertion orbit_secded72_fv.s2_flags at orbit_secded72_fv.sv:67.9-67.56
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] summary:   failed assertion orbit_secded72_fv.s2_no_flip at orbit_secded72_fv.sv:68.9-68.66
-SBY  0:18:00 [formal/neg/codec_even_col/orbit_secded72_codec] DONE (FAIL, rc=2)
-SBY  0:18:00 The following tasks failed: ['codec']
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] Removing directory formal/neg/codec_even_col/orbit_secded72_codec'.
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0: smtbmc bitwuzla
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] base: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] base: finished (returncode=0)
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] prep: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec/model; yosys -ql design_prep.log design_prep.ys"
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] prep: finished (returncode=0)
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] smt2: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] smt2: finished (returncode=0)
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec; yosys-smtbmc -s bitwuzla --presat --unroll --noprogress -t 1  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  1:14:41 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: starting process "cd formal/neg/codec_even_col/orbit_secded72_codec; yosys-smtbmc -s bitwuzla --presat --unroll -i --noprogress -t 1  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  1:14:42 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:00  Solver: bitwuzla
+SBY  1:14:42 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: ##   0:00:00  Solver: bitwuzla
+SBY  1:14:42 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: ##   0:00:00  Trying induction in step 1..
+SBY  1:14:42 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:00  Checking assumptions in step 0..
+SBY  1:14:43 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  Checking assertions in step 0..
+SBY  1:14:43 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  BMC failed!
+SBY  1:14:43 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  Assert failed in orbit_secded72_fv: s2_flags
+SBY  1:14:43 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  Assert failed in orbit_secded72_fv: s2_no_flip
+SBY  1:14:43 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:01  Writing trace to VCD file: engine_0/trace.vcd
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: ##   0:00:02  Trying induction in step 0..
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:02  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:02  Writing trace to constraints file: engine_0/trace.smtc
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:02  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: ##   0:00:02  Status: failed
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: finished (returncode=1)
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] engine_0.induction: terminating process
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:03 (3)
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] summary: engine_0 (smtbmc bitwuzla) returned FAIL for basecase
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] summary: counterexample trace [basecase]: formal/neg/codec_even_col/orbit_secded72_codec/engine_0/trace.vcd
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] summary:   failed assertion orbit_secded72_fv.s2_flags at orbit_secded72_fv.sv:67.9-67.56
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] summary:   failed assertion orbit_secded72_fv.s2_no_flip at orbit_secded72_fv.sv:68.9-68.66
+SBY  1:14:44 [formal/neg/codec_even_col/orbit_secded72_codec] DONE (FAIL, rc=2)
+SBY  1:14:44 The following tasks failed: ['codec']

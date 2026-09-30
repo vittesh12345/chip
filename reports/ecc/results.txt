@@ -1,12 +1,13 @@
-OK  formal_bank_clean status=PASS expected=PASS 20s
+OK  formal_bank_clean status=PASS expected=PASS 41s
 OK  formal_bank_cover status=PASS expected=PASS 58s
-OK  formal_bank_cover_ded status=PASS expected=PASS 306s
-OK  formal_bank_ded status=PASS expected=PASS 92s
-OK  formal_bank_e2e_clean status=PASS expected=PASS 57s
+OK  formal_bank_cover_ded status=PASS expected=PASS 324s
+OK  formal_bank_ded status=PASS expected=PASS 89s
+OK  formal_bank_e2e_clean status=PASS expected=PASS 56s
 OK  formal_bank_e2e_upset status=PASS expected=PASS 50s
-OK  formal_bank_sec status=PASS expected=PASS 70s
-OK  formal_codec status=PASS expected=PASS 41s
-OK  formal_neg_bank_no_writeback status=FAIL expected=FAIL 32s
+OK  formal_bank_sec status=PASS expected=PASS 135s
+OK  formal_codec status=PASS expected=PASS 33s
+OK  formal_neg_bank_no_writeback status=FAIL expected=FAIL 64s
+OK  formal_neg_bank_read_way_swap status=FAIL expected=FAIL 11s
 OK  formal_neg_codec_even_col status=FAIL expected=FAIL 3s
 OK  formal_neg_il1_neg status=FAIL expected=FAIL 6s
 OK  hsiao  H matrix = Hsiao construction (72 distinct odd-weight columns; 26 ones per data row)
@@ -18,6 +19,7 @@ OK  simneg_bank_cnt_wrap  killed (codec bench fail=0; bank bench fail=1; first: 
 OK  simneg_bank_log_prio  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 252: last_err)
 OK  simneg_bank_no_interleave  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 2: array contents differ from model)
 OK  simneg_bank_no_writeback  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 66: array contents differ from model)
+OK  simneg_bank_read_way_swap  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 34: read data)
 OK  simneg_bank_scrub_on_read  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 82: scrub_row)
 OK  simneg_codec_even_col  killed (codec bench fail=1; bank bench fail=1; first: ERROR column 0: rtl 00000110 ref 00000111)
 OK  synth_orbit_ecc_bank cells=10690 flip-flops=2414 (expected 2414) logic depth=48

@@ -45,6 +45,14 @@ MUTANTS = {
                       "if (ev_is_ue ? ev_ue[i] : ev_ce[i])",
                       "if (ev_ce[i] | ev_ue[i])", 1,
                       "last_err_* UE precedence"),
+    # The read-side de-interleaving swaps the two ways (the write side is
+    # right): reads and scrub decode the neighbouring codeword. The unbounded
+    # bank proofs abstract the decoder, so they need assertion A5 (decoder
+    # input = stored codeword) to see this.
+    "bank_read_way_swap": (BANK,
+                           "assign cw_raw[k] = dec_bits[k*INTERLEAVE + w];",
+                           "assign cw_raw[k] = dec_bits[k*INTERLEAVE + (INTERLEAVE - 1 - w)];", 1,
+                           "read-side bit mapping / decoder input"),
     # The scrubber also runs while the read port is busy (steals the decoders).
     "bank_scrub_on_read": (BANK,
                            "wire                  scrub_go  = scrub_en & ~wr_en & ~rd_en;",

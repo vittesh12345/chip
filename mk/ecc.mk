@@ -21,7 +21,8 @@
 #   make ecc-formal       formal/ecc/*.sby: codec proof, bank proofs (clean, sec, ded),
 #                         covers, bounded end-to-end BMC with the real decoder, and
 #                         negative controls that must FAIL (il1_neg, codec_even_col,
-#                         bank_no_writeback: BMC from reset, task sec_bmc)
+#                         bank_no_writeback and bank_read_way_swap: BMC from reset,
+#                         task sec_bmc)
 #   make ecc-synth        Yosys generic synthesis of the encoder, decoder and bank:
 #                         check -assert, no latches, codec without flip-flops, bank
 #                         flip-flop count as designed; statistics in $(ECC_OUT)/synth/
@@ -51,7 +52,7 @@ ECC_MUT_CYCLES     ?= 3000
 ECC_FORMAL_TIMEOUT ?= 1200
 ECC_REPORT_DIR     ?= reports/ecc
 ECC_MUTANTS        := codec_even_col bank_no_writeback bank_no_interleave bank_cnt_wrap \
-                      bank_log_prio bank_scrub_on_read
+                      bank_log_prio bank_scrub_on_read bank_read_way_swap
 
 # Bank proof tasks (formal/ecc/orbit_ecc_bank.sby) and their expected status.
 ECC_FV_PASS_TASKS  := clean sec ded cover cover_ded e2e_clean e2e_upset
@@ -206,17 +207,22 @@ ecc-formal-bank: $(ECC_OUT)/formal/bank/orbit_ecc_bank.sby
 ecc-formal-neg:
 	@rm -rf $(ECC_OUT)/formal/neg && mkdir -p $(ECC_OUT)/formal/neg $(ECC_RES)
 	@$(ECC_PY) $(ECC_TB_DIR)/ecc_mutants.py $(ECC_RTL_DIR) $(ECC_OUT)/formal/neg \
-	    codec_even_col bank_no_writeback > /dev/null
+	    codec_even_col bank_no_writeback bank_read_way_swap > /dev/null
 	@$(call ECC_SBY_GEN,$(ECC_FV_DIR)/orbit_secded72.sby,$(ECC_OUT)/formal/neg/codec_even_col/orbit_secded72.sby,\
 	    $(ECC_OUT)/formal/neg/codec_even_col/orbit_secded72.v,$(ECC_BANK))
 	@$(call ECC_SBY_GEN,$(ECC_FV_DIR)/orbit_ecc_bank.sby,$(ECC_OUT)/formal/neg/bank_no_writeback/orbit_ecc_bank.sby,\
 	    $(ECC_CODEC),$(ECC_OUT)/formal/neg/bank_no_writeback/orbit_ecc_bank.v)
+	@$(call ECC_SBY_GEN,$(ECC_FV_DIR)/orbit_ecc_bank.sby,$(ECC_OUT)/formal/neg/bank_read_way_swap/orbit_ecc_bank.sby,\
+	    $(ECC_CODEC),$(ECC_OUT)/formal/neg/bank_read_way_swap/orbit_ecc_bank.v)
 	@fail=0; \
 	$(ECC_RUN_SBY) $(ECC_OUT)/formal/neg/codec_even_col/orbit_secded72.sby codec FAIL \
 	    $(ECC_FORMAL_TIMEOUT) formal_neg_codec_even_col | tee $(ECC_RES)/formal_neg_codec_even_col.txt; \
 	[ $${PIPESTATUS[0]} -eq 0 ] || fail=1; \
 	$(ECC_RUN_SBY) $(ECC_OUT)/formal/neg/bank_no_writeback/orbit_ecc_bank.sby sec_bmc FAIL \
 	    $(ECC_FORMAL_TIMEOUT) formal_neg_bank_no_writeback | tee $(ECC_RES)/formal_neg_bank_no_writeback.txt; \
+	[ $${PIPESTATUS[0]} -eq 0 ] || fail=1; \
+	$(ECC_RUN_SBY) $(ECC_OUT)/formal/neg/bank_read_way_swap/orbit_ecc_bank.sby sec_bmc FAIL \
+	    $(ECC_FORMAL_TIMEOUT) formal_neg_bank_read_way_swap | tee $(ECC_RES)/formal_neg_bank_read_way_swap.txt; \
 	[ $${PIPESTATUS[0]} -eq 0 ] || fail=1; \
 	exit $$fail
 

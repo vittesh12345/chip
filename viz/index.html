@@ -63,7 +63,7 @@
   --font-ui: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --panel-w: 368px;
-  --ph-al: #d8dbe0; --ph-tin: #7c746f; --ph-cut: #2a2d33; --ph-poly: #6b5d54; --ph-si: #3b4756; --ph-tap: #4a5665; --ph-well: #333d4b; --ph-sub: #262d3a; --ph-oxide: #a9bfd2;
+  --ph-al: #d8dbe0; --ph-m5: #e0c27a; --ph-m4: #c9a45c; --ph-m3: #6fa58c; --ph-m2: #5b86c4; --ph-m1: #8f6fc0; --ph-tin: #8a6a4e; --ph-cut: #2a2d33; --ph-poly: #b8563f; --ph-si: #3f7a55; --ph-tap: #4f6a5a; --ph-well: #3a3f63; --ph-sub: #2e2a4f; --ph-oxide: #7fb7c9;
   --pk-mold: #1b1d20; --pk-cu: #c98f56; --pk-plate: #cdd2d6; --pk-au: #e2b43c; --pk-attach: #8f9498; --pk-si: #262d3a; --pk-pad: #d8dbe0; --pk-mark: #cfd3d7;
 }
 @media (prefers-color-scheme: dark) {
@@ -82,7 +82,7 @@
     --k-ctrl: #a8c24f; --k-rst: #d9bb3f; --k-clk: #ffd23f; --k-io: #79a9c4; --k-repair: #95abb5; --k-hold: #b8c8cf;
     --k-tie: #9a9a9a; --k-ant: #b0b0b0; --k-tap: #6d787d; --k-decap: #56616a; --k-fill: #3d484e; --k-other: #dddddd;
     --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .35);
-    --ph-al: #d8dbe0; --ph-tin: #7c746f; --ph-cut: #2a2d33; --ph-poly: #6b5d54; --ph-si: #3b4756; --ph-tap: #4a5665; --ph-well: #333d4b; --ph-sub: #262d3a; --ph-oxide: #a9bfd2;
+    --ph-al: #d8dbe0; --ph-m5: #e0c27a; --ph-m4: #c9a45c; --ph-m3: #6fa58c; --ph-m2: #5b86c4; --ph-m1: #8f6fc0; --ph-tin: #8a6a4e; --ph-cut: #2a2d33; --ph-poly: #b8563f; --ph-si: #3f7a55; --ph-tap: #4f6a5a; --ph-well: #3a3f63; --ph-sub: #2e2a4f; --ph-oxide: #7fb7c9;
     --pk-mold: #1b1d20; --pk-cu: #c98f56; --pk-plate: #cdd2d6; --pk-au: #e2b43c; --pk-attach: #8f9498; --pk-si: #262d3a; --pk-pad: #d8dbe0; --pk-mark: #cfd3d7;
     color-scheme: dark;
   }
@@ -102,7 +102,7 @@
   --k-ctrl: #a8c24f; --k-rst: #d9bb3f; --k-clk: #ffd23f; --k-io: #79a9c4; --k-repair: #95abb5; --k-hold: #b8c8cf;
   --k-tie: #9a9a9a; --k-ant: #b0b0b0; --k-tap: #6d787d; --k-decap: #56616a; --k-fill: #3d484e; --k-other: #dddddd;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .35);
-  --ph-al: #d8dbe0; --ph-tin: #7c746f; --ph-cut: #2a2d33; --ph-poly: #6b5d54; --ph-si: #3b4756; --ph-tap: #4a5665; --ph-well: #333d4b; --ph-sub: #262d3a; --ph-oxide: #a9bfd2;
+  --ph-al: #d8dbe0; --ph-m5: #e0c27a; --ph-m4: #c9a45c; --ph-m3: #6fa58c; --ph-m2: #5b86c4; --ph-m1: #8f6fc0; --ph-tin: #8a6a4e; --ph-cut: #2a2d33; --ph-poly: #b8563f; --ph-si: #3f7a55; --ph-tap: #4f6a5a; --ph-well: #3a3f63; --ph-sub: #2e2a4f; --ph-oxide: #7fb7c9;
   --pk-mold: #1b1d20; --pk-cu: #c98f56; --pk-plate: #cdd2d6; --pk-au: #e2b43c; --pk-attach: #8f9498; --pk-si: #262d3a; --pk-pad: #d8dbe0; --pk-mark: #cfd3d7;
   color-scheme: dark;
 }
@@ -501,7 +501,7 @@ td.wrap { white-space: normal; }
       </div>
       <div class="switches">
         <label class="switch" for="ph-labels">Part labels<input type="checkbox" id="ph-labels"></label>
-        <label class="switch" for="ph-oxide">Oxide glaze<input type="checkbox" id="ph-oxide"></label>
+        <label class="switch" for="ph-oxide">Oxide glaze<input type="checkbox" id="ph-oxide" checked></label>
         <label class="switch" for="ph-bar">Scale bar<input type="checkbox" id="ph-bar" checked></label>
         <label class="switch" for="ph-hair">Hair for scale<input type="checkbox" id="ph-hair" checked></label>
       </div>
@@ -511,7 +511,7 @@ td.wrap { white-space: normal; }
         <input type="range" id="s-pexag" min="1" max="10" step="0.5" value="1">
         <span class="help">×1 is the real stack height. Raise it to make the metal layers stand up; the chip in the corner says when heights are stretched.</span>
       </div>
-      <p class="block-note">Materials are approximations of the process (colour, roughness, reflectivity per layer); the geometry under them is the GDS. The oxide glaze stands in for the inter-layer dielectric and passivation, which the data do not model.</p>
+      <p class="block-note">Materials are approximations of the process (colour, roughness, reflectivity per layer); the geometry under them is the GDS. The colours come from thin-film interference in the oxide and passivation over each layer, which is why real die shots look gold, green, blue and purple; the tints are approximations, and the oxide glaze stands in for the dielectric the data do not model.</p>
     </section>
 
     <section class="block" data-tabs="package" aria-labelledby="h-pkg">
@@ -689,7 +689,7 @@ const state = {
   exag: 3, gap: 0, highlight: false, dim: true, group: 'all', view: 'iso',
   mode: 'parts', labels: true, regions: true, pins: true, power: false, rows: false, fill: false,
   sel: -1, hidden: new Set(), collapsed: new Set(), section: { on: false, axis: 'x', pos: 0.5, flip: false },
-  tab: 'layout', photoExag: 1, photoLabels: false, oxide: false, bar: true, hair: true, pview: 'tilt',
+  tab: 'layout', photoExag: 1, photoLabels: false, oxide: true, bar: true, hair: true, pview: 'tilt',
   pkg: { ring: 'fit', lid: 'ghost', explode: 0, view: 'iso' },
 };
 let meta, buf, renderer, scene, camera, controls, layerObjs = [], dieSize, center, dw, dh;
@@ -821,7 +821,7 @@ function buildScene() {
   slabPhotoMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(cssVar('--ph-sub')), metalness: 0.1, roughness: 0.55 });
   slab = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, 1), slabMat);
   dieGroup.add(slab);
-  oxideMesh = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, 1), new THREE.MeshPhysicalMaterial({ color: new THREE.Color(cssVar('--ph-oxide')), metalness: 0, roughness: 0.06, transparent: true, opacity: 0.2, depthWrite: false }));
+  oxideMesh = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, 1), new THREE.MeshPhysicalMaterial({ color: new THREE.Color(cssVar('--ph-oxide')), metalness: 0, roughness: 0.08, transparent: true, opacity: 0.14, depthWrite: false, iridescence: 1, iridescenceIOR: 1.46, iridescenceThicknessRange: [300, 800] }));
   oxideMesh.renderOrder = 30;
   oxideMesh.visible = false;
   dieGroup.add(oxideMesh);
@@ -1956,11 +1956,15 @@ let pkg = null, pkgHemi, pkgSun;
 const savedLayout = { exag: 3, gap: 0, pos: null, target: null };
 const PHOTO_KIND = { nwell: ['--ph-well', 0.1, 0.9], diff: ['--ph-si', 0.15, 0.75], tap: ['--ph-tap', 0.15, 0.75], poly: ['--ph-poly', 0.25, 0.65],
   licon1: ['--ph-cut', 0.7, 0.55], mcon: ['--ph-cut', 0.7, 0.55], via: ['--ph-cut', 0.7, 0.55], via2: ['--ph-cut', 0.7, 0.55], via3: ['--ph-cut', 0.7, 0.55], via4: ['--ph-cut', 0.7, 0.55],
-  li1: ['--ph-tin', 0.85, 0.5] };
+  li1: ['--ph-tin', 0.6, 0.5], met1: ['--ph-m1', 0.55, 0.35, [260, 420]], met2: ['--ph-m2', 0.55, 0.35, [300, 480]],
+  met3: ['--ph-m3', 0.55, 0.33, [380, 560]], met4: ['--ph-m4', 0.7, 0.3, [420, 620]], met5: ['--ph-m5', 0.75, 0.28, [480, 700]] };
 function photoSpec(L) { return PHOTO_KIND[L.name] || ['--ph-al', 0.95, 0.32]; }
 function photoMaterial(L, uniforms) {
-  const [, metalness, roughness] = photoSpec(L);
-  const m = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness, roughness });
+  // Die shots are coloured by thin-film interference in the oxide and passivation over
+  // each layer; the per-layer tint plus three.js iridescence approximates that.
+  const [, metalness, roughness, film] = photoSpec(L);
+  const m = new THREE.MeshPhysicalMaterial({ color: 0xffffff, metalness, roughness,
+    iridescence: film ? 0.9 : 0.3, iridescenceIOR: 1.46, iridescenceThicknessRange: film || [200, 400] });
   m.userData.uniforms = uniforms;
   m.onBeforeCompile = patchShader;
   m.customProgramCacheKey = () => 'box';
@@ -2422,7 +2426,7 @@ function wireTabs() {
     const v = b.dataset.pview;
     if (v === 'reset') {
       state.photoExag = 1; state.exag = 1; $('s-pexag').value = 1;
-      state.oxide = false; $('ph-oxide').checked = false;
+      state.oxide = true; $('ph-oxide').checked = true;
       layerObjs.forEach((o) => { o.on = o.L.count > 0; const i = $('layer-' + o.L.name); if (i) i.checked = o.on; });
       applyZ(); applyVisibility(); state.pview = 'tilt'; setView('tilt');
     } else { state.pview = v; setView(v); }
