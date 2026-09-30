@@ -1,28 +1,28 @@
-SBY 20:14:26 [dup] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_dup'.
-SBY 20:14:26 [dup] engine_0: smtbmc yices
-SBY 20:14:26 [dup] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY 20:14:26 [dup] base: finished (returncode=0)
-SBY 20:14:26 [dup] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup/model; yosys -ql design_prep.log design_prep.ys"
-SBY 20:14:26 [dup] prep: finished (returncode=0)
-SBY 20:14:26 [dup] smt2: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup/model; yosys -ql design_smt2.log design_smt2.ys"
-SBY 20:14:26 [dup] smt2: finished (returncode=0)
-SBY 20:14:26 [dup] engine_0.basecase: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll --noprogress -t 6  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
-SBY 20:14:26 [dup] engine_0.induction: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 6  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
-SBY 20:14:26 [dup] engine_0.induction: ##   0:00:00  Solver: yices
-SBY 20:14:26 [dup] engine_0.basecase: ##   0:00:00  Solver: yices
-SBY 20:14:26 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 6..
-SBY 20:14:26 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 5..
-SBY 20:14:26 [dup] engine_0.induction: ##   0:00:00  Temporal induction successful.
-SBY 20:14:26 [dup] engine_0.induction: ##   0:00:00  Status: passed
-SBY 20:14:26 [dup] engine_0.induction: finished (returncode=0)
-SBY 20:14:26 [dup] engine_0.induction: Status returned by engine for induction: pass
-SBY 20:14:26 [dup] engine_0.basecase: ##   0:00:00  Status: passed
-SBY 20:14:26 [dup] engine_0.basecase: finished (returncode=0)
-SBY 20:14:26 [dup] engine_0.basecase: Status returned by engine for basecase: pass
-SBY 20:14:26 [dup] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY 20:14:26 [dup] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY 20:14:26 [dup] summary: engine_0 (smtbmc yices) returned pass for basecase
-SBY 20:14:26 [dup] summary: engine_0 (smtbmc yices) returned pass for induction
-SBY 20:14:26 [dup] summary: engine_0 did not produce any traces
-SBY 20:14:26 [dup] summary: successful proof by k-induction.
-SBY 20:14:26 [dup] DONE (PASS, rc=0)
+SBY  0:14:01 [dup] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_dup'.
+SBY  0:14:01 [dup] engine_0: smtbmc yices
+SBY  0:14:01 [dup] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:14:02 [dup] base: finished (returncode=0)
+SBY  0:14:02 [dup] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:14:02 [dup] prep: finished (returncode=0)
+SBY  0:14:02 [dup] smt2: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:14:02 [dup] smt2: finished (returncode=0)
+SBY  0:14:02 [dup] engine_0.basecase: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll --noprogress -t 6  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:14:02 [dup] engine_0.induction: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_dup; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 6  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:14:02 [dup] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  0:14:02 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 6..
+SBY  0:14:02 [dup] engine_0.induction: ##   0:00:00  Trying induction in step 5..
+SBY  0:14:02 [dup] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:14:02 [dup] engine_0.induction: ##   0:00:00  Temporal induction successful.
+SBY  0:14:02 [dup] engine_0.induction: ##   0:00:00  Status: passed
+SBY  0:14:02 [dup] engine_0.induction: finished (returncode=0)
+SBY  0:14:02 [dup] engine_0.induction: Status returned by engine for induction: pass
+SBY  0:14:02 [dup] engine_0.basecase: ##   0:00:00  Status: passed
+SBY  0:14:02 [dup] engine_0.basecase: finished (returncode=0)
+SBY  0:14:02 [dup] engine_0.basecase: Status returned by engine for basecase: pass
+SBY  0:14:02 [dup] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:14:02 [dup] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:14:02 [dup] summary: engine_0 (smtbmc yices) returned pass for basecase
+SBY  0:14:02 [dup] summary: engine_0 (smtbmc yices) returned pass for induction
+SBY  0:14:02 [dup] summary: engine_0 did not produce any traces
+SBY  0:14:02 [dup] summary: successful proof by k-induction.
+SBY  0:14:02 [dup] DONE (PASS, rc=0)

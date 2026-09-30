@@ -1,5 +1,5 @@
 --- rtl/orbit_demo.v	2026-09-29 18:50:44.562939717 +0000
-+++ build/formal/vacuity/no_backpressure_pdr/rtl/orbit_demo.v	2026-09-29 20:14:21.805196921 +0000
++++ build/formal/vacuity/no_backpressure_pdr/rtl/orbit_demo.v	2026-09-30 00:13:58.276907873 +0000
 @@ -68,7 +68,7 @@
      // The output buffer holds one result. Input is blocked while it is full
      // and not being drained this cycle (this also covers non-final beats).
@@ -10,57 +10,57 @@
      wire in_fire = in_valid & in_ready;
  
 
-[formal] handshake_pdr  FAIL    (expected FAIL, 2s)
+[formal] handshake_pdr  FAIL    (expected FAIL, 1s)
 
-SBY 20:14:21 [handshake_pdr] Removing directory '/home/user/chip/build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr'.
-SBY 20:14:21 [handshake_pdr] engine_0: abc pdr
-SBY 20:14:21 [handshake_pdr] base: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY 20:14:22 [handshake_pdr] base: finished (returncode=0)
-SBY 20:14:22 [handshake_pdr] prep: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/model; yosys -ql design_prep.log design_prep.ys"
-SBY 20:14:22 [handshake_pdr] prep: finished (returncode=0)
-SBY 20:14:22 [handshake_pdr] aig: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
-SBY 20:14:22 [handshake_pdr] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
-SBY 20:14:22 [handshake_pdr] aig: finished (returncode=0)
-SBY 20:14:22 [handshake_pdr] engine_0: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
-SBY 20:14:22 [handshake_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
-SBY 20:14:22 [handshake_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
-SBY 20:14:22 [handshake_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 359. MonoCNF = no. SkipGen = no. SolveAll = no.
-SBY 20:14:23 [handshake_pdr] engine_0: Block =    1  Oblig =     1  Clause =     0  Call =     8 (sat=12.5%)  Cex =   0  Start =   0
-SBY 20:14:23 [handshake_pdr] engine_0: SAT solving =     0.00 sec (  0.27 %)
-SBY 20:14:23 [handshake_pdr] engine_0: unsat     =     0.00 sec (  0.01 %)
-SBY 20:14:23 [handshake_pdr] engine_0: sat       =     0.00 sec (  0.26 %)
-SBY 20:14:23 [handshake_pdr] engine_0: Generalize  =     0.00 sec (  0.00 %)
-SBY 20:14:23 [handshake_pdr] engine_0: Push clause =     0.00 sec (  0.00 %)
-SBY 20:14:23 [handshake_pdr] engine_0: Ternary sim =     0.00 sec (  0.47 %)
-SBY 20:14:23 [handshake_pdr] engine_0: Containment =     0.00 sec (  0.00 %)
-SBY 20:14:23 [handshake_pdr] engine_0: CNF compute =     0.00 sec (  0.00 %)
-SBY 20:14:23 [handshake_pdr] engine_0: Refinement  =     0.00 sec (  0.75 %)
-SBY 20:14:23 [handshake_pdr] engine_0: TOTAL       =     0.03 sec (100.00 %)
-SBY 20:14:23 [handshake_pdr] engine_0: Output 7 of miter "model/design_aiger" was asserted in frame 0.  Time =     0.03 sec
-SBY 20:14:23 [handshake_pdr] engine_0: finished (returncode=0)
-SBY 20:14:23 [handshake_pdr] engine_0: Status returned by engine: FAIL
-SBY 20:14:23 [handshake_pdr] smt2: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/model; yosys -ql design_smt2.log design_smt2.ys"
-SBY 20:14:23 [handshake_pdr] engine_0: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr; yosys-witness aiw2yw engine_0/trace.aiw model/design_aiger.ywa engine_0/trace_aiw.yw"
-SBY 20:14:23 [handshake_pdr] smt2: finished (returncode=0)
-SBY 20:14:23 [handshake_pdr] engine_0: Converting AIGER witness trace 'engine_0/trace.aiw' to Yosys witness trace 'engine_0/trace_aiw.yw'...
-SBY 20:14:23 [handshake_pdr] engine_0: Using Yosys witness AIGER map file 'model/design_aiger.ywa'
-SBY 20:14:23 [handshake_pdr] engine_0: Converted 1 time steps.
-SBY 20:14:23 [handshake_pdr] engine_0: finished (returncode=0)
-SBY 20:14:23 [handshake_pdr] engine_0: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr; yosys-smtbmc -s yices --noprogress --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc --yw engine_0/trace_aiw.yw model/design_smt2.smt2"
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  Solver: yices
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  BMC failed!
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  Assert failed in orbit_demo_fv: P4_blocked_buffer_full
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  Assert failed in orbit_demo_fv: P4_blocked_out_valid
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
-SBY 20:14:23 [handshake_pdr] engine_0: ##   0:00:00  Status: FAILED
-SBY 20:14:23 [handshake_pdr] engine_0: finished (returncode=1)
-SBY 20:14:23 [handshake_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
-SBY 20:14:23 [handshake_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
-SBY 20:14:23 [handshake_pdr] summary: engine_0 (abc pdr) returned FAIL
-SBY 20:14:23 [handshake_pdr] summary: counterexample trace: build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/engine_0/trace.vcd
-SBY 20:14:23 [handshake_pdr] summary:   failed assertion orbit_demo_fv.P4_blocked_buffer_full at orbit_demo_fv.sv:441.13-441.55
-SBY 20:14:23 [handshake_pdr] summary:   failed assertion orbit_demo_fv.P4_blocked_out_valid at orbit_demo_fv.sv:444.13-444.53
-SBY 20:14:23 [handshake_pdr] DONE (FAIL, rc=2)
+SBY  0:13:58 [handshake_pdr] Removing directory '/home/user/chip/build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr'.
+SBY  0:13:58 [handshake_pdr] engine_0: abc pdr
+SBY  0:13:58 [handshake_pdr] base: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:58 [handshake_pdr] base: finished (returncode=0)
+SBY  0:13:58 [handshake_pdr] prep: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:58 [handshake_pdr] prep: finished (returncode=0)
+SBY  0:13:58 [handshake_pdr] aig: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  0:13:59 [handshake_pdr] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
+SBY  0:13:59 [handshake_pdr] aig: finished (returncode=0)
+SBY  0:13:59 [handshake_pdr] engine_0: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY  0:13:59 [handshake_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY  0:13:59 [handshake_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY  0:13:59 [handshake_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 359. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY  0:13:59 [handshake_pdr] engine_0: Block =    1  Oblig =     1  Clause =     0  Call =     8 (sat=12.5%)  Cex =   0  Start =   0
+SBY  0:13:59 [handshake_pdr] engine_0: SAT solving =     0.00 sec (  0.27 %)
+SBY  0:13:59 [handshake_pdr] engine_0: unsat     =     0.00 sec (  0.01 %)
+SBY  0:13:59 [handshake_pdr] engine_0: sat       =     0.00 sec (  0.26 %)
+SBY  0:13:59 [handshake_pdr] engine_0: Generalize  =     0.00 sec (  0.00 %)
+SBY  0:13:59 [handshake_pdr] engine_0: Push clause =     0.00 sec (  0.00 %)
+SBY  0:13:59 [handshake_pdr] engine_0: Ternary sim =     0.00 sec (  0.66 %)
+SBY  0:13:59 [handshake_pdr] engine_0: Containment =     0.00 sec (  0.00 %)
+SBY  0:13:59 [handshake_pdr] engine_0: CNF compute =     0.00 sec (  0.00 %)
+SBY  0:13:59 [handshake_pdr] engine_0: Refinement  =     0.00 sec (  0.34 %)
+SBY  0:13:59 [handshake_pdr] engine_0: TOTAL       =     0.02 sec (100.00 %)
+SBY  0:13:59 [handshake_pdr] engine_0: Output 7 of miter "model/design_aiger" was asserted in frame 0.  Time =     0.03 sec
+SBY  0:13:59 [handshake_pdr] engine_0: finished (returncode=0)
+SBY  0:13:59 [handshake_pdr] engine_0: Status returned by engine: FAIL
+SBY  0:13:59 [handshake_pdr] smt2: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:13:59 [handshake_pdr] engine_0: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr; yosys-witness aiw2yw engine_0/trace.aiw model/design_aiger.ywa engine_0/trace_aiw.yw"
+SBY  0:13:59 [handshake_pdr] smt2: finished (returncode=0)
+SBY  0:13:59 [handshake_pdr] engine_0: Converting AIGER witness trace 'engine_0/trace.aiw' to Yosys witness trace 'engine_0/trace_aiw.yw'...
+SBY  0:13:59 [handshake_pdr] engine_0: Using Yosys witness AIGER map file 'model/design_aiger.ywa'
+SBY  0:13:59 [handshake_pdr] engine_0: Converted 1 time steps.
+SBY  0:13:59 [handshake_pdr] engine_0: finished (returncode=0)
+SBY  0:13:59 [handshake_pdr] engine_0: starting process "cd build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr; yosys-smtbmc -s yices --noprogress --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc --yw engine_0/trace_aiw.yw model/design_smt2.smt2"
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  Solver: yices
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  BMC failed!
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  Assert failed in orbit_demo_fv: P4_blocked_buffer_full
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  Assert failed in orbit_demo_fv: P4_blocked_out_valid
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  0:13:59 [handshake_pdr] engine_0: ##   0:00:00  Status: FAILED
+SBY  0:13:59 [handshake_pdr] engine_0: finished (returncode=1)
+SBY  0:13:59 [handshake_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  0:13:59 [handshake_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  0:13:59 [handshake_pdr] summary: engine_0 (abc pdr) returned FAIL
+SBY  0:13:59 [handshake_pdr] summary: counterexample trace: build/formal/vacuity/no_backpressure_pdr/run/orbit_demo_handshake_pdr/engine_0/trace.vcd
+SBY  0:13:59 [handshake_pdr] summary:   failed assertion orbit_demo_fv.P4_blocked_buffer_full at orbit_demo_fv.sv:447.13-447.55
+SBY  0:13:59 [handshake_pdr] summary:   failed assertion orbit_demo_fv.P4_blocked_out_valid at orbit_demo_fv.sv:450.13-450.53
+SBY  0:13:59 [handshake_pdr] DONE (FAIL, rc=2)

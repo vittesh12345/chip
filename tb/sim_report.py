@@ -269,8 +269,10 @@ def main():
         "- The random stimulus is constrained by the choices in `tb/cocotb/test_orbit_random.py` "
         "(e.g. temperature regimes, sum lengths); the mutation table is evidence that it is sensitive, "
         "not a proof of completeness.",
-        "- `rst_n` is asserted only a few times mid-run in the random test; reset during an output "
-        "transfer is covered only if the random run happens to do so.",
+        "- Mid-run reset: the directed scenario `reset_midrun` resets with a sum in progress and a "
+        "result pending (checked in 2-state Verilator too, not only via X at power-on); in the random "
+        "test `rst_n` is asserted only a few times per seed, so reset in other states (e.g. during "
+        "an output transfer or in THROTTLE) is covered only if a random run happens to do so.",
     ]
     L.append("")
     L.append("Files copied next to this summary: " + ", ".join(copied) + ".")

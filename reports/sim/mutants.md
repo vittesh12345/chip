@@ -21,6 +21,7 @@ RTL: rtl; directed bench tb/tb_orbit_demo.v (+maxerr=1); random bench: 1 seed x 
 | clear_keeps_acc | clear_fault does not zero the accumulators | KILLED: ERROR t=1335744000 [clear_fault] DUT outputs differ from the reference model | KILLED: 25 mismatches in 1090 cycles |
 | clear_keeps_result | clear_fault does not zero the result registers | KILLED: ERROR t=1335684000 [clear_fault] DUT outputs differ from the reference model | KILLED: 25 mismatches in 678 cycles |
 | clear_keeps_out_valid | clear_fault does not empty the output buffer | KILLED: ERROR t=1335684000 [clear_fault] DUT outputs differ from the reference model | KILLED: 25 mismatches in 1463 cycles |
+| reset_keeps_out_valid | reset does not empty the output buffer | KILLED: ERROR t=24000 [reset_stop] DUT outputs differ from the reference model | KILLED: 6 mismatches in 20000 cycles |
 | ready_during_clear | in_ready not held low while clear_fault | KILLED: ERROR t=1335684000 [clear_fault] DUT outputs differ from the reference model | KILLED: 25 mismatches in 2565 cycles |
 | nonlast_not_blocked | full buffer blocks only in_last beats | KILLED: ERROR t=3174000 [multi_beat] DUT outputs differ from the reference model | KILLED: 26 mismatches in 152 cycles |
 | bubble | no same-cycle drain and refill (in_ready ignores out_ready) | KILLED: ERROR t=254000 [reset_stop] DUT outputs differ from the reference model | KILLED: 25 mismatches in 54 cycles |
@@ -30,4 +31,4 @@ RTL: rtl; directed bench tb/tb_orbit_demo.v (+maxerr=1); random bench: 1 seed x 
 | lanes_reversed | out_data lanes in reverse order | KILLED: ERROR t=254000 [reset_stop] DUT outputs differ from the reference model | KILLED: 25 mismatches in 29 cycles |
 | b_lane_rotated | lane i multiplies by lane i+1's b operand | KILLED: ERROR t=254000 [reset_stop] DUT outputs differ from the reference model | KILLED: 25 mismatches in 29 cycles |
 
-directed bench killed 25/25, random bench killed 25/25
+directed bench killed 26/26, random bench killed 26/26

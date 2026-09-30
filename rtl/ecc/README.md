@@ -161,7 +161,7 @@ hierarchical writes to `cells` instead.
 
 ## 3. Verification (`make ecc`)
 
-Results and run times: `reports/ecc/summary.md`.
+Results and run times: `reports/ecc/results.txt` (written by `make ecc-report`).
 
 * `ecc-hsiao`: `gen_hsiao72.py --check` confirms the H block of the codec
   equals the construction and has the Hsiao properties.

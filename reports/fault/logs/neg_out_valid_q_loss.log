@@ -1,13 +1,13 @@
-SBY 22:15:07 [fault_loss] engine_0: smtbmc yices
-SBY 22:15:07 [fault_loss] engine_0: ##   0:00:00  Solver: yices
-SBY 22:15:07 [fault_loss] engine_0: ##   0:00:00  BMC failed!
-SBY 22:15:07 [fault_loss] engine_0: ##   0:00:00  Value for anyconst in fi_harness (orbit_demo_fi.v:113.31-113.40): 0
-SBY 22:15:07 [fault_loss] engine_0: ##   0:00:00  Assert failed in fi_harness: D_no_silent_loss
-SBY 22:15:07 [fault_loss] engine_0: ##   0:00:00  Status: failed
-SBY 22:15:07 [fault_loss] engine_0: Status returned by engine: FAIL
-SBY 22:15:07 [fault_loss] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY 22:15:07 [fault_loss] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
-SBY 22:15:07 [fault_loss] summary: engine_0 (smtbmc yices) returned FAIL
-SBY 22:15:07 [fault_loss] summary: counterexample trace: fault_loss/engine_0/trace.vcd
-SBY 22:15:07 [fault_loss] summary:   failed assertion fi_harness.D_no_silent_loss at fi_harness.sv:265.17-265.53 step 3
-SBY 22:15:07 [fault_loss] DONE (FAIL, rc=2)
+SBY  0:20:58 [fault_loss] engine_0: smtbmc yices
+SBY  0:20:58 [fault_loss] engine_0: ##   0:00:00  Solver: yices
+SBY  0:20:58 [fault_loss] engine_0: ##   0:00:00  BMC failed!
+SBY  0:20:58 [fault_loss] engine_0: ##   0:00:00  Value for anyconst in fi_harness (orbit_demo_fi.v:113.31-113.40): 0
+SBY  0:20:58 [fault_loss] engine_0: ##   0:00:00  Assert failed in fi_harness: D_no_silent_loss
+SBY  0:20:58 [fault_loss] engine_0: ##   0:00:00  Status: failed
+SBY  0:20:58 [fault_loss] engine_0: Status returned by engine: FAIL
+SBY  0:20:58 [fault_loss] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:20:58 [fault_loss] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:20:58 [fault_loss] summary: engine_0 (smtbmc yices) returned FAIL
+SBY  0:20:58 [fault_loss] summary: counterexample trace: fault_loss/engine_0/trace.vcd
+SBY  0:20:58 [fault_loss] summary:   failed assertion fi_harness.D_no_silent_loss at fi_harness.sv:265.17-265.53 step 3
+SBY  0:20:58 [fault_loss] DONE (FAIL, rc=2)

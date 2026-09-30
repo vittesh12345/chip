@@ -1,0 +1,9 @@
+tb_orbit_secded72 summary
+  seed                         1
+  no-error words               20003
+  single-bit errors corrected  21600 (300 words x 72 positions)
+  double-bit errors detected   30672 (12 words x 2556 pairs)
+  triple-bit errors            19189: 8417 flagged UE, 10772 miscorrected (CE, wrong data), 0 CE with right data
+  errors                       0
+TB_ORBIT_SECDED72 PASS
+tb/ecc/tb_orbit_secded72.v:231: $finish called at 202992 (1s)

@@ -1434,6 +1434,21 @@ function syncCamera() {
   camera.updateProjectionMatrix();
   camera.updateMatrixWorld();
 }
+// With the section on, a label whose anchor lies in the removed half is hidden;
+// a fence label moves to the middle of the part of its fence that is still drawn.
+const _cv = new THREE.Vector3();
+function keptAt(x, y) { return clipPlane.distanceToPoint(_cv.set(x - dw / 2, y - dh / 2, 0)) >= -1e-6; }
+function keptAnchor(d) {
+  if (!state.section.on || keptAt(d.at[0], d.at[1])) return d.at;
+  if (!d.region) return null;
+  const [x0, y0, x1, y1] = d.region.boxes[0];
+  let sx = 0, sy = 0, n = 0;
+  for (let i = 0; i <= 12; i++) for (let j = 0; j <= 12; j++) {
+    const x = x0 + (x1 - x0) * i / 12, y = y0 + (y1 - y0) * j / 12;
+    if (keptAt(x, y)) { sx += x; sy += y; n++; }
+  }
+  return n ? [sx / n, sy / n] : null;
+}
 function layoutLabels() {
   layoutPending = false;
   syncCamera();
@@ -1461,10 +1476,11 @@ function layoutLabels() {
       if (d.stack && elev > 72 && !state.section.on) continue;
       let at = d.at;
       if (d.stack) at = stackAnchor();
+      else if (!forced) { at = keptAnchor(d); if (!at) continue; }
       const p = project(at[0], at[1], d.z());
       if (!p.ok || p.x < -20 || p.y < -20 || p.x > W + 20 || p.y > H + 20) continue;
       const prio = d.stack && (state.section.on || state.view === 'low' || state.gap > 0) ? 95 : d.prio;
-      cands.push({ d, p, prio: forced ? 200 : prio, forced });
+      cands.push({ d, p, at, prio: forced ? 200 : prio, forced });
     }
   }
   if (tier === 2) {
@@ -1511,7 +1527,7 @@ function layoutLabels() {
     }
     if (!chosen) { layoutMisses.push(d.id + ' @' + Math.round(c.p.x) + ',' + Math.round(c.p.y) + ' ' + Math.round(w) + 'x' + Math.round(h)); continue; }
     taken.push(chosen.rect);
-    next.push({ d, el, dx: chosen.dx, dy: chosen.dy });
+    next.push({ d, el, at: c.at, dx: chosen.dx, dy: chosen.dy });
     if (d.inline) nb++; else n++;
   }
   const keep = new Set(next.map((q) => q.d.id));
@@ -1528,7 +1544,7 @@ function positionLabels() {
   const col = cssVar('--leader');
   for (const q of placed) {
     const d = q.d;
-    const at = d.stack ? stackAnchor() : d.at;
+    const at = d.stack ? stackAnchor() : (q.at || d.at);
     const p = project(at[0], at[1], d.z());
     const x = p.x + q.dx, y = p.y + q.dy;
     q.el.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';

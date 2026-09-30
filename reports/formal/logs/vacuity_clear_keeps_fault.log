@@ -1,0 +1,57 @@
+--- rtl/orbit_demo.v	2026-09-29 18:50:44.562939717 +0000
++++ build/formal/vacuity/clear_keeps_fault/rtl/orbit_demo.v	2026-09-30 00:13:25.445469963 +0000
+@@ -109,7 +109,7 @@
+             fault_q     <= 1'b0;
+             out_valid_q <= 1'b0;
+         end else if (clear_fault) begin
+-            fault_q     <= 1'b0;
++            fault_q     <= fault_q;
+             out_valid_q <= 1'b0;
+         end else begin
+             if (mismatch)
+
+[formal] clear          FAIL    (expected FAIL, 1s)
+
+SBY  0:13:25 [clear] Removing directory '/home/user/chip/build/formal/vacuity/clear_keeps_fault/run/orbit_demo_clear'.
+SBY  0:13:25 [clear] engine_0: smtbmc yices
+SBY  0:13:25 [clear] base: starting process "cd build/formal/vacuity/clear_keeps_fault/run/orbit_demo_clear/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:25 [clear] base: finished (returncode=0)
+SBY  0:13:25 [clear] prep: starting process "cd build/formal/vacuity/clear_keeps_fault/run/orbit_demo_clear/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:25 [clear] prep: finished (returncode=0)
+SBY  0:13:25 [clear] smt2: starting process "cd build/formal/vacuity/clear_keeps_fault/run/orbit_demo_clear/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY  0:13:25 [clear] smt2: finished (returncode=0)
+SBY  0:13:25 [clear] engine_0.basecase: starting process "cd build/formal/vacuity/clear_keeps_fault/run/orbit_demo_clear; yosys-smtbmc -s yices --presat --unroll --noprogress -t 3  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY  0:13:25 [clear] engine_0.induction: starting process "cd build/formal/vacuity/clear_keeps_fault/run/orbit_demo_clear; yosys-smtbmc -s yices --presat --unroll -i --noprogress -t 3  --append 0 --dump-vcd engine_0/trace_induct.vcd --dump-yw engine_0/trace_induct.yw --dump-vlogtb engine_0/trace_induct_tb.v --dump-smtc engine_0/trace_induct.smtc model/design_smt2.smt2"
+SBY  0:13:25 [clear] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  0:13:25 [clear] engine_0.induction: ##   0:00:00  Trying induction in step 3..
+SBY  0:13:25 [clear] engine_0.induction: ##   0:00:00  Trying induction in step 2..
+SBY  0:13:25 [clear] engine_0.induction: ##   0:00:00  Trying induction in step 1..
+SBY  0:13:25 [clear] engine_0.induction: ##   0:00:00  Trying induction in step 0..
+SBY  0:13:25 [clear] engine_0.induction: ##   0:00:00  Temporal induction failed!
+SBY  0:13:25 [clear] engine_0.induction: ##   0:00:00  Assert failed in orbit_demo_fv: P8_any_no_fault
+SBY  0:13:25 [clear] engine_0.induction: ##   0:00:00  Writing trace to VCD file: engine_0/trace_induct.vcd
+SBY  0:13:26 [clear] engine_0.induction: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_induct_tb.v
+SBY  0:13:26 [clear] engine_0.induction: ##   0:00:00  Writing trace to constraints file: engine_0/trace_induct.smtc
+SBY  0:13:26 [clear] engine_0.induction: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace_induct.yw
+SBY  0:13:26 [clear] engine_0.induction: ##   0:00:00  Status: failed
+SBY  0:13:26 [clear] engine_0.induction: finished (returncode=1)
+SBY  0:13:26 [clear] engine_0.induction: Status returned by engine for induction: FAIL
+SBY  0:13:26 [clear] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:13:26 [clear] engine_0.basecase: ##   0:00:00  BMC failed!
+SBY  0:13:26 [clear] engine_0.basecase: ##   0:00:00  Assert failed in orbit_demo_fv: P8_any_no_fault
+SBY  0:13:26 [clear] engine_0.basecase: ##   0:00:00  Writing trace to VCD file: engine_0/trace.vcd
+SBY  0:13:26 [clear] engine_0.basecase: ##   0:00:00  Writing trace to Verilog testbench: engine_0/trace_tb.v
+SBY  0:13:26 [clear] engine_0.basecase: ##   0:00:00  Writing trace to constraints file: engine_0/trace.smtc
+SBY  0:13:26 [clear] engine_0.basecase: ##   0:00:00  Writing trace to Yosys witness file: engine_0/trace.yw
+SBY  0:13:26 [clear] engine_0.basecase: ##   0:00:00  Status: failed
+SBY  0:13:26 [clear] engine_0.basecase: finished (returncode=1)
+SBY  0:13:26 [clear] engine_0.basecase: Status returned by engine for basecase: FAIL
+SBY  0:13:26 [clear] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:26 [clear] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:00 (0)
+SBY  0:13:26 [clear] summary: engine_0 (smtbmc yices) returned FAIL for basecase
+SBY  0:13:26 [clear] summary: engine_0 (smtbmc yices) returned FAIL for induction
+SBY  0:13:26 [clear] summary: counterexample trace [basecase]: build/formal/vacuity/clear_keeps_fault/run/orbit_demo_clear/engine_0/trace.vcd
+SBY  0:13:26 [clear] summary:   failed assertion orbit_demo_fv.P8_any_no_fault at orbit_demo_fv.sv:575.13-575.49 step 2
+SBY  0:13:26 [clear] summary: counterexample trace [induction]: build/formal/vacuity/clear_keeps_fault/run/orbit_demo_clear/engine_0/trace_induct.vcd
+SBY  0:13:26 [clear] summary:   failed assertion orbit_demo_fv.P8_any_no_fault at orbit_demo_fv.sv:575.13-575.49
+SBY  0:13:26 [clear] DONE (FAIL, rc=2)

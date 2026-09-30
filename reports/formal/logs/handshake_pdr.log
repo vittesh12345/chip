@@ -1,59 +1,60 @@
-SBY 20:14:45 [handshake_pdr] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr'.
-SBY 20:14:45 [handshake_pdr] engine_0: abc pdr
-SBY 20:14:45 [handshake_pdr] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
-SBY 20:14:45 [handshake_pdr] base: finished (returncode=0)
-SBY 20:14:45 [handshake_pdr] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr/model; yosys -ql design_prep.log design_prep.ys"
-SBY 20:14:45 [handshake_pdr] prep: finished (returncode=0)
-SBY 20:14:45 [handshake_pdr] aig: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
-SBY 20:14:46 [handshake_pdr] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
-SBY 20:14:46 [handshake_pdr] aig: finished (returncode=0)
-SBY 20:14:46 [handshake_pdr] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
-SBY 20:14:46 [handshake_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
-SBY 20:14:46 [handshake_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
-SBY 20:14:46 [handshake_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 359. MonoCNF = no. SkipGen = no. SolveAll = no.
-SBY 20:14:46 [handshake_pdr] engine_0: Timing out on output 12 in frame 1 (retrying in next anytime pass).
-SBY 20:14:47 [handshake_pdr] engine_0: Proved output 7 in frame 1.
-SBY 20:14:47 [handshake_pdr] engine_0: Proved output 8 in frame 1.
-SBY 20:14:47 [handshake_pdr] engine_0: Proved output 9 in frame 1.
-SBY 20:14:47 [handshake_pdr] engine_0: Proved output 10 in frame 1.
-SBY 20:14:47 [handshake_pdr] engine_0: Proved output 11 in frame 1.
-SBY 20:14:47 [handshake_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
-SBY 20:14:47 [handshake_pdr] engine_0: Timing out on output  4 in frame 2 (retrying in next anytime pass).
-SBY 20:14:48 [handshake_pdr] engine_0: Timing out on output  5 in frame 3 (retrying in next anytime pass).
-SBY 20:14:48 [handshake_pdr] engine_0: Timing out on output  6 in frame 3 (retrying in next anytime pass).
-SBY 20:14:48 [handshake_pdr] engine_0: Proved output 0 in frame 3.
-SBY 20:14:48 [handshake_pdr] engine_0: Proved output 1 in frame 3.
-SBY 20:14:48 [handshake_pdr] engine_0: Proved output 2 in frame 3.
-SBY 20:14:49 [handshake_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
-SBY 20:14:49 [handshake_pdr] engine_0: Timing out on output  4 in frame 2 (retrying in next anytime pass).
-SBY 20:14:49 [handshake_pdr] engine_0: Timing out on output 12 in frame 2 (retrying in next anytime pass).
-SBY 20:14:50 [handshake_pdr] engine_0: Timing out on output  5 in frame 3 (retrying in next anytime pass).
-SBY 20:14:50 [handshake_pdr] engine_0: Timing out on output  6 in frame 3 (retrying in next anytime pass).
-SBY 20:14:50 [handshake_pdr] engine_0: All outputs solved or timed out in frame 4.
-SBY 20:14:51 [handshake_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
-SBY 20:14:52 [handshake_pdr] engine_0: Proved output 3 in frame 2.
-SBY 20:14:52 [handshake_pdr] engine_0: Proved output 4 in frame 2.
-SBY 20:14:52 [handshake_pdr] engine_0: Proved output 5 in frame 3.
-SBY 20:14:52 [handshake_pdr] engine_0: Proved output 6 in frame 3.
-SBY 20:14:52 [handshake_pdr] engine_0: Proved output 12 in frame 3.
-SBY 20:14:53 [handshake_pdr] engine_0: All outputs solved or timed out in frame 5.
-SBY 20:14:53 [handshake_pdr] engine_0: Block = 1050  Oblig =  1702  Clause =  1363  Call = 11757 (sat=76.3%)  Cex =   0  Start =  31
-SBY 20:14:53 [handshake_pdr] engine_0: SAT solving =     4.00 sec ( 59.02 %)
-SBY 20:14:53 [handshake_pdr] engine_0: unsat     =     0.42 sec (  6.25 %)
-SBY 20:14:53 [handshake_pdr] engine_0: sat       =     3.57 sec ( 52.77 %)
-SBY 20:14:53 [handshake_pdr] engine_0: Generalize  =     2.18 sec ( 32.24 %)
-SBY 20:14:53 [handshake_pdr] engine_0: Push clause =     1.76 sec ( 26.01 %)
-SBY 20:14:53 [handshake_pdr] engine_0: Ternary sim =     0.32 sec (  4.76 %)
-SBY 20:14:53 [handshake_pdr] engine_0: Containment =     0.01 sec (  0.20 %)
-SBY 20:14:53 [handshake_pdr] engine_0: CNF compute =     0.15 sec (  2.15 %)
-SBY 20:14:53 [handshake_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
-SBY 20:14:53 [handshake_pdr] engine_0: TOTAL       =     6.77 sec (100.00 %)
-SBY 20:14:53 [handshake_pdr] engine_0: Property proved.  Time =     6.78 sec
-SBY 20:14:53 [handshake_pdr] engine_0: Counter-example is not available.
-SBY 20:14:53 [handshake_pdr] engine_0: finished (returncode=0)
-SBY 20:14:53 [handshake_pdr] engine_0: Status returned by engine: PASS
-SBY 20:14:53 [handshake_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:07 (7)
-SBY 20:14:53 [handshake_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:07 (7)
-SBY 20:14:53 [handshake_pdr] summary: engine_0 (abc pdr) returned PASS
-SBY 20:14:53 [handshake_pdr] summary: engine_0 did not produce any traces
-SBY 20:14:53 [handshake_pdr] DONE (PASS, rc=0)
+SBY  0:14:19 [handshake_pdr] Removing directory '/home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr'.
+SBY  0:14:19 [handshake_pdr] engine_0: abc pdr
+SBY  0:14:19 [handshake_pdr] base: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:14:19 [handshake_pdr] base: finished (returncode=0)
+SBY  0:14:19 [handshake_pdr] prep: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:14:19 [handshake_pdr] prep: finished (returncode=0)
+SBY  0:14:19 [handshake_pdr] aig: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  0:14:19 [handshake_pdr] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
+SBY  0:14:19 [handshake_pdr] aig: finished (returncode=0)
+SBY  0:14:19 [handshake_pdr] engine_0: starting process "cd /home/user/chip/build/formal/full/run/orbit_demo_handshake_pdr; yosys-abc -c 'read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw'"
+SBY  0:14:19 [handshake_pdr] engine_0: ======== ABC command line "read_aiger model/design_aiger.aig; fold; strash; pdr -v -l; write_cex -a engine_0/trace.aiw"
+SBY  0:14:19 [handshake_pdr] engine_0: Warning: The last 2 outputs are interpreted as constraints.
+SBY  0:14:19 [handshake_pdr] engine_0: VarMax = 300. FrameMax = 10000. QueMax = 0. TimeMax = 359. MonoCNF = no. SkipGen = no. SolveAll = no.
+SBY  0:14:20 [handshake_pdr] engine_0: Timing out on output 12 in frame 1 (retrying in next anytime pass).
+SBY  0:14:20 [handshake_pdr] engine_0: Proved output 7 in frame 1.
+SBY  0:14:20 [handshake_pdr] engine_0: Proved output 8 in frame 1.
+SBY  0:14:20 [handshake_pdr] engine_0: Proved output 9 in frame 1.
+SBY  0:14:20 [handshake_pdr] engine_0: Proved output 10 in frame 1.
+SBY  0:14:20 [handshake_pdr] engine_0: Proved output 11 in frame 1.
+SBY  0:14:20 [handshake_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
+SBY  0:14:20 [handshake_pdr] engine_0: Timing out on output  4 in frame 2 (retrying in next anytime pass).
+SBY  0:14:21 [handshake_pdr] engine_0: Timing out on output  5 in frame 3 (retrying in next anytime pass).
+SBY  0:14:21 [handshake_pdr] engine_0: Timing out on output  6 in frame 3 (retrying in next anytime pass).
+SBY  0:14:21 [handshake_pdr] engine_0: Proved output 0 in frame 3.
+SBY  0:14:21 [handshake_pdr] engine_0: Proved output 1 in frame 3.
+SBY  0:14:21 [handshake_pdr] engine_0: Proved output 2 in frame 3.
+SBY  0:14:22 [handshake_pdr] engine_0: All outputs solved or timed out in frame 5.
+SBY  0:14:22 [handshake_pdr] engine_0: Timing out on output 12 in frame 1 (retrying in next anytime pass).
+SBY  0:14:22 [handshake_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
+SBY  0:14:23 [handshake_pdr] engine_0: Timing out on output  4 in frame 2 (retrying in next anytime pass).
+SBY  0:14:23 [handshake_pdr] engine_0: Timing out on output  5 in frame 3 (retrying in next anytime pass).
+SBY  0:14:23 [handshake_pdr] engine_0: Timing out on output  6 in frame 3 (retrying in next anytime pass).
+SBY  0:14:24 [handshake_pdr] engine_0: All outputs solved or timed out in frame 4.
+SBY  0:14:25 [handshake_pdr] engine_0: Timing out on output  3 in frame 2 (retrying in next anytime pass).
+SBY  0:14:25 [handshake_pdr] engine_0: Proved output 3 in frame 2.
+SBY  0:14:25 [handshake_pdr] engine_0: Proved output 4 in frame 2.
+SBY  0:14:26 [handshake_pdr] engine_0: Proved output 5 in frame 3.
+SBY  0:14:26 [handshake_pdr] engine_0: Proved output 6 in frame 3.
+SBY  0:14:26 [handshake_pdr] engine_0: Proved output 12 in frame 3.
+SBY  0:14:26 [handshake_pdr] engine_0: All outputs solved or timed out in frame 5.
+SBY  0:14:26 [handshake_pdr] engine_0: Block = 1074  Oblig =  1727  Clause =  1389  Call = 12335 (sat=76.3%)  Cex =   0  Start =  32
+SBY  0:14:26 [handshake_pdr] engine_0: SAT solving =     3.87 sec ( 56.19 %)
+SBY  0:14:26 [handshake_pdr] engine_0: unsat     =     0.35 sec (  5.03 %)
+SBY  0:14:26 [handshake_pdr] engine_0: sat       =     3.53 sec ( 51.16 %)
+SBY  0:14:26 [handshake_pdr] engine_0: Generalize  =     2.09 sec ( 30.30 %)
+SBY  0:14:26 [handshake_pdr] engine_0: Push clause =     1.74 sec ( 25.31 %)
+SBY  0:14:26 [handshake_pdr] engine_0: Ternary sim =     0.33 sec (  4.86 %)
+SBY  0:14:26 [handshake_pdr] engine_0: Containment =     0.01 sec (  0.18 %)
+SBY  0:14:26 [handshake_pdr] engine_0: CNF compute =     0.13 sec (  1.96 %)
+SBY  0:14:26 [handshake_pdr] engine_0: Refinement  =     0.00 sec (  0.00 %)
+SBY  0:14:26 [handshake_pdr] engine_0: TOTAL       =     6.89 sec (100.00 %)
+SBY  0:14:26 [handshake_pdr] engine_0: Property proved.  Time =     6.90 sec
+SBY  0:14:26 [handshake_pdr] engine_0: Counter-example is not available.
+SBY  0:14:26 [handshake_pdr] engine_0: finished (returncode=0)
+SBY  0:14:26 [handshake_pdr] engine_0: Status returned by engine: PASS
+SBY  0:14:26 [handshake_pdr] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:07 (7)
+SBY  0:14:26 [handshake_pdr] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:07 (7)
+SBY  0:14:26 [handshake_pdr] summary: engine_0 (abc pdr) returned PASS
+SBY  0:14:26 [handshake_pdr] summary: engine_0 did not produce any traces
+SBY  0:14:26 [handshake_pdr] DONE (PASS, rc=0)

@@ -16,7 +16,7 @@ chip, and nothing in it is radiation-qualified.
 | `viz/layout.json`, `viz/layout.b64.txt` | Generated, committed page data (the publishable set). The binary geometry is stored as base64 text because Artifacts serve text files, not `.bin`. |
 | `viz/layout.bin` | Optional raw copy for local use (`VIZ_FLAGS=--write-bin`); git-ignored, never published. |
 | `reports/viz/orbit_demo_sky130hd_3d_full.glb` | Detailed portable model: all 16 drawn layers for the whole die + named parts, pins, fences (Draco). |
-| `reports/viz/orbit_demo_sky130hd_3d.glb` | Smaller uncompressed-geometry model: met1-met5 and vias + the same parts/pins/fences (KHR_mesh_quantization). |
+| `reports/viz/orbit_demo_sky130hd_3d.glb` | Metals-only model that needs no Draco decoder: met1-met5 and vias + the same parts/pins/fences (KHR_mesh_quantization, int16 positions scaled by 0.01). Fewer layers than the detailed file but larger in bytes (12.8 MB vs 9.2 MB), because it is not Draco-compressed. |
 | `reports/viz/redundancy_placement.md` | Before/after placement of the redundant storage copies. |
 | `reports/viz/viewer_*.png`, `glb_preview_*.png` | Headless renders of the page and of both GLBs. |
 | `scripts/viz_gds_to_3d.py` | GDS/DEF/LEF to page data + GLBs + redundancy report. |
@@ -114,7 +114,8 @@ tooltip), `viewer_parts` (Parts mode, lane 2 focused), `viewer_section`
   **cell rows** (125 rows, 2.72 µm) and **fill cells** are toggles.
 * **Cross-section**: a clipping plane across x or y with a position slider,
   "Section view" camera and "Keep other half"; the layer callout labels the
-  layers at the cut.
+  layers at the cut. Labels anchored in the removed half are hidden, and a
+  fence label moves to the middle of the part of its fence that is still drawn.
 * **Redundant storage**: baseline vs separated numbers side by side, the
   flip-flop highlight by copy, a per-group table (click a row to draw lines
   between same-bit copies) and the list of what is still shared.
@@ -170,7 +171,7 @@ physical-only cells; **0 left in Other logic**):
 | Multiplier | 196-198 | netlist cone |
 | Adder A / Adder B | 271-281 / 272-279 | netlist cone |
 | Accumulator A, B, Result A, B | 32 each (32 FF bits) | instance name |
-| Load mux A / B | 128-129 | instance name |
+| Load mux A / B | 128-129 | instance name (128 = 64 `mux2i` + 64 `nor2b`; the 5 parts with 129 also hold one resizer `buf_4`, e.g. `g_lane[0].u_lane.u_acc_a/place1698`, that the resizer inserted inside the copy's hierarchy on the mux select net, so it keeps that prefix) |
 | Mismatch comparator | 54-58 | netlist cone |
 
 | Shared part | Cells | Source |
