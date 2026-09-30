@@ -42,13 +42,13 @@ i.e. metastability, is out of scope), so the model covers every flip time.
 
 | Scenario | Injected element | Upset | Tasks and results | As expected |
 |---|---|---|---|---|
-| acc_a | accumulator copy A (`u_acc_a`) | any lane, any bit, any cycle | prove: PASS (k-induction, 18 assertions, induction closed, 12 s)<br>cover: PASS (8/8 covers reached) | yes |
+| acc_a | accumulator copy A (`u_acc_a`) | any lane, any bit, any cycle | prove: PASS (k-induction, 18 assertions, induction closed, 13 s)<br>cover: PASS (8/8 covers reached) | yes |
 | acc_b | accumulator copy B (`u_acc_b`) | any lane, any bit, any cycle | prove: PASS (k-induction, 18 assertions, induction closed, 12 s)<br>cover: PASS (8/8 covers reached) | yes |
 | res_a | result copy A (`u_res_a`, drives `out_data`) | any lane, any bit, any cycle | prove: PASS (k-induction, 18 assertions, induction closed, 10 s)<br>cover: PASS (8/8 covers reached) | yes |
-| res_b | result copy B (`u_res_b`) | any lane, any bit, any cycle | prove: PASS (k-induction, 18 assertions, induction closed, 15 s)<br>cover: PASS (8/8 covers reached) | yes |
+| res_b | result copy B (`u_res_b`) | any lane, any bit, any cycle | prove: PASS (k-induction, 18 assertions, induction closed, 16 s)<br>cover: PASS (8/8 covers reached) | yes |
 | therm_c0 | thermal copy 0 (`u_thermal.u_copy0`) | any bit, any cycle | prove: PASS (k-induction, 16 assertions, induction closed, 10 s)<br>cover: PASS (8/8 covers reached) | yes |
-| therm_c1 | thermal copy 1 (`u_thermal.u_copy1`) | any bit, any cycle | prove: PASS (k-induction, 16 assertions, induction closed, 10 s)<br>cover: PASS (8/8 covers reached) | yes |
-| therm_c2 | thermal copy 2 (`u_thermal.u_copy2`) | any bit, any cycle | prove: PASS (k-induction, 16 assertions, induction closed, 7 s)<br>cover: PASS (8/8 covers reached) | yes |
+| therm_c1 | thermal copy 1 (`u_thermal.u_copy1`) | any bit, any cycle | prove: PASS (k-induction, 16 assertions, induction closed, 12 s)<br>cover: PASS (8/8 covers reached) | yes |
+| therm_c2 | thermal copy 2 (`u_thermal.u_copy2`) | any bit, any cycle | prove: PASS (k-induction, 16 assertions, induction closed, 8 s)<br>cover: PASS (8/8 covers reached) | yes |
 | neg_out_valid_q | `out_valid_q` (unprotected) | any cycle | cover: PASS (5/5 covers reached)<br>fire: FAIL (expected FAIL: `D_out_fire_matches_ref` fails at step 1)<br>loss: FAIL (expected FAIL: `D_no_silent_loss` fails at step 3) | yes |
 | neg_product | shared product `prod32` of a lane (unprotected, one-cycle transient) | any lane, any bit, one cycle | cover: PASS (2/2 covers reached)<br>fire: FAIL (expected FAIL: `D_out_fire_matches_ref` fails at step 3) | yes |
 
@@ -178,7 +178,7 @@ identical to the fault-free copy), DETECTED (`fault` rose, no wrong data transfe
 REPAIRED (only `therm_repair` differed), TIMING (no fault, every result correct, but the port
 trace differs, e.g. a shifted throttled admission), SDC (a transferred result is wrong), LOST
 (an accepted result dropped without fault), EXTRA (a result transferred with none pending:
-duplicate or stale), HANG (no fault but no progress in the drain), OTHER.
+duplicate or stale), HANG (no beat accepted in the drain, even after the host's `clear_fault`), OTHER.
 
 Bench: `fault/tb_seu_campaign.v` (Icarus Verilog), seed=1 tpb=12 tpb_unprot=200 controls=20 prefix=8..127 post=64 drain=24+8.
 

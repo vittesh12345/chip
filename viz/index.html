@@ -63,6 +63,8 @@
   --font-ui: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --panel-w: 368px;
+  --ph-al: #d8dbe0; --ph-tin: #7c746f; --ph-cut: #2a2d33; --ph-poly: #6b5d54; --ph-si: #3b4756; --ph-tap: #4a5665; --ph-well: #333d4b; --ph-sub: #262d3a; --ph-oxide: #a9bfd2;
+  --pk-mold: #1b1d20; --pk-cu: #c98f56; --pk-plate: #cdd2d6; --pk-au: #e2b43c; --pk-attach: #8f9498; --pk-si: #262d3a; --pk-pad: #d8dbe0; --pk-mark: #cfd3d7;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -80,6 +82,8 @@
     --k-ctrl: #a8c24f; --k-rst: #d9bb3f; --k-clk: #ffd23f; --k-io: #79a9c4; --k-repair: #95abb5; --k-hold: #b8c8cf;
     --k-tie: #9a9a9a; --k-ant: #b0b0b0; --k-tap: #6d787d; --k-decap: #56616a; --k-fill: #3d484e; --k-other: #dddddd;
     --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .35);
+    --ph-al: #d8dbe0; --ph-tin: #7c746f; --ph-cut: #2a2d33; --ph-poly: #6b5d54; --ph-si: #3b4756; --ph-tap: #4a5665; --ph-well: #333d4b; --ph-sub: #262d3a; --ph-oxide: #a9bfd2;
+    --pk-mold: #1b1d20; --pk-cu: #c98f56; --pk-plate: #cdd2d6; --pk-au: #e2b43c; --pk-attach: #8f9498; --pk-si: #262d3a; --pk-pad: #d8dbe0; --pk-mark: #cfd3d7;
     color-scheme: dark;
   }
 }
@@ -98,6 +102,8 @@
   --k-ctrl: #a8c24f; --k-rst: #d9bb3f; --k-clk: #ffd23f; --k-io: #79a9c4; --k-repair: #95abb5; --k-hold: #b8c8cf;
   --k-tie: #9a9a9a; --k-ant: #b0b0b0; --k-tap: #6d787d; --k-decap: #56616a; --k-fill: #3d484e; --k-other: #dddddd;
   --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px rgba(0, 0, 0, .35);
+  --ph-al: #d8dbe0; --ph-tin: #7c746f; --ph-cut: #2a2d33; --ph-poly: #6b5d54; --ph-si: #3b4756; --ph-tap: #4a5665; --ph-well: #333d4b; --ph-sub: #262d3a; --ph-oxide: #a9bfd2;
+  --pk-mold: #1b1d20; --pk-cu: #c98f56; --pk-plate: #cdd2d6; --pk-au: #e2b43c; --pk-attach: #8f9498; --pk-si: #262d3a; --pk-pad: #d8dbe0; --pk-mark: #cfd3d7;
   color-scheme: dark;
 }
 
@@ -291,6 +297,36 @@ td.wrap { white-space: normal; }
 .sources p { margin: 0; }
 .sources code { font-family: var(--font-data); font-size: 11px; overflow-wrap: anywhere; }
 
+/* ---------- view-type tabs (Layout / Die photo / Packaged chip) ---------- */
+.tabs { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; gap: 6px; padding: 10px 16px 8px; overflow-x: auto; scrollbar-width: none; pointer-events: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  pointer-events: auto; flex: none; font: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
+  background: color-mix(in srgb, var(--panel) 90%, transparent); border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 14px; cursor: pointer; box-shadow: var(--shadow); white-space: nowrap;
+}
+.tab:hover { color: var(--ink); border-color: var(--accent); }
+.tab[aria-selected="true"] { color: var(--accent-ink); background: var(--accent-soft); border-color: var(--accent); }
+.tab .k { font-family: var(--font-data); font-size: 10.5px; opacity: .75; margin-right: 7px; }
+.hud-top { top: 54px; }
+.chip.warn { border-color: var(--warn); color: var(--warn); font-weight: 500; }
+.scalebar { display: flex; flex-direction: column; gap: 3px; pointer-events: none; font-family: var(--font-data); font-size: 11px; color: var(--ink); background: color-mix(in srgb, var(--panel) 80%, transparent); border-radius: 6px; padding: 5px 8px; max-width: min(360px, 60vw); }
+.scalebar .bar { height: 7px; border: 2px solid var(--ink); border-top: 0; box-sizing: border-box; }
+.scalebar .bar.hair { border-color: var(--warn); }
+.scalebar .t { white-space: normal; line-height: 1.3; }
+.scalebar .t.m { color: var(--muted); font-size: 10.5px; }
+.balloon {
+  position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; pointer-events: auto; cursor: default;
+  border: 1.5px solid var(--leader); background: var(--label-bg); color: var(--ink); text-align: center;
+  font: 600 12px/23px var(--font-data); box-shadow: 0 1px 3px rgba(0, 0, 0, .18); visibility: hidden;
+}
+.balloon.hot { outline: 2px solid var(--accent); outline-offset: 1px; }
+.notice.mock { border-left: 4px solid var(--warn); }
+.bnum { display: inline-block; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--leader); color: var(--ink); text-align: center; font: 600 11px/17px var(--font-data); }
+#pk-bom td, #pk-dims td { text-align: left; white-space: normal; }
+#pk-bom th { text-align: left; }
+#app[data-tab="layout"] [data-tabs]:not([data-tabs~="layout"]), #app[data-tab="photo"] [data-tabs]:not([data-tabs~="photo"]), #app[data-tab="package"] [data-tabs]:not([data-tabs~="package"]) { display: none !important; }
+
 @media (max-width: 820px) {
   html, body { height: auto; }
   .app { display: block; height: auto; }
@@ -300,21 +336,32 @@ td.wrap { white-space: normal; }
 }
 @media (prefers-reduced-motion: reduce) {
   .progress > span, .switch input, .switch input::after, .lbl { transition: none; }
+  .tabs { scroll-behavior: auto; }
 }
 </style>
 
-<div class="app" id="app">
+<div class="app" id="app" data-tab="layout">
   <section class="stage" id="stage" aria-label="3D view of the routed die">
     <canvas id="gl" tabindex="0" aria-label="Interactive 3D layout. Drag to orbit, right-drag or two fingers to pan, scroll or pinch to zoom. Hover or tap a cell to identify it."></canvas>
     <div class="labels" id="labels" aria-hidden="true"><svg id="leaders"></svg></div>
+    <div class="tabs" role="tablist" aria-label="View type" id="tabs">
+      <button type="button" role="tab" class="tab" id="tab-layout" data-tab="layout" aria-selected="true" tabindex="0"><span class="k">1</span>Layout</button>
+      <button type="button" role="tab" class="tab" id="tab-photo" data-tab="photo" aria-selected="false" tabindex="-1"><span class="k">2</span>Die photo</button>
+      <button type="button" role="tab" class="tab" id="tab-package" data-tab="package" aria-selected="false" tabindex="-1"><span class="k">3</span>Packaged chip</button>
+    </div>
     <div class="hud hud-top">
       <span class="chip" id="hud-design"><b>orbit_demo</b> · sky130hd</span>
       <span class="chip mono" id="hud-scale">vertical ×3</span>
       <span class="chip mono" id="hud-sec" hidden></span>
       <span class="chip mono" id="hud-cam" hidden></span>
+      <span class="chip warn" id="hud-mock" hidden>Mockup · package and pad ring are not in the routed data</span>
     </div>
     <div class="hud hud-bottom">
       <span class="chip hint" id="hud-hint">Drag to orbit · right-drag or Shift-drag to pan · scroll to zoom · hover a cell to identify it</span>
+      <div class="scalebar" id="scalebar" hidden>
+        <span class="bar" id="sb-bar"></span><span class="t" id="sb-txt"></span>
+        <span id="sb-hair"><span class="bar hair" id="sb-hairbar"></span><span class="t m" id="sb-hairtxt"></span></span>
+      </div>
     </div>
     <div class="tip" id="tip" hidden></div>
     <div class="overlay" id="overlay" role="status" aria-live="polite">
@@ -345,7 +392,7 @@ td.wrap { white-space: normal; }
 
     <p class="notice">This is the <strong>sky130 open-PDK layout of the 4-lane demonstrator</strong>, not the 16-tile ORBIT-AI concept chip. Nothing here is radiation-qualified.</p>
 
-    <section class="block" aria-labelledby="h-view">
+    <section class="block" data-tabs="layout" aria-labelledby="h-view">
       <div class="block-head"><h2 class="block-title" id="h-view">View</h2></div>
       <div class="seg" role="group" aria-label="Camera presets">
         <button type="button" id="v-iso" data-view="iso" aria-pressed="true">Isometric</button>
@@ -383,7 +430,7 @@ td.wrap { white-space: normal; }
       </div>
     </section>
 
-    <section class="block" aria-labelledby="h-sec">
+    <section class="block" data-tabs="layout" aria-labelledby="h-sec">
       <div class="block-head"><h2 class="block-title" id="h-sec">Cross-section</h2></div>
       <label class="switch" for="c-on">Cut the die open<input type="checkbox" id="c-on"></label>
       <div class="seg" role="group" aria-label="Section axis">
@@ -400,7 +447,7 @@ td.wrap { white-space: normal; }
       </div>
     </section>
 
-    <section class="block" aria-labelledby="h-parts">
+    <section class="block" data-tabs="layout" aria-labelledby="h-parts">
       <div class="block-head">
         <h2 class="block-title" id="h-parts">Parts</h2>
         <div>
@@ -413,7 +460,7 @@ td.wrap { white-space: normal; }
       <p class="block-note" id="parts-method"></p>
     </section>
 
-    <section class="block" aria-labelledby="h-red">
+    <section class="block" data-tabs="layout" aria-labelledby="h-red">
       <div class="block-head"><h2 class="block-title" id="h-red">Redundant storage</h2></div>
       <p class="finding" id="r-finding"></p>
       <div class="table-wrap">
@@ -443,7 +490,73 @@ td.wrap { white-space: normal; }
       <p class="finding" id="r-common"></p>
     </section>
 
-    <section class="block" aria-labelledby="h-layers">
+    <section class="block" data-tabs="photo" aria-labelledby="h-photo">
+      <div class="block-head"><h2 class="block-title" id="h-photo">Die photo</h2></div>
+      <p class="block-note">The same routed geometry rendered the way a die shot looks: aluminium interconnect (sky130 uses Al for met1 to met5), TiN-like local interconnect, dark tungsten contacts and vias, polysilicon gates and the silicon under an environment light. Heights are true scale, so the die is as flat as the real one: the whole stack is <span id="ph-stack">6.6</span> µm on a <span id="ph-die">346</span> µm die.</p>
+      <div class="seg" role="group" aria-label="Die photo camera presets">
+        <button type="button" data-pview="tilt" aria-pressed="true">Tilted</button>
+        <button type="button" data-pview="micro" aria-pressed="false">Microscope</button>
+        <button type="button" data-pview="low" aria-pressed="false">Low angle</button>
+        <button type="button" data-pview="reset">Reset</button>
+      </div>
+      <div class="switches">
+        <label class="switch" for="ph-labels">Part labels<input type="checkbox" id="ph-labels"></label>
+        <label class="switch" for="ph-oxide">Oxide glaze<input type="checkbox" id="ph-oxide"></label>
+        <label class="switch" for="ph-bar">Scale bar<input type="checkbox" id="ph-bar" checked></label>
+        <label class="switch" for="ph-hair">Hair for scale<input type="checkbox" id="ph-hair" checked></label>
+      </div>
+      <div class="slider">
+        <label for="s-pexag">Vertical scale</label>
+        <output id="o-pexag" for="s-pexag">×1 (true)</output>
+        <input type="range" id="s-pexag" min="1" max="10" step="0.5" value="1">
+        <span class="help">×1 is the real stack height. Raise it to make the metal layers stand up; the chip in the corner says when heights are stretched.</span>
+      </div>
+      <p class="block-note">Materials are approximations of the process (colour, roughness, reflectivity per layer); the geometry under them is the GDS. The oxide glaze stands in for the inter-layer dielectric and passivation, which the data do not model.</p>
+    </section>
+
+    <section class="block" data-tabs="package" aria-labelledby="h-pkg">
+      <div class="block-head"><h2 class="block-title" id="h-pkg">Packaged chip</h2></div>
+      <p class="notice mock"><strong>Mockup.</strong> The package, leadframe, bond wires, pad ring and die outline are drawn procedurally to show how this die would be packaged; none of them is in the routed data. <strong>Measured:</strong> the <span id="pk-core">346 × 346</span> µm core on the die, every layer of it. <strong>Illustrative:</strong> everything else on this tab.</p>
+      <div class="block-head"><span class="block-note">Pad ring</span></div>
+      <div class="seg two" role="group" aria-label="Pad ring">
+        <button type="button" data-ring="fit" aria-pressed="true">Fits a small QFN</button>
+        <button type="button" data-ring="all" aria-pressed="false" id="pk-ring-all">All pins</button>
+      </div>
+      <p class="block-note" id="pk-ring-note"></p>
+      <div class="block-head"><span class="block-note">Lid</span></div>
+      <div class="seg" role="group" aria-label="Lid">
+        <button type="button" data-lid="solid" aria-pressed="false">Solid</button>
+        <button type="button" data-lid="ghost" aria-pressed="true">See-through</button>
+        <button type="button" data-lid="hidden" aria-pressed="false">Hidden</button>
+      </div>
+      <div class="slider">
+        <label for="s-explode">Explode</label>
+        <output id="o-explode" for="s-explode">assembled</output>
+        <input type="range" id="s-explode" min="0" max="100" step="1" value="0">
+        <span class="help">Lifts lid, bond wires, die and die attach apart vertically, the way an exploded assembly drawing does.</span>
+      </div>
+      <div class="seg" role="group" aria-label="Package camera presets">
+        <button type="button" data-kview="iso" aria-pressed="true">Isometric</button>
+        <button type="button" data-kview="top" aria-pressed="false">Top</button>
+        <button type="button" data-kview="low" aria-pressed="false">Low angle</button>
+        <button type="button" data-kview="reset">Reset</button>
+      </div>
+      <div class="table-wrap">
+        <table id="pk-bom">
+          <thead><tr><th>#</th><th>Part</th><th>Material</th><th>Source</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="table-wrap">
+        <table id="pk-dims">
+          <thead><tr><th>Dimension</th><th>Value</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="block-note">Drawing conventions: numbered balloons keyed to the parts list (ISO 6433), an exploded view that moves parts only along the stacking axis, and dimensions in mm on the front edge. Body, lead and pad sizes follow typical QFN/QFP practice, not a datasheet.</p>
+    </section>
+
+    <section class="block" data-tabs="layout photo" aria-labelledby="h-layers">
       <div class="block-head">
         <h2 class="block-title" id="h-layers">Layers</h2>
         <div>
@@ -483,6 +596,7 @@ td.wrap { white-space: normal; }
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 window.__vizBoot = true;
 window.__vizFrames = 0;
 
@@ -575,6 +689,8 @@ const state = {
   exag: 3, gap: 0, highlight: false, dim: true, group: 'all', view: 'iso',
   mode: 'parts', labels: true, regions: true, pins: true, power: false, rows: false, fill: false,
   sel: -1, hidden: new Set(), collapsed: new Set(), section: { on: false, axis: 'x', pos: 0.5, flip: false },
+  tab: 'layout', photoExag: 1, photoLabels: false, oxide: false, bar: true, hair: true, pview: 'tilt',
+  pkg: { ring: 'fit', lid: 'ghost', explode: 0, view: 'iso' },
 };
 let meta, buf, renderer, scene, camera, controls, layerObjs = [], dieSize, center, dw, dh;
 let flopMesh, flopList = [], pairLines, rulers, rulersY, slab, dieOutline, feWindow, hemi, sun;
@@ -599,7 +715,7 @@ function stackTopDisplay() {
   return top;
 }
 const cellTop = () => Math.max(dispZ('li1').z1, 0.05);
-const partsMode = () => state.mode !== 'layers';
+const partsMode = () => state.tab === 'layout' && state.mode !== 'layers';
 const anchorZ = () => (partsMode() ? cellTop() : stackTopDisplay());
 const toScene = (x, y, z = 0) => new THREE.Vector3(x - dw / 2, y - dh / 2, z);
 
@@ -664,9 +780,9 @@ function buildScene() {
   dieSize = Math.max(dw, dh);
   center = new THREE.Vector2(dw / 2, dh / 2);
 
-  camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100000);
+  camera = layoutCam = new THREE.PerspectiveCamera(32, 1, 0.1, 100000);
   camera.up.set(0, 0, 1);
-  controls = new OrbitControls(camera, canvas);
+  controls = layoutCtl = new OrbitControls(camera, canvas);
   controls.enableDamping = !reduceMotion.matches;
   controls.dampingFactor = 0.12;
   controls.screenSpacePanning = true;
@@ -684,6 +800,10 @@ function buildScene() {
   sun.position.set(-0.6, -1.0, 1.6).multiplyScalar(dieSize);
   scene.add(sun);
 
+  // the die group holds the layer meshes and the substrate slab; the Packaged chip tab moves it into the package scene
+  dieGroup = new THREE.Group();
+  dieGroup.name = 'die';
+  scene.add(dieGroup);
   const rank = layerRank(meta.layers);
   const Arr = meta.format.dtype === 'uint32' ? Uint32Array : Uint16Array;
   for (const L of meta.layers) {
@@ -693,12 +813,18 @@ function buildScene() {
     mesh.renderOrder = rank(L);
     mesh.visible = L.count > 0;
     mesh.name = L.name;
-    scene.add(mesh);
-    layerObjs.push({ L, mesh, mat, rank: rank(L), on: L.count > 0 });
+    dieGroup.add(mesh);
+    layerObjs.push({ L, mesh, mat, photoMat: photoMaterial(L, mat.userData.uniforms), rank: rank(L), on: L.count > 0 });
   }
 
-  slab = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, 1), new THREE.MeshLambertMaterial({ color: new THREE.Color(cssVar('--die')) }));
-  scene.add(slab);
+  slabMat = new THREE.MeshLambertMaterial({ color: new THREE.Color(cssVar('--die')) });
+  slabPhotoMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(cssVar('--ph-sub')), metalness: 0.1, roughness: 0.55 });
+  slab = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, 1), slabMat);
+  dieGroup.add(slab);
+  oxideMesh = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, 1), new THREE.MeshPhysicalMaterial({ color: new THREE.Color(cssVar('--ph-oxide')), metalness: 0, roughness: 0.06, transparent: true, opacity: 0.2, depthWrite: false }));
+  oxideMesh.renderOrder = 30;
+  oxideMesh.visible = false;
+  dieGroup.add(oxideMesh);
   const outline = new THREE.BufferGeometry().setFromPoints([toScene(0, 0), toScene(dw, 0), toScene(dw, dh), toScene(0, dh)]);
   dieOutline = new THREE.LineLoop(outline, new THREE.LineBasicMaterial({ color: new THREE.Color(cssVar('--ruler')) }));
   scene.add(dieOutline);
@@ -723,6 +849,7 @@ function buildScene() {
   applyTheme();
   resize();
   new ResizeObserver(resize).observe($('stage'));
+  window.addEventListener('resize', updateScaleBar);
 }
 
 // ---------------------------------------------------------------- cells (part footprints)
@@ -1025,6 +1152,9 @@ function applyZ() {
   slab.scale.set(1, 1, slabT);
   slab.position.set(0, 0, -slabT / 2 - 0.001);
   if (cellMat) { cellMat.userData.uniforms.uZ0.value = 0; cellMat.userData.uniforms.uThick.value = cellTop(); }
+  const oxT = stackTopDisplay() + 0.3;
+  oxideMesh.scale.set(1.002, 1.002, oxT);
+  oxideMesh.position.set(0, 0, oxT / 2);
   updateFlops();
   updatePins();
   updatePower();
@@ -1034,19 +1164,22 @@ function applyZ() {
   $('o-exag').textContent = '×' + state.exag;
   $('h-exag').textContent = 'The stack is ' + fx(topTrue, 2) + ' µm tall on a ' + fx(dieSize, 0) + ' µm die; drawn ' + fx(topTrue * state.exag, 1) + ' µm tall at ×' + state.exag + '.';
   $('o-gap').textContent = (state.gap ? '+' + state.gap : '0') + ' µm';
-  $('hud-scale').textContent = 'vertical ×' + state.exag + (state.gap ? ' · spread +' + state.gap + ' µm' : '');
+  $('hud-scale').textContent = (state.exag === 1 && state.tab !== 'layout' ? 'true scale · vertical ×1' : 'vertical ×' + state.exag) + (state.gap ? ' · spread +' + state.gap + ' µm' : '');
+  $('o-pexag').textContent = '×' + state.photoExag + (state.photoExag === 1 ? ' (true)' : '');
   if (pickState.cell >= 0) showPickBox(pickState.cell);
   labelsDirty();
   requestRender();
 }
 function applyVisibility() {
+  const lay = state.tab === 'layout', photo = state.tab === 'photo';
   const pm = partsMode();
-  const ghostAll = state.highlight && state.dim;
+  const ghostAll = lay && state.highlight && state.dim;
   const ct = meta.layers.find((l) => l.name === 'met1');
   const cellTopTrue = ct ? ct.z_um + ct.thickness_um : 1.7;
   for (const o of layerObjs) {
     const under = o.L.z_um + o.L.thickness_um <= cellTopTrue + 1e-6;
     o.mesh.visible = o.on && o.L.count > 0 && !(pm && under);
+    o.mesh.material = lay ? o.mat : o.photoMat;
     const m = o.mat;
     const want = ghostAll || pm;
     const op = ghostAll ? 0.1 : (o.L.kind === 'cut' ? 0.16 : 0.12);
@@ -1057,13 +1190,18 @@ function applyVisibility() {
       m.needsUpdate = true;
     }
   }
+  slab.material = lay ? slabMat : slabPhotoMat;
+  oxideMesh.visible = photo && state.oxide;
   if (cellMesh) cellMesh.visible = pm;
-  flopMesh.visible = state.highlight && flopList.length > 0;
-  pairLines.visible = state.highlight && pairLines.geometry.attributes.position && pairLines.geometry.attributes.position.count > 0;
-  pinMesh.visible = state.pins;
-  if (powerMesh) powerMesh.visible = state.power;
-  if (rowLines) rowLines.visible = state.rows;
-  if (regionGroup) regionGroup.visible = state.regions;
+  flopMesh.visible = lay && state.highlight && flopList.length > 0;
+  pairLines.visible = lay && state.highlight && pairLines.geometry.attributes.position && pairLines.geometry.attributes.position.count > 0;
+  pinMesh.visible = lay && state.pins;
+  if (powerMesh) powerMesh.visible = lay && state.power;
+  if (rowLines) rowLines.visible = lay && state.rows;
+  if (regionGroup) regionGroup.visible = lay && state.regions;
+  if (rulers) rulers.visible = lay;
+  dieOutline.visible = lay;
+  if (feWindow) feWindow.visible = lay;
   document.querySelectorAll('label.layer').forEach((el) => {
     const o = layerObjs.find((x) => x.L.name === el.dataset.layer);
     el.classList.toggle('off', !o.on);
@@ -1073,9 +1211,9 @@ function applyVisibility() {
   requestRender();
 }
 function allMaterials() {
-  const mats = layerObjs.map((o) => o.mat);
+  const mats = layerObjs.map((o) => o.mat).concat(layerObjs.map((o) => o.photoMat));
   if (cellMat) mats.push(cellMat);
-  mats.push(slab.material, flopMesh.material, pinMesh.material, pairLines.material);
+  mats.push(slabMat, slabPhotoMat, oxideMesh.material, flopMesh.material, pinMesh.material, pairLines.material);
   if (powerMesh) mats.push(powerMesh.material);
   if (rowLines) mats.push(rowLines.material);
   if (regionGroup) regionGroup.children.forEach((l) => mats.push(l.material));
@@ -1083,23 +1221,24 @@ function allMaterials() {
 }
 function applySection() {
   const S = state.section;
+  const on = S.on && state.tab === 'layout';   // the cut is a Layout-tab tool; the die is moved in the package scene
   const pos = S.axis === 'x' ? S.pos * dw - dw / 2 : S.pos * dh - dh / 2;
   const n = S.axis === 'x' ? new THREE.Vector3(-1, 0, 0) : new THREE.Vector3(0, -1, 0);
   if (S.flip) n.negate();
   clipPlane.normal.copy(n);
   clipPlane.constant = S.flip ? -pos : pos;
   for (const m of allMaterials()) {
-    const planes = S.on ? [clipPlane] : null;
-    const side = S.on ? THREE.DoubleSide : THREE.FrontSide;
+    const planes = on ? [clipPlane] : null;
+    const side = on ? THREE.DoubleSide : THREE.FrontSide;
     if (m.clippingPlanes !== planes || m.side !== side) {
       m.clippingPlanes = planes;
-      if (m.isMeshLambertMaterial) m.side = side;
+      if (m.isMeshLambertMaterial || m.isMeshStandardMaterial) m.side = side;
       m.needsUpdate = true;
     }
   }
   const um = S.axis === 'x' ? S.pos * dw : S.pos * dh;
   $('o-cut').textContent = S.axis + ' = ' + fx(um, 1) + ' µm';
-  $('hud-sec').hidden = !S.on;
+  $('hud-sec').hidden = !on;
   $('hud-sec').textContent = 'Section ' + S.axis + ' = ' + fx(um, 1) + ' µm';
   document.querySelectorAll('[data-axis]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.axis === S.axis)));
   labelsDirty();
@@ -1115,9 +1254,11 @@ function applyTheme() {
   if (rowLines) rowLines.material.color.set(cssVar('--row-line'));
   if (regionGroup) regionGroup.children.forEach((l) => l.material.color.set(cssVar(ROLE_VAR[l.userData.role] || '--accent')));
   const dark = (getComputedStyle(document.documentElement).colorScheme || '').includes('dark');
-  hemi.intensity = dark ? 1.25 : 1.5;
   hemi.groundColor.set(dark ? 0x334455 : 0x8899aa);
+  applyPhotoColors();
+  applyLook();
   buildRulers();
+  if (rulers) rulers.visible = state.tab === 'layout';
   updateFlops();
   updatePins();
   updatePower();
@@ -1128,11 +1269,11 @@ function applyTheme() {
 
 // ---------------------------------------------------------------- camera
 let tween = null;
-function fitDistance(dir, target, margin, pad) {
+function fitDistance(dir, target, margin, pad, given) {
   const S = dieSize;
   const zt = stackTopDisplay();
-  const pts = [];
-  for (const x of [-dw / 2 - pad[0] * S, dw / 2 + pad[1] * S]) for (const y of [-dh / 2 - pad[2] * S, dh / 2 + pad[3] * S]) for (const z of [0, zt]) pts.push(new THREE.Vector3(x, y, z));
+  const pts = given || [];
+  if (!given) for (const x of [-dw / 2 - pad[0] * S, dw / 2 + pad[1] * S]) for (const y of [-dh / 2 - pad[2] * S, dh / 2 + pad[3] * S]) for (const z of [0, zt]) pts.push(new THREE.Vector3(x, y, z));
   const cam = camera.clone();
   let d = S * 2;
   const v = new THREE.Vector3();
@@ -1164,6 +1305,13 @@ function viewPose(name) {
   if (name === 'top') {
     az = -90; el = 89.9; margin = 0.94; pad = [0.1, 0.06, 0.07, 0.07];
     target = new THREE.Vector3(-0.02 * S, 0, 0);
+  } else if (name === 'micro') {
+    // microscope: straight down, the die filling the view
+    az = -90; el = 89.9; margin = 0.96; pad = [0.02, 0.02, 0.02, 0.02];
+    target = new THREE.Vector3(0, 0, 0);
+  } else if (name === 'tilt') {
+    az = -112; el = 30; margin = 0.97; pad = [0.02, 0.02, 0.02, 0];
+    target = new THREE.Vector3(0, -0.02 * S, zc);
   } else if (name === 'low') {
     az = -90; el = 7; margin = 0.96; pad = [0.02, 0.02, 0.02, 0];
     target = new THREE.Vector3(0, 0, zc);
@@ -1188,7 +1336,7 @@ function viewPose(name) {
 }
 function markView(name) {
   state.view = name;
-  document.querySelectorAll('[data-view]').forEach((b) => { if (b.dataset.view !== 'reset') b.setAttribute('aria-pressed', String(b.dataset.view === name)); });
+  document.querySelectorAll('[data-view],[data-pview]').forEach((b) => { const v = b.dataset.view || b.dataset.pview; if (v !== 'reset') b.setAttribute('aria-pressed', String(v === name)); });
 }
 function setView(name, animate = true) {
   markView(name);
@@ -1256,9 +1404,10 @@ function frame(now) {
   camera.near = Math.max(d / 2000, 0.01);
   camera.far = d * 20 + dieSize * 4;
   camera.updateProjectionMatrix();
-  renderer.render(scene, camera);
+  renderer.render(state.tab === 'package' ? pkgScene : scene, camera);
   window.__vizFrames++;
-  updateLabels(now, tweening || moved);
+  if (state.tab === 'package') positionBalloons(); else updateLabels(now, tweening || moved);
+  if (state.tab === 'photo' && (tweening || moved || layoutPending === false)) updateScaleBar();
   if (tweening || moved) requestRender();
 }
 function resize() {
@@ -1267,8 +1416,7 @@ function resize() {
   if (!w || !h) return;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(w, h, false);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
+  for (const c of [layoutCam, pkgCam]) if (c) { c.aspect = w / h; c.updateProjectionMatrix(); }
   labelsDirty();
   requestRender();
 }
@@ -1302,7 +1450,7 @@ function buildLabelDefs() {
     const [x0, y0, x1, y1] = r.boxes[0];
     const tall = (y1 - y0) > 3 * (x1 - x0);
     add({ id: 'reg:' + r.name, cls: 'region t0', text: r.label, sub: (r.flip_flops != null ? r.flip_flops + ' flip-flops · ' : '') + 'placement fence', colorVar: ROLE_VAR[r.role], prio: 90,
-      at: [(x0 + x1) / 2, tall ? y1 - 0.06 * (y1 - y0) : (y0 + y1) / 2], show: () => state.regions, region: r });
+      at: [(x0 + x1) / 2, tall ? y1 - 0.06 * (y1 - y0) : (y0 + y1) / 2], show: () => state.regions && state.tab === 'layout', region: r });
   }
   // lanes (tier 0) and every non-physical part (tier 1)
   for (let i = 0; i < 4; i++) {
@@ -1318,7 +1466,7 @@ function buildLabelDefs() {
     add({ id: 'part:' + p.id, cls: p.source === 'netlist-cone' ? 'inferred' : '', text: shortPartName(p),
       sub: fmt(p.cells) + ' cells' + (p.ffs ? ' · ' + p.ffs + ' FF' : '') + (spread ? ' · spread over die' : '') + (p.source === 'netlist-cone' ? ' · inferred' : ''),
       colorVar: '--k-' + p.kind, prio: t0parts.has(p.id) ? 60 : spread ? 22 : 40 + Math.min(15, Math.log2(1 + p.area_um2) ), tiers: t0parts.has(p.id) ? [0, 1, 2] : spread ? [2] : [1, 2],
-      at: p.anchor_um, part: p.index, show: () => partsMode() || state.sel === p.index });
+      at: p.anchor_um, part: p.index, show: () => partsMode() || state.sel === p.index || state.tab === 'photo' });
   }
   // clock root
   if (cells) {
@@ -1338,11 +1486,11 @@ function buildLabelDefs() {
     const buses = Object.entries(s.buses).filter(([b]) => b !== 'power').sort((a, b) => b[1] - a[1]).slice(0, 3).map(([b, n]) => b + ' ' + n).join(', ');
     const cnt = s.count - (s.buses.power || 0);
     const at = side === 'N' ? [dw / 2, dh] : side === 'S' ? [dw / 2, 0] : side === 'E' ? [dw, dh / 2] : [0, dh / 2];
-    add({ id: 'edge:' + side, cls: 'pin', text: sideName[side] + ' edge · ' + cnt + ' pins (' + lay + ')', sub: buses, colorVar: '--fam-power', prio: 70, tiers: [0], at, out: out[side], z: () => stackTopDisplay(), show: () => state.pins });
+    add({ id: 'edge:' + side, cls: 'pin', text: sideName[side] + ' edge · ' + cnt + ' pins (' + lay + ')', sub: buses, colorVar: '--fam-power', prio: 70, tiers: [0], at, out: out[side], z: () => stackTopDisplay(), show: () => state.pins && state.tab === 'layout' });
   }
   for (const g of P.groups || []) {
     if (g.fam === 'power') continue;
-    add({ id: 'pins:' + g.bus + ':' + g.side, cls: 'pin', text: g.label, sub: g.count + ' pin' + (g.count > 1 ? 's' : '') + ' · ' + g.side + ' edge · ' + (g.layer || ''), colorVar: FAM_VAR[g.fam] || '--muted', prio: 45 + Math.min(10, g.count / 8), tiers: [1, 2], at: g.center_um, out: out[g.side], z: () => stackTopDisplay(), show: () => state.pins });
+    add({ id: 'pins:' + g.bus + ':' + g.side, cls: 'pin', text: g.label, sub: g.count + ' pin' + (g.count > 1 ? 's' : '') + ' · ' + g.side + ' edge · ' + (g.layer || ''), colorVar: FAM_VAR[g.fam] || '--muted', prio: 45 + Math.min(10, g.count / 8), tiers: [1, 2], at: g.center_um, out: out[g.side], z: () => stackTopDisplay(), show: () => state.pins && state.tab === 'layout' });
   }
   // layer stack callout
   add({ id: 'stack', cls: 'stack', text: 'Layer stack', prio: 75, tiers: [0, 1, 2], stack: true });
@@ -1454,12 +1602,12 @@ function layoutLabels() {
   syncCamera();
   const st = $('stage');
   const W = st.clientWidth, H = st.clientHeight;
-  const on = state.labels;
+  const on = state.labels && (state.tab === 'layout' || (state.tab === 'photo' && state.photoLabels));
   const tier = tierNow();
   const budget = W < 600 ? 8 : 15;
   const bitBudget = W < 600 ? 16 : 40;
   const obstacles = [];
-  for (const id of ['hud-design', 'hud-scale', 'hud-sec', 'hud-cam', 'hud-hint']) {
+  for (const id of ['tabs', 'hud-design', 'hud-scale', 'hud-sec', 'hud-cam', 'hud-mock', 'hud-hint', 'scalebar']) {
     const e = $(id);
     if (!e || e.hidden || !e.offsetWidth) continue;
     const r = e.getBoundingClientRect(), s = st.getBoundingClientRect();
@@ -1473,7 +1621,7 @@ function layoutLabels() {
       const forced = d.part != null && d.part === state.sel && d.id.startsWith('part:');
       if (!forced && !d.tiers.includes(tier)) continue;
       if (d.show && !d.show() && !forced) continue;
-      if (d.stack && elev > 72 && !state.section.on) continue;
+      if (d.stack && (state.tab !== 'layout' || (elev > 72 && !state.section.on))) continue;
       let at = d.at;
       if (d.stack) at = stackAnchor();
       else if (!forced) { at = keptAnchor(d); if (!at) continue; }
@@ -1583,7 +1731,7 @@ const ray = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
 const pickState = { cell: -1, pinned: false };
 function cellAt(clientX, clientY) {
-  if (!cells) return -1;
+  if (!cells || state.tab === 'package') return -1;
   const rect = $('gl').getBoundingClientRect();
   ndc.set(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
   ray.setFromCamera(ndc, camera);
@@ -1796,6 +1944,505 @@ function fillModeLegend() {
   el.innerHTML = items.map(([v, t]) => '<span><i class="sw" style="background:var(' + v + ')"></i>' + esc(t) + '</span>').join('');
 }
 
+// ================================================================ tabs: die photo and packaged chip
+// The Layout tab is the engineering view above. The Die photo tab renders the
+// same instanced geometry with physically based materials (aluminium metals,
+// TiN-like li1, dark tungsten cuts, poly, silicon) under a room environment;
+// only the meshes' materials are swapped, the 750k rectangles are shared. The
+// Packaged chip tab moves the die group into a second scene with a procedural
+// QFN/QFP-style package (a MOCKUP: nothing of it is in the routed data).
+let layoutCam, layoutCtl, pkgCam, pkgCtl, pkgScene, envTex = null, dieGroup, oxideMesh, slabMat, slabPhotoMat;
+let pkg = null, pkgHemi, pkgSun;
+const savedLayout = { exag: 3, gap: 0, pos: null, target: null };
+const PHOTO_KIND = { nwell: ['--ph-well', 0.1, 0.9], diff: ['--ph-si', 0.15, 0.75], tap: ['--ph-tap', 0.15, 0.75], poly: ['--ph-poly', 0.25, 0.65],
+  licon1: ['--ph-cut', 0.7, 0.55], mcon: ['--ph-cut', 0.7, 0.55], via: ['--ph-cut', 0.7, 0.55], via2: ['--ph-cut', 0.7, 0.55], via3: ['--ph-cut', 0.7, 0.55], via4: ['--ph-cut', 0.7, 0.55],
+  li1: ['--ph-tin', 0.85, 0.5] };
+function photoSpec(L) { return PHOTO_KIND[L.name] || ['--ph-al', 0.95, 0.32]; }
+function photoMaterial(L, uniforms) {
+  const [, metalness, roughness] = photoSpec(L);
+  const m = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness, roughness });
+  m.userData.uniforms = uniforms;
+  m.onBeforeCompile = patchShader;
+  m.customProgramCacheKey = () => 'box';
+  return m;
+}
+function ensureEnv() {
+  if (envTex) return envTex;
+  const pm = new THREE.PMREMGenerator(renderer);
+  envTex = pm.fromScene(new RoomEnvironment(), 0.04).texture;
+  pm.dispose();
+  return envTex;
+}
+function applyLook() {
+  const lay = state.tab === 'layout';
+  const dark = (getComputedStyle(document.documentElement).colorScheme || '').includes('dark');
+  scene.environment = lay ? null : ensureEnv();
+  scene.environmentIntensity = 1.0;
+  renderer.toneMapping = lay ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  hemi.intensity = lay ? (dark ? 1.25 : 1.5) : 0.4;
+  sun.intensity = lay ? 1.9 : 1.3;
+  if (pkgScene) { pkgScene.environment = ensureEnv(); pkgScene.environmentIntensity = 0.9; }
+}
+function applyPhotoColors() {
+  for (const o of layerObjs) o.photoMat.color.set(cssVar(photoSpec(o.L)[0]));
+  slabPhotoMat.color.set(cssVar('--ph-sub'));
+  oxideMesh.material.color.set(cssVar('--ph-oxide'));
+  if (pkg) for (const [m, v] of pkg.tokenMats) m.color.set(cssVar(v));
+}
+
+// ---------------------------------------------------------------- scale bar (die photo)
+function nice125(t) { const p = Math.pow(10, Math.floor(Math.log10(t))); for (const m of [1, 2, 5, 10]) if (m * p >= t) return m * p; return 10 * p; }
+function updateScaleBar() {
+  const el = $('scalebar');
+  if (state.tab !== 'photo' || !state.bar) { el.hidden = true; return; }
+  el.hidden = false;
+  const s = pxPerUm();
+  const step = nice125(110 / s);
+  $('sb-bar').style.width = Math.max(2, Math.round(step * s)) + 'px';
+  $('sb-txt').textContent = (step >= 1000 ? fx(step / 1000, 1) + ' mm' : step + ' µm') + (state.view === 'micro' || state.view === 'top' ? '' : ' at the focus point');
+  const hair = $('sb-hair');
+  hair.hidden = !state.hair;
+  if (state.hair) {
+    $('sb-hairbar').style.width = Math.max(2, Math.round(70 * s)) + 'px';
+    $('sb-hairtxt').textContent = 'human hair ≈ 70 µm · the ' + fx(dieSize, 0) + ' µm die is ' + fx(dieSize / 70, 0) + ' hairs wide, a grain of rice (~6 mm) is ' + fx(6000 / dieSize, 0) + ' dies long';
+  }
+}
+
+// ---------------------------------------------------------------- packaged chip (procedural MOCKUP)
+const PAD_W = 80, PAD_PITCH = 100, LEAD_PITCH = 500, FRAME_T = 200, ATTACH_T = 25, DIE_T = 280;
+function packageSpec(ring) {
+  const signal = ((meta.pins && meta.pins.list) || []).filter((p) => p.fam !== 'power').length;
+  const power = ((meta.pins && meta.pins.list) || []).filter((p) => p.fam === 'power').length;
+  const need = signal + power + 6;                     // + extra VDD/VSS pads a real ring would add
+  const nAll = Math.ceil(need / 4);
+  const n = ring === 'all' ? nAll : 5;                 // 5 per side: a QFN-20
+  const minDie = dieSize + 2 * (30 + PAD_W + 40);      // core + seal gap + pad + edge keep-out per side
+  const Dp = Math.max(minDie, n * PAD_PITCH + 120);
+  const B = (n + 3) * LEAD_PITCH;                      // body: leads at 0.5 mm pitch + corners
+  const E = Math.max(Dp + 800, Math.round(0.55 * B / 100) * 100);   // exposed die pad
+  const Lf = B / 2 - E / 2 - 150;                      // lead finger length inside the body
+  const H = ring === 'all' ? 3000 : 750;               // body height (QFP 3.0 mm, QFN 0.75 mm)
+  return { ring, n, pads: 4 * n, nAll, need, signal, power, Dp, B, E, Lf, H, style: ring === 'all' ? 'QFP-style, ' + 4 * n + ' leads' : 'QFN-style, ' + 4 * n + ' leads' };
+}
+function pkgMat(token, metalness, roughness, extra = {}) {
+  const m = new THREE.MeshStandardMaterial(Object.assign({ color: new THREE.Color(cssVar(token)), metalness, roughness }, extra));
+  pkg.tokenMats.push([m, token]);
+  return m;
+}
+function markingTexture(spec) {
+  const c = document.createElement('canvas');
+  c.width = 1024; c.height = 1024;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, 1024, 1024);
+  ctx.fillStyle = cssVar('--pk-mark');
+  ctx.textAlign = 'center';
+  ctx.font = '600 92px "IBM Plex Sans", Helvetica, Arial, sans-serif';
+  ctx.fillText('ORBIT-AI', 512, 420);
+  ctx.font = '500 58px "IBM Plex Mono", ui-monospace, Menlo, monospace';
+  ctx.fillText('4L INT8 · SKY130HD', 512, 520);
+  ctx.fillText('MOCKUP ' + (spec.ring === 'all' ? 'QFP' + spec.pads : 'QFN' + spec.pads), 512, 600);
+  ctx.beginPath(); ctx.arc(150, 874, 34, 0, Math.PI * 2); ctx.fill();   // pin-1 index
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  return tex;
+}
+function buildPackage() {
+  if (pkg) {
+    pkgScene.remove(pkg.root);
+    pkg.root.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material && !o.userData.shared) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } });
+  }
+  if (!pkgScene) {
+    pkgScene = new THREE.Scene();
+    pkgHemi = new THREE.HemisphereLight(0xffffff, 0x8899aa, 0.5);
+    pkgHemi.position.set(0, 0, 1);
+    pkgScene.add(pkgHemi);
+    pkgSun = new THREE.DirectionalLight(0xffffff, 1.6);
+    pkgSun.position.set(-0.5, -0.8, 1.4);
+    pkgScene.add(pkgSun);
+    pkgCam = new THREE.PerspectiveCamera(32, layoutCam.aspect, 1, 1e6);
+    pkgCam.up.set(0, 0, 1);
+    pkgCtl = new OrbitControls(pkgCam, $('gl'));
+    pkgCtl.enableDamping = !reduceMotion.matches;
+    pkgCtl.dampingFactor = 0.12;
+    pkgCtl.screenSpacePanning = true;
+    pkgCtl.enabled = false;
+    pkgCtl.addEventListener('change', requestRender);
+  }
+  const spec = packageSpec(state.pkg.ring);
+  pkg = { spec, root: new THREE.Group(), tokenMats: [], groups: {}, anchors: {}, wires: [] };
+  const { n, Dp, B, E, Lf, H } = spec;
+  const root = pkg.root;
+  const G = (k) => { const g = new THREE.Group(); g.name = k; pkg.groups[k] = g; root.add(g); return g; };
+  const gFrame = G('frame'), gAttach = G('attach'), gDie = G('die'), gWires = G('wires'), gLid = G('lid');
+  pkgSun.position.copy(new THREE.Vector3(-0.5, -0.8, 1.4).multiplyScalar(B));
+
+  // 5 leadframe: die pad + leads (copper, silver-plated on top)
+  const cu = pkgMat('--pk-cu', 0.9, 0.45), plate = pkgMat('--pk-plate', 0.95, 0.35);
+  const diePad = new THREE.Mesh(new THREE.BoxGeometry(E, E, FRAME_T), plate);
+  diePad.position.z = -FRAME_T / 2;
+  gFrame.add(diePad);
+  const leads = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), plate, 4 * n);
+  leads.userData.shared = true;
+  const m4 = new THREE.Matrix4();
+  const leadPos = [];
+  for (let s = 0; s < 4; s++) for (let i = 0; i < n; i++) {
+    const t = (i - (n - 1) / 2) * LEAD_PITCH;
+    const r = B / 2 - Lf / 2;
+    const along = s === 0 ? [t, -r] : s === 1 ? [r, t] : s === 2 ? [-t, r] : [-r, -t];
+    const horiz = s === 0 || s === 2;
+    m4.makeScale(horiz ? 250 : Lf, horiz ? Lf : 250, FRAME_T);
+    m4.setPosition(along[0], along[1], -FRAME_T / 2);
+    leads.setMatrixAt(s * n + i, m4);
+    // inner tip of the finger (where the wire lands), 120 µm in from the tip end
+    const tip = s === 0 ? [t, -(B / 2 - Lf) - 120] : s === 1 ? [(B / 2 - Lf) + 120, t] : s === 2 ? [-t, (B / 2 - Lf) + 120] : [-(B / 2 - Lf) - 120, -t];
+    leadPos.push({ s, i, tip, at: along });
+  }
+  leads.instanceMatrix.needsUpdate = true;
+  gFrame.add(leads);
+  // the mold underside between the leads, so the frame does not float when the lid is hidden
+  const base = new THREE.Mesh(new THREE.BoxGeometry(B - 2 * Lf - 300, B - 2 * Lf - 300, FRAME_T - 20), pkgMat('--pk-mold', 0.05, 0.75));
+  base.position.z = -FRAME_T / 2 - 10;
+  gFrame.add(base);
+
+  // 4 die attach (silver-filled epoxy)
+  const attach = new THREE.Mesh(new THREE.BoxGeometry(Dp + 140, Dp + 140, ATTACH_T), pkgMat('--pk-attach', 0.6, 0.55));
+  attach.position.z = ATTACH_T / 2;
+  gAttach.add(attach);
+
+  // 3 die: padded silicon die with a synthetic pad ring; the real core geometry (dieGroup) sits on it
+  const zTop = ATTACH_T + DIE_T;
+  const dieBox = new THREE.Mesh(new THREE.BoxGeometry(Dp, Dp, DIE_T - 0.6), pkgMat('--pk-si', 0.2, 0.6));
+  dieBox.position.z = ATTACH_T + (DIE_T - 0.6) / 2;
+  gDie.add(dieBox);
+  const padMat = pkgMat('--pk-pad', 0.95, 0.35);
+  const pads = new THREE.InstancedMesh(new THREE.BoxGeometry(PAD_W, PAD_W, 1.6), padMat, 4 * n);
+  pads.userData.shared = true;
+  const padPos = [];
+  const inset = Dp / 2 - 40 - PAD_W / 2;
+  for (let s = 0; s < 4; s++) for (let i = 0; i < n; i++) {
+    const t = (i - (n - 1) / 2) * PAD_PITCH;
+    const p = s === 0 ? [t, -inset] : s === 1 ? [inset, t] : s === 2 ? [-t, inset] : [-inset, -t];
+    m4.makeScale(1, 1, 1);
+    m4.setPosition(p[0], p[1], zTop + 0.8);
+    pads.setMatrixAt(s * n + i, m4);
+    padPos.push(p);
+  }
+  pads.instanceMatrix.needsUpdate = true;
+  gDie.add(pads);
+  const sr = Dp / 2 - 16;
+  const seal = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-sr, -sr, zTop + 0.3), new THREE.Vector3(sr, -sr, zTop + 0.3), new THREE.Vector3(sr, sr, zTop + 0.3), new THREE.Vector3(-sr, sr, zTop + 0.3)]),
+    new THREE.LineBasicMaterial({ color: new THREE.Color(cssVar('--pk-pad')) }));
+  pkg.tokenMats.push([seal.material, '--pk-pad']);
+  gDie.add(seal);
+  pkg.dieZ = zTop;
+
+  // 2 bond wires (25 µm gold), pad i to lead i on the same side
+  const au = pkgMat('--pk-au', 1.0, 0.3);
+  leadPos.forEach((L, k) => {
+    const p = padPos[k];
+    const a = new THREE.Vector3(p[0], p[1], zTop + 2), b = new THREE.Vector3(L.tip[0], L.tip[1], 0);
+    const d = b.clone().sub(a); d.z = 0;
+    const len = d.length();
+    const loop = Math.min(220, 90 + len * 0.12);
+    const pts = [a, a.clone().add(new THREE.Vector3(d.x * 0.06 / len * 30, d.y * 0.06 / len * 30, loop)),
+      a.clone().addScaledVector(d, 0.45).setZ(loop * 0.85), a.clone().addScaledVector(d, 0.85).setZ(loop * 0.25), b];
+    const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal');
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 12.5, 6, false), au);
+    tube.userData.shared = true;
+    gWires.add(tube);
+    if (L.s === 0 && L.i === n - 1) pkg.anchors.wire = curve.getPoint(0.3);
+    if (L.s === 0 && L.i === n - 1) pkg.anchors.lead = new THREE.Vector3(L.at[0], L.at[1], 0);
+  });
+
+  // 1 lid: the mold cap over everything, laser-marked on top
+  const lidMat = pkgMat('--pk-mold', 0.05, 0.7);
+  const lid = new THREE.Mesh(new THREE.BoxGeometry(B, B, H - FRAME_T + 20), lidMat);
+  lid.position.z = -FRAME_T + 10 + (H - FRAME_T + 20) / 2 - 20;
+  lid.renderOrder = 80;
+  gLid.add(lid);
+  const lidTop = -FRAME_T - 10 + H;
+  const mark = new THREE.Mesh(new THREE.PlaneGeometry(B * 0.7, B * 0.7), new THREE.MeshBasicMaterial({ map: markingTexture(spec), transparent: true, depthWrite: false, toneMapped: false }));
+  mark.position.z = lidTop + 2;
+  mark.renderOrder = 81;
+  gLid.add(mark);
+  pkg.lid = lid; pkg.mark = mark; pkg.lidTop = lidTop;
+
+  // dimensions (mm) along the front edge: package outline and die
+  const dimMat = new THREE.LineBasicMaterial({ color: new THREE.Color(cssVar('--ruler')) });
+  pkg.tokenMats.push([dimMat, '--ruler']);
+  const dims = new THREE.Group();
+  const dim = (x0, x1, y, off, text, z) => {
+    const yy = y - off;
+    const pts = [new THREE.Vector3(x0, y, z), new THREE.Vector3(x0, yy - off * 0.15, z), new THREE.Vector3(x1, y, z), new THREE.Vector3(x1, yy - off * 0.15, z),
+      new THREE.Vector3(x0, yy, z), new THREE.Vector3(x1, yy, z)];
+    dims.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), dimMat));
+    const s = textSprite(text, cssVar('--ruler'), Math.min(B * 0.028, (x1 - x0) * 0.05));
+    s.material.toneMapped = false;
+    s.position.set((x0 + x1) / 2, yy - s.scale.y * 0.7, z);
+    dims.add(s);
+  };
+  dim(-B / 2, B / 2, -B / 2, B * 0.07, fx(B / 1000, 2) + ' mm body (illustrative)', -FRAME_T);
+  dim(-Dp / 2, Dp / 2, -Dp / 2, Dp * 0.22, fx(Dp / 1000, 2) + ' mm die (illustrative) · ' + fx(dieSize / 1000, 3) + ' mm core (measured)', zTop + 2);
+  gDie.add(dims);
+
+  // balloon anchors (in the group each part belongs to, so they explode with it)
+  pkg.anchors.lid = new THREE.Vector3(-B * 0.36, -B * 0.36, lidTop);
+  pkg.anchors.die = new THREE.Vector3(Dp * 0.46, -Dp * 0.46, zTop);
+  pkg.anchors.attach = new THREE.Vector3(-(Dp + 140) / 2, -(Dp + 140) / 2 * 0.6, ATTACH_T / 2);
+  pkg.anchors.frame = new THREE.Vector3(E * 0.44, -E * 0.44, 0);
+  pkg.anchorGroup = { lid: gLid, wire: gWires, die: gDie, attach: gAttach, frame: gFrame, lead: gFrame };
+  pkgScene.add(root);
+  placeDieInPackage();
+  applyLid();
+  applyExplode();
+  fillPackagePanel();
+}
+function placeDieInPackage() {
+  if (!pkg || state.tab !== 'package') return;
+  pkg.groups.die.add(dieGroup);
+  dieGroup.position.set(0, 0, pkg.dieZ);
+}
+function applyLid() {
+  if (!pkg) return;
+  const mode = state.pkg.lid;
+  const m = pkg.lid.material;
+  pkg.lid.visible = mode !== 'hidden';
+  pkg.mark.visible = mode !== 'hidden';
+  m.transparent = mode === 'ghost';
+  m.opacity = mode === 'ghost' ? 0.22 : 1;
+  m.depthWrite = mode !== 'ghost';
+  m.needsUpdate = true;
+  pkg.mark.material.opacity = mode === 'ghost' ? 0.55 : 1;
+  document.querySelectorAll('[data-lid]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lid === mode)));
+  requestRender();
+}
+function applyExplode() {
+  if (!pkg) return;
+  const t = state.pkg.explode, Ex = pkg.spec.B * 0.55;
+  const g = pkg.groups;
+  g.lid.position.z = t * Ex * 1.0;
+  g.wires.position.z = t * Ex * 0.55;
+  g.die.position.z = t * Ex * 0.36;
+  g.attach.position.z = t * Ex * 0.18;
+  $('o-explode').textContent = t ? Math.round(t * 100) + '%' : 'assembled';
+  requestRender();
+}
+const BALLOONS = [
+  ['1', 'lid', 'Lid (mold cap)', 'epoxy mold compound, laser-marked', 'illustrative'],
+  ['2', 'wire', 'Bond wires', '25 µm gold, pad to lead', 'illustrative'],
+  ['3', 'die', 'Die', 'silicon with the synthetic pad ring; the core on it is the routed layout', 'core measured, ring illustrative'],
+  ['4', 'attach', 'Die attach', 'silver-filled epoxy, 25 µm', 'illustrative'],
+  ['5', 'frame', 'Leadframe / substrate', 'copper, silver-plated die pad', 'illustrative'],
+  ['6', 'lead', 'Leads / pads', 'copper fingers, 0.5 mm pitch', 'illustrative'],
+];
+const balloonEls = new Map();
+let balloonRects = [];
+function balloonEl(id, num, name) {
+  let el = balloonEls.get(id);
+  if (el) return el;
+  el = document.createElement('div');
+  el.className = 'balloon';
+  el.textContent = num;
+  el.title = num + ' ' + name;
+  el.setAttribute('aria-label', num + ' ' + name);
+  $('labels').appendChild(el);
+  balloonEls.set(id, el);
+  return el;
+}
+function hideBalloons() {
+  for (const el of balloonEls.values()) { el.style.visibility = 'hidden'; }
+  balloonRects = [];
+  if (state.tab !== 'package') return;
+  $('leaders').innerHTML = '';
+}
+function positionBalloons() {
+  if (!pkg) return;
+  const st = $('stage');
+  const W = st.clientWidth, H = st.clientHeight;
+  const taken = [];
+  for (const id of ['tabs', 'hud-design', 'hud-scale', 'hud-mock', 'hud-hint']) {
+    const e = $(id);
+    if (!e || e.hidden || !e.offsetWidth) continue;
+    const r = e.getBoundingClientRect(), s = st.getBoundingClientRect();
+    taken.push({ x: r.left - s.left, y: r.top - s.top, w: r.width, h: r.height });
+  }
+  const R = 26, size = 26;
+  let html = '';
+  const out = [];
+  const v = new THREE.Vector3();
+  for (const [num, key, name] of BALLOONS) {
+    const a = pkg.anchors[key];
+    const el = balloonEl(key, num, name);
+    if (!a || (key === 'lid' && state.pkg.lid === 'hidden')) { el.style.visibility = 'hidden'; continue; }
+    v.copy(a);
+    pkg.anchorGroup[key].localToWorld(v);
+    const p = projectScene(v);
+    if (!p.ok || p.x < -10 || p.y < -10 || p.x > W + 10 || p.y > H + 10) { el.style.visibility = 'hidden'; continue; }
+    // candidates: 8 directions at two radii, the direction away from the screen centre first
+    const ang0 = Math.atan2(p.y - H / 2, p.x - W / 2);
+    const tries = [];
+    for (const r of [64, 96, 136]) for (const k of [0, 1, -1, 2, -2, 3, -3, 4]) {
+      const ang = ang0 + k * Math.PI / 4;
+      tries.push({ x: p.x + Math.cos(ang) * r - size / 2, y: p.y + Math.sin(ang) * r - size / 2, w: size, h: size });
+    }
+    let rect = null;
+    for (const t of tries) {
+      if (t.x < 4 || t.y < 4 || t.x + size > W - 4 || t.y + size > H - 4) continue;
+      if (taken.some((q) => overlaps(t, q, 6))) continue;
+      rect = t; break;
+    }
+    if (!rect) rect = tries[0];
+    taken.push(rect);
+    el.style.visibility = 'visible';
+    el.style.transform = 'translate(' + Math.round(rect.x) + 'px,' + Math.round(rect.y) + 'px)';
+    // leader from the balloon rim to the anchor
+    const cx = rect.x + size / 2, cy = rect.y + size / 2;
+    const dx = p.x - cx, dy = p.y - cy, L = Math.hypot(dx, dy) || 1;
+    html += '<line x1="' + (cx + dx / L * size / 2).toFixed(1) + '" y1="' + (cy + dy / L * size / 2).toFixed(1) + '" x2="' + p.x.toFixed(1) + '" y2="' + p.y.toFixed(1) + '"/>';
+    html += '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="2.5"/>';
+    out.push({ id: key, num, x: rect.x, y: rect.y, w: size, h: size });
+  }
+  $('leaders').innerHTML = html;
+  balloonRects = out;
+}
+function pkgPts() {
+  const { B, H } = pkg.spec;
+  const top = pkg.lidTop + pkg.groups.lid.position.z + 20;
+  const pts = [];
+  for (const x of [-B / 2, B / 2]) for (const y of [-B / 2, B / 2]) for (const z of [-FRAME_T, top]) pts.push(new THREE.Vector3(x, y, z));
+  return pts;
+}
+function pkgSetView(name, animate = true) {
+  if (!pkg) return;
+  state.pkg.view = name;
+  document.querySelectorAll('[data-kview]').forEach((b) => { if (b.dataset.kview !== 'reset') b.setAttribute('aria-pressed', String(b.dataset.kview === name)); });
+  const B = pkg.spec.B;
+  let az = -122, el = 34, margin = 0.9;
+  if (name === 'top') { az = -90; el = 89.9; margin = 0.92; }
+  else if (name === 'low') { az = -105; el = 12; margin = 0.95; }
+  const zc = (pkg.lidTop + pkg.groups.lid.position.z) * 0.35;
+  const target = new THREE.Vector3(0, name === 'top' ? 0 : -B * 0.04, zc);
+  const dir = dirFrom(az, el);
+  const dist = fitDistance(dir, target, margin, null, pkgPts());
+  flyTo(dir.multiplyScalar(dist).add(target), target, animate);
+}
+function fillPackagePanel() {
+  const s = pkg.spec;
+  const perSide = s.nAll;
+  $('pk-ring-note').textContent = s.ring === 'all'
+    ? 'All ' + fmt(s.signal) + ' signal pins plus ' + fmt(s.power + 6) + ' power pads: ' + fmt(s.pads) + ' pads of ' + PAD_W + ' × ' + PAD_W + ' µm at ' + PAD_PITCH + ' µm pitch, ' + perSide + ' per side, force a ' + fx(s.Dp / 1000, 2) + ' mm die around the ' + fx(dieSize / 1000, 3) + ' mm core (' + fmt(Math.round((s.Dp * s.Dp) / (dieSize * dieSize))) + '× its area) and a ' + fx(s.B / 1000, 1) + ' mm ' + s.style + '. A real pad ring also carries ESD clamps and IO drivers in each pad, so this pad-limited die is the honest size.'
+    : fmt(s.pads) + ' pads of ' + PAD_W + ' × ' + PAD_W + ' µm at ' + PAD_PITCH + ' µm pitch fit around the core on a ' + fx(s.Dp / 1000, 2) + ' mm die in a ' + fx(s.B / 1000, 0) + ' × ' + fx(s.B / 1000, 0) + ' mm ' + s.style + '. The routed core has ' + fmt(s.signal) + ' signal pins plus VDD/VSS, so this ring would need the IO multiplexed or serialised; switch to "All ' + fmt(s.signal + s.power) + ' pins" to see the pad-limited die a full ring with ESD would need.';
+  const tb = $('pk-bom').querySelector('tbody');
+  tb.innerHTML = '';
+  for (const [num, key, name, mat, src] of BALLOONS) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td><span class="bnum">' + num + '</span></td><td class="wrap">' + esc(name) + '</td><td class="wrap">' + esc(mat) + '</td><td class="wrap">' + esc(src) + '</td>';
+    tr.addEventListener('mouseenter', () => { const el = balloonEls.get(key); if (el) el.classList.add('hot'); });
+    tr.addEventListener('mouseleave', () => { const el = balloonEls.get(key); if (el) el.classList.remove('hot'); });
+    tb.appendChild(tr);
+  }
+  const rows = [
+    ['Package body', fx(s.B / 1000, 2) + ' × ' + fx(s.B / 1000, 2) + ' × ' + fx(s.H / 1000, 2) + ' mm, ' + s.style],
+    ['Lead pitch / width', fx(LEAD_PITCH / 1000, 2) + ' mm / 0.25 mm, ' + s.n + ' per side'],
+    ['Exposed die pad', fx(s.E / 1000, 2) + ' × ' + fx(s.E / 1000, 2) + ' mm'],
+    ['Die', fx(s.Dp / 1000, 2) + ' × ' + fx(s.Dp / 1000, 2) + ' mm, ' + fx(DIE_T / 1000, 2) + ' mm thick (thinned)'],
+    ['Core (measured)', fx(dieSize, 1) + ' × ' + fx(dieSize, 1) + ' µm, stack ' + fx(meta.stack_top_um, 2) + ' µm'],
+    ['Bond pads', s.pads + ' × ' + PAD_W + ' µm at ' + PAD_PITCH + ' µm pitch'],
+    ['Bond wire', '25 µm Au, loop ≤ 0.22 mm'],
+    ['Die attach', fx(ATTACH_T, 0) + ' µm silver epoxy'],
+  ];
+  const td = $('pk-dims').querySelector('tbody');
+  td.innerHTML = '';
+  for (const [k, vv] of rows) { const tr = document.createElement('tr'); tr.innerHTML = '<td class="wrap">' + esc(k) + '</td><td class="num wrap">' + esc(vv) + '</td>'; td.appendChild(tr); }
+  document.querySelectorAll('[data-ring]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ring === s.ring)));
+}
+
+// ---------------------------------------------------------------- tab switching
+const TAB_HINTS = {
+  layout: null,
+  photo: 'Drag to orbit · scroll to zoom · hover a cell to identify it · heights are true scale',
+  package: 'Drag to orbit · scroll to zoom · balloons key to the parts list · mockup, not routed data',
+};
+function setTab(name, animate = false) {
+  if (!['layout', 'photo', 'package'].includes(name) || name === state.tab) return;
+  const prev = state.tab;
+  state.tab = name;
+  $('app').dataset.tab = name;
+  document.documentElement.dataset.vizTab = name;
+  document.querySelectorAll('.tab').forEach((b) => { const on = b.dataset.tab === name; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+  hideTip();
+  tween = null;
+  if (prev === 'layout') { savedLayout.exag = state.exag; savedLayout.gap = state.gap; savedLayout.pos = camera.position.clone(); savedLayout.target = controls.target.clone(); }
+  if (prev === 'package') { hideBalloons(); scene.add(dieGroup); dieGroup.position.set(0, 0, 0); }
+  if (name === 'package') {
+    if (!pkg) buildPackage(); else placeDieInPackage();
+    camera = pkgCam; controls = pkgCtl;
+    layoutCtl.enabled = false; pkgCtl.enabled = true;
+  } else {
+    camera = layoutCam; controls = layoutCtl;
+    layoutCtl.enabled = true; if (pkgCtl) pkgCtl.enabled = false;
+  }
+  if (name === 'layout') { state.exag = savedLayout.exag; state.gap = savedLayout.gap; }
+  else if (name === 'photo') { state.exag = state.photoExag; state.gap = 0; }
+  else { state.exag = 1; state.gap = 0; }
+  $('hud-mock').hidden = name !== 'package';
+  $('hud-hint').textContent = TAB_HINTS[name] || defaultHint;
+  applyLook();
+  applyZ();
+  applyVisibility();
+  applySection();
+  if (name === 'layout') { if (savedLayout.pos) flyTo(savedLayout.pos, savedLayout.target, false); else setView('iso', false); }
+  else if (name === 'photo') setView(state.pview || 'tilt', animate);
+  else if (name === 'package') { if (!pkg.viewed) { pkg.viewed = true; pkgSetView('iso', false); } else pkgSetView(state.pkg.view, false); }
+  if (name === 'package') layoutLabels(); else hideBalloons();
+  updateScaleBar();
+  labelsDirty();
+  requestRender();
+  $('live').textContent = name === 'layout' ? 'Layout view' : name === 'photo' ? 'Die photo view, true vertical scale' : 'Packaged chip mockup';
+}
+function wireTabs() {
+  const tabs = [...document.querySelectorAll('.tab')];
+  tabs.forEach((b, i) => {
+    b.addEventListener('click', () => setTab(b.dataset.tab, true));
+    b.addEventListener('keydown', (e) => {
+      let j = null;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i + tabs.length - 1) % tabs.length;
+      else if (e.key === 'Home') j = 0;
+      else if (e.key === 'End') j = tabs.length - 1;
+      if (j == null) return;
+      e.preventDefault();
+      tabs[j].focus();
+      setTab(tabs[j].dataset.tab, true);
+    });
+  });
+  document.querySelectorAll('[data-pview]').forEach((b) => b.addEventListener('click', () => {
+    const v = b.dataset.pview;
+    if (v === 'reset') {
+      state.photoExag = 1; state.exag = 1; $('s-pexag').value = 1;
+      state.oxide = false; $('ph-oxide').checked = false;
+      layerObjs.forEach((o) => { o.on = o.L.count > 0; const i = $('layer-' + o.L.name); if (i) i.checked = o.on; });
+      applyZ(); applyVisibility(); state.pview = 'tilt'; setView('tilt');
+    } else { state.pview = v; setView(v); }
+  }));
+  $('s-pexag').addEventListener('input', (e) => { state.photoExag = Number(e.target.value); state.exag = state.photoExag; applyZ(); });
+  $('ph-labels').addEventListener('change', (e) => { state.photoLabels = e.target.checked; labelsDirty(); requestRender(); });
+  $('ph-oxide').addEventListener('change', (e) => { state.oxide = e.target.checked; applyVisibility(); });
+  $('ph-hair').addEventListener('change', (e) => { state.hair = e.target.checked; updateScaleBar(); });
+  $('ph-bar').addEventListener('change', (e) => { state.bar = e.target.checked; updateScaleBar(); });
+  document.querySelectorAll('[data-ring]').forEach((b) => b.addEventListener('click', () => { state.pkg.ring = b.dataset.ring; buildPackage(); pkgSetView(state.pkg.view, true); }));
+  document.querySelectorAll('[data-lid]').forEach((b) => b.addEventListener('click', () => { state.pkg.lid = b.dataset.lid; applyLid(); }));
+  $('s-explode').addEventListener('input', (e) => { state.pkg.explode = Number(e.target.value) / 100; applyExplode(); });
+  $('s-explode').addEventListener('change', () => pkgSetView(state.pkg.view));
+  document.querySelectorAll('[data-kview]').forEach((b) => b.addEventListener('click', () => {
+    const v = b.dataset.kview;
+    if (v === 'reset') { state.pkg.explode = 0; $('s-explode').value = 0; applyExplode(); state.pkg.lid = 'ghost'; applyLid(); pkgSetView('iso'); }
+    else pkgSetView(v);
+  }));
+}
+
 // ---------------------------------------------------------------- panel
 function fillPanel() {
   const s = meta.stats || {};
@@ -1818,6 +2465,10 @@ function fillPanel() {
   $('st-clk').title = 'Source: ' + (src.sdc || src.pd_summary || 'not available');
   $('st-wns').title = 'Source: ' + (src.orfs_metrics || src.pd_summary || 'not available');
   $('st-cells').title = 'Standard cells excluding fill/decap and tap cells; source: ' + (src.orfs_metrics || src.pd_summary || 'n/a') + '. DEF components incl. filler: ' + fmt(s.components_in_def);
+  $('ph-stack').textContent = fx(meta.stack_top_um, 2);
+  $('ph-die').textContent = fx(dieSize, 0);
+  $('pk-core').textContent = fx(dw, 1) + ' × ' + fx(dh, 1);
+  $('pk-ring-all').textContent = 'All ' + fmt(((meta.pins && meta.pins.list) || []).length) + ' pins';
   const fences = regionList().length;
   $('sub').textContent = (meta.design === 'orbit_demo' ? 'Routed' : 'Development data: ' + meta.design + ', routed') + ' with OpenROAD on SkyWater sky130hd' + (fences ? ' · copy-separated placement (' + fences + ' fences)' : '');
 
@@ -2022,7 +2673,10 @@ function wireControls() {
   new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   reduceMotion.addEventListener && reduceMotion.addEventListener('change', () => { controls.enableDamping = !reduceMotion.matches; });
   if (coarse.matches) $('hud-hint').textContent = 'One finger to orbit · two to pan and zoom · tap a cell to identify it';
+  defaultHint = $('hud-hint').textContent;
+  wireTabs();
 }
+let defaultHint = '';
 
 let defaultExag = 3;
 async function main() {
@@ -2055,6 +2709,8 @@ async function main() {
     setMode(state.mode);
     applySection();
     setView('iso', false);
+    const want = (location.hash || '').replace('#', '');
+    if (want === 'photo' || want === 'package') setTab(want);
   } catch (e) {
     console.error(e);
     showError(e.message || 'The 3D view could not be built.', 'The data loaded, but the scene could not be created in this browser.', e.detail || String(e.stack || e).split('\n')[0]);
@@ -2069,6 +2725,9 @@ async function main() {
   // Hooks for the screenshot harness (scripts/viz_shots.py).
   window.orbitViz = {
     setView, selectGroup, state, setMode, focusPart, focusLane, selectPart, flyToBox, applySection, applyZ,
+    setTab, pkgSetView, buildPackage,
+    balloons() { return balloonRects.map((b) => { const r = $('stage').getBoundingClientRect(); return Object.assign({}, b, { x: b.x + r.left, y: b.y + r.top }); }); },
+    pkgInfo() { return pkg ? Object.assign({ lid: state.pkg.lid, explode: state.pkg.explode, wires: pkg.groups.wires.children.length }, pkg.spec) : null; },
     get frames() { return window.__vizFrames; },
     idle() { return !rafPending && !tween; },
     screenOf(i) {

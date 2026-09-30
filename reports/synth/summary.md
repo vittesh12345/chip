@@ -26,15 +26,15 @@ Tool: Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 
 **Brief page 4 claims.** The brief reports "4,356 generic logic cells and 521
 flip-flop bits" (Yosys 0.69 through YoWASP) and a nine-group storage audit.
 
-* Flip-flop bits: reproduced exactly (521) with native Yosys and with YoWASP
-  Yosys 0.69. 518 of them are in the nine redundant groups; the other three
-  are `fault_q`, `out_valid_q` and `u_thermal.phase` (SPEC section 8).
+* Flip-flop bits: 521 with native Yosys and 521 with YoWASP
+  Yosys 0.69 (brief and SPEC: 521). 518 of them are in the nine redundant
+  groups; the other three are `fault_q`, `out_valid_q` and `u_thermal.phase` (SPEC section 8).
 * Generic logic cells: **not reproduced exactly**. With this RTL and
   `synth/synth_generic.ys`, native Yosys gives 4,373 and YoWASP Yosys 0.69
   gives 4,384, against 4,356 in the brief. "Logic cells" here means every
   generic gate cell other than flip-flops and `$scopeinfo`. The brief does not
-  give its script. As an informational probe (not a make target),
-  `synth -top orbit_demo` without `-flatten` gave 4,340 and plain
+  give its script. As an informational probe (not a make target, run once on
+  2026-09-29), `synth -top orbit_demo` without `-flatten` gave 4,340 and plain
   `synth -flatten` gave 4,373 with native Yosys, so no variant tried matched
   4,356. The difference is in the ABC gate mapping only; flip-flop counts are
   the same in every run. It is small, but it is a difference, so the table
@@ -48,8 +48,8 @@ flip-flop bits" (Yosys 0.69 through YoWASP) and a nine-group storage audit.
 attribute is removed from `orbit_keep_reg`, Yosys merges the three thermal
 copies. They have identical D, clock, reset and enable, so the flip-flop
 count drops from 521 to 517 (6 thermal bits become 2) and the audit fails.
-Putting `(* keep *)` on the `q` register alone does **not** prevent this (same
-517 bits, audit fails). This matches the brief's remark that "signal attributes
+Putting `(* keep *)` on the `q` register alone gives 517 flip-flop
+bits (this run: thermal copies MERGED, so it does **not** prevent the merge). This matches the brief's remark that "signal attributes
 alone initially allowed copies to merge". The accumulator and result pairs
 are not merged in either variant because their D logic comes from each copy's
 own stored value.

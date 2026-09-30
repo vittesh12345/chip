@@ -19,6 +19,13 @@ the preinstalled Chromium with Playwright to write screenshots:
   viewer_dark.png              dark theme, isometric
   viewer_phone.png             390x844 phone layout, light (full page)
   viewer_phone_dark.png        390x844 phone layout, dark (full page)
+  viewer_photo.png             Die photo tab: PBR materials, true vertical scale, tilted preset
+  viewer_photo_micro.png       Die photo tab, Microscope (top-down) preset with the scale bar
+  viewer_package.png           Packaged chip tab (mockup): QFN-20, see-through lid, balloons
+  viewer_package_exploded.png  the package exploded (slider at 100%), solid lid
+  viewer_package_allpins.png   the pad-limited variant with a pad for every pin (QFP-style)
+  viewer_photo_phone.png       390x844 phone layout, Die photo tab (full page)
+  viewer_package_phone.png     390x844 phone layout, Packaged chip tab (full page)
   glb_preview_full.png         the detailed (Draco) GLB loaded with three.js GLTFLoader
   glb_preview_portable.png     the portable metals GLB loaded with three.js GLTFLoader
 
@@ -137,6 +144,7 @@ CHROME_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Ge
 THREE_FILES = ["build/three.module.js", "examples/jsm/controls/OrbitControls.js",
                "examples/jsm/loaders/GLTFLoader.js", "examples/jsm/loaders/DRACOLoader.js",
                "examples/jsm/utils/BufferGeometryUtils.js",
+               "examples/jsm/environments/RoomEnvironment.js",
                "examples/jsm/libs/draco/gltf/draco_decoder.js", "examples/jsm/libs/draco/gltf/draco_decoder.wasm",
                "examples/jsm/libs/draco/gltf/draco_wasm_wrapper.js"]
 
@@ -450,7 +458,7 @@ def main():
         print(f"viz_shots: wrote {path}")
 
     def set_range(page, sel, value):
-        page.eval_on_selector(sel, "(el, v) => { el.value = v; el.dispatchEvent(new Event('input', {bubbles: true})); }",
+        page.eval_on_selector(sel, "(el, v) => { el.value = v; el.dispatchEvent(new Event('input', {bubbles: true})); el.dispatchEvent(new Event('change', {bubbles: true})); }",
                               value)
 
     def scroll_to(page, el_id):
@@ -594,6 +602,78 @@ def main():
                     shot(page, "viewer_redundancy_lane0")
             problems.extend(f"desktop console {l}" for l in logs)
             ctx.close()
+
+        def check_balloons(page, where):
+            """Package balloons must not overlap each other."""
+            bs = page.evaluate("window.orbitViz.balloons()")
+            for i, a in enumerate(bs):
+                for b in bs[i + 1:]:
+                    if a["x"] < b["x"] + b["w"] and b["x"] < a["x"] + a["w"] and a["y"] < b["y"] + b["h"] and b["y"] < a["y"] + a["h"]:
+                        problems.append(f"{where}: balloons overlap: {a['num']} / {b['num']}")
+            print(f"viz_shots: {where}: {len(bs)} balloons placed: " + ", ".join(b["num"] for b in bs))
+            return bs
+
+        photo_pkg = ("viewer_photo", "viewer_photo_micro", "viewer_package", "viewer_package_exploded", "viewer_package_allpins")
+        if any(want(n) for n in photo_pkg):
+            ctx, page, logs = open_page(1440, 900)
+            # the tab bar is keyboard operable: focus the Layout tab, ArrowRight selects Die photo
+            page.evaluate("document.getElementById('tab-layout').focus()")
+            page.keyboard.press("ArrowRight")
+            settle(page)
+            tab = page.evaluate("window.orbitViz.state.tab")
+            if tab != "photo":
+                problems.append(f"tabs: ArrowRight from Layout selected {tab!r}, expected 'photo'")
+            if want("viewer_photo"):
+                if page.evaluate("window.orbitViz.state.exag") != 1:
+                    problems.append("die photo: vertical scale is not 1 by default")
+                check_labels(page, "photo (labels off)", problems, 0)
+                shot(page, "viewer_photo")
+            if want("viewer_photo_micro"):
+                jsclick(page, "[data-pview=micro]")
+                settle(page)
+                print("viz_shots: scale bar:", page.inner_text("#scalebar").replace("\n", " | "))
+                shot(page, "viewer_photo_micro")
+            if any(want(n) for n in photo_pkg[2:]):
+                page.evaluate("window.orbitViz.setTab('package')")
+                scroll_to(page, "h-pkg")
+                settle(page)
+                info = page.evaluate("window.orbitViz.pkgInfo()")
+                print("viz_shots: package:", json.dumps(info))
+                if want("viewer_package"):
+                    check_balloons(page, "package")
+                    shot(page, "viewer_package")
+                if want("viewer_package_exploded"):
+                    jsclick(page, "[data-lid=solid]")
+                    set_range(page, "#s-explode", 100)
+                    settle(page)
+                    check_balloons(page, "package exploded")
+                    shot(page, "viewer_package_exploded")
+                    set_range(page, "#s-explode", 0)
+                    jsclick(page, "[data-lid=ghost]")
+                if want("viewer_package_allpins"):
+                    jsclick(page, "[data-ring=all]")
+                    settle(page)
+                    info = page.evaluate("window.orbitViz.pkgInfo()")
+                    print("viz_shots: package (all pins):", json.dumps(info))
+                    check_balloons(page, "package all pins")
+                    shot(page, "viewer_package_allpins")
+            problems.extend(f"photo/package console {l}" for l in logs)
+            ctx.close()
+
+        for name, tab in (("viewer_photo_phone", "photo"), ("viewer_package_phone", "package")):
+            if want(name):
+                ctx, page, logs = open_page(390, 844, dpr=1.5, mobile=True)
+                page.evaluate(f"window.orbitViz.setTab('{tab}')")
+                settle(page)
+                sw = page.evaluate("[document.documentElement.scrollWidth, document.documentElement.clientWidth]")
+                if sw[0] > sw[1]:
+                    problems.append(f"{name}: horizontal overflow, scrollWidth {sw[0]} > {sw[1]}")
+                full_h = page.evaluate("document.documentElement.scrollHeight")
+                page.set_viewport_size({"width": 390, "height": full_h})
+                settle(page)
+                shot(page, name)
+                problems.extend(f"{name} console {l}" for l in logs)
+                ctx.close()
 
         if want("viewer_dark"):
             ctx, page, logs = open_page(1440, 900, scheme="dark")

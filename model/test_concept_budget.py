@@ -141,6 +141,43 @@ class TestDemonstrator(unittest.TestCase):
         self.assertEqual(p.get("T_STOP"), cb.T_STOP_C)
         self.assertEqual(p.get("T_RECOVER"), cb.T_RECOVER_C)
 
+    def test_rtl_thresholds_reach_thermal_fsm(self):
+        # The thresholds checked above only matter if orbit_demo passes them
+        # through to orbit_thermal_tmr unchanged (.T_X (T_X)).
+        rtl_dir = os.environ.get("MODEL_RTL_DIR", os.path.join(REPO, "rtl"))
+        conn = cb.rtl_thermal_overrides(rtl_dir)
+        for name in cb.THERMAL_PARAM_NAMES:
+            with self.subTest(param=name):
+                self.assertEqual(conn.get(name), name)
+
+    def test_verilog_int_literals(self):
+        self.assertEqual(cb.verilog_int("95"), 95)
+        self.assertEqual(cb.verilog_int("8'sd95"), 95)
+        self.assertEqual(cb.verilog_int("8'sh5F"), 95)
+        self.assertEqual(cb.verilog_int("8'b0101_1111"), 95)
+        self.assertEqual(cb.verilog_int("4'h8"), 8)      # not the width 4
+        self.assertIsNone(cb.verilog_int("8'sd9x"))
+        self.assertIsNone(cb.verilog_int("T_BASE+15"))
+
+    def test_rtl_parameter_parser_negative_controls(self):
+        # A hex-coded wrong LANES, a commented-out stale value and a miswired
+        # threshold must all be seen by the cross-check readers.
+        src = ("// parameter integer LANES = 4,\n"
+               "module orbit_demo #(parameter integer LANES = 4'h8,\n"
+               "  parameter signed [7:0] T_THROTTLE = 8'sd80,\n"
+               "  parameter signed [7:0] T_STOP = 8'sh5F,\n"
+               "  parameter signed [7:0] T_RECOVER = 8'sd70) ();\n"
+               "orbit_thermal_tmr #(.T_THROTTLE (T_THROTTLE), .T_STOP (T_THROTTLE),\n"
+               "  .T_RECOVER(T_RECOVER)) u_thermal (.clk(clk));\nendmodule\n")
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "orbit_demo.v"), "w") as fh:
+                fh.write(src)
+            self.assertEqual(cb.rtl_parameters(d),
+                             {"LANES": 8, "T_THROTTLE": 80, "T_STOP": 95, "T_RECOVER": 70})
+            self.assertEqual(cb.rtl_thermal_overrides(d),
+                             {"T_THROTTLE": "T_THROTTLE", "T_STOP": "T_THROTTLE",
+                              "T_RECOVER": "T_RECOVER"})
+
     def test_pd_clock_parsing(self):
         with tempfile.TemporaryDirectory() as d:
             path = os.path.join(d, "summary.md")
@@ -154,6 +191,17 @@ class TestDemonstrator(unittest.TestCase):
             with open(path, "w") as fh:
                 fh.write("| closed clock | 142.86 MHz |\n")
             self.assertAlmostEqual(cb.pd_closed_clock_mhz(path), 142.86)
+            with open(path, "w") as fh:                               # pd sweep wording
+                fh.write("| 7 | 142.9 | 0.066 | CLOSED |\n"
+                         "Best closed period: **7 ns (142.9 MHz)**.\n")
+            self.assertAlmostEqual(cb.pd_closed_clock_mhz(path), 142.9)
+            with open(path, "w") as fh:                               # negated closure
+                fh.write("Timing not closed at 6.5 ns (153.8 MHz)\n"
+                         "Timing closure failed at 150 MHz\n")
+            self.assertIsNone(cb.pd_closed_clock_mhz(path))
+            with open(path, "w") as fh:                               # target before result
+                fh.write("Target 150 MHz; closed at period 8.0 ns\n")
+            self.assertAlmostEqual(cb.pd_closed_clock_mhz(path), 125.0)
 
 
 class TestBriefConsistency(unittest.TestCase):

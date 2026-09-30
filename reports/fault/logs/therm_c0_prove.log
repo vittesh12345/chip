@@ -1,15 +1,15 @@
-SBY  0:21:29 [fault_prove] engine_0: smtbmc yices
-SBY  0:21:29 [fault_prove] engine_0.basecase: ##   0:00:00  Solver: yices
-SBY  0:21:29 [fault_prove] engine_0.induction: ##   0:00:00  Solver: yices
-SBY  0:21:29 [fault_prove] engine_0.basecase: ##   0:00:00  Status: passed
-SBY  0:21:29 [fault_prove] engine_0.basecase: Status returned by engine for basecase: pass
-SBY  0:21:38 [fault_prove] engine_0.induction: ##   0:00:09  Temporal induction successful.
-SBY  0:21:38 [fault_prove] engine_0.induction: ##   0:00:09  Status: passed
-SBY  0:21:38 [fault_prove] engine_0.induction: Status returned by engine for induction: pass
-SBY  0:21:38 [fault_prove] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:09 (9)
-SBY  0:21:38 [fault_prove] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:09 (9)
-SBY  0:21:38 [fault_prove] summary: engine_0 (smtbmc yices) returned pass for basecase
-SBY  0:21:38 [fault_prove] summary: engine_0 (smtbmc yices) returned pass for induction
-SBY  0:21:38 [fault_prove] summary: engine_0 did not produce any traces
-SBY  0:21:38 [fault_prove] summary: successful proof by k-induction.
-SBY  0:21:38 [fault_prove] DONE (PASS, rc=0)
+SBY  0:42:40 [fault_prove] engine_0: smtbmc yices
+SBY  0:42:40 [fault_prove] engine_0.induction: ##   0:00:00  Solver: yices
+SBY  0:42:40 [fault_prove] engine_0.basecase: ##   0:00:00  Solver: yices
+SBY  0:42:41 [fault_prove] engine_0.basecase: ##   0:00:00  Status: passed
+SBY  0:42:41 [fault_prove] engine_0.basecase: Status returned by engine for basecase: pass
+SBY  0:42:49 [fault_prove] engine_0.induction: ##   0:00:09  Temporal induction successful.
+SBY  0:42:49 [fault_prove] engine_0.induction: ##   0:00:09  Status: passed
+SBY  0:42:49 [fault_prove] engine_0.induction: Status returned by engine for induction: pass
+SBY  0:42:49 [fault_prove] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:09 (9)
+SBY  0:42:49 [fault_prove] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:09 (9)
+SBY  0:42:49 [fault_prove] summary: engine_0 (smtbmc yices) returned pass for basecase
+SBY  0:42:49 [fault_prove] summary: engine_0 (smtbmc yices) returned pass for induction
+SBY  0:42:49 [fault_prove] summary: engine_0 did not produce any traces
+SBY  0:42:49 [fault_prove] summary: successful proof by k-induction.
+SBY  0:42:49 [fault_prove] DONE (PASS, rc=0)
