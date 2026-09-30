@@ -1,32 +1,40 @@
 <title>ORBIT-AI in Orbit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
 /* Layout: a fixed three.js canvas (stars, Earth, the die) behind a column of tall scroll
    scenes. Each scene has a sticky 100svh stage; its scroll progress drives both the 3D
    choreography and HTML text that enters from different directions. One dark look. */
 :root {
   color-scheme: dark;
-  --bg: #04060b;
-  --ink: #e9eef6;
-  --muted: #929cb0;
-  --faint: rgba(233, 238, 246, 0.14);
-  --glass: rgba(6, 10, 18, 0.62);
-  --gold: #f2c35b;
-  --cyan: #6fe0ff;
-  --magenta: #ff7ab8;
-  --amber: #ffa54d;
-  --panel: #0f5a45;
-  --panel-ink: #e8f7ef;
-  --panel-dim: rgba(232, 247, 239, 0.24);
-  --display: "Unbounded", "Arial Black", "Helvetica Neue", Arial, sans-serif;
-  --body: "Instrument Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  /* Vantage palette and type (from the Vantage Raise Kit). */
+  --bg: #080b11;
+  --panel2: #0d121b;
+  --border: #1d2532;
+  --border2: #2a3547;
+  --ink: #e6edf6;
+  --fg: #c2cedd;
+  --muted: #8593a6;
+  --faint: rgba(230, 237, 246, 0.14);
+  --glass: rgba(8, 11, 17, 0.72);
+  --beam: #4da3ff;
+  --mint: #7cf6c9;
+  --watch: #ffca16;
+  --gold: var(--beam);
+  --cyan: var(--beam);
+  --magenta: var(--mint);
+  --amber: var(--watch);
+  --panel: #0b1a2e;
+  --panel-ink: #e6edf6;
+  --panel-dim: rgba(230, 237, 246, 0.22);
+  --display: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; background: var(--bg); color: var(--ink); }
-body { font: 400 17px/1.5 var(--body); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+body { color: var(--fg); font: 400 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; overflow-x: clip; }
 a { color: inherit; }
 
 #gl { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100lvh; display: block; z-index: 0; }
@@ -37,6 +45,15 @@ a { color: inherit; }
 #hud svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 #hud line, #hud polyline { fill: none; stroke-width: 1; }
 main { position: relative; z-index: 2; }
+.vhead { position: fixed; top: 0; left: 0; right: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: calc(12px + env(safe-area-inset-top, 0px)) max(16px, 3vw) 12px; background: rgba(8, 11, 17, 0.7); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); }
+.vbrand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.vbrand svg { width: 26px; height: 26px; color: var(--beam); flex: none; }
+.vbrand .name { font: 700 14.5px/1.1 var(--body); letter-spacing: 0.24em; color: var(--ink); }
+.vbrand .sub { font: 500 10px/1.3 var(--mono); letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+.vconf { font: 500 10px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase; color: var(--watch); border: 1px solid rgba(255, 202, 22, 0.35); padding: 5px 9px; border-radius: 3px; white-space: nowrap; }
+@media (max-width: 520px) { .vconf { display: none; } }
+
 
 .scene { position: relative; }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
@@ -48,11 +65,11 @@ main { position: relative; z-index: 2; }
 #s-pack { height: 380svh; }
 
 [data-a] { will-change: transform, opacity; }
-.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.eyebrow { font: 500 11.5px/1.4 var(--mono); letter-spacing: 0.24em; text-transform: uppercase; color: var(--muted); }
 .shadow { text-shadow: 0 2px 24px rgba(4, 6, 11, 0.9), 0 0 2px rgba(4, 6, 11, 0.8); }
 
 /* ---------- hero ---------- */
-.hero-top { position: absolute; top: max(22px, env(safe-area-inset-top, 0px)); left: 16px; right: 16px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-inline: max(0px, 3vw); }
+.hero-top { position: absolute; top: calc(max(22px, env(safe-area-inset-top, 0px)) + 52px); left: 16px; right: 16px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-inline: max(0px, 3vw); }
 .hero-copy { position: absolute; left: 0; right: 0; top: 18svh; padding-inline: max(16px, 6vw); display: grid; gap: 22px; }
 .hero-copy h1 {
   margin: 0; font: 500 clamp(46px, 8.2vw, 124px)/0.98 var(--display); letter-spacing: -0.035em; max-width: 12ch; text-wrap: balance;
@@ -95,7 +112,8 @@ main { position: relative; z-index: 2; }
 #s-proof .stage { display: grid; place-items: center; padding-inline: 16px; perspective: 1400px; }
 .panel {
   width: min(1100px, 100%); min-height: min(66svh, 620px); border-radius: 18px;
-  background: var(--panel); color: var(--panel-ink);
+  background: radial-gradient(120% 90% at 85% -10%, rgba(77, 163, 255, 0.22), transparent 60%), linear-gradient(180deg, var(--panel), var(--panel2));
+  border: 1px solid var(--border2); color: var(--panel-ink);
   padding: clamp(24px, 6vw, 72px); display: flex; flex-direction: column; justify-content: space-between; gap: 28px;
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6); transform-origin: 50% 100%;
 }
@@ -133,7 +151,7 @@ main { position: relative; z-index: 2; }
 .spec .n small { font: 400 0.42em var(--mono); color: var(--muted); letter-spacing: 0; margin-left: 6px; }
 .spec .l { margin-top: 8px; color: var(--muted); font-size: 14.5px; max-width: 32ch; }
 .cta { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-.btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 24px; border-radius: 999px; background: var(--gold); color: var(--bg); text-decoration: none; font: 600 16px var(--body); }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 15px 24px; border-radius: 999px; background: var(--beam); color: #04101f; text-decoration: none; font: 600 16px var(--body); }
 .btn:hover { background: var(--ink); }
 .btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 .fine { color: var(--muted); font: 400 12px/1.65 var(--mono); max-width: 92ch; margin: 0; }
@@ -164,6 +182,13 @@ main { position: relative; z-index: 2; }
   <div id="tags"></div>
 </div>
 
+<header class="vhead">
+  <div class="vbrand">
+    <svg viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/><polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/><polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/><circle cx="50" cy="49.8" r="6.3"/></svg>
+    <div><div class="name">VANTAGE</div><div class="sub">ORBIT-AI · on-orbit compute</div></div>
+  </div>
+  <span class="vconf">Demonstrator · not flight-qualified</span>
+</header>
 <main>
   <section class="scene" id="s-hero" aria-label="Introduction">
     <div class="stage">
@@ -239,28 +264,28 @@ main { position: relative; z-index: 2; }
           <span class="k">DETECT</span>
           <h3>Duplicate and compare</h3>
           <p>Every accumulator and result register exists twice. A comparator checks the pair every clock. On a mismatch the chip raises fault and stops, so no wrong result leaves the chip.</p>
-          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--cyan)"><rect x="10" y="12" width="70" height="30" rx="3"/><rect x="10" y="68" width="70" height="30" rx="3"/><path d="M80 27h60v20M80 83h60v-20"/><circle cx="160" cy="55" r="18"/><path d="M178 55h40"/><rect x="218" y="40" width="72" height="30" rx="3"/></g><g font-family="JetBrains Mono, monospace" font-size="10" fill="#e9eef6"><text x="22" y="31">copy A</text><text x="22" y="87">copy B</text><text x="152" y="59">=?</text><text x="224" y="59">fault-stop</text></g></svg>
+          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--cyan)"><rect x="10" y="12" width="70" height="30" rx="3"/><rect x="10" y="68" width="70" height="30" rx="3"/><path d="M80 27h60v20M80 83h60v-20"/><circle cx="160" cy="55" r="18"/><path d="M178 55h40"/><rect x="218" y="40" width="72" height="30" rx="3"/></g><g font-family="IBM Plex Mono, monospace" font-size="10" fill="#e6edf6"><text x="22" y="31">copy A</text><text x="22" y="87">copy B</text><text x="152" y="59">=?</text><text x="224" y="59">fault-stop</text></g></svg>
           <div class="stat"><strong>702 / 702</strong> injected flips → fault-stop</div>
         </article>
         <article class="card" style="--c:var(--amber)">
           <span class="k">REPAIR</span>
           <h3>Triple-redundant thermal state</h3>
           <p>The thermal state machine runs in three copies with a majority voter, so a flipped copy is outvoted and rewritten every clock. Throttle at 80 °C, stop at 95 °C, recover at 70 °C.</p>
-          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--amber)"><rect x="10" y="6" width="60" height="24" rx="3"/><rect x="10" y="43" width="60" height="24" rx="3"/><rect x="10" y="80" width="60" height="24" rx="3"/><path d="M70 18h50l20 30M70 55h70M70 92h50l20-30"/><path d="M140 35h30a22 22 0 0 1 0 40h-30z"/><path d="M192 55h40M232 55v45H40v4" stroke-dasharray="3 3"/></g><g font-family="JetBrains Mono, monospace" font-size="10" fill="#e9eef6"><text x="24" y="22">copy 0</text><text x="24" y="59">copy 1</text><text x="24" y="96">copy 2</text><text x="146" y="59">vote</text><text x="240" y="52">every</text><text x="240" y="64">clock</text></g></svg>
+          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--amber)"><rect x="10" y="6" width="60" height="24" rx="3"/><rect x="10" y="43" width="60" height="24" rx="3"/><rect x="10" y="80" width="60" height="24" rx="3"/><path d="M70 18h50l20 30M70 55h70M70 92h50l20-30"/><path d="M140 35h30a22 22 0 0 1 0 40h-30z"/><path d="M192 55h40M232 55v45H40v4" stroke-dasharray="3 3"/></g><g font-family="IBM Plex Mono, monospace" font-size="10" fill="#e6edf6"><text x="24" y="22">copy 0</text><text x="24" y="59">copy 1</text><text x="24" y="96">copy 2</text><text x="146" y="59">vote</text><text x="240" y="52">every</text><text x="240" y="64">clock</text></g></svg>
           <div class="stat"><strong>234 / 234</strong> injected flips repaired next clock</div>
         </article>
         <article class="card" style="--c:var(--magenta)">
           <span class="k">SEPARATE</span>
           <h3>Physical separation</h3>
           <p>A single particle track can upset neighbouring cells. So copy A and copy B are placed in fences 242 µm apart, and every same-bit twin sits at least 251 µm from its partner.</p>
-          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke-width="1.2"><rect x="10" y="8" width="40" height="94" stroke="#6fe0ff"/><rect x="250" y="8" width="40" height="94" stroke="#ff7ab8"/><path d="M50 55h200M50 47v16M250 47v16" stroke="#e9eef6"/></g><text x="150" y="46" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#e9eef6">242 µm</text></svg>
+          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke-width="1.2"><rect x="10" y="8" width="40" height="94" stroke="#4da3ff"/><rect x="250" y="8" width="40" height="94" stroke="#7cf6c9"/><path d="M50 55h200M50 47v16M250 47v16" stroke="#e9eef6"/></g><text x="150" y="46" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="#e6edf6">242 µm</text></svg>
           <div class="stat"><strong>0 of 262</strong> same-bit pairs touching (13 before separation)</div>
         </article>
         <article class="card" style="--c:var(--gold)">
           <span class="k">COMPUTE</span>
           <h3>Signed INT8 × 4 lanes</h3>
           <p>Four signed INT8 multiply-accumulate lanes with INT32 accumulation. Timing closes at a 7.2 ns clock after routing, setup and hold both met.</p>
-          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--gold)"><rect x="10" y="6" width="280" height="20" rx="3"/><rect x="10" y="32" width="280" height="20" rx="3"/><rect x="10" y="58" width="280" height="20" rx="3"/><rect x="10" y="84" width="280" height="20" rx="3"/></g><g font-family="JetBrains Mono, monospace" font-size="10" fill="#e9eef6"><text x="18" y="20">lane 0  int8 × int8 → int32</text><text x="18" y="46">lane 1  int8 × int8 → int32</text><text x="18" y="72">lane 2  int8 × int8 → int32</text><text x="18" y="98">lane 3  int8 × int8 → int32</text></g></svg>
+          <svg viewBox="0 0 300 110" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.2" style="color:var(--gold)"><rect x="10" y="6" width="280" height="20" rx="3"/><rect x="10" y="32" width="280" height="20" rx="3"/><rect x="10" y="58" width="280" height="20" rx="3"/><rect x="10" y="84" width="280" height="20" rx="3"/></g><g font-family="IBM Plex Mono, monospace" font-size="10" fill="#e6edf6"><text x="18" y="20">lane 0  int8 × int8 → int32</text><text x="18" y="46">lane 1  int8 × int8 → int32</text><text x="18" y="72">lane 2  int8 × int8 → int32</text><text x="18" y="98">lane 3  int8 × int8 → int32</text></g></svg>
           <div class="stat"><strong>139 MHz</strong> after routing</div>
         </article>
       </div>
@@ -465,7 +490,7 @@ try {
   document.documentElement.classList.add('nogl');
   throw e;
 }
-renderer.setClearColor(0x04060b, 1);
+renderer.setClearColor(0x080b11, 1);
 renderer.autoClear = false;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -691,8 +716,8 @@ function regionMesh(box, color) {
   overlay.add(g);
   return g;
 }
-const regA = regionMesh(R.copyA, 0x6fe0ff), regB = regionMesh(R.copyB, 0xff7ab8);
-const regT = ['th0', 'th1', 'th2'].map(k => regionMesh(R[k], 0xffa54d));
+const regA = regionMesh(R.copyA, 0x4da3ff), regB = regionMesh(R.copyB, 0x7cf6c9);
+const regT = ['th0', 'th1', 'th2'].map(k => regionMesh(R[k], 0xffca16));
 function lineMesh(points, color) {
   const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0, depthWrite: false }));
   l.renderOrder = 41; overlay.add(l); return l;
@@ -703,7 +728,7 @@ const dimAB = lineMesh([
   new THREE.Vector3(X(R.copyB[0]), 0, Z(dimY)), new THREE.Vector3(X(R.copyB[0]), 0, Z(dimY) - 0.14)], 0xffffff);
 const tc = k => [(R[k][0] + R[k][2]) / 2, (R[k][1] + R[k][3]) / 2];
 const thX = R.th0[2] + 6;
-const dimT = lineMesh([[thX, tc('th2')[1]], [thX, tc('th1')[1]], [thX, tc('th0')[1]]].map(([x, y]) => new THREE.Vector3(X(x), 0, Z(y))), 0xffa54d);
+const dimT = lineMesh([[thX, tc('th2')[1]], [thX, tc('th1')[1]], [thX, tc('th0')[1]]].map(([x, y]) => new THREE.Vector3(X(x), 0, Z(y))), 0xffca16);
 
 /* ----- cosmic rays ----- */
 const RAYS = [];
@@ -849,8 +874,8 @@ function chipTag(text, color) {
   const d = document.createElement('div'); d.className = 'chip-tag'; d.textContent = text; d.style.color = color; tagBox.appendChild(d); return d;
 }
 const tagsR = {
-  A: chipTag('COPY A', '#6fe0ff'), B: chipTag('COPY B', '#ff7ab8'), AB: chipTag('242 µm APART', '#e9eef6'),
-  T: chipTag('THERMAL × 3', '#ffa54d'), T98: chipTag('≥ 98 µm APART', '#ffa54d'),
+  A: chipTag('COPY A', '#4da3ff'), B: chipTag('COPY B', '#7cf6c9'), AB: chipTag('242 µm APART', '#e6edf6'),
+  T: chipTag('THERMAL × 3', '#ffca16'), T98: chipTag('≥ 98 µm APART', '#ffca16'),
   lead: chipTag('LEADFRAME · MOCKUP', '#d9b46a'), wire: chipTag('BOND WIRES', '#ffdc8a'), lidt: chipTag('LID · MOCKUP', '#c8d0dc'),
 };
 const v3 = new THREE.Vector3();
