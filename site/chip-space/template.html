@@ -193,7 +193,6 @@ header#hdr { position: fixed; top: calc(var(--header-inset) + env(safe-area-inse
 .statement em { font-style: italic; }
 .statement a { color: var(--fg); border-bottom: 2px solid var(--rule-strong); transition: border-color var(--motion-fast) var(--motion-ease-out); }
 .statement a:hover { border-bottom-color: var(--fg); }
-.statement .sub { margin-top: 32px; font-family: var(--font-mono); font-size: 13px; color: var(--fg-muted); max-width: 64ch; }
 .stages { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 64px; position: relative; padding-top: 32px; }
 .stages::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 1px; background: var(--rule-strong); transform: scaleX(0); transform-origin: 0 50%; transition: transform 560ms linear; }
 .stages.in::after { transform: scaleX(1); }
@@ -201,7 +200,6 @@ header#hdr { position: fixed; top: calc(var(--header-inset) + env(safe-area-inse
 .stage::before { content: ""; position: absolute; top: -33px; left: 0; width: 36px; height: 3px; background: var(--fg); transform: scaleX(0); transform-origin: 0 50%; transition: transform var(--motion-fast) var(--motion-ease-out); }
 .stage.in::before { transform: scaleX(1); }
 .stage .sn { font-family: var(--font-mono); font-size: 12px; letter-spacing: .05em; color: var(--fg-faint); }
-.stage .who { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); margin-top: 8px; }
 .stage h4 { font-weight: 600; color: var(--fg); font-size: var(--text-body-lg); line-height: 1.25; margin: 12px 0 8px; letter-spacing: -0.01em; }
 .stage p { font-size: 14px; color: var(--fg-muted); }
 
@@ -229,9 +227,9 @@ header#hdr { position: fixed; top: calc(var(--header-inset) + env(safe-area-inse
   font: 400 11.5px/1.5 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--fg-muted); text-shadow: none; }
 
 /* assembly labels, projected from the 3D die (fixed dark glass, the layer is always over the night canvas) */
-.tag { position: absolute; left: 0; top: 0; width: 250px; padding: 9px 12px 10px; background: var(--glass); border: 1px solid var(--glass-line); border-radius: var(--radius-sm);
+.tag { position: absolute; left: 0; top: 0; width: max-content; padding: 9px 12px; background: var(--glass); border: 1px solid var(--glass-line); border-radius: var(--radius-sm);
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); opacity: 0; }
-.tag b { display: flex; align-items: center; gap: 8px; font: 500 14px/1.2 var(--font-mono); letter-spacing: .04em; color: var(--glass-fg); }
+.tag b { display: flex; white-space: nowrap; align-items: center; gap: 8px; font: 500 14px/1.2 var(--font-mono); letter-spacing: .04em; color: var(--glass-fg); }
 .tag b::before { content: ""; width: 10px; height: 10px; border-radius: 1px; background: var(--sw); flex: none; }
 .tag span { display: block; margin-top: 4px; font: 400 12px/1.4 var(--font-mono); color: var(--glass-muted); }
 .tag em, .cap-card em { font-style: normal; color: var(--glass-fg); }
@@ -246,15 +244,10 @@ header#hdr { position: fixed; top: calc(var(--header-inset) + env(safe-area-inse
 /* ---------- 4 evidence (light): four mechanisms + fault injection ---------- */
 .prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
 .prod { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); padding: 32px; min-width: 0; }
-.prod-top { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
 .prod-designator { font-family: var(--font-mono); font-size: 13px; letter-spacing: var(--tracking-label); color: var(--fg); }
-.prod-count { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--fg-faint); }
-.prod h3 { font-weight: 600; color: var(--fg); font-size: var(--text-h3); letter-spacing: var(--tracking-tight); line-height: 1.15; margin: 16px 0 12px; }
+.prod-designator { display: block; }
+.prod h3 { font-weight: 600; color: var(--fg); font-size: var(--text-h3); letter-spacing: var(--tracking-tight); line-height: 1.15; margin: 16px 0 10px; }
 .prod p { color: var(--fg-muted); font-size: 15px; max-width: 48ch; }
-.prod-models { list-style: none; margin-top: auto; border-top: 1px solid var(--rule); }
-.prod p { margin-bottom: 24px; }
-.prod-models li { display: flex; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--fg-muted); }
-.prod-models .i { font-family: var(--font-mono); font-size: 14px; color: var(--fg); flex: 0 0 auto; min-width: 9ch; }
 .fig { margin-top: 64px; }
 .fig .lead { margin-bottom: 20px; }
 .panel { background: var(--panel); border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); padding: clamp(20px, 3.4vw, 40px); }
@@ -264,7 +257,6 @@ header#hdr { position: fixed; top: calc(var(--header-inset) + env(safe-area-inse
 .rail .cell + .cell { border-left: 1px solid var(--rule); padding-left: 24px; }
 .rail .num { font-family: var(--font-mono); font-size: clamp(23px, 2.3vw, 31px); font-weight: 500; color: var(--fg); line-height: 1.1; font-variant-numeric: tabular-nums; }
 .rail .lbl { font-size: 14px; color: var(--fg-muted); margin-top: 8px; max-width: 32ch; }
-.panel .note { margin-top: 24px; }
 
 /* ---------- 6 photo (dark) ---------- */
 .photo-figure { margin: 48px 0 0; }
@@ -306,22 +298,15 @@ table.mx { border-collapse: separate; border-spacing: 0; width: 100%; min-width:
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 .mx-legend { margin-top: 14px; font: 400 12px/1.6 var(--font-mono); color: var(--fg-muted); }
 .mx-legend .ck { display: inline-block; vertical-align: middle; width: 18px; height: 18px; stroke-width: 3; margin: -3px 6px 0 0; }
-.mx-legend .src-n { margin-left: 14px; color: var(--fg-faint); white-space: nowrap; }
 .mx-scope { margin-top: 28px; padding: 16px 20px; border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); max-width: 86ch; font-size: 15px; line-height: 1.6; color: var(--fg-muted); }
 .mx-scope .lead { margin-right: 10px; color: var(--fg); font-size: 11px; }
-.ns { margin-top: 72px; }
-.ns-h { font-weight: 600; font-size: var(--text-h3); letter-spacing: var(--tracking-tight); line-height: 1.2; color: var(--fg); margin-bottom: 16px; }
-.ns-r { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 4px 24px; padding: 12px; border-top: 1px solid var(--rule); align-items: baseline; }
-.ns-r:last-child { border-bottom: 1px solid var(--rule); }
-.ns-r.us { background: var(--bg-2); }
-.ns-r dt { font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--fg); }
-.ns-r dt small { display: block; margin-top: 2px; font: 400 11.5px/1.4 var(--font-mono); color: var(--fg-faint); }
-.ns-r dd { font-size: 14px; line-height: 1.55; color: var(--fg-muted); }
-.ns-r dd .m { font-family: var(--font-mono); font-size: 13px; color: var(--fg); }
-.ns-r sup a { font: 500 10px var(--font-mono); color: var(--fg-faint); margin-left: 2px; border-bottom: 1px solid var(--rule-strong); }
-.ns .note { margin-top: 16px; }
-.src { margin-top: 56px; padding: 20px 0 0 22px; border-top: 1px solid var(--rule); font: 400 11.5px/1.75 var(--font-mono); color: var(--fg-faint); columns: 2 340px; column-gap: 40px; }
-.src li { break-inside: avoid; }
+.src-d { margin-top: 48px; border-top: 1px solid var(--rule); padding-top: 16px; }
+.src-d summary { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; cursor: pointer; list-style: none; font-family: var(--font-mono); font-size: 12px; letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg-faint); }
+.src-d summary::-webkit-details-marker { display: none; }
+.src-d summary::after { content: "+"; font-size: 14px; }
+.src-d[open] summary::after { content: "\2212"; }
+.src-d summary:hover { color: var(--fg); }
+.src { margin-top: 8px; padding-left: 22px; font: 400 11.5px/1.75 var(--font-mono); color: var(--fg-faint); }
 .src a { color: var(--fg-muted); border-bottom: 1px solid var(--rule-strong); overflow-wrap: anywhere; }
 .src a:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
@@ -342,13 +327,10 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
 .foot-top { display: grid; grid-template-columns: 1.7fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
 .foot-brand .brand { color: var(--fg); font-size: 19px; }
 .foot-brand p { color: var(--fg-muted); font-size: 14px; max-width: 40ch; margin-top: 16px; }
-.social-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 24px; }
-.social { display: inline-flex; align-items: center; height: 38px; padding: 0 16px; border: 1px solid var(--rule-strong); border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-muted); }
 .foot-col h5 { font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--fg-faint); margin-bottom: 12px; font-weight: 500; }
 .foot-col a, .foot-col .plain { display: flex; align-items: center; min-height: 40px; color: var(--fg-muted); font-size: 14px; transition: color var(--motion-fast) var(--motion-ease-out); }
 .foot-col a:hover { color: var(--fg); }
 .foot-col .plain { font-family: var(--font-mono); color: var(--fg-faint); user-select: all; overflow-wrap: anywhere; }
-.fine { color: var(--fg-muted); font-size: 13px; line-height: 1.7; padding-top: 24px; border-top: 1px solid var(--rule); margin-bottom: 24px; }
 .foot-bot { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 24px; border-top: 1px solid var(--rule); flex-wrap: wrap; }
 .foot-bot p { font-size: 13px; color: var(--fg-faint); }
 .foot-bot .region { display: flex; gap: 16px; flex-wrap: wrap; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: var(--fg-faint); }
@@ -393,7 +375,6 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
   .rail .cell + .cell { border-left: 0; border-top: 1px solid var(--rule); padding-left: 0; margin-top: 16px; padding-top: 16px; }
   .rail .cell { padding-top: 16px; }
   .spec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
-  .ns-r { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 720px) {
   .tag { display: none; }
@@ -486,7 +467,7 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
     <div class="wrap">
       <span class="eyebrow reveal">ORBIT-AI · On-orbit AI compute</span>
       <h1 class="reveal"><span class="hl">An AI chip for orbit.</span> <span class="hl">It catches its own mistakes.</span></h1>
-      <p class="lede reveal">ORBIT-AI is a Vantage chip design for running AI on board a spacecraft. This <span class="m">346&nbsp;µm</span> demonstrator flags its own bit flips, then stops or repairs them.</p>
+      <p class="lede reveal">A <span class="m">346&nbsp;µm</span> demonstrator that stops or repairs its own bit flips.</p>
       <div class="cta-row reveal">
         <a href="{{EXPLORER}}" class="btn btn-solid" target="_blank" rel="noopener">Explore the die in 3D →</a>
         <a href="#s-compare" class="btn">How it compares →</a>
@@ -498,13 +479,12 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
   <!-- 2 STATEMENT (light) -->
   <section class="sec sec-wide statement tone-light" id="why">
     <div class="wrap">
-      <p class="big reveal"><span class="dim">Anyone can put a chip in orbit.</span> Keeping it <em>right</em> when <a href="#s-rad">radiation flips its bits</a> is the hard part.</p>
-      <p class="sub reveal">Orbit adds three more problems. Nobody can visit to repair a part, heat leaves only by radiation, and every watt comes from solar panels. ORBIT-AI answers each one in the chip's layout.</p>
+      <p class="big reveal"><span class="dim">Any chip can fly.</span> Keeping it <em>right</em> is the hard part.</p>
       <div class="stages reveal" data-stagger="130">
-        <div class="stage reveal"><span class="sn">01 · Radiation</span><span class="who">Answer: duplicate + compare</span><h4>A flipped bit stops the chip.</h4><p>Results are kept twice. A mismatch halts it before a wrong result leaves.</p></div>
-        <div class="stage reveal"><span class="sn">02 · No repair visits</span><span class="who">Answer: triple voting</span><h4>A flipped copy is outvoted.</h4><p>Thermal state is kept three times and rewritten on the next clock.</p></div>
-        <div class="stage reveal"><span class="sn">03 · Heat</span><span class="who">Answer: thermal guard</span><h4>It throttles before it cooks.</h4><p>Throttle at <span class="m">80&nbsp;°C</span>, stop at <span class="m">95&nbsp;°C</span>, recover at <span class="m">70&nbsp;°C</span>.</p></div>
-        <div class="stage reveal"><span class="sn">04 · Power</span><span class="who">Answer: INT8 inference</span><h4>Integer maths, more work per watt.</h4><p>Small integer arithmetic does more work per watt than floating point.</p></div>
+        <div class="stage reveal"><span class="sn">01</span><h4>Radiation flips bits.</h4><p>Protected bits stored twice.</p></div>
+        <div class="stage reveal"><span class="sn">02</span><h4>No repair visits.</h4><p>A flipped copy is outvoted.</p></div>
+        <div class="stage reveal"><span class="sn">03</span><h4>Heat has nowhere to go.</h4><p>Throttle at <span class="m">80&nbsp;°C</span>, stop at <span class="m">95&nbsp;°C</span>.</p></div>
+        <div class="stage reveal"><span class="sn">04</span><h4>Every watt is solar.</h4><p>INT8 maths, more work per watt.</p></div>
       </div>
     </div>
   </section>
@@ -513,13 +493,13 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
   <section class="scene tone-dark" id="s-build" aria-label="The chip assembles layer by layer">
     <div class="stage-s">
       <div class="beat top shadow" data-a data-in="up" data-k="0,0.05,0.12,0.18" data-out="left">
-        <span class="lead">Product output · routed layout · <span class="m">750,439</span> rectangles</span>
+        <span class="lead">Routed layout · <span class="m">750,439</span> rectangles</span>
         <h2>The real routed chip. Layer by layer.</h2>
       </div>
       <div class="beat top right shadow" data-a data-in="down" data-k="0.84,0.92,1,1.1" data-out="up">
         <span class="lead">True scale</span>
         <h2>Pressed flat, it is a few µm thick.</h2>
-        <p>Eight layers on a die <span class="m">346&nbsp;µm</span> across. The spacing above was exaggerated so you could see them.</p>
+        <p>Spacing above was exaggerated.</p>
       </div>
       <div id="caps"></div>
     </div>
@@ -530,51 +510,45 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="eyebrow">Evidence</span>
-        <h2>It catches its own mistakes. In the layout, not in software.</h2>
-        <p>Four mechanisms, placed and checked on the routed chip. Then we flipped its bits on purpose to see what got through.</p>
+        <h2>It catches its own mistakes, in silicon.</h2>
+        <p>Four mechanisms in the routed layout. Then we flipped its bits on purpose.</p>
       </div>
 
       <div class="prod-grid" data-stagger="90">
         <div class="prod reveal">
-          <span class="prod-top"><span class="prod-designator">M/01 DETECT</span><span class="prod-count">duplicated state</span></span>
+          <span class="prod-designator">M/01 DETECT</span>
           <h3>Duplicate and compare.</h3>
-          <p>Every accumulator and result register exists twice. A comparator checks each pair every clock. On a mismatch the chip raises a fault and stops, so no wrong result leaves it.</p>
-          <ul class="prod-models"><li><span class="i">702 / 702</span>injected flips ended in a fault-stop</li></ul>
+          <p>A mismatch stops the chip before a wrong result leaves.</p>
         </div>
         <div class="prod reveal">
-          <span class="prod-top"><span class="prod-designator">M/02 REPAIR</span><span class="prod-count">triplicated state</span></span>
-          <h3>Triple voting on thermal state.</h3>
-          <p>The thermal state machine runs in three copies behind a majority voter. A flipped copy is outvoted and rewritten on the next clock.</p>
-          <ul class="prod-models"><li><span class="i">234 / 234</span>injected flips repaired on the next clock</li></ul>
+          <span class="prod-designator">M/02 REPAIR</span>
+          <h3>Triple voting.</h3>
+          <p>A flipped thermal copy is outvoted and rewritten next clock.</p>
         </div>
         <div class="prod reveal">
-          <span class="prod-top"><span class="prod-designator">M/03 SEPARATE</span><span class="prod-count">placement fences</span></span>
+          <span class="prod-designator">M/03 SEPARATE</span>
           <h3>Keep the twins apart.</h3>
-          <p>One particle track can upset neighbouring cells. So copy A and copy B sit in fences <span class="m">242&nbsp;µm</span> apart, and every same-bit twin is at least <span class="m">251&nbsp;µm</span> from its partner.</p>
-          <ul class="prod-models"><li><span class="i">0 of 262</span>same-bit pairs touching, down from 13 before separation</li></ul>
+          <p>Fences <span class="m">242&nbsp;µm</span> apart; every twin <span class="m">≥&nbsp;251&nbsp;µm</span> from its partner.</p>
         </div>
         <div class="prod reveal">
-          <span class="prod-top"><span class="prod-designator">M/04 COMPUTE</span><span class="prod-count">4 lanes</span></span>
+          <span class="prod-designator">M/04 COMPUTE</span>
           <h3>Signed INT8 arithmetic.</h3>
-          <p>Four signed INT8 multiply-accumulate lanes with INT32 accumulation. Timing closes at a <span class="m">7.2&nbsp;ns</span> clock after routing, setup and hold met.</p>
-          <ul class="prod-models"><li><span class="i">1.1 GOPS</span>INT8 peak: 4 MACs × 2 ops × 139&nbsp;MHz</li></ul>
+          <p>Four lanes, <span class="m">1.1&nbsp;GOPS</span> at <span class="m">139&nbsp;MHz</span>, timing met.</p>
         </div>
       </div>
 
       <figure class="fig reveal">
-        <span class="lead">Simulation output · gate-level fault injection</span>
+        <span class="lead">Gate-level simulation · not a beam test</span>
         <div class="panel">
           <div class="chip-row">
-            <span class="chip chip-nominal">936 / 936 stopped or repaired</span>
             <span class="chip chip-watch">Not radiation-tested</span>
           </div>
-          <p class="big">We flipped 936 bits in the routed chip's protected registers. All 936 were stopped or repaired.</p>
+          <p class="big">We flipped 936 bits. All 936 were stopped or repaired.</p>
           <div class="rail">
-            <div class="cell"><div class="num">702 / 702</div><div class="lbl">Flips in duplicated copies. Each one caught, chip fault-stopped.</div></div>
-            <div class="cell"><div class="num">234 / 234</div><div class="lbl">Flips in thermal copies. Each one repaired on the next clock.</div></div>
-            <div class="cell"><div class="num">0</div><div class="lbl">Wrong results released.</div></div>
+            <div class="cell"><div class="num">702 / 702</div><div class="lbl">Caught, chip fault-stopped</div></div>
+            <div class="cell"><div class="num">234 / 234</div><div class="lbl">Repaired next clock</div></div>
+            <div class="cell"><div class="num">0</div><div class="lbl">Wrong results released</div></div>
           </div>
-          <p class="note">Gate-level simulation of the routed netlist, not a beam test. It shows the error catching works as designed. It says nothing yet about radiation tolerance.</p>
         </div>
       </figure>
     </div>
@@ -584,17 +558,16 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
   <section class="scene tone-dark" id="s-rad" aria-label="Radiation and redundancy">
     <div class="stage-s">
       <div class="beat top narrow shadow" data-a data-in="left" data-k="0.02,0.14,0.3,0.4" data-out="up">
-        <span class="lead">Radiation · cosmic rays, trapped protons</span>
+        <span class="lead">Radiation</span>
         <h2>Particles hit. Bits flip.</h2>
       </div>
       <div class="beat bot right narrow shadow" data-a data-in="right" data-k="0.32,0.44,0.6,0.7" data-out="down">
-        <span class="lead">Product output · placement fences</span>
         <h2>Every protected bit is stored twice.</h2>
-        <p>Copy A sits in the left fence, copy B in the right. The fences are <span class="m">242&nbsp;µm</span> apart. Every same-bit twin is at least <span class="m">251&nbsp;µm</span> from its partner.</p>
+        <p>Twins at least <span class="m">251&nbsp;µm</span> apart.</p>
       </div>
       <div class="beat top narrow shadow" data-a data-in="spin" data-k="0.62,0.74,0.92,1" data-out="spinR">
         <h2>Thermal state is kept three times.</h2>
-        <p>Three copies in the centre column, at least <span class="m">98&nbsp;µm</span> apart. A majority vote runs every clock.</p>
+        <p>Majority vote every clock.</p>
       </div>
     </div>
   </section>
@@ -605,12 +578,11 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
       <div class="sec-head reveal">
         <span class="eyebrow">Where it has to work</span>
         <h2>No repair visits. No second chance.</h2>
-        <p>A part that fails in orbit stays failed. That is why the error catching lives in the silicon, where it cannot be skipped.</p>
       </div>
       <figure class="photo-figure reveal">
         <img src="{{PHOTO}}" width="{{PHOTO_W}}" height="{{PHOTO_H}}" decoding="async"
              alt="Northrop Grumman's Cygnus XL cargo spacecraft against black space, orange solar arrays deployed, on final approach to the International Space Station.">
-        <figcaption>Cargo vehicle on final approach to the International Space Station, photographed from the station. Photograph: NASA, iss073e0703405.</figcaption>
+        <figcaption>Cargo vehicle approaching the ISS. Photo: NASA, iss073e0703405.</figcaption>
       </figure>
     </div>
   </section>
@@ -620,13 +592,13 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="eyebrow">How it compares</span>
-        <h2 id="cmp-h">Built to catch its own mistakes. Nobody else shows you how.</h2>
-        <p>Flight processors are hardened, but they are not AI engines. The AI chips that fly do not publish how they handle upsets. ORBIT-AI does both, and shows its work.</p>
+        <h2 id="cmp-h">Built to catch its own mistakes. Nobody else shows how.</h2>
+        <p>Flight processors are hardened, not AI engines. The AI chips that fly do not publish upset handling.</p>
       </div>
 
       <div class="mx-lead reveal" id="cmp-mx">
-        <span class="lead">Competitive landscape · six capabilities</span>
-        <span class="scroll-hint">Swipe to see all six chips →</span>
+        <span class="lead">Six capabilities</span>
+        <span class="scroll-hint">Swipe for all six chips →</span>
       </div>
       <div class="mx-wrap reveal" tabindex="0" role="region" aria-label="Capability matrix: ORBIT-AI against five space compute chips">
         <table class="mx">
@@ -634,42 +606,31 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
             <tr><th scope="col" class="mx-f"><span class="mx-k">Capability</span></th><th scope="col" class="us"><span class="mx-c"><span class="mx-n">ORBIT-AI</span></span><span class="mx-v">Vantage</span></th><th scope="col"><span class="mx-c"><span class="mx-n">RAD750</span></span><span class="mx-v">BAE Systems<sup><a href="#src-1" aria-label="Source 1">1</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">GR740</span></span><span class="mx-v">Frontgrade Gaisler<sup><a href="#src-2" aria-label="Source 2">2</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">XQR Versal</span></span><span class="mx-v">AMD<sup><a href="#src-3" aria-label="Source 3">3</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">PIC64-HPSC</span></span><span class="mx-v">Microchip<sup><a href="#src-4" aria-label="Source 4">4</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">Jetson Orin NX</span></span><span class="mx-v">NVIDIA<sup><a href="#src-5" aria-label="Source 5">5</a></sup></span></th></tr>
           </thead>
           <tbody>
-            <tr><th scope="row"><span class="mx-t">AI inference engine, INT8</span><small>ORBIT-AI: INT8 multiply lanes, 1.1 GOPS built</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td></tr>
-            <tr><th scope="row"><span class="mx-t">Fault tolerance designed into the hardware</span><small>Hardened or redundant logic, beyond memory ECC. ORBIT-AI: duplicate + compare, triple voting</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td></tr>
-            <tr><th scope="row"><span class="mx-t">Redundant copies physically separated, measured in the layout</span><small>ORBIT-AI: every same-bit twin at least 251&nbsp;µm apart</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
-            <tr><th scope="row"><span class="mx-t">Fault-injection results published bit by bit</span><small>ORBIT-AI: 936 flips injected, each outcome reported</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
-            <tr><th scope="row"><span class="mx-t">Never releases a wrong result on a detected upset</span><small>Fault-stop. ORBIT-AI: verified 936&nbsp;/&nbsp;936 in simulation</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
-            <tr><th scope="row"><span class="mx-t">Open design: layout, RTL and proofs you can inspect</span><small>ORBIT-AI: open sky130 PDK, formal proofs, routed die viewable in 3D. <a href="https://github.com/vittesh12345/chip" target="_blank" rel="noopener">github.com/vittesh12345/chip</a></small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">AI inference engine, INT8</span><small>1.1 GOPS demonstrator</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Hardware fault tolerance</span><small>Beyond memory ECC</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Separated copies, measured in layout</span><small>Twins ≥&nbsp;251&nbsp;µm apart</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Fault injection published bit by bit</span><small>936 flips, each reported</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">No wrong result on a detected upset</span><small>936&nbsp;/&nbsp;936 in simulation</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Open design you can inspect</span><small><a href="https://github.com/vittesh12345/chip" target="_blank" rel="noopener">github.com/vittesh12345/chip</a></small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
           </tbody>
           <tfoot>
             <tr class="mx-tot"><th scope="row"><span class="mx-k">Published, of six</span></th><td class="us">6&nbsp;/&nbsp;6</td><td>1&nbsp;/&nbsp;6</td><td>1&nbsp;/&nbsp;6</td><td>2&nbsp;/&nbsp;6</td><td>2&nbsp;/&nbsp;6</td><td>1&nbsp;/&nbsp;6</td></tr>
           </tfoot>
         </table>
       </div>
-      <p class="mx-legend reveal" id="cmp-leg"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Check mark:</span> published capability · blank not published<span class="src-n">Sources 1 to 5 below.</span></p>
-      <p class="mx-scope reveal"><span class="lead">Scope</span> The 4-lane demonstrator is built: routed sky130 layout, DRC 0, LVS clean. Its fault handling is verified in gate-level simulation; radiation testing is the next step. The 16-tile full-size design, same architecture, reaches <span class="m">6.55 to 26.21</span> INT8 TOPS on paper.</p>
+      <p class="mx-legend reveal" id="cmp-leg"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Check mark:</span> published · blank not published</p>
+      <p class="mx-scope reveal"><span class="lead">Scope</span> Demonstrator built and verified in simulation; radiation testing is next.</p>
 
-      <div class="ns reveal" id="cmp-ns">
-        <h3 class="ns-h">By the numbers</h3>
-        <dl class="ns-l">
-          <div class="ns-r us"><dt>ORBIT-AI demonstrator<small>Built · sky130</small></dt><dd><span class="m">1.1&nbsp;GOPS</span> INT8 at <span class="m">139&nbsp;MHz</span> · <span class="m">936&nbsp;/&nbsp;936</span> flips stopped or repaired · copies <span class="m">≥&nbsp;251&nbsp;µm</span> apart</dd></div>
-          <div class="ns-r us"><dt>ORBIT-AI 16-tile design<small>Full-size design</small></dt><dd><span class="m">6.55 to 26.21</span> INT8 TOPS, dense, <span class="m">200 to 800&nbsp;MHz</span> · designed with selectable duplication, checkpoint and retry</dd></div>
-          <div class="ns-r"><dt>RAD750<small>BAE Systems</small></dt><dd>CPU, <span class="m">~400&nbsp;MIPS</span> · <span class="m">200&nbsp;krad to 1&nbsp;Mrad</span> TID · flies on Curiosity, Perseverance, JWST<sup><a href="#src-1">1</a></sup></dd></div>
-          <div class="ns-r"><dt>GR740<small>Frontgrade Gaisler</small></dt><dd>CPU, <span class="m">1,700&nbsp;DMIPS</span> · <span class="m">300&nbsp;krad(Si)</span> TID · QML-V qualified, 2022<sup><a href="#src-2">2</a></sup></dd></div>
-          <div class="ns-r"><dt>XQR Versal AI Core<small>AMD</small></dt><dd><span class="m">133</span> INT8 TOPS (commercial VC1902 peak) · <span class="m">120&nbsp;krad(Si)</span> TID · Class B qualified, 2022<sup><a href="#src-3">3</a></sup></dd></div>
-          <div class="ns-r"><dt>PIC64-HPSC<small>Microchip · NASA HPSC</small></dt><dd><span class="m">2</span> INT8 TOPS, vector units · <span class="m">100&nbsp;krad</span> TID · in NASA JPL testing, 2026<sup><a href="#src-4">4</a></sup></dd></div>
-          <div class="ns-r"><dt>Jetson Orin NX 16GB<small>NVIDIA</small></dt><dd><span class="m">100</span> INT8 TOPS, sparse · not radiation-rated · flew shielded, Aug 2024<sup><a href="#src-5">5</a></sup></dd></div>
-        </dl>
-        <p class="note">Vendor figures in each vendor's own unit; CPU instruction rates and INT8 operations are not like-for-like. Flight processors carry radiation ratings and flight heritage that ORBIT-AI does not yet have.</p>
-      </div>
-
-      <ol class="src" aria-label="Sources">
-        <li id="src-1">RAD750: <a href="https://www.spaceflightnow.com/mars/msl/120810computer/" target="_blank" rel="noopener">Spaceflight Now</a>, <a href="https://satsearch.co/products/bae-systems-rad750-radiation-hardened-powerpc-microprocessor" target="_blank" rel="noopener">satsearch (BAE)</a>, <a href="https://en.wikipedia.org/wiki/RAD750" target="_blank" rel="noopener">Wikipedia</a></li>
-        <li id="src-2">GR740: <a href="https://download.gaisler.com/products/gr740/doc/GR740-OVERVIEW.pdf" target="_blank" rel="noopener">Gaisler overview</a>, <a href="https://www.gaisler.com/news-events/qml-v-and-qml-q-space-grade-qualification-of-the-gr740-quad-core-leon4ft-microprocessor" target="_blank" rel="noopener">QML-V notice</a></li>
-        <li id="src-3">XQR Versal: <a href="https://www.amd.com/en/products/adaptive-socs-and-fpgas/versal/space-grade.html" target="_blank" rel="noopener">AMD</a>, <a href="https://docs.amd.com/v/u/en-US/versal-ai-core-product-selection-guide" target="_blank" rel="noopener">Versal AI Core selection guide</a>, <a href="https://indico.esa.int/event/531/contributions/10592/attachments/6538/11610/AMD%20XQR%20Versal%20Adaptive%20SoCs%20Enable%20Next-Generation%20Signal%20Processing%20and%20AI%20in%20Space%20-%20SEFUW%20Non-NDA%202025-03-25%20FINAL.pdf" target="_blank" rel="noopener">ESA SEFUW 2025</a></li>
-        <li id="src-4">PIC64-HPSC: <a href="https://www.microchip.com/en-us/about/news-releases/products/microchip-unveils-industrys-highest-performance-64-bit-hpsc-mpu" target="_blank" rel="noopener">Microchip</a>, <a href="https://riscv.org/blog/eight-core-risc-v-processor-and-tsn-switch-for-ai-space-designs/" target="_blank" rel="noopener">RISC-V International</a>, <a href="https://glitchwire.com/news/nasas-hpsc-processor-tests-500x-faster-than-current-spaceflight-computers-openin/" target="_blank" rel="noopener">Glitchwire</a></li>
-        <li id="src-5">Jetson Orin NX: <a href="https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/" target="_blank" rel="noopener">NVIDIA</a>, <a href="https://www.researchgate.net/publication/387116286_Total_Ionizing_Dose_Radiation_Testing_of_NVIDIA_Jetson_Orin_NX_System_on_Module" target="_blank" rel="noopener">TID test</a>, <a href="https://hubble.com/community/guides/nvidia-jetson-orin-on-satellites-what-on-orbit-edge-ai-looks-like-today/" target="_blank" rel="noopener">flight summary</a></li>
-      </ol>
+      <details class="src-d reveal" id="cmp-src">
+        <summary>Sources</summary>
+        <ol class="src" aria-label="Sources">
+          <li id="src-1">RAD750: <a href="https://www.spaceflightnow.com/mars/msl/120810computer/" target="_blank" rel="noopener">Spaceflight Now</a>, <a href="https://satsearch.co/products/bae-systems-rad750-radiation-hardened-powerpc-microprocessor" target="_blank" rel="noopener">satsearch (BAE)</a>, <a href="https://en.wikipedia.org/wiki/RAD750" target="_blank" rel="noopener">Wikipedia</a></li>
+          <li id="src-2">GR740: <a href="https://download.gaisler.com/products/gr740/doc/GR740-OVERVIEW.pdf" target="_blank" rel="noopener">Gaisler overview</a>, <a href="https://www.gaisler.com/news-events/qml-v-and-qml-q-space-grade-qualification-of-the-gr740-quad-core-leon4ft-microprocessor" target="_blank" rel="noopener">QML-V notice</a></li>
+          <li id="src-3">XQR Versal: <a href="https://www.amd.com/en/products/adaptive-socs-and-fpgas/versal/space-grade.html" target="_blank" rel="noopener">AMD</a>, <a href="https://docs.amd.com/v/u/en-US/versal-ai-core-product-selection-guide" target="_blank" rel="noopener">selection guide</a>, <a href="https://indico.esa.int/event/531/contributions/10592/attachments/6538/11610/AMD%20XQR%20Versal%20Adaptive%20SoCs%20Enable%20Next-Generation%20Signal%20Processing%20and%20AI%20in%20Space%20-%20SEFUW%20Non-NDA%202025-03-25%20FINAL.pdf" target="_blank" rel="noopener">ESA SEFUW 2025</a></li>
+          <li id="src-4">PIC64-HPSC: <a href="https://www.microchip.com/en-us/about/news-releases/products/microchip-unveils-industrys-highest-performance-64-bit-hpsc-mpu" target="_blank" rel="noopener">Microchip</a>, <a href="https://riscv.org/blog/eight-core-risc-v-processor-and-tsn-switch-for-ai-space-designs/" target="_blank" rel="noopener">RISC-V International</a>, <a href="https://glitchwire.com/news/nasas-hpsc-processor-tests-500x-faster-than-current-spaceflight-computers-openin/" target="_blank" rel="noopener">Glitchwire</a></li>
+          <li id="src-5">Jetson Orin NX: <a href="https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/" target="_blank" rel="noopener">NVIDIA</a>, <a href="https://www.researchgate.net/publication/387116286_Total_Ionizing_Dose_Radiation_Testing_of_NVIDIA_Jetson_Orin_NX_System_on_Module" target="_blank" rel="noopener">TID test</a>, <a href="https://hubble.com/community/guides/nvidia-jetson-orin-on-satellites-what-on-orbit-edge-ai-looks-like-today/" target="_blank" rel="noopener">flight summary</a></li>
+        </ol>
+      </details>
     </div>
   </section>
 
@@ -677,14 +638,12 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
   <section class="scene tone-dark" id="s-pack" aria-label="The package closes around the die">
     <div class="stage-s">
       <div class="beat top shadow" data-a data-in="left" data-k="0.02,0.12,0.5,0.6" data-out="left">
-        <span class="lead">Mockup · not routed data</span>
         <h2>Then it gets a package.</h2>
-        <p>Leadframe, bond wires and a lid close in around the die.</p>
-        <span class="mock">Illustrative QFN-style mockup. Not routed data, not to scale, not a flight package.</span>
+        <span class="mock">Mockup package · not to scale</span>
       </div>
       <div class="beat bot right shadow" data-a data-in="tilt" data-k="0.62,0.74,0.95,1.05" data-out="up">
         <h2>Under one lid.</h2>
-        <p><span class="m">6,270</span> logic cells and <span class="m">521</span> flip-flops. <span class="m">518</span> of those flip-flops hold duplicated or triplicated state.</p>
+        <p><span class="m">6,270</span> logic cells · <span class="m">521</span> flip-flops</p>
       </div>
     </div>
   </section>
@@ -694,22 +653,19 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
       <div class="wrap">
         <span class="eyebrow" data-a data-in="left" data-k="0,0.5,2,2">ORBIT-AI · sky130 demonstrator</span>
         <h2 data-a data-in="down" data-k="0,0.6,2,2">An AI chip that catches its own mistakes.</h2>
-        <p data-a data-in="down" data-k="0,0.7,2,2">Direction, not a product: on-board inference hardware for spacecraft autonomy when the ground link is denied, the job Vantage built GuardianEdge for.</p>
+        <p data-a data-in="down" data-k="0,0.7,2,2">The 16-tile full-size design: <span class="m">6.55 to 26.21</span> INT8 TOPS, on paper.</p>
       </div>
     </div>
     <div class="specs">
       <div class="wrap">
         <span class="eyebrow reveal">Specifications · routed demonstrator</span>
         <div class="spec-grid reveal">
-          <div class="spec"><div class="n">346<small>× 346&nbsp;µm</small></div><div class="l">Die, SkyWater sky130 open PDK</div></div>
-          <div class="spec"><div class="n">1.1<small>GOPS INT8</small></div><div class="l">Peak: 4 MAC lanes × 2 ops × 139&nbsp;MHz. 6,270 logic cells, routed with OpenROAD</div></div>
-          <div class="spec"><div class="n">750,439</div><div class="l">Layout rectangles in the routed die</div></div>
-          <div class="spec"><div class="n">521</div><div class="l">Flip-flops; 518 of them in duplicated or triplicated storage</div></div>
-          <div class="spec"><div class="n">139<small>MHz</small></div><div class="l">7.2&nbsp;ns clock, setup and hold met after routing</div></div>
-          <div class="spec"><div class="n">≥ 251<small>µm</small></div><div class="l">Between every same-bit twin; 0 of 262 pairs touching (13 before separation)</div></div>
-          <div class="spec"><div class="n">≥ 98<small>µm</small></div><div class="l">Between the three thermal-state copies</div></div>
-          <div class="spec"><div class="n">936<small>/ 936</small></div><div class="l">Injected bit flips caught: 702 fault-stopped, 234 repaired next clock</div></div>
-          <div class="spec"><div class="n">0<small>DRC errors</small></div><div class="l">LVS clean, antenna clean</div></div>
+          <div class="spec"><div class="n">346<small>× 346&nbsp;µm</small></div><div class="l">Die, sky130 open PDK</div></div>
+          <div class="spec"><div class="n">1.1<small>GOPS INT8</small></div><div class="l">Peak, four MAC lanes</div></div>
+          <div class="spec"><div class="n">139<small>MHz</small></div><div class="l">Clock, timing met</div></div>
+          <div class="spec"><div class="n">≥ 251<small>µm</small></div><div class="l">Between same-bit twins</div></div>
+          <div class="spec"><div class="n">936<small>/ 936</small></div><div class="l">Flips stopped or repaired</div></div>
+          <div class="spec"><div class="n">0<small>DRC errors</small></div><div class="l">LVS and antenna clean</div></div>
         </div>
       </div>
     </div>
@@ -720,8 +676,7 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
     <div class="wrap">
       <div class="cta-head reveal">
         <span class="eyebrow">Explore the die</span>
-        <h2>Walk every layer yourself. Then bring us a mission.</h2>
-        <p>Every layer, every protected register and the mockup package, in 3D. A demonstrator with simulated evidence, not a flight part.</p>
+        <h2>Walk every layer. Then bring us a mission.</h2>
       </div>
       <div class="cta-blocks reveal">
         <a class="cta-block cta-block--grey" href="{{EXPLORER}}" target="_blank" rel="noopener">Explore the die in 3D <span class="arrow" aria-hidden="true">→</span></a>
@@ -747,12 +702,7 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
           </span>
           VANTAGE
         </a>
-        <p>ORBIT-AI is Vantage's chip design for running AI on board a spacecraft, with the error catching built into the silicon. This page shows the routed sky130 demonstrator.</p>
-        <div class="social-row">
-          <span class="social">Demonstrator</span>
-          <span class="social">Simulated evidence</span>
-          <span class="social">Not flight-qualified</span>
-        </div>
+        <p>Demonstrator. Simulated evidence. Not flight-qualified.</p>
       </div>
       <div class="foot-col">
         <h5>This page</h5>
@@ -774,10 +724,9 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
         <span class="plain">contact@vantage.industries</span>
       </div>
     </div>
-    <p class="fine">Scope, stated plainly: this is a small demonstrator on the SkyWater sky130 open PDK, not the 16-tile ORBIT-AI full-size design. It is not radiation-qualified or flight-qualified, and sky130 is not radiation-characterised. The distances shown are layout geometry, not an upset-rate model. Fault handling was verified by gate-level fault injection on the routed netlist, not by beam testing. The package is an illustrative mockup. Layer colours are approximate, and layer spacing is exaggerated during the assembly. Competitor figures are vendor peaks, from the sources listed above.</p>
     <div class="foot-bot">
-      <p>© 2026 Vantage · ORBIT-AI on-orbit AI compute</p>
-      <span class="region"><span>SIMULATED EVIDENCE</span><span>NOT FLIGHT-QUALIFIED</span></span>
+      <p>© 2026 Vantage · ORBIT-AI</p>
+      <span class="region"><span>SKY130 NOT RADIATION-CHARACTERISED</span><span>DISTANCES ARE LAYOUT GEOMETRY</span></span>
     </div>
   </div>
 </footer>
@@ -870,6 +819,10 @@ window.__SPACE = { tex: {{TEXTURES}}, geo: {{SCENE}} };
     }, { rootMargin: (-offset) + 'px 0px -60% 0px', threshold: 0 });
     sections.forEach(function (s) { io.observe(s); });
   })();
+
+  /* source superscripts open the collapsed sources list */
+  var srcD = document.getElementById('cmp-src');
+  if (srcD) document.addEventListener('click', function (e) { var a = e.target.closest('a[href^="#src-"]'); if (a) srcD.open = true; });
 
   /* reveal, staggered within each group */
   var targets = document.querySelectorAll('.reveal');
@@ -1268,13 +1221,13 @@ const NS = 'http://www.w3.org/2000/svg';
 LAYERS.forEach((l, i) => {
   const t = document.createElement('div');
   t.className = 'tag'; t.style.setProperty('--sw', l.sw);
-  t.innerHTML = `<b>${l.n}</b><span><em>${l.h}</em> · ${l.role}</span>`;
+  t.innerHTML = `<b>${l.n} · ${l.h}</b>`;
   tagBox.appendChild(t); l.tag = t;
   const pl = document.createElementNS(NS, 'polyline'); pl.setAttribute('stroke', l.sw); svg.appendChild(pl); l.lead = pl;
   const dot = document.createElementNS(NS, 'circle'); dot.setAttribute('r', 3); dot.setAttribute('fill', l.sw); svg.appendChild(dot); l.dot = dot;
   const c = document.createElement('div');
   c.className = 'cap-card'; c.style.setProperty('--sw', l.sw);
-  c.innerHTML = `<div class="n">LAYER ${i + 1} OF 8 · BOTTOM UP</div><b>${l.n}</b><span><em>${l.h}</em> · ${l.role}</span>`;
+  c.innerHTML = `<div class="n">LAYER ${i + 1} OF 8</div><b>${l.n} · ${l.h}</b>`;
   caps.appendChild(c); l.cap = c;
 });
 function chipTag(text, color) {
@@ -1510,7 +1463,7 @@ function render(S) {
     for (let j = 1; j < list.length; j++) { const g = (list[j - 1].l.tag.offsetHeight || 60) + 10; if (list[j].y > list[j - 1].y - g) list[j].y = list[j - 1].y - g; }
   });
   pts.forEach(p => {
-    const t = p.l.tag, w = 250, h = t.offsetHeight || 52;
+    const t = p.l.tag, w = t.offsetWidth || 180, h = t.offsetHeight || 40;
     const land = seg(b, 0.07 + p.i * 0.086 + 0.1, 0.07 + p.i * 0.086 + 0.16);
     const slide = (1 - easeOut(land)) * (p.right ? 80 : -80);
     const gap = 70;
