@@ -272,63 +272,54 @@ header#hdr { position: fixed; top: calc(var(--header-inset) + env(safe-area-inse
 .photo-figure figcaption { margin-top: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--fg-faint); line-height: 1.6; }
 
 /* ---------- 7 comparison (light) ---------- */
-.cmp-scope { margin-top: 24px; padding: 16px 20px; border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); max-width: 86ch; }
-.cmp-scope .lead { display: block; margin-bottom: 6px; color: var(--fg); }
-.cmp-scope p { font-size: 15px; color: var(--fg-muted); }
-.tbl-lead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 24px; flex-wrap: wrap; margin: 56px 0 16px; }
+/* competitive landscape: check-mark matrix, ORBIT-AI column first */
+.mx-lead { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 24px; flex-wrap: wrap; margin: 56px 0 8px; }
 .scroll-hint { font-family: var(--font-mono); font-size: 11px; color: var(--fg-faint); display: none; }
-.tbl-wrap { overflow-x: auto; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); -webkit-overflow-scrolling: touch; }
-table.cmp-t { border-collapse: collapse; width: 100%; min-width: 1060px; font-size: 14px; line-height: 1.5; color: var(--fg-muted); }
-.cmp-t th, .cmp-t td { text-align: left; vertical-align: top; padding: 14px 16px 14px 0; border-bottom: 1px solid var(--rule); }
-.cmp-t td { padding-left: 16px; }
-.cmp-t thead th { font: 500 11px/1.35 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); padding-top: 16px; }
-.cmp-t thead th + th { padding-left: 16px; }
-.cmp-t tbody th { font-weight: 600; font-size: 15px; color: var(--fg); min-width: 168px; position: sticky; left: 0; background: var(--bg); z-index: 1; box-shadow: 1px 0 0 var(--rule); }
-.cmp-t tbody th small { display: block; margin-top: 2px; font: 400 11.5px/1.4 var(--font-mono); color: var(--fg-faint); }
-.cmp-t .grp th { position: static; padding: 28px 0 10px; font: 600 12.5px/1.3 var(--font-sans); letter-spacing: var(--tracking-label); text-transform: uppercase; color: var(--fg); box-shadow: none; border-bottom: 1px solid var(--rule-strong); }
-.cmp-t .grp th span { margin-left: 12px; font: 400 12px var(--font-mono); letter-spacing: 0; text-transform: none; color: var(--fg-faint); }
-.cmp-t td b { color: var(--fg); font-weight: 600; }
-.cmp-t .v { display: block; font-family: var(--font-mono); font-size: 15px; color: var(--fg); font-variant-numeric: tabular-nums; }
-.cmp-t .v small { font-size: 12px; color: var(--fg-faint); }
-.cmp-t .v + span { display: block; font-size: 13px; color: var(--fg-faint); margin-top: 2px; }
-.cmp-t .chip { margin-bottom: 6px; }
-.cmp-t td .mono-s { font-family: var(--font-mono); font-size: 12.5px; }
-.cmp-t tr.us th, .cmp-t tr.us td { background: var(--bg-2); }
-.cmp-t sup a { font: 500 10px var(--font-mono); color: var(--fg-faint); margin-left: 2px; border-bottom: 1px solid var(--rule-strong); }
-.cmp-t sup a:hover { color: var(--fg); }
-.cmp-t .col-for { min-width: 190px; }
-.cmp-t .col-ai { min-width: 150px; }
-.cmp-t .col-rad { min-width: 210px; }
-.cmp-t .col-err { min-width: 220px; }
-.cmp-t .col-fly { min-width: 170px; }
-
-/* one chart, one unit: peak INT8 TOPS on a log axis */
-.bars { margin-top: 64px; }
-.bars-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 24px; flex-wrap: wrap; margin-bottom: 8px; }
-.bars-head h3 { font-weight: 600; font-size: var(--text-h3); letter-spacing: var(--tracking-tight); line-height: 1.2; color: var(--fg); max-width: 30ch; }
-.bars-sub { font-family: var(--font-mono); font-size: 12px; color: var(--fg-faint); margin-bottom: 24px; }
-.brow { display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 4px 24px; align-items: center; padding: 10px 0; border-top: 1px solid var(--rule); }
-.brow .nm { font-weight: 600; font-size: 15px; line-height: 1.25; color: var(--fg); }
-.brow .nm small { display: block; margin-top: 2px; font: 400 11.5px/1.4 var(--font-mono); color: var(--fg-faint); }
-.trk { position: relative; height: 28px; background: repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px calc(100% / 7)); }
-.trk .bar { position: absolute; left: 0; top: 4px; bottom: 4px; width: var(--w); background: var(--fg); border-radius: 0 4px 4px 0; }
-.trk .rng { position: absolute; top: 4px; bottom: 4px; left: var(--x); width: var(--w); border: 1px solid var(--fg); border-radius: 2px;
-  background: repeating-linear-gradient(135deg, var(--fg) 0 1.5px, transparent 1.5px 6px); }
-.trk .val { position: absolute; top: 50%; transform: translateY(-50%); font-family: var(--font-mono); font-size: 13px; color: var(--fg); white-space: nowrap; font-variant-numeric: tabular-nums; }
-.trk .val.out { left: calc(var(--w) + 8px); }
-.trk .val.in { right: calc(100% - var(--w) + 8px); color: var(--bg); }
-.trk .val.before { right: calc(100% - var(--x) + 8px); }
-.axis-row { display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 0 24px; border-top: 1px solid var(--rule-strong); }
-.axis { position: relative; height: 22px; margin-top: 6px; font: 400 11px/1 var(--font-mono); color: var(--fg-faint); }
-.axis span { position: absolute; top: 4px; transform: translateX(-50%); white-space: nowrap; }
-.axis span:first-child { transform: none; }
-.axis span:last-child { transform: translateX(-100%); }
-.axis-u { grid-column: 2; font: 400 11px/1.4 var(--font-mono); color: var(--fg-faint); margin-top: 2px; }
-.not-plotted { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--rule); display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 8px 24px; }
-.not-plotted .k { font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-faint); }
-.not-plotted ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 28px; font-size: 14px; color: var(--fg-muted); }
-.not-plotted li b { color: var(--fg); font-weight: 600; }
-.bars .note { margin-top: 20px; }
+.mx-wrap { position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); }
+.mx-wrap:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
+table.mx { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 900px; table-layout: fixed; }
+.mx th, .mx td { position: relative; padding: 0; text-align: center; vertical-align: middle; }
+.mx td .ck { display: block; margin: 0 auto; }
+.mx .mx-f, .mx tbody th, .mx tfoot th { width: 34%; text-align: left; position: -webkit-sticky; position: sticky; left: 0; z-index: 2; background: var(--bg); padding-right: 24px; }
+.mx thead th { padding: 32px 8px 24px; vertical-align: top; }
+.mx thead th:not(.us):not(.mx-f) .mx-c { margin-top: 14px; }
+.mx thead th:not(.us):not(.mx-f) .mx-v { margin-top: 26px; }
+.mx thead .mx-f { padding-left: 0; vertical-align: bottom; }
+.mx-k { font: 500 11px/1.35 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--fg-faint); }
+.mx-c { display: flex; align-items: center; justify-content: center; width: 76px; height: 76px; margin: 0 auto; border-radius: 50%; border: 1px solid var(--rule-strong); background: var(--bg); padding: 6px; }
+.mx-n { font-weight: 600; font-size: 12.5px; line-height: 1.15; letter-spacing: -0.01em; color: var(--fg); text-wrap: balance; }
+.mx thead .us .mx-c { width: 104px; height: 104px; border: 0; background: var(--fg); box-shadow: 0 0 0 6px var(--bg-2), 0 0 0 7px var(--rule-strong); }
+.mx thead .us .mx-n { color: var(--bg); font-size: 16px; letter-spacing: 0.02em; }
+.mx-v { display: block; margin-top: 12px; font: 400 11px/1.35 var(--font-mono); color: var(--fg-faint); }
+.mx-v sup a { font-size: 10px; color: var(--fg-faint); margin-left: 3px; border-bottom: 1px solid var(--rule-strong); }
+.mx-v sup a:hover { color: var(--fg); }
+.mx .us { background: var(--bg-2); }
+.mx tbody th, .mx tbody td { border-top: 1px dashed var(--rule-strong); }
+.mx tbody th { padding: 20px 24px 20px 0; }
+.mx-t { display: block; font-weight: 600; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; color: var(--fg); }
+.mx tbody th small { display: block; margin-top: 6px; font: 400 11.5px/1.5 var(--font-mono); color: var(--fg-faint); }
+.ck { width: 34px; height: 34px; fill: none; stroke: var(--fg-faint); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; vertical-align: middle; }
+.mx td.us .ck { width: 40px; height: 40px; stroke: var(--fg); stroke-width: 3; }
+.mx tfoot th, .mx tfoot td { border-top: 1px solid var(--rule-strong); padding: 16px 8px; font: 500 13px/1 var(--font-mono); color: var(--fg-faint); font-variant-numeric: tabular-nums; }
+.mx tfoot th { padding-left: 0; }
+.mx tfoot td.us { color: var(--fg); font-size: 17px; font-weight: 600; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.mx-legend { margin-top: 14px; font: 400 12px/1.6 var(--font-mono); color: var(--fg-muted); }
+.mx-legend .ck { display: inline-block; vertical-align: middle; width: 18px; height: 18px; stroke-width: 3; margin: -3px 6px 0 0; }
+.mx-legend .src-n { margin-left: 14px; color: var(--fg-faint); white-space: nowrap; }
+.mx-scope { margin-top: 28px; padding: 16px 20px; border: 1px solid var(--rule-strong); border-radius: var(--radius-sm); max-width: 86ch; font-size: 15px; line-height: 1.6; color: var(--fg-muted); }
+.mx-scope .lead { margin-right: 10px; color: var(--fg); font-size: 11px; }
+.ns { margin-top: 72px; }
+.ns-h { font-weight: 600; font-size: var(--text-h3); letter-spacing: var(--tracking-tight); line-height: 1.2; color: var(--fg); margin-bottom: 16px; }
+.ns-r { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 4px 24px; padding: 12px; border-top: 1px solid var(--rule); align-items: baseline; }
+.ns-r:last-child { border-bottom: 1px solid var(--rule); }
+.ns-r.us { background: var(--bg-2); }
+.ns-r dt { font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--fg); }
+.ns-r dt small { display: block; margin-top: 2px; font: 400 11.5px/1.4 var(--font-mono); color: var(--fg-faint); }
+.ns-r dd { font-size: 14px; line-height: 1.55; color: var(--fg-muted); }
+.ns-r dd .m { font-family: var(--font-mono); font-size: 13px; color: var(--fg); }
+.ns-r sup a { font: 500 10px var(--font-mono); color: var(--fg-faint); margin-left: 2px; border-bottom: 1px solid var(--rule-strong); }
+.ns .note { margin-top: 16px; }
 .src { margin-top: 56px; padding: 20px 0 0 22px; border-top: 1px solid var(--rule); font: 400 11.5px/1.75 var(--font-mono); color: var(--fg-faint); columns: 2 340px; column-gap: 40px; }
 .src li { break-inside: avoid; }
 .src a { color: var(--fg-muted); border-bottom: 1px solid var(--rule-strong); overflow-wrap: anywhere; }
@@ -402,16 +393,27 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
   .rail .cell + .cell { border-left: 0; border-top: 1px solid var(--rule); padding-left: 0; margin-top: 16px; padding-top: 16px; }
   .rail .cell { padding-top: 16px; }
   .spec-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 24px; }
-  .brow, .axis-row, .not-plotted { grid-template-columns: minmax(0, 1fr); }
-  .axis-row > :first-child { display: none; }
-  .axis-u { grid-column: 1; }
-  .brow { padding: 12px 0 8px; }
+  .ns-r { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 720px) {
   .tag { display: none; }
   .cap-card { display: block; }
   .scroll-hint { display: block; }
-  .axis span:nth-child(even) { display: none; }
+  table.mx { min-width: 660px; }
+  .mx .mx-f, .mx tbody th, .mx tfoot th { width: 168px; padding-right: 12px; box-shadow: 1px 0 0 var(--rule); }
+  .mx thead th { padding: 20px 4px 16px; }
+  .mx thead th:not(.us):not(.mx-f) .mx-c { margin-top: 9px; }
+  .mx thead th:not(.us):not(.mx-f) .mx-v { margin-top: 17px; }
+  .mx-c { width: 58px; height: 58px; padding: 4px; }
+  .mx-n { font-size: 10.5px; }
+  .mx thead .us .mx-c { width: 76px; height: 76px; box-shadow: 0 0 0 4px var(--bg-2), 0 0 0 5px var(--rule-strong); }
+  .mx thead .us .mx-n { font-size: 13px; }
+  .mx-v { font-size: 10px; margin-top: 8px; }
+  .mx-t { font-size: 14.5px; }
+  .mx tbody th { padding: 14px 12px 14px 0; }
+  .mx tbody th small { font-size: 10.5px; }
+  .ck { width: 26px; height: 26px; }
+  .mx td.us .ck { width: 30px; height: 30px; }
   .nav-cta { display: none; }
   .beat p { font-size: 15.5px; }
   .narrow h2 { max-width: 17ch; }
@@ -618,76 +620,55 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
     <div class="wrap">
       <div class="sec-head reveal">
         <span class="eyebrow">How it compares</span>
-        <h2 id="cmp-h">Today you choose: survives space, or fast at AI.</h2>
-        <p>Flight-proven radiation-hardened processors are dependable, but they are general-purpose CPUs, not AI engines. The fast AI chips that fly are either costly radiation-tolerant parts or commercial chips with no radiation rating.</p>
-        <p>ORBIT-AI is designed to put AI speed and built-in error catching on one chip.</p>
-      </div>
-      <div class="cmp-scope reveal">
-        <span class="lead">What is proven so far</span>
-        <p>The built demonstrator proves the error catching, in simulation. It does not yet prove AI speed or radiation tolerance.</p>
+        <h2 id="cmp-h">Built to catch its own mistakes. Nobody else shows you how.</h2>
+        <p>Flight processors are hardened, but they are not AI engines. The AI chips that fly do not publish how they handle upsets. ORBIT-AI does both, and shows its work.</p>
       </div>
 
-      <div class="tbl-lead reveal">
-        <span class="lead">Nine chips, five plain questions</span>
-        <span class="scroll-hint">Table scrolls sideways →</span>
+      <div class="mx-lead reveal" id="cmp-mx">
+        <span class="lead">Competitive landscape · six capabilities</span>
+        <span class="scroll-hint">Swipe to see all six chips →</span>
       </div>
-      <div class="tbl-wrap reveal" tabindex="0" role="region" aria-label="Comparison of space compute chips">
-        <table class="cmp-t">
+      <div class="mx-wrap reveal" tabindex="0" role="region" aria-label="Capability matrix: ORBIT-AI against five space compute chips">
+        <table class="mx">
           <thead>
-            <tr><th scope="col">Chip</th><th scope="col" class="col-for">What it is for</th><th scope="col" class="col-ai">AI speed, INT8 TOPS</th><th scope="col" class="col-rad">Survives radiation?</th><th scope="col" class="col-err">Catches its own errors on chip?</th><th scope="col" class="col-fly">Flying today?</th></tr>
+            <tr><th scope="col" class="mx-f"><span class="mx-k">Capability</span></th><th scope="col" class="us"><span class="mx-c"><span class="mx-n">ORBIT-AI</span></span><span class="mx-v">Vantage</span></th><th scope="col"><span class="mx-c"><span class="mx-n">RAD750</span></span><span class="mx-v">BAE Systems<sup><a href="#src-1" aria-label="Source 1">1</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">GR740</span></span><span class="mx-v">Frontgrade Gaisler<sup><a href="#src-2" aria-label="Source 2">2</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">XQR Versal</span></span><span class="mx-v">AMD<sup><a href="#src-3" aria-label="Source 3">3</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">PIC64-HPSC</span></span><span class="mx-v">Microchip<sup><a href="#src-4" aria-label="Source 4">4</a></sup></span></th><th scope="col"><span class="mx-c"><span class="mx-n">Jetson Orin NX</span></span><span class="mx-v">NVIDIA<sup><a href="#src-5" aria-label="Source 5">5</a></sup></span></th></tr>
           </thead>
           <tbody>
-            <tr class="grp"><th colspan="6" scope="colgroup">Radiation-hardened processors <span>the flight-proven class</span></th></tr>
-            <tr><th scope="row">RAD750<small>BAE Systems</small></th><td>Flight computer, Curiosity, Perseverance and JWST</td><td><b>Not an AI chip</b><br><span class="mono-s">CPU, ~400&nbsp;MIPS</span></td><td><span class="chip chip-nominal">Yes</span><br>Rated <span class="mono-s">200&nbsp;krad to 1&nbsp;Mrad</span> TID</td><td>Not published</td><td><b>Yes.</b> Curiosity, Perseverance, JWST<sup><a href="#src-1">1</a></sup></td></tr>
-            <tr><th scope="row">RAD5545<small>BAE Systems</small></th><td>Quad-core flight computer, sold as a SpaceVPX board</td><td><b>Not an AI chip</b><br><span class="mono-s">CPU, 5.6&nbsp;GOPS / 3.7&nbsp;GFLOPS</span></td><td><span class="chip chip-nominal">Yes</span><br>Rated <span class="mono-s">100&nbsp;krad</span> TID</td><td>Not published</td><td>Board product; no mission named in our sources<sup><a href="#src-2">2</a></sup></td></tr>
-            <tr><th scope="row">GR740<small>Frontgrade Gaisler</small></th><td>Quad-core flight processor</td><td><b>Not an AI chip</b><br><span class="mono-s">CPU, 1,700&nbsp;DMIPS</span></td><td><span class="chip chip-nominal">Yes</span><br>Rated <span class="mono-s">300&nbsp;krad(Si)</span> TID</td><td><b>Yes, as published:</b> fault-tolerant LEON4FT cores</td><td>QML-V qualified, 2022; no mission named in our sources<sup><a href="#src-3">3</a></sup></td></tr>
-
-            <tr class="grp"><th colspan="6" scope="colgroup">AI chips used in space <span>fast, but either costly or unrated</span></th></tr>
-            <tr><th scope="row">XQR Versal AI Core<small>AMD · XQRVC1902</small></th><td>Space-grade adaptive chip with AI engines</td><td><span class="v">133</span><span>Commercial VC1902 peak; space part may differ</span></td><td><span class="chip chip-nominal">Yes</span><br>Passed <span class="mono-s">120&nbsp;krad(Si)</span> TID</td><td><b>Partly:</b> a triple-redundant platform controller handles upset mitigation</td><td>Class B qualified, 2022; shipping since 2023<sup><a href="#src-4">4</a></sup></td></tr>
-            <tr><th scope="row">PIC64-HPSC<small>Microchip · NASA HPSC</small></th><td>NASA's next spaceflight processor, with AI vector units</td><td><span class="v">2</span><span>Vector units</span></td><td><span class="chip chip-nominal">Yes</span><br>Rated <span class="mono-s">100&nbsp;krad</span> TID (hardened version)</td><td>Not published</td><td>Not yet. In NASA JPL testing, 2026<sup><a href="#src-5">5</a></sup></td></tr>
-            <tr><th scope="row">Jetson Orin NX 16GB<small>NVIDIA</small></th><td>Commercial edge-AI module</td><td><span class="v">100</span><span>Sparse: counts skipped zeros</span></td><td><span class="chip chip-watch">Not rated</span><br>One test to past <span class="mono-s">36.2&nbsp;krad(Si)</span></td><td>ECC memory; relies on shielding and software</td><td><b>Yes.</b> Flew shielded, Aug 2024<sup><a href="#src-6">6</a></sup></td></tr>
-            <tr><th scope="row">Myriad 2<small>Intel Movidius</small></th><td>Commercial vision processor</td><td><b>No INT8 figure</b><br><span class="mono-s">~1&nbsp;TFLOPS FP16</span></td><td><span class="chip chip-watch">Not rated</span><br>Beam-tested at CERN, 2018</td><td>Not published</td><td><b>Yes.</b> ESA Φ-sat-1, 2020<sup><a href="#src-7">7</a></sup></td></tr>
-
-            <tr class="grp"><th colspan="6" scope="colgroup">ORBIT-AI <span>Vantage</span></th></tr>
-            <tr class="us"><th scope="row">Demonstrator<small>Built · sky130</small></th><td>Test chip that proves the error catching</td><td><span class="v">0.0011</span><span>1.1&nbsp;GOPS: 4 lanes × 2 ops × 139&nbsp;MHz</span></td><td><span class="chip chip-watch">Not tested</span><br>sky130 is not radiation-characterised</td><td><b>Yes:</b> duplicate + compare, triple voting. Verified in simulation, <span class="mono-s">936 / 936</span></td><td>No. Routed layout: DRC 0, LVS clean</td></tr>
-            <tr class="us"><th scope="row">Concept<small>Target · not built</small></th><td>16-tile INT8 inference chip</td><td><span class="v">6.55 to 26.21</span><span>Dense, 200 to 800&nbsp;MHz. Target, not built</span></td><td><span class="chip chip-watch">Not tested</span><br>None claimed</td><td><b>Planned:</b> selectable duplication, checkpoint and retry, <span class="mono-s">32&nbsp;MiB</span> SECDED SRAM</td><td>No. Nothing built</td></tr>
+            <tr><th scope="row"><span class="mx-t">AI inference engine, INT8</span><small>ORBIT-AI: INT8 multiply lanes, 1.1 GOPS built</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Fault tolerance designed into the hardware</span><small>Hardened or redundant logic, beyond memory ECC. ORBIT-AI: duplicate + compare, triple voting</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Redundant copies physically separated, measured in the layout</span><small>ORBIT-AI: every same-bit twin at least 251&nbsp;µm apart</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Fault-injection results published bit by bit</span><small>ORBIT-AI: 936 flips injected, each outcome reported</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Never releases a wrong result on a detected upset</span><small>Fault-stop. ORBIT-AI: verified 936&nbsp;/&nbsp;936 in simulation</small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
+            <tr><th scope="row"><span class="mx-t">Open design: layout, RTL and proofs you can inspect</span><small>ORBIT-AI: open sky130 PDK, formal proofs, routed die viewable in 3D. <a href="https://github.com/vittesh12345/chip" target="_blank" rel="noopener">github.com/vittesh12345/chip</a></small></th><td class="us"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Published capability</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td><td><span class="sr">Not published</span></td></tr>
           </tbody>
+          <tfoot>
+            <tr class="mx-tot"><th scope="row"><span class="mx-k">Published, of six</span></th><td class="us">6&nbsp;/&nbsp;6</td><td>1&nbsp;/&nbsp;6</td><td>1&nbsp;/&nbsp;6</td><td>2&nbsp;/&nbsp;6</td><td>2&nbsp;/&nbsp;6</td><td>1&nbsp;/&nbsp;6</td></tr>
+          </tfoot>
         </table>
       </div>
+      <p class="mx-legend reveal" id="cmp-leg"><svg class="ck" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path d="M6 17.5l6.5 6.5L26 9"/></svg><span class="sr">Check mark:</span> published capability · blank not published<span class="src-n">Sources 1 to 5 below.</span></p>
+      <p class="mx-scope reveal"><span class="lead">Scope</span> The 4-lane demonstrator is built: routed sky130 layout, DRC 0, LVS clean. Its fault handling is verified in gate-level simulation; radiation testing is the next step. The 16-tile full-size design, same architecture, reaches <span class="m">6.55 to 26.21</span> INT8 TOPS on paper.</p>
 
-      <figure class="bars reveal" aria-labelledby="bars-h">
-        <div class="bars-head">
-          <h3 id="bars-h">Peak AI throughput, INT8 TOPS, vendor figures, log scale</h3>
-        </div>
-        <p class="bars-sub">Only chips whose vendor states an INT8 figure. Each gridline is ten times the one before it.</p>
-        <div role="list">
-          <div class="brow" role="listitem"><div class="nm">XQR Versal AI Core<small>AMD · commercial-part peak</small></div><div class="trk" title="XQR Versal AI Core: 133 TOPS INT8, AI Engine peak of the commercial VC1902"><span class="bar" style="--w:87.48%"></span><span class="val in" style="--w:87.48%">133</span></div></div>
-          <div class="brow" role="listitem"><div class="nm">Jetson Orin NX 16GB<small>NVIDIA · sparse figure</small></div><div class="trk" title="Jetson Orin NX 16GB: up to 100 TOPS INT8, sparse"><span class="bar" style="--w:85.71%"></span><span class="val in" style="--w:85.71%">100</span></div></div>
-          <div class="brow" role="listitem"><div class="nm">ORBIT-AI concept<small>Target, not built</small></div><div class="trk" title="ORBIT-AI concept: 6.55 to 26.21 TOPS INT8 dense at 200 to 800 MHz. Unvalidated target."><span class="rng" style="--x:68.80%;--w:8.60%"></span><span class="val before" style="--x:68.80%">6.55 to 26.21</span></div></div>
-          <div class="brow" role="listitem"><div class="nm">PIC64-HPSC<small>Microchip · vector units</small></div><div class="trk" title="PIC64-HPSC: up to 2 TOPS INT8"><span class="bar" style="--w:61.44%"></span><span class="val out" style="--w:61.44%">2</span></div></div>
-          <div class="brow" role="listitem"><div class="nm">ORBIT-AI demonstrator<small>Built · 1.1 GOPS</small></div><div class="trk" title="ORBIT-AI demonstrator: 0.0011 TOPS (1.1 GOPS) INT8 peak, 4 MACs × 2 ops × 139 MHz"><span class="bar" style="--w:14.88%"></span><span class="val out" style="--w:14.88%">0.0011</span></div></div>
-        </div>
-        <div class="axis-row"><div></div><div class="axis" aria-hidden="true"><span style="left:0%">0.0001</span><span style="left:14.29%">0.001</span><span style="left:28.57%">0.01</span><span style="left:42.86%">0.1</span><span style="left:57.14%">1</span><span style="left:71.43%">10</span><span style="left:85.71%">100</span><span style="left:100%">1,000</span></div><div class="axis-u">INT8 TOPS, trillions of operations per second</div></div>
-        <div class="not-plotted">
-          <span class="k">Not rated in INT8 operations, so not plotted</span>
-          <ul>
-            <li><b>RAD750</b> <span class="m">~400&nbsp;MIPS</span></li>
-            <li><b>RAD5545</b> <span class="m">5.6&nbsp;GOPS / 3.7&nbsp;GFLOPS</span></li>
-            <li><b>GR740</b> <span class="m">1,700&nbsp;DMIPS</span></li>
-            <li><b>Myriad 2</b> <span class="m">~1&nbsp;TFLOPS FP16</span></li>
-          </ul>
-        </div>
-        <figcaption class="note">The built demonstrator sits five orders of magnitude below the fastest parts. It was built to prove the error catching, not speed. The concept range is an unvalidated target. The Jetson figure is sparse, which counts skipped zeros. The Versal figure is the commercial VC1902 peak; the space-grade part's clock, and so its peak, may differ.</figcaption>
-      </figure>
+      <div class="ns reveal" id="cmp-ns">
+        <h3 class="ns-h">By the numbers</h3>
+        <dl class="ns-l">
+          <div class="ns-r us"><dt>ORBIT-AI demonstrator<small>Built · sky130</small></dt><dd><span class="m">1.1&nbsp;GOPS</span> INT8 at <span class="m">139&nbsp;MHz</span> · <span class="m">936&nbsp;/&nbsp;936</span> flips stopped or repaired · copies <span class="m">≥&nbsp;251&nbsp;µm</span> apart</dd></div>
+          <div class="ns-r us"><dt>ORBIT-AI 16-tile design<small>Full-size design</small></dt><dd><span class="m">6.55 to 26.21</span> INT8 TOPS, dense, <span class="m">200 to 800&nbsp;MHz</span> · designed with selectable duplication, checkpoint and retry</dd></div>
+          <div class="ns-r"><dt>RAD750<small>BAE Systems</small></dt><dd>CPU, <span class="m">~400&nbsp;MIPS</span> · <span class="m">200&nbsp;krad to 1&nbsp;Mrad</span> TID · flies on Curiosity, Perseverance, JWST<sup><a href="#src-1">1</a></sup></dd></div>
+          <div class="ns-r"><dt>GR740<small>Frontgrade Gaisler</small></dt><dd>CPU, <span class="m">1,700&nbsp;DMIPS</span> · <span class="m">300&nbsp;krad(Si)</span> TID · QML-V qualified, 2022<sup><a href="#src-2">2</a></sup></dd></div>
+          <div class="ns-r"><dt>XQR Versal AI Core<small>AMD</small></dt><dd><span class="m">133</span> INT8 TOPS (commercial VC1902 peak) · <span class="m">120&nbsp;krad(Si)</span> TID · Class B qualified, 2022<sup><a href="#src-3">3</a></sup></dd></div>
+          <div class="ns-r"><dt>PIC64-HPSC<small>Microchip · NASA HPSC</small></dt><dd><span class="m">2</span> INT8 TOPS, vector units · <span class="m">100&nbsp;krad</span> TID · in NASA JPL testing, 2026<sup><a href="#src-4">4</a></sup></dd></div>
+          <div class="ns-r"><dt>Jetson Orin NX 16GB<small>NVIDIA</small></dt><dd><span class="m">100</span> INT8 TOPS, sparse · not radiation-rated · flew shielded, Aug 2024<sup><a href="#src-5">5</a></sup></dd></div>
+        </dl>
+        <p class="note">Vendor figures in each vendor's own unit; CPU instruction rates and INT8 operations are not like-for-like. Flight processors carry radiation ratings and flight heritage that ORBIT-AI does not yet have.</p>
+      </div>
 
       <ol class="src" aria-label="Sources">
         <li id="src-1">RAD750: <a href="https://www.spaceflightnow.com/mars/msl/120810computer/" target="_blank" rel="noopener">Spaceflight Now</a>, <a href="https://satsearch.co/products/bae-systems-rad750-radiation-hardened-powerpc-microprocessor" target="_blank" rel="noopener">satsearch (BAE)</a>, <a href="https://en.wikipedia.org/wiki/RAD750" target="_blank" rel="noopener">Wikipedia</a></li>
-        <li id="src-2">RAD5545: <a href="https://satsearch.co/products/bae-systems-rad5545-space-vpx-single-board-computer" target="_blank" rel="noopener">satsearch (BAE SpaceVPX SBC)</a>, <a href="https://en.wikipedia.org/wiki/RAD5500" target="_blank" rel="noopener">Wikipedia</a></li>
-        <li id="src-3">GR740: <a href="https://download.gaisler.com/products/gr740/doc/GR740-OVERVIEW.pdf" target="_blank" rel="noopener">Gaisler overview</a>, <a href="https://www.gaisler.com/news-events/qml-v-and-qml-q-space-grade-qualification-of-the-gr740-quad-core-leon4ft-microprocessor" target="_blank" rel="noopener">QML-V notice</a></li>
-        <li id="src-4">XQR Versal: <a href="https://www.amd.com/en/products/adaptive-socs-and-fpgas/versal/space-grade.html" target="_blank" rel="noopener">AMD</a>, <a href="https://docs.amd.com/v/u/en-US/versal-ai-core-product-selection-guide" target="_blank" rel="noopener">Versal AI Core selection guide</a>, <a href="https://indico.esa.int/event/531/contributions/10592/attachments/6538/11610/AMD%20XQR%20Versal%20Adaptive%20SoCs%20Enable%20Next-Generation%20Signal%20Processing%20and%20AI%20in%20Space%20-%20SEFUW%20Non-NDA%202025-03-25%20FINAL.pdf" target="_blank" rel="noopener">ESA SEFUW 2025</a></li>
-        <li id="src-5">PIC64-HPSC: <a href="https://www.microchip.com/en-us/about/news-releases/products/microchip-unveils-industrys-highest-performance-64-bit-hpsc-mpu" target="_blank" rel="noopener">Microchip</a>, <a href="https://riscv.org/blog/eight-core-risc-v-processor-and-tsn-switch-for-ai-space-designs/" target="_blank" rel="noopener">RISC-V International</a>, <a href="https://glitchwire.com/news/nasas-hpsc-processor-tests-500x-faster-than-current-spaceflight-computers-openin/" target="_blank" rel="noopener">Glitchwire</a></li>
-        <li id="src-6">Jetson Orin NX: <a href="https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/" target="_blank" rel="noopener">NVIDIA</a>, <a href="https://www.researchgate.net/publication/387116286_Total_Ionizing_Dose_Radiation_Testing_of_NVIDIA_Jetson_Orin_NX_System_on_Module" target="_blank" rel="noopener">TID test</a>, <a href="https://hubble.com/community/guides/nvidia-jetson-orin-on-satellites-what-on-orbit-edge-ai-looks-like-today/" target="_blank" rel="noopener">flight summary</a></li>
-        <li id="src-7">Myriad 2: <a href="https://www.intel.com/content/dam/support/us/en/documents/boardsandkits/neural-compute-sticks/Myriad2VPU-ProductBrief.pdf" target="_blank" rel="noopener">Intel brief</a>, <a href="https://www.esa.int/Enabling_Support/Space_Engineering_Technology/ESA_team_blasts_Intel_s_new_AI_chip_with_radiation_at_CERN" target="_blank" rel="noopener">ESA</a>, <a href="https://www.eoportal.org/satellite-missions/phisat-1" target="_blank" rel="noopener">eoPortal</a></li>
+        <li id="src-2">GR740: <a href="https://download.gaisler.com/products/gr740/doc/GR740-OVERVIEW.pdf" target="_blank" rel="noopener">Gaisler overview</a>, <a href="https://www.gaisler.com/news-events/qml-v-and-qml-q-space-grade-qualification-of-the-gr740-quad-core-leon4ft-microprocessor" target="_blank" rel="noopener">QML-V notice</a></li>
+        <li id="src-3">XQR Versal: <a href="https://www.amd.com/en/products/adaptive-socs-and-fpgas/versal/space-grade.html" target="_blank" rel="noopener">AMD</a>, <a href="https://docs.amd.com/v/u/en-US/versal-ai-core-product-selection-guide" target="_blank" rel="noopener">Versal AI Core selection guide</a>, <a href="https://indico.esa.int/event/531/contributions/10592/attachments/6538/11610/AMD%20XQR%20Versal%20Adaptive%20SoCs%20Enable%20Next-Generation%20Signal%20Processing%20and%20AI%20in%20Space%20-%20SEFUW%20Non-NDA%202025-03-25%20FINAL.pdf" target="_blank" rel="noopener">ESA SEFUW 2025</a></li>
+        <li id="src-4">PIC64-HPSC: <a href="https://www.microchip.com/en-us/about/news-releases/products/microchip-unveils-industrys-highest-performance-64-bit-hpsc-mpu" target="_blank" rel="noopener">Microchip</a>, <a href="https://riscv.org/blog/eight-core-risc-v-processor-and-tsn-switch-for-ai-space-designs/" target="_blank" rel="noopener">RISC-V International</a>, <a href="https://glitchwire.com/news/nasas-hpsc-processor-tests-500x-faster-than-current-spaceflight-computers-openin/" target="_blank" rel="noopener">Glitchwire</a></li>
+        <li id="src-5">Jetson Orin NX: <a href="https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/" target="_blank" rel="noopener">NVIDIA</a>, <a href="https://www.researchgate.net/publication/387116286_Total_Ionizing_Dose_Radiation_Testing_of_NVIDIA_Jetson_Orin_NX_System_on_Module" target="_blank" rel="noopener">TID test</a>, <a href="https://hubble.com/community/guides/nvidia-jetson-orin-on-satellites-what-on-orbit-edge-ai-looks-like-today/" target="_blank" rel="noopener">flight summary</a></li>
       </ol>
     </div>
   </section>
@@ -793,7 +774,7 @@ footer { background: #f2f1ee; color: var(--fg); border-top: 1px solid var(--rule
         <span class="plain">contact@vantage.industries</span>
       </div>
     </div>
-    <p class="fine">Scope, stated plainly: this is a small demonstrator on the SkyWater sky130 open PDK, not the 16-tile ORBIT-AI concept chip. It is not radiation-qualified or flight-qualified, and sky130 is not radiation-characterised. The distances shown are layout geometry, not an upset-rate model. Fault handling was verified by gate-level fault injection on the routed netlist, not by beam testing. The package is an illustrative mockup. Layer colours are approximate, and layer spacing is exaggerated during the assembly. Competitor figures are vendor peaks, from the sources listed above.</p>
+    <p class="fine">Scope, stated plainly: this is a small demonstrator on the SkyWater sky130 open PDK, not the 16-tile ORBIT-AI full-size design. It is not radiation-qualified or flight-qualified, and sky130 is not radiation-characterised. The distances shown are layout geometry, not an upset-rate model. Fault handling was verified by gate-level fault injection on the routed netlist, not by beam testing. The package is an illustrative mockup. Layer colours are approximate, and layer spacing is exaggerated during the assembly. Competitor figures are vendor peaks, from the sources listed above.</p>
     <div class="foot-bot">
       <p>© 2026 Vantage · ORBIT-AI on-orbit AI compute</p>
       <span class="region"><span>SIMULATED EVIDENCE</span><span>NOT FLIGHT-QUALIFIED</span></span>
