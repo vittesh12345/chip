@@ -199,5 +199,7 @@ Results and run times: `reports/ecc/summary.md`.
     k-induction in the solvers tried and makes BMC grow fast with depth.
   * Negative controls that must fail: `il1_neg` (the `sec` proof with
     `INTERLEAVE = 1`), the codec proof on a copy with an even-weight column,
-    and the `sec` proof on a bank that never writes back.
+    and the `sec` harness, as a BMC from reset (task `sec_bmc`), on a bank
+    that never writes back (the depth-2 `sec` prove would only report a
+    failed induction step, i.e. UNKNOWN, not a reachable counterexample).
 * `ecc-synth`: Yosys generic synthesis of the encoder, decoder and bank.

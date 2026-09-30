@@ -32,6 +32,8 @@
 //   FV_LIVE       P2 liveness: an accepted result is eventually delivered
 //   FV_COVER      reachability covers from reset
 //   FV_WRAP       INT32 wraparound covers (use with FV_FREE_START)
+//   FV_CLEAR      P8 / P5 reset and clear_fault from any state, including a
+//                 latched fault (use with FV_ANY_START)
 // Groups also contain the helper invariants (labels *_h_*) that make their
 // k-induction close. -DFV_NO_HELPERS disables them; the abc pdr tasks use it
 // to show that the port-level properties hold without hand-written helpers.
@@ -324,6 +326,10 @@ module orbit_demo_fv (
             assume(!m_fresh && !f_fresh_chk && m_ovf == 0 && m_buf_ovf == 0);
         end
     end
+`elsif FV_ANY_START
+    // No constraint at all: every register (DUT and model) starts arbitrary,
+    // including fault_q = 1, out_valid_q = 1 and disagreeing copies. Used by
+    // the `clear` task for properties that must hold after a real fault.
 `else
     always @* begin
         if (!f_past_valid)
@@ -547,6 +553,45 @@ module orbit_demo_fv (
         end
         if (f_past_valid && f_fresh_chk) begin
             P8_fresh_result_valid: assert (out_valid);
+        end
+    end
+`endif
+
+    // ------------------------------------------------------------------
+    // P8 / P5 from an arbitrary state (use with FV_ANY_START)
+    // ------------------------------------------------------------------
+`ifdef FV_CLEAR
+    // In the fault-free reachable state space fault_q is always 0, so there
+    // the "fault = 0 after clear_fault" part of P8 cannot fail. This group
+    // starts from any state (fault latched, stale out_valid_q, copies that
+    // disagree) and checks what reset / clear_fault must do in one step
+    // (SPEC section 5), and that the thermal copies are always rewritten with
+    // the SPEC next state of their bitwise majority (SPEC section 6; so
+    // clear_fault does not touch the thermal state).
+    wire [1:0] f_vote = (h_c0 & h_c1) | (h_c1 & h_c2) | (h_c0 & h_c2);
+
+    always @(posedge clk) begin
+        if (f_past_valid && (!$past(rst_n) || $past(clear_fault))) begin
+            P8_any_no_fault:     assert (!fault);
+            P8_any_no_valid:     assert (!out_valid);
+            P8_any_valid_q_zero: assert (!h_out_valid_q);
+            P8_any_storage_zero: assert (h_acc_a == 0 && h_acc_b == 0 && h_res_a == 0 && h_res_b == 0);
+        end
+        if (f_past_valid && !$past(rst_n)) begin
+            P5_any_reset_stop:   assert (h_c0 == S_STOP && h_c1 == S_STOP && h_c2 == S_STOP && !h_phase);
+        end
+        if (f_past_valid && $past(rst_n)) begin
+            P5_any_copies_next:  assert (h_c0 == spec_next($past(f_vote), $past(temp_valid), $past(temp_c)) &&
+                                         h_c1 == h_c0 && h_c2 == h_c0);
+        end
+        // The first accepted beat after clear_fault, without in_first, sums
+        // from 0 in both copies (and loads both result copies on in_last).
+        if (f_past2 && $past(rst_n, 2) && $past(clear_fault, 2) &&
+            $past(rst_n) && !$past(clear_fault) && $past(in_fire) && !$past(in_first)) begin
+            P8_any_fresh_acc:    assert (h_acc_a == $past(f_prod_all) && h_acc_b == $past(f_prod_all));
+            if ($past(in_last)) begin
+                P8_any_fresh_res: assert (h_res_a == $past(f_prod_all) && h_res_b == $past(f_prod_all));
+            end
         end
     end
 `endif
