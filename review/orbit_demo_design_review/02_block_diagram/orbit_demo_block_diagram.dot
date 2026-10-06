@@ -1,5 +1,5 @@
 // Block diagram of orbit_demo, drawn by hand from rtl/orbit_demo.v, rtl/orbit_mac_lane.v,
-// rtl/orbit_thermal_tmr.v and rtl/orbit_keep_reg.v (RTL unchanged since commit 26566f0).
+// rtl/orbit_thermal_tmr.v and rtl/orbit_keep_reg.v (RTL unchanged since commit 26d71a8).
 // Instance, port and net names are copied from the RTL. Bus widths in [ ].
 // Clock/reset: one clock clk, one synchronous active-low reset rst_n, to every flip-flop.
 // Power: one domain (VDD/VSS pins of the sep layout; no other supplies in DEF or RTL).

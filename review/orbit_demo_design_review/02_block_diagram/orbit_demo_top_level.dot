@@ -1,4 +1,4 @@
-// Top-level block diagram of orbit_demo, drawn from rtl/*.v (RTL unchanged since commit 26566f0).
+// Top-level block diagram of orbit_demo, drawn from rtl/*.v (RTL unchanged since commit 26d71a8).
 // Instance and port names are copied from the RTL. Bus widths in [ ].
 digraph top {
   graph [rankdir=LR, fontname="Helvetica", fontsize=12, nodesep=0.4, ranksep=0.9, labelloc=t,
