@@ -18,7 +18,7 @@ The two diagrams in this folder describe the built digital demonstrator `orbit_d
 
 Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
 
-`MANIFEST.sha256`, named in the RTL row, is not at the package root (checked 2026-10-06): MISSING, register D-53. The full RTL, SPEC and brief hashes are in [../04_digital_design/README.md](../04_digital_design/README.md) under "Design revision covered by this package"; the layout hashes are in [../06_physical_design/README.md](../06_physical_design/README.md) section 1.
+`MANIFEST.sha256`, named in the RTL row, is at the package root ([../MANIFEST.sha256](../MANIFEST.sha256), generated last on 2026-10-06; register D-53). The full RTL, SPEC and brief hashes are also in [../04_digital_design/README.md](../04_digital_design/README.md) under "Design revision covered by this package"; the layout hashes are in [../06_physical_design/README.md](../06_physical_design/README.md) section 1.
 
 ## Files
 

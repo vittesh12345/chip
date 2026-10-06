@@ -1,6 +1,6 @@
 # orbit_demo physical design (sky130hd, variant sep)
 
-Package section 06_physical_design of `orbit_demo_design_review`, written 2026-10-06. Links are relative to this file. Paths in backticks that start with `build/` or `viz/` are repository paths (repo `/home/user/chip`) that are not in the package. The `pd/`, `scripts/` and `mk/` files cited here are copied byte-identical under [04_digital_design/source/](../04_digital_design/source/), except `scripts/viz_parts.py` (repository only); `reports/pdsep/` is copied under [07_verification/published_reports/](../07_verification/published_reports/) except its GDS archive (see Related evidence below). Repository HEAD at writing: 54745f7; `git diff 0495cfa 54745f7 -- rtl pd mk scripts reports docs viz` is empty, so the design sources are those of the package commit in the revision table. Discrepancies are listed in the discrepancy register (09_review_notes).
+Package section 06_physical_design of `orbit_demo_design_review`, written 2026-10-06. Links are relative to this file. Paths in backticks that start with `build/` or `viz/` are repository paths (repo `/home/user/chip`); they are not in the package unless the text links a package copy. The `pd/`, `scripts/` and `mk/` files cited here are copied byte-identical under [04_digital_design/source/](../04_digital_design/source/), except `scripts/viz_parts.py` (repository only); `reports/pdsep/` is copied under [07_verification/published_reports/](../07_verification/published_reports/) except its GDS archive (see Related evidence below). Repository HEAD at writing: 54745f7; `git diff 0495cfa 54745f7 -- rtl pd mk scripts reports docs viz` is empty, so the design sources are those of the package commit in the revision table. Discrepancies are listed in the discrepancy register (09_review_notes).
 
 Status labels: **VERIFIED** = a tool log or report shows it. **REPRODUCED 2026-10-06** = re-run for this package. **TARGET** = design goal, not measured. **ASSUMPTION**. **CLAIM (unverified)** = stated in a document, no log found. **MISSING**. **N/A** = not applicable (reason given).
 
@@ -22,23 +22,23 @@ This section covers only the reviewed layout (variant `sep`, 7.2 ns). The refere
 
 Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
 
-Notes for this section: the image tag is set in `mk/pdsep.mk` line 25 and logged in `build/pd_sep/make_pd_sep.out` line 1. The ORFS commit and the open_pdks / skywater-pdk version are MISSING (not logged; the image's `/OpenROAD-flow-scripts` is not a git repository).
+Notes for this section: the image tag is set in `mk/pdsep.mk` line 25 and logged in `build/pd_sep/make_pd_sep.out` line 1 (packaged as [make_pd_sep.out.gz](../07_verification/additional_evidence/flow/make_pd_sep.out.gz)). The ORFS commit and the open_pdks / skywater-pdk version are MISSING (not logged; the image's `/OpenROAD-flow-scripts` is not a git repository).
 
 ## Contents of this folder
 
 | Path | Content | Origin |
 |---|---|---|
-| [layout_db/](layout_db/) | final GDS, DEF, SPEF, gate netlist (gzip), final SDC, clock period | copied from `build/pd_sep/results/sky130hd/orbit_demo/sep/` |
+| [layout_db/](layout_db/) | final GDS, DEF, SPEF, gate netlist, OpenROAD database `6_final.odb` (gzip), final SDC, clock period | copied from `build/pd_sep/results/sky130hd/orbit_demo/sep/` |
 | [klayout_views/](klayout_views/) | 10 KLayout renders of the final GDS (v01-v08) and [render_gds.py](klayout_views/render_gds.py) | rendered for this package, KLayout 0.30.12 Python module |
 | [orfs_images/](orfs_images/) | 10 OpenROAD GUI images written by the ORFS final report step | copied from `build/pd_sep/reports/sky130hd/orbit_demo/sep/` |
 | [floorplan_plot/](floorplan_plot/) | [floorplan_fences_pins.png](floorplan_plot/floorplan_fences_pins.png) and its script [plot_floorplan.py](floorplan_plot/plot_floorplan.py) | plotted for this package from package files only |
 | [physical_design.pdf](physical_design.pdf) | this document rendered to PDF | `md2pdf.py README.md physical_design.pdf` |
 
-Related evidence elsewhere in the package: ORFS step logs [07_verification/orfs_logs/](../07_verification/orfs_logs/) (byte-identical copies of 39 of the 40 files in `build/pd_sep/logs/sky130hd/orbit_demo/sep/`; `5_1_grt.json` not copied), ORFS reports [07_verification/orfs_reports/](../07_verification/orfs_reports/) (all non-image report files of `build/pd_sep/reports/sky130hd/orbit_demo/sep/` except `drt_antennas.log` and `grt_antennas.log`), the published copy-separation reports [07_verification/published_reports/](../07_verification/published_reports/) (= `reports/pdsep/` except `orbit_demo_sky130hd_sep.gds.gz`, the same GDS as [layout_db/6_final.gds.gz](layout_db/6_final.gds.gz)), the pin table [08_pinout_packaging/pinout.csv](../08_pinout_packaging/pinout.csv), the ORFS design configuration [04_digital_design/source/pd/sky130hd_sep/](../04_digital_design/source/pd/sky130hd_sep/config.mk), and the LVS reference netlist [03_schematics/netlists/6_final.cdl.gz](../03_schematics/netlists/6_final.cdl.gz).
+Related evidence elsewhere in the package: ORFS step logs [07_verification/orfs_logs/](../07_verification/orfs_logs/) (byte-identical copies of 39 of the 40 files in `build/pd_sep/logs/sky130hd/orbit_demo/sep/`; the 40th, `5_1_grt.json`, is in [07_verification/additional_evidence/flow/](../07_verification/additional_evidence/flow/)), ORFS reports [07_verification/orfs_reports/](../07_verification/orfs_reports/) (all non-image report files of `build/pd_sep/reports/sky130hd/orbit_demo/sep/` except `drt_antennas.log` and `grt_antennas.log`, which are 0 bytes and are in [07_verification/additional_evidence/flow/](../07_verification/additional_evidence/flow/)), the published copy-separation reports [07_verification/published_reports/](../07_verification/published_reports/) (= `reports/pdsep/` except `orbit_demo_sky130hd_sep.gds.gz`, the same GDS as [layout_db/6_final.gds.gz](layout_db/6_final.gds.gz)), the pin table [08_pinout_packaging/pinout.csv](../08_pinout_packaging/pinout.csv), the ORFS design configuration [04_digital_design/source/pd/sky130hd_sep/](../04_digital_design/source/pd/sky130hd_sep/config.mk), and the LVS reference netlist [03_schematics/netlists/6_final.cdl.gz](../03_schematics/netlists/6_final.cdl.gz) (with the library CDL appended: [6_final_concat.cdl.gz](../07_verification/additional_evidence/flow/6_final_concat.cdl.gz)).
 
 ## 1. Layout database inventory
 
-Run: `make pd-sep` (ORFS, sky130hd, variant `sep`), files written 2026-09-29 UTC. The sha256 values are of the uncompressed originals in `build/pd_sep/results/sky130hd/orbit_demo/sep/`. Check made for this package: `gunzip -c <file>.gz | sha256sum` compared with `sha256sum` of the build file, and `gzip -t` on all four archives: all four match, archives intact (**REPRODUCED 2026-10-06**).
+Run: `make pd-sep` (ORFS, sky130hd, variant `sep`), files written 2026-09-29 UTC. The sha256 values are of the uncompressed originals in `build/pd_sep/results/sky130hd/orbit_demo/sep/`. Check made for this package: `gunzip -c <file>.gz | sha256sum` compared with `sha256sum` of the build file, and `gzip -t` on all five archives (`6_final.odb.gz` added and checked at the final step): all five match, archives intact (**REPRODUCED 2026-10-06**).
 
 | Package file | Original in `build/pd_sep/results/sky130hd/orbit_demo/sep/` (mtime UTC) | Bytes .gz / uncompressed | gunzip = build | Status |
 |---|---|---|---|---|
@@ -46,6 +46,7 @@ Run: `make pd-sep` (ORFS, sky130hd, variant `sep`), files written 2026-09-29 UTC
 | [6_final.def.gz](layout_db/6_final.def.gz) | `6_final.def` (22:09:33) | 852148 / 6992153 | match | REPRODUCED 2026-10-06 |
 | [6_final.spef.gz](layout_db/6_final.spef.gz) | `6_final.spef` (22:09:39) | 1956262 / 6827076 | match | REPRODUCED 2026-10-06 |
 | [6_final.v.gz](layout_db/6_final.v.gz) | `6_final.v` (22:09:33) | 96856 / 812562 | match | REPRODUCED 2026-10-06 |
+| [6_final.odb.gz](layout_db/6_final.odb.gz) | `6_final.odb` (22:09:33) | 2751275 / 14668665 | match | REPRODUCED 2026-10-06 |
 | [6_final.sdc](layout_db/6_final.sdc) | `6_final.sdc` (22:09:33) | - / 19270 | byte-identical (cmp) | REPRODUCED 2026-10-06 |
 | [clock_period.txt](layout_db/clock_period.txt) | `clock_period.txt` (21:56:09), content `7.2` | - / 4 | byte-identical (cmp) | REPRODUCED 2026-10-06 |
 
@@ -55,6 +56,7 @@ Run: `make pd-sep` (ORFS, sky130hd, variant `sep`), files written 2026-09-29 UTC
 | 6_final.def | `f5c544f37701038b0cf24fdc09481c58b249c425539b229d000ccb8a9df20ec1` |
 | 6_final.spef | `014e655ae938245ace4ebc279b9c6c311ddf57f23bfae44367af342aeb8d5acb` |
 | 6_final.v | `68093c41fca50e9e532205b1128490a1e7807e63d998ff1a179ca985981c8b06` |
+| 6_final.odb | `3a6144cb4f882f8e9f7a2acc9d52fa0375f3c313797b1c0e29050567dabac7e8` |
 | 6_final.sdc | `1dbe8e7e8cd2853f6b5d533496b080b2aca8bfa82e5f10ed1714f37922409680` |
 | clock_period.txt | `69cd84998732b964b8b9c218f595f2aa1c438cd71d725a2542227075cd721969` |
 
@@ -69,7 +71,7 @@ What the files contain:
 | 6_final.v | routed gate netlist, module `orbit_demo`, 18 ports / 215 bits, 6250 cell instances; fill, tap and antenna-diode cells are not written; no VDD/VSS ports | `zcat` + count of `sky130_*` instance lines | REPRODUCED 2026-10-06 |
 | 6_final.sdc | `create_clock -name clk -period 7.2000`, `set_propagated_clock`, 79 `set_input_delay` and 135 `set_output_delay` of 1.44 ns (0.2 x period, an ASSUMPTION of the SDC for the unknown outside world) | file lines 8-10; constraint source [constraint.sdc](../04_digital_design/source/pd/sky130hd_sep/constraint.sdc) | VERIFIED |
 
-Not in this folder: `6_final.odb` (14668665 bytes, needed to re-run OpenROAD STA/PSM directly; build path only), the LVS database `6_lvs.lvsdb` and `6_final_concat.cdl` (build only). The CDL `6_final.cdl` is in [03_schematics/netlists/](../03_schematics/netlists/6_final.cdl.gz); the KLayout LVS extracted netlist `orbit_demo_extracted.cir` is in [07_verification/lvs/](../07_verification/lvs/orbit_demo_extracted.cir.gz).
+`6_final.odb` (14668665 bytes, needed to re-run OpenROAD STA/PSM directly) was added to this folder on 2026-10-06 as [6_final.odb.gz](layout_db/6_final.odb.gz). The LVS database `6_lvs.lvsdb` and `6_final_concat.cdl` (build originals in `build/pd_sep/results/.../sep/` and `build/pd_sep/objects/.../sep/`) are in [07_verification/additional_evidence/flow/](../07_verification/additional_evidence/flow/). The CDL `6_final.cdl` is in [03_schematics/netlists/](../03_schematics/netlists/6_final.cdl.gz); the KLayout LVS extracted netlist `orbit_demo_extracted.cir` is in [07_verification/lvs/](../07_verification/lvs/orbit_demo_extracted.cir.gz).
 
 ## 2. Run settings that shape the layout
 

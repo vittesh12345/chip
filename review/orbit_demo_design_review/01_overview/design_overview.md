@@ -1,6 +1,6 @@
 # orbit_demo design overview
 
-Package section 01_overview of `orbit_demo_design_review`, written 2026-10-06 from the package files and the repository at commit 0495cfa. Links are relative to this file. Cited `reports/...` files are linked to their byte-identical copies in 07_verification. Unlinked repository paths under `rtl/`, `pd/`, `tb/`, `fault/` and `scripts/` are copied in [04_digital_design/source/](../04_digital_design/source/). Only `build/...`, `docs/research/...` and ORFS image paths (`platforms/...`, `flow/scripts`) are outside the package. Discrepancies are listed in the discrepancy register (09_review_notes).
+Package section 01_overview of `orbit_demo_design_review`, written 2026-10-06 from the package files and the repository at commit 0495cfa. Links are relative to this file. Cited `reports/...` files are linked to their byte-identical copies in 07_verification. Unlinked repository paths under `rtl/`, `pd/`, `tb/`, `fault/` and `scripts/` are copied in [04_digital_design/source/](../04_digital_design/source/). Only `build/...` files without a package copy (the copies are listed in [README.md](../README.md) under How the package was built), `docs/research/...` and ORFS image paths (`platforms/...`, `flow/scripts`) are outside the package. Discrepancies are listed in the discrepancy register (09_review_notes).
 
 Status labels: **VERIFIED** = a tool log or report shows it. **REPRODUCED 2026-10-06** = re-run for this package. **TARGET** = design goal, not measured. **ASSUMPTION**. **CLAIM (unverified)** = stated in a document, no log found. **MISSING**. **N/A** = not applicable (reason given).
 
@@ -22,7 +22,7 @@ Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; 
 
 Notes on this table, checked for this document:
 
-- `MANIFEST.sha256`, cited in the RTL row, is not in the package (MISSING, searched 2026-10-06; see discrepancy register (09_review_notes)). The four RTL sha256 values recomputed at 0495cfa equal those in [fault/summary.md](../07_verification/fault/summary.md) lines 16-19 and in [04_digital_design/README.md](../04_digital_design/README.md); e.g. `rtl/orbit_demo.v` a3fffb229df3e166694d9259cee45411537118aa2673f84bb26b0f4108f3183a.
+- `MANIFEST.sha256`, cited in the RTL row, is at the package root: [MANIFEST.sha256](../MANIFEST.sha256), generated last on 2026-10-06 (see [README.md](../README.md) section Manifest; discrepancy register (09_review_notes) D-53). The four RTL sha256 values recomputed at 0495cfa equal those in [fault/summary.md](../07_verification/fault/summary.md) lines 16-19 and in [04_digital_design/README.md](../04_digital_design/README.md); e.g. `rtl/orbit_demo.v` a3fffb229df3e166694d9259cee45411537118aa2673f84bb26b0f4108f3183a.
 
 ## Purpose and scope
 
