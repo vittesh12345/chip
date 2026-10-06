@@ -1,0 +1,95 @@
+[2026-09-29 21:57:21.886] [miter_logger] [info] MiterStrategy::run starting
+[2026-09-29 21:57:21.887] [miter_logger] [info] Collecting POs for design 0: orbit_demo
+
+[2026-09-29 21:57:21.916] [miter_logger] [info] Collected 613 PIs for design 0
+
+[2026-09-29 21:57:21.916] [miter_logger] [info] Collected 1177 POs for design 0
+
+[2026-09-29 21:57:21.916] [miter_logger] [info] design 0 PI summary by model/term (613 total terminals, 14 unique rows):
+| Model                    | Term        | Count |
+|--------------------------|-------------|-------|
+| sky130_fd_sc_hd__dfxtp_1 | Q           |   521 |
+| orbit_demo               | in_a        |    32 |
+| orbit_demo               | in_b        |    32 |
+| orbit_demo               | temp_c      |     8 |
+| sky130_fd_sc_hd__conb_1  | HI          |     6 |
+| sky130_fd_sc_hd__conb_1  | LO          |     6 |
+| orbit_demo               | clear_fault |     1 |
+| orbit_demo               | clk         |     1 |
+| orbit_demo               | in_first    |     1 |
+| orbit_demo               | in_last     |     1 |
+| orbit_demo               | in_valid    |     1 |
+| orbit_demo               | out_ready   |     1 |
+| orbit_demo               | rst_n       |     1 |
+| orbit_demo               | temp_valid  |     1 |
+
+[2026-09-29 21:57:21.916] [miter_logger] [info] design 0 PO summary by model/term (1177 total terminals, 9 unique rows):
+| Model                    | Term         | Count |
+|--------------------------|--------------|-------|
+| sky130_fd_sc_hd__dfxtp_1 | CLK          |   521 |
+| sky130_fd_sc_hd__dfxtp_1 | D            |   521 |
+| orbit_demo               | out_data     |   128 |
+| orbit_demo               | therm_state  |     2 |
+| orbit_demo               | fault        |     1 |
+| orbit_demo               | in_ready     |     1 |
+| orbit_demo               | out_valid    |     1 |
+| orbit_demo               | shutdown_req |     1 |
+| orbit_demo               | therm_repair |     1 |
+
+[2026-09-29 21:57:21.917] [miter_logger] [info] Collecting POs for design 1: orbit_demo
+
+[2026-09-29 21:57:21.941] [miter_logger] [info] size of common inputs: 601
+[2026-09-29 21:57:21.941] [miter_logger] [info] size of diff0 inputs: 0
+[2026-09-29 21:57:21.941] [miter_logger] [info] size of diff1 inputs: 0
+[2026-09-29 21:57:21.941] [miter_logger] [info] Collected 613 PIs for design 1
+
+[2026-09-29 21:57:21.941] [miter_logger] [info] Collected 1177 POs for design 1
+
+[2026-09-29 21:57:21.941] [miter_logger] [info] design 1 PI summary by model/term (613 total terminals, 14 unique rows):
+| Model                    | Term        | Count |
+|--------------------------|-------------|-------|
+| sky130_fd_sc_hd__dfxtp_1 | Q           |   521 |
+| orbit_demo               | in_a        |    32 |
+| orbit_demo               | in_b        |    32 |
+| orbit_demo               | temp_c      |     8 |
+| sky130_fd_sc_hd__conb_1  | HI          |     6 |
+| sky130_fd_sc_hd__conb_1  | LO          |     6 |
+| orbit_demo               | clear_fault |     1 |
+| orbit_demo               | clk         |     1 |
+| orbit_demo               | in_first    |     1 |
+| orbit_demo               | in_last     |     1 |
+| orbit_demo               | in_valid    |     1 |
+| orbit_demo               | out_ready   |     1 |
+| orbit_demo               | rst_n       |     1 |
+| orbit_demo               | temp_valid  |     1 |
+
+[2026-09-29 21:57:21.941] [miter_logger] [info] design 1 PO summary by model/term (1177 total terminals, 9 unique rows):
+| Model                    | Term         | Count |
+|--------------------------|--------------|-------|
+| sky130_fd_sc_hd__dfxtp_1 | CLK          |   521 |
+| sky130_fd_sc_hd__dfxtp_1 | D            |   521 |
+| orbit_demo               | out_data     |   128 |
+| orbit_demo               | therm_state  |     2 |
+| orbit_demo               | fault        |     1 |
+| orbit_demo               | in_ready     |     1 |
+| orbit_demo               | out_valid    |     1 |
+| orbit_demo               | shutdown_req |     1 |
+| orbit_demo               | therm_repair |     1 |
+
+[2026-09-29 21:57:21.941] [miter_logger] [info] normalizeInputs: starting
+[2026-09-29 21:57:21.942] [miter_logger] [info] size of common inputs: 613
+[2026-09-29 21:57:21.942] [miter_logger] [info] size of diff0 inputs: 0
+[2026-09-29 21:57:21.942] [miter_logger] [info] size of diff1 inputs: 0
+[2026-09-29 21:57:21.942] [miter_logger] [info] normalizeOutputs: starting
+[2026-09-29 21:57:21.943] [miter_logger] [info] size of common outputs: 1177
+[2026-09-29 21:57:21.943] [miter_logger] [info] size of diff0 outputs: 0
+[2026-09-29 21:57:21.943] [miter_logger] [info] size of diff1 outputs: 0
+[2026-09-29 21:57:21.943] [miter_logger] [info] size of PIs in circuit 0: 613
+[2026-09-29 21:57:21.943] [miter_logger] [info] size of PIs in circuit 1: 613
+[2026-09-29 21:57:21.943] [miter_logger] [info] size of POs in circuit 0: 1177
+[2026-09-29 21:57:21.943] [miter_logger] [info] size of POs in circuit 1: 1177
+[2026-09-29 21:57:22.061] [miter_logger] [info] Building miter expression
+[2026-09-29 21:57:22.062] [miter_logger] [info] Finished building miter expression
+[2026-09-29 21:57:22.115] [miter_logger] [info] Starting solver
+[2026-09-29 21:57:26.496] [miter_logger] [info] SAT solver finished: UNSAT
+[2026-09-29 21:57:26.496] [miter_logger] [info] Circuits are IDENTICAL

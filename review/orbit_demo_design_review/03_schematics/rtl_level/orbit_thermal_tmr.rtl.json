@@ -1,0 +1,1022 @@
+{
+  "creator": "Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)",
+  "modules": {
+    "$paramod\\orbit_keep_reg\\W=s32'00000000000000000000000000000010\\RESET_VAL=2'10": {
+      "attributes": {
+        "hdlname": "orbit_keep_reg",
+        "dynports": "00000000000000000000000000000001",
+        "keep_hierarchy": "00000000000000000000000000000001",
+        "src": "rtl/orbit_keep_reg.v:15.1-33.10"
+      },
+      "parameter_default_values": {
+        "RESET_VAL": "10",
+        "W": "00000000000000000000000000000010"
+      },
+      "ports": {
+        "clk": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "rst_n": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "en": {
+          "direction": "input",
+          "bits": [ 4 ]
+        },
+        "d": {
+          "direction": "input",
+          "bits": [ 5, 6 ]
+        },
+        "q": {
+          "direction": "output",
+          "bits": [ 7, 8 ]
+        }
+      },
+      "cells": {
+        "$auto$ff.cc:337:slice$88": {
+          "hide_name": 1,
+          "type": "$sdffe",
+          "parameters": {
+            "CLK_POLARITY": "00000000000000000000000000000001",
+            "EN_POLARITY": "00000000000000000000000000000001",
+            "SRST_POLARITY": "00000000000000000000000000000000",
+            "SRST_VALUE": "10",
+            "WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_keep_reg.v:26.5-31.8"
+          },
+          "port_directions": {
+            "CLK": "input",
+            "D": "input",
+            "EN": "input",
+            "Q": "output",
+            "SRST": "input"
+          },
+          "connections": {
+            "CLK": [ 2 ],
+            "D": [ 5, 6 ],
+            "EN": [ 4 ],
+            "Q": [ 7, 8 ],
+            "SRST": [ 3 ]
+          }
+        }
+      },
+      "netnames": {
+        "clk": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "rtl/orbit_keep_reg.v:19.25-19.28"
+          }
+        },
+        "d": {
+          "hide_name": 0,
+          "bits": [ 5, 6 ],
+          "attributes": {
+            "src": "rtl/orbit_keep_reg.v:22.25-22.26"
+          }
+        },
+        "en": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "rtl/orbit_keep_reg.v:21.25-21.27"
+          }
+        },
+        "q": {
+          "hide_name": 0,
+          "bits": [ 7, 8 ],
+          "attributes": {
+            "src": "rtl/orbit_keep_reg.v:23.25-23.26"
+          }
+        },
+        "rst_n": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "rtl/orbit_keep_reg.v:20.25-20.30"
+          }
+        }
+      }
+    },
+    "orbit_thermal_tmr": {
+      "attributes": {
+        "top": "00000000000000000000000000000001",
+        "src": "rtl/orbit_thermal_tmr.v:21.1-84.10"
+      },
+      "parameter_default_values": {
+        "T_RECOVER": "01000110",
+        "T_STOP": "01011111",
+        "T_THROTTLE": "01010000"
+      },
+      "ports": {
+        "clk": {
+          "direction": "input",
+          "bits": [ 2 ]
+        },
+        "rst_n": {
+          "direction": "input",
+          "bits": [ 3 ]
+        },
+        "temp_valid": {
+          "direction": "input",
+          "bits": [ 4 ]
+        },
+        "temp_c": {
+          "direction": "input",
+          "bits": [ 5, 6, 7, 8, 9, 10, 11, 12 ]
+        },
+        "state": {
+          "direction": "output",
+          "bits": [ 13, 14 ]
+        },
+        "admit": {
+          "direction": "output",
+          "bits": [ 15 ]
+        },
+        "repair": {
+          "direction": "output",
+          "bits": [ 16 ]
+        }
+      },
+      "cells": {
+        "$and$rtl/orbit_thermal_tmr.v:40$18": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.25-40.32"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 17, 18 ],
+            "B": [ 19, 20 ],
+            "Y": [ 21, 22 ]
+          }
+        },
+        "$and$rtl/orbit_thermal_tmr.v:40$19": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.37-40.44"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 19, 20 ],
+            "B": [ 23, 24 ],
+            "Y": [ 25, 26 ]
+          }
+        },
+        "$and$rtl/orbit_thermal_tmr.v:40$21": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.49-40.56"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 17, 18 ],
+            "B": [ 23, 24 ],
+            "Y": [ 27, 28 ]
+          }
+        },
+        "$and$rtl/orbit_thermal_tmr.v:81$41": {
+          "hide_name": 1,
+          "type": "$and",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000001",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000001",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:81.44-81.74"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 29 ],
+            "B": [ 30 ],
+            "Y": [ 31 ]
+          }
+        },
+        "$auto$ff.cc:337:slice$89": {
+          "hide_name": 1,
+          "type": "$sdff",
+          "parameters": {
+            "CLK_POLARITY": "00000000000000000000000000000001",
+            "SRST_POLARITY": "00000000000000000000000000000000",
+            "SRST_VALUE": "0",
+            "WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:73.5-78.8"
+          },
+          "port_directions": {
+            "CLK": "input",
+            "D": "input",
+            "Q": "output",
+            "SRST": "input"
+          },
+          "connections": {
+            "CLK": [ 2 ],
+            "D": [ 30 ],
+            "Q": [ 32 ],
+            "SRST": [ 33 ]
+          }
+        },
+        "$auto$simple.cc:237:combine_resets$91": {
+          "hide_name": 1,
+          "type": "$reduce_and",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 3, 29 ],
+            "Y": [ 33 ]
+          }
+        },
+        "$ge$rtl/orbit_thermal_tmr.v:46$25": {
+          "hide_name": 1,
+          "type": "$ge",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000001",
+            "A_WIDTH": "00000000000000000000000000001000",
+            "B_SIGNED": "00000000000000000000000000000001",
+            "B_WIDTH": "00000000000000000000000000001000",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:46.28-46.39"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 5, 6, 7, 8, 9, 10, 11, 12 ],
+            "B": [ "1", "1", "1", "1", "1", "0", "1", "0" ],
+            "Y": [ 34 ]
+          }
+        },
+        "$ge$rtl/orbit_thermal_tmr.v:50$27": {
+          "hide_name": 1,
+          "type": "$ge",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000001",
+            "A_WIDTH": "00000000000000000000000000001000",
+            "B_SIGNED": "00000000000000000000000000000001",
+            "B_WIDTH": "00000000000000000000000000001000",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:50.36-50.51"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 5, 6, 7, 8, 9, 10, 11, 12 ],
+            "B": [ "0", "0", "0", "0", "1", "0", "1", "0" ],
+            "Y": [ 35 ]
+          }
+        },
+        "$le$rtl/orbit_thermal_tmr.v:53$31": {
+          "hide_name": 1,
+          "type": "$le",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000001",
+            "A_WIDTH": "00000000000000000000000000001000",
+            "B_SIGNED": "00000000000000000000000000000001",
+            "B_WIDTH": "00000000000000000000000000001000",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:53.36-53.50"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 5, 6, 7, 8, 9, 10, 11, 12 ],
+            "B": [ "0", "1", "1", "0", "0", "0", "1", "0" ],
+            "Y": [ 36 ]
+          }
+        },
+        "$logic_not$rtl/orbit_thermal_tmr.v:46$24": {
+          "hide_name": 1,
+          "type": "$logic_not",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000001",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:46.13-46.24"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 4 ],
+            "Y": [ 37 ]
+          }
+        },
+        "$logic_or$rtl/orbit_thermal_tmr.v:46$26": {
+          "hide_name": 1,
+          "type": "$logic_or",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000001",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000001",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:46.13-46.39"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 37 ],
+            "B": [ 34 ],
+            "Y": [ 38 ]
+          }
+        },
+        "$ne$rtl/orbit_thermal_tmr.v:82$43": {
+          "hide_name": 1,
+          "type": "$ne",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:82.22-82.30"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 17, 18 ],
+            "B": [ 19, 20 ],
+            "Y": [ 39 ]
+          }
+        },
+        "$ne$rtl/orbit_thermal_tmr.v:82$44": {
+          "hide_name": 1,
+          "type": "$ne",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:82.35-82.43"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 19, 20 ],
+            "B": [ 23, 24 ],
+            "Y": [ 40 ]
+          }
+        },
+        "$not$rtl/orbit_thermal_tmr.v:81$40": {
+          "hide_name": 1,
+          "type": "$not",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000001",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:81.68-81.74"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 32 ],
+            "Y": [ 30 ]
+          }
+        },
+        "$or$rtl/orbit_thermal_tmr.v:40$20": {
+          "hide_name": 1,
+          "type": "$or",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.24-40.45"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 21, 22 ],
+            "B": [ 25, 26 ],
+            "Y": [ 41, 42 ]
+          }
+        },
+        "$or$rtl/orbit_thermal_tmr.v:40$22": {
+          "hide_name": 1,
+          "type": "$or",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.24-40.57"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 41, 42 ],
+            "B": [ 27, 28 ],
+            "Y": [ 13, 14 ]
+          }
+        },
+        "$or$rtl/orbit_thermal_tmr.v:81$42": {
+          "hide_name": 1,
+          "type": "$or",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000001",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000001",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:81.21-81.75"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 43 ],
+            "B": [ 31 ],
+            "Y": [ 15 ]
+          }
+        },
+        "$or$rtl/orbit_thermal_tmr.v:82$45": {
+          "hide_name": 1,
+          "type": "$or",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000001",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000001",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:82.21-82.44"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 39 ],
+            "B": [ 40 ],
+            "Y": [ 16 ]
+          }
+        },
+        "$procmux$76": {
+          "hide_name": 1,
+          "type": "$pmux",
+          "parameters": {
+            "S_WIDTH": "00000000000000000000000000000010",
+            "WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "full_case": "00000000000000000000000000000001",
+            "src": "rtl/orbit_thermal_tmr.v:50.77-50.77|rtl/orbit_thermal_tmr.v:49.13-54.20"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 44, 45 ],
+            "B": [ 46, 47, 48, 49 ],
+            "S": [ 29, 43 ],
+            "Y": [ 50, 51 ]
+          }
+        },
+        "$procmux$77_CMP0": {
+          "hide_name": 1,
+          "type": "$eq",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "B_SIGNED": "00000000000000000000000000000000",
+            "B_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "full_case": "00000000000000000000000000000001",
+            "src": "rtl/orbit_thermal_tmr.v:50.77-50.77|rtl/orbit_thermal_tmr.v:49.13-54.20"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 13, 14 ],
+            "B": [ "1", "0" ],
+            "Y": [ 29 ]
+          }
+        },
+        "$procmux$78_CMP0": {
+          "hide_name": 1,
+          "type": "$logic_not",
+          "parameters": {
+            "A_SIGNED": "00000000000000000000000000000000",
+            "A_WIDTH": "00000000000000000000000000000010",
+            "Y_WIDTH": "00000000000000000000000000000001"
+          },
+          "attributes": {
+            "full_case": "00000000000000000000000000000001",
+            "src": "rtl/orbit_thermal_tmr.v:49.25-49.25|rtl/orbit_thermal_tmr.v:49.13-54.20"
+          },
+          "port_directions": {
+            "A": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 13, 14 ],
+            "Y": [ 43 ]
+          }
+        },
+        "$procmux$83": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "full_case": "00000000000000000000000000000001",
+            "src": "rtl/orbit_thermal_tmr.v:46.13-46.39|rtl/orbit_thermal_tmr.v:46.9-55.12"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ 50, 51 ],
+            "B": [ "0", "1" ],
+            "S": [ 38 ],
+            "Y": [ 52, 53 ]
+          }
+        },
+        "$ternary$rtl/orbit_thermal_tmr.v:50$28": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:50.35-50.76"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ "0", "0" ],
+            "B": [ "1", "0" ],
+            "S": [ 35 ],
+            "Y": [ 48, 49 ]
+          }
+        },
+        "$ternary$rtl/orbit_thermal_tmr.v:51$30": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:51.35-51.78"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ "1", "0" ],
+            "B": [ "0", "0" ],
+            "S": [ 36 ],
+            "Y": [ 46, 47 ]
+          }
+        },
+        "$ternary$rtl/orbit_thermal_tmr.v:53$32": {
+          "hide_name": 1,
+          "type": "$mux",
+          "parameters": {
+            "WIDTH": "00000000000000000000000000000010"
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:53.35-53.74"
+          },
+          "port_directions": {
+            "A": "input",
+            "B": "input",
+            "S": "input",
+            "Y": "output"
+          },
+          "connections": {
+            "A": [ "0", "1" ],
+            "B": [ "0", "0" ],
+            "S": [ 36 ],
+            "Y": [ 44, 45 ]
+          }
+        },
+        "u_copy0": {
+          "hide_name": 0,
+          "type": "$paramod\\orbit_keep_reg\\W=s32'00000000000000000000000000000010\\RESET_VAL=2'10",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:58.49-60.6"
+          },
+          "port_directions": {
+            "clk": "input",
+            "d": "input",
+            "en": "input",
+            "q": "output",
+            "rst_n": "input"
+          },
+          "connections": {
+            "clk": [ 2 ],
+            "d": [ 52, 53 ],
+            "en": [ "1" ],
+            "q": [ 17, 18 ],
+            "rst_n": [ 3 ]
+          }
+        },
+        "u_copy1": {
+          "hide_name": 0,
+          "type": "$paramod\\orbit_keep_reg\\W=s32'00000000000000000000000000000010\\RESET_VAL=2'10",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:62.49-64.6"
+          },
+          "port_directions": {
+            "clk": "input",
+            "d": "input",
+            "en": "input",
+            "q": "output",
+            "rst_n": "input"
+          },
+          "connections": {
+            "clk": [ 2 ],
+            "d": [ 52, 53 ],
+            "en": [ "1" ],
+            "q": [ 19, 20 ],
+            "rst_n": [ 3 ]
+          }
+        },
+        "u_copy2": {
+          "hide_name": 0,
+          "type": "$paramod\\orbit_keep_reg\\W=s32'00000000000000000000000000000010\\RESET_VAL=2'10",
+          "parameters": {
+          },
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:66.49-68.6"
+          },
+          "port_directions": {
+            "clk": "input",
+            "d": "input",
+            "en": "input",
+            "q": "output",
+            "rst_n": "input"
+          },
+          "connections": {
+            "clk": [ 2 ],
+            "d": [ 52, 53 ],
+            "en": [ "1" ],
+            "q": [ 23, 24 ],
+            "rst_n": [ 3 ]
+          }
+        }
+      },
+      "netnames": {
+        "$2\\nxt[1:0]": {
+          "hide_name": 1,
+          "bits": [ 50, 51 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:45.5-56.8"
+          }
+        },
+        "$and$rtl/orbit_thermal_tmr.v:40$18_Y": {
+          "hide_name": 1,
+          "bits": [ 21, 22 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.25-40.32"
+          }
+        },
+        "$and$rtl/orbit_thermal_tmr.v:40$19_Y": {
+          "hide_name": 1,
+          "bits": [ 25, 26 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.37-40.44"
+          }
+        },
+        "$and$rtl/orbit_thermal_tmr.v:40$21_Y": {
+          "hide_name": 1,
+          "bits": [ 27, 28 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.49-40.56"
+          }
+        },
+        "$and$rtl/orbit_thermal_tmr.v:81$41_Y": {
+          "hide_name": 1,
+          "bits": [ 31 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:81.44-81.74"
+          }
+        },
+        "$auto$simple.cc:234:combine_resets$90": {
+          "hide_name": 1,
+          "bits": [ 33 ],
+          "attributes": {
+          }
+        },
+        "$eq$rtl/orbit_thermal_tmr.v:77$35_Y": {
+          "hide_name": 1,
+          "bits": [ 29 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:77.23-77.42"
+          }
+        },
+        "$eq$rtl/orbit_thermal_tmr.v:81$38_Y": {
+          "hide_name": 1,
+          "bits": [ 43 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:81.22-81.39"
+          }
+        },
+        "$ge$rtl/orbit_thermal_tmr.v:46$25_Y": {
+          "hide_name": 1,
+          "bits": [ 34 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:46.28-46.39"
+          }
+        },
+        "$ge$rtl/orbit_thermal_tmr.v:50$27_Y": {
+          "hide_name": 1,
+          "bits": [ 35 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:50.36-50.51"
+          }
+        },
+        "$le$rtl/orbit_thermal_tmr.v:51$29_Y": {
+          "hide_name": 1,
+          "bits": [ 36 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:51.36-51.50"
+          }
+        },
+        "$logic_not$rtl/orbit_thermal_tmr.v:46$24_Y": {
+          "hide_name": 1,
+          "bits": [ 37 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:46.13-46.24"
+          }
+        },
+        "$logic_or$rtl/orbit_thermal_tmr.v:46$26_Y": {
+          "hide_name": 1,
+          "bits": [ 38 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:46.13-46.39"
+          }
+        },
+        "$ne$rtl/orbit_thermal_tmr.v:82$43_Y": {
+          "hide_name": 1,
+          "bits": [ 39 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:82.22-82.30"
+          }
+        },
+        "$ne$rtl/orbit_thermal_tmr.v:82$44_Y": {
+          "hide_name": 1,
+          "bits": [ 40 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:82.35-82.43"
+          }
+        },
+        "$not$rtl/orbit_thermal_tmr.v:77$36_Y": {
+          "hide_name": 1,
+          "bits": [ 30 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:77.46-77.52"
+          }
+        },
+        "$or$rtl/orbit_thermal_tmr.v:40$20_Y": {
+          "hide_name": 1,
+          "bits": [ 41, 42 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:40.24-40.45"
+          }
+        },
+        "$ternary$rtl/orbit_thermal_tmr.v:50$28_Y": {
+          "hide_name": 1,
+          "bits": [ 48, 49 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:50.35-50.76"
+          }
+        },
+        "$ternary$rtl/orbit_thermal_tmr.v:51$30_Y": {
+          "hide_name": 1,
+          "bits": [ 46, 47 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:51.35-51.78"
+          }
+        },
+        "$ternary$rtl/orbit_thermal_tmr.v:53$32_Y": {
+          "hide_name": 1,
+          "bits": [ 44, 45 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:53.35-53.74"
+          }
+        },
+        "admit": {
+          "hide_name": 0,
+          "bits": [ 15 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:31.23-31.28"
+          }
+        },
+        "c0": {
+          "hide_name": 0,
+          "bits": [ 17, 18 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:39.16-39.18"
+          }
+        },
+        "c1": {
+          "hide_name": 0,
+          "bits": [ 19, 20 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:39.20-39.22"
+          }
+        },
+        "c2": {
+          "hide_name": 0,
+          "bits": [ 23, 24 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:39.24-39.26"
+          }
+        },
+        "clk": {
+          "hide_name": 0,
+          "bits": [ 2 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:26.23-26.26"
+          }
+        },
+        "nxt": {
+          "hide_name": 0,
+          "bits": [ 52, 53 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:44.15-44.18"
+          }
+        },
+        "phase": {
+          "hide_name": 0,
+          "bits": [ 32 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:72.9-72.14"
+          }
+        },
+        "repair": {
+          "hide_name": 0,
+          "bits": [ 16 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:32.23-32.29"
+          }
+        },
+        "rst_n": {
+          "hide_name": 0,
+          "bits": [ 3 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:27.23-27.28"
+          }
+        },
+        "state": {
+          "hide_name": 0,
+          "bits": [ 13, 14 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:30.23-30.28"
+          }
+        },
+        "temp_c": {
+          "hide_name": 0,
+          "bits": [ 5, 6, 7, 8, 9, 10, 11, 12 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:29.23-29.29"
+          }
+        },
+        "temp_valid": {
+          "hide_name": 0,
+          "bits": [ 4 ],
+          "attributes": {
+            "src": "rtl/orbit_thermal_tmr.v:28.23-28.33"
+          }
+        }
+      }
+    }
+  }
+}

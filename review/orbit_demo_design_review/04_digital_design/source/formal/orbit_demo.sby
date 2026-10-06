@@ -1,0 +1,97 @@
+# SymbiYosys jobs for the fault-free orbit_demo (harness: formal/orbit_demo_fv.sv).
+#
+# Template: formal/gen_sby.sh puts the RTL file names in place of the RTL_FILES
+# placeholder in [script] and appends the RTL ($(RTL) in mk/formal.mk) and the
+# harness to [files]. mk/formal.mk runs one task per target, so failures stay
+# isolated.
+#
+# Task           Properties                                   Mode / engine
+# thermal        P5, P6 (+ helpers)                           prove, k-induction, smtbmc yices
+# dup            P7                                           prove, k-induction, smtbmc yices
+# handshake      P2, P3, P4 (+ P5-P7 and helpers)             prove, k-induction, smtbmc yices
+# datapath       P1, P8 (+ P7 and helpers)                    prove, k-induction, smtbmc yices
+# clear          P8 (and reset -> STOP, thermal rewrite) from     prove, k-induction, smtbmc yices
+#                an arbitrary state incl. fault_q = 1
+# product        P1 lemma: SPEC product formula equals        prove, smtbmc bitwuzla
+#                sign * (|a| * |b|) for all a, b
+# thermal_pdr    P5, P6 without helper invariants             prove, abc pdr
+# dup_pdr        P7                                           prove, abc pdr
+# handshake_pdr  P2, P3, P4 without helper invariants         prove, abc pdr
+# datapath_pdr   P1, P8 without helper invariants             prove, abc pdr (slow, see summary)
+# live           P2 liveness, fair consumer                   live, aiger suprove
+# cover          reachability covers from reset               cover, smtbmc yices
+# wrap           INT32 wraparound covers from a consistent    cover, smtbmc yices
+#                arbitrary state; all assertions checked
+#
+# The smtbmc prove depth is the k of k-induction and also the base-case BMC
+# depth. It is larger than induction needs so that the base case alone finds
+# the short counterexamples of `make formal-vacuity` (a failed induction step
+# alone would only give status UNKNOWN).
+
+# Tags: prv = smtbmc yices prove, prv_bw = smtbmc bitwuzla prove,
+#       pdr = abc pdr prove, lv = liveness, cov = cover.
+[tasks]
+thermal       prv
+dup           prv
+handshake     prv
+datapath      prv
+clear         prv
+product       prv_bw
+thermal_pdr   pdr
+dup_pdr       pdr
+handshake_pdr pdr
+datapath_pdr  pdr
+live          lv
+cover         cov
+wrap          cov
+
+[options]
+prv: mode prove
+prv_bw: mode prove
+pdr: mode prove
+lv: mode live
+cov: mode cover
+thermal: depth 8
+dup: depth 6
+handshake: depth 8
+datapath: depth 6
+clear: depth 3
+product: depth 1
+cover: depth 24
+wrap: depth 8
+wrap: cover_assert on
+
+[engines]
+prv: smtbmc yices
+prv_bw: smtbmc bitwuzla
+pdr: abc pdr
+lv: aiger suprove
+cov: smtbmc yices
+
+[script]
+read_verilog -formal @RTL_FILES@
+thermal: read_verilog -formal -sv -DFV_THERMAL orbit_demo_fv.sv
+dup: read_verilog -formal -sv -DFV_DUP orbit_demo_fv.sv
+handshake: read_verilog -formal -sv -DFV_HANDSHAKE -DFV_THERMAL -DFV_DUP orbit_demo_fv.sv
+datapath: read_verilog -formal -sv -DFV_DATAPATH -DFV_DUP orbit_demo_fv.sv
+clear: read_verilog -formal -sv -DFV_ANY_START -DFV_CLEAR orbit_demo_fv.sv
+product: read_verilog -formal -sv -DFV_PRODUCT orbit_demo_fv.sv
+thermal_pdr: read_verilog -formal -sv -DFV_THERMAL -DFV_NO_HELPERS orbit_demo_fv.sv
+dup_pdr: read_verilog -formal -sv -DFV_DUP orbit_demo_fv.sv
+handshake_pdr: read_verilog -formal -sv -DFV_HANDSHAKE -DFV_NO_HELPERS orbit_demo_fv.sv
+datapath_pdr: read_verilog -formal -sv -DFV_DATAPATH -DFV_NO_HELPERS orbit_demo_fv.sv
+live: read_verilog -formal -sv -DFV_LIVE orbit_demo_fv.sv
+cover: read_verilog -formal -sv -DFV_COVER orbit_demo_fv.sv
+wrap: read_verilog -formal -sv -DFV_FREE_START -DFV_WRAP -DFV_DATAPATH -DFV_HANDSHAKE -DFV_THERMAL -DFV_DUP orbit_demo_fv.sv
+# Hierarchical references: flatten must run right after proc (no opt before
+# it) and the keep_hierarchy attribute of orbit_keep_reg must be removed so
+# that the (* hierconn *) wires of the harness get connected.
+hierarchy -top orbit_demo_fv
+proc
+setattr -mod -unset keep_hierarchy
+flatten
+# Fail if any harness wire (e.g. a mistyped hierconn path) is left undriven.
+check -assert
+prep -top orbit_demo_fv
+
+[files]

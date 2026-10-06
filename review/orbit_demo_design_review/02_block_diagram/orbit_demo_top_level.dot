@@ -1,0 +1,30 @@
+// Top-level block diagram of orbit_demo, drawn from rtl/*.v (RTL unchanged since commit 26566f0).
+// Instance and port names are copied from the RTL. Bus widths in [ ].
+digraph top {
+  graph [rankdir=LR, fontname="Helvetica", fontsize=12, nodesep=0.4, ranksep=0.9, labelloc=t,
+         label="orbit_demo top level   |   clock domain: clk (single)   |   reset: rst_n, synchronous, active low   |   power domain: VDD/VSS (single)"];
+  node  [fontname="Helvetica", fontsize=11, shape=box];
+  edge  [fontname="Helvetica", fontsize=10];
+  src  [shape=plaintext, label="input stream\nin_valid, in_first, in_last\nin_a [31:0], in_b [31:0]"];
+  snk  [shape=plaintext, label="output stream\nout_valid, out_data [127:0]"];
+  rdy  [shape=plaintext, label="out_ready (input)"];
+  sens [shape=plaintext, label="temp_valid, temp_c [7:0]"];
+  ctl  [shape=plaintext, label="clear_fault (input)"];
+  st   [shape=plaintext, label="fault, therm_state [1:0],\ntherm_repair, shutdown_req"];
+  irdy [shape=plaintext, label="in_ready (output)"];
+  lanes [label="g_lane[0..3].u_lane : orbit_mac_lane  (x4)\nINT8 x INT8 -> INT32 accumulate\nu_acc_a / u_acc_b, u_res_a / u_res_b (duplicated, 4 x 32 FF each)\nlane_mismatch[i] = (acc_a != acc_b) | (res_a != res_b)"];
+  glue  [label="orbit_demo glue\nin_fire, in_ready, out_valid, out_fire\nmismatch = |lane_mismatch\nfault_q (sticky), out_valid_q"];
+  therm [label="u_thermal : orbit_thermal_tmr\nu_copy0/1/2 (3 x 2 FF), majority vote, feedback repair\nphase FF, admit"];
+  src -> lanes [label="in_a/in_b[8*i +: 8], in_first, in_last"];
+  glue -> lanes [label="mac_en = in_fire, clr = clear_fault"];
+  lanes -> glue [label="lane_mismatch[3:0]"];
+  lanes -> snk [label="result = res_a -> out_data[32*i +: 32]"];
+  glue -> snk [label="out_valid"];
+  rdy -> glue; ctl -> glue; ctl -> lanes [label="clr"];
+  src -> glue [label="in_valid, in_last"];
+  sens -> therm;
+  therm -> glue [label="admit"];
+  therm -> st [label="therm_state, therm_repair, shutdown_req"];
+  glue -> st [label="fault"];
+  glue -> irdy;
+}

@@ -1,0 +1,7 @@
+pdsep floorplan variant edges, region type EXCLUSIVE
+core (um): 2.300 2.720 344.080 342.720
+region pdsep_copyA  box_um     2.300     2.720    52.440   342.720  members  824  flip-flops  256 (expected 256)
+region pdsep_copyB  box_um   293.940     2.720   344.080   342.720  members  824  flip-flops  256 (expected 256)
+region pdsep_th0    box_um   161.920   272.000   184.920   288.320  members    8  flip-flops    2 (expected 2)
+region pdsep_th1    box_um   161.920   165.920   184.920   182.240  members    8  flip-flops    2 (expected 2)
+region pdsep_th2    box_um   161.920    57.120   184.920    73.440  members    8  flip-flops    2 (expected 2)

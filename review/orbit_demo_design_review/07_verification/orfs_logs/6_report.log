@@ -1,0 +1,80 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 2 thread(s).
+read_liberty /OpenROAD-flow-scripts/flow/platforms/sky130hd/lib/sky130_fd_sc_hd__tt_025C_1v80.lib
+read_db /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/6_1_fill.odb
+read_sdc /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/6_1_fill.sdc
+source /OpenROAD-flow-scripts/flow/platforms/sky130hd/setRC.tcl
+write_db /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/6_final.odb
+write_sdc -no_timestamp /home/user/chip/build/pd_sep/results/sky130hd/orbit_demo/sep/6_final.sdc
+Deleted 0 routing obstructions
+Warning: master sky130_ef_sc_hd__decap_12 has signal pins but no liberty cell
+Warning: master sky130_ef_sc_hd__decap_12 has signal pins but no liberty cell
+Global output passed lec test
+[INFO RCX-0431] Defined process_corner X with ext_model_index 0
+[INFO RCX-0029] Defined extraction corner X
+[INFO RCX-0435] Reading extraction model file /OpenROAD-flow-scripts/flow/platforms/sky130hd/rcx_patterns.rules ...
+[INFO RCX-0436] RC segment generation orbit_demo (max_merge_res 50.0) ...
+[INFO RCX-0040] Final 23210 rc segments
+[INFO RCX-0439] Coupling Cap extraction orbit_demo ...
+[INFO RCX-0440] Coupling threshhold is 0.1000 fF, coupling capacitance less than 0.1000 fF will be grounded.
+[INFO RCX-0442] 54% of 50530 wires extracted
+[INFO RCX-0442] 100% of 50530 wires extracted
+[INFO RCX-0045] Extract 6886 nets, 30095 rsegs, 30095 caps, 60471 ccs
+[INFO RCX-0443] 6886 nets finished
+[INFO PSM-0040] All shapes on net VDD are connected.
+########## IR report #################
+Net              : VDD
+Corner           : default
+Total power      : 5.21e-02 W
+Supply voltage   : 1.80e+00 V
+Worstcase voltage: 1.80e+00 V
+Average voltage  : 1.80e+00 V
+Average IR drop  : 9.58e-05 V
+Worstcase IR drop: 4.54e-04 V
+Percentage drop  : 0.03 %
+######################################
+[INFO PSM-0040] All shapes on net VSS are connected.
+########## IR report #################
+Net              : VSS
+Corner           : default
+Total power      : 5.21e-02 W
+Supply voltage   : 0.00e+00 V
+Worstcase voltage: 6.28e-04 V
+Average voltage  : 8.72e-05 V
+Average IR drop  : 8.72e-05 V
+Worstcase IR drop: 6.28e-04 V
+Percentage drop  : 0.03 %
+######################################
+Cell type report:                       Count        Area
+  Fill cell                             10381    53905.45
+  Tap cell                               1524     1906.83
+  Antenna cell                             20       50.05
+  Clock buffer                             88     1672.85
+  Timing Repair Buffer                   1201     9959.55
+  Inverter                                171      648.12
+  Clock inverter                            8      127.62
+  Sequential cell                         521    10430.00
+  Multi-Input combinational cell         4261    37504.72
+  Total                                 18175   116205.20
+Report metrics stage 6, finish...
+
+==========================================================================
+finish report_design_area
+--------------------------------------------------------------------------
+Design area 62300 um^2 54% utilization.
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/final_all.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/final_routing.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/final_placement.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/final_ir_drop.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/final_clocks.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/cts_default_clk.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/cts_default_clk_layout.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/final_resizer.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/final_congestion.webp.png
+[WARNING GUI-0010] File path does not end with a valid extension, new path is: /home/user/chip/build/pd_sep/reports/sky130hd/orbit_demo/sep/final_worst_path.webp.png
+Elapsed time: 0:13.22[h:]min:sec. CPU time: user 12.82 sys 0.70 (102%). Peak memory: 255708KB.
+Log                       Ext     Elapsed/s Peak Memory/MB sha1sum result [0:20)
+6_report                                 13            249                  N/A
