@@ -22,7 +22,7 @@ Package revision table, verbatim from the package revision record:
 
 Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
 
-Checked for this section on 2026-10-06: `MANIFEST.sha256` is at the package root ([../MANIFEST.sha256](../MANIFEST.sha256), generated last on 2026-10-06; register D-53). The fault summary [fault/summary.md](fault/summary.md) lines 15-20 records the full sha256 of the four RTL files, and they match the table prefixes. The SPEF copy [6_final.spef.gz](../06_physical_design/layout_db/6_final.spef.gz) decompresses to sha256 014e655ae938245a…, the value in the table. `git diff --name-only 0495cfa..HEAD` outside `review/` is empty (checked 2026-10-06 at HEAD 23c72ac); no design, report or flow file changed after the package commit.
+Checked for this section on 2026-10-06: `MANIFEST.sha256` is at the package root ([../MANIFEST.sha256](../MANIFEST.sha256), generated last on 2026-10-06; register D-53). The fault summary [fault/summary.md](fault/summary.md) lines 15-20 records the full sha256 of the four RTL files, and they match the table prefixes. The SPEF copy [6_final.spef.gz](../06_physical_design/layout_db/6_final.spef.gz) decompresses to sha256 014e655ae938245a…, the value in the table. `git diff --name-only 0495cfa..HEAD` outside `review/` was empty (checked 2026-10-06 at HEAD 23c72ac); since then it lists only the repository-root `README.md`, added after packaging (not a design input). No design, report or flow file changed after the package commit.
 
 ## 2 Evidence in this folder
 

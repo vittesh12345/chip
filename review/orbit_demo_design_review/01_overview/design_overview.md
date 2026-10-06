@@ -31,7 +31,7 @@ Notes on this table, checked for this document:
 | Item | Demonstrator `orbit_demo` (built, reviewed here) | ORBIT-AI concept chip (brief only, not built) |
 |---|---|---|
 | Compute | 4 lanes x 1 INT8 MAC, INT32 accumulate | 16 tiles x 32 x 32 = 16384 INT8 MACs: TARGET |
-| Clock | no requirement (MISSING); 7.2 ns closed at TT only: VERIFIED | 200-800 MHz, 6.55-26.21 TOPS: TARGET ("No timing measurement supports these clock targets", p.2) |
+| Clock | no requirement (MISSING); 7.2 ns met at TT (ORFS optimised at TT only): VERIFIED; re-time of the same layout passes at ff_n40C_1v95 and fails setup at ss_100C_1v60 (WNS -6.131 ns): REPRODUCED 2026-10-06 | 200-800 MHz, 6.55-26.21 TOPS: TARGET ("No timing measurement supports these clock targets", p.2) |
 | Storage | 521 flip-flops; no SRAM or ECC (`rtl/ecc/` exists but is not instantiated: N/A here) | 32 MiB SRAM with SECDED 64+8: TARGET |
 | Protection | duplicate + compare fault-stop (512 bits), TMR + repair (6 bits), 3 unprotected flip-flops, no replay | duplication, checkpoint/retry, tile quarantine: TARGET |
 | Power | no budget (MISSING); 52.1092 mW default-activity estimate: VERIFIED tool output | 40 W "for conceptual sizing only": ASSUMPTION |
