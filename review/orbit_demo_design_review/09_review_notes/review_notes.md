@@ -86,7 +86,7 @@ Only trade-offs stated in a file are listed. Costs are measured values unless la
 
 ## 4. Discrepancy register
 
-Every row was re-checked against the cited files on 2026-10-06 (status of each check: REPRODUCED 2026-10-06). Rows merge duplicates reported by several areas. Items specific to the drawings are in [02_block_diagram/README.md](../02_block_diagram/README.md) (BD-1 to BD-5) and [03_schematics/README.md](../03_schematics/README.md) (SC-1 to SC-4) and are not repeated here, except BD-1 to BD-3 (D-91) and SC-1 (D-92). BD-1 to BD-3 and SC-2 were fixed in commit 0477235; BD-4, BD-5, SC-1, SC-3 and SC-4 are open (SC-4 now covers only the missing library CDL and the unrecorded PDK version). "src/" below = [04_digital_design/source/](../04_digital_design/source/).
+Every row was re-checked against the cited files on 2026-10-06 (status of each check: REPRODUCED 2026-10-06). Rows merge duplicates reported by several areas. Items specific to the drawings are in [02_block_diagram/README.md](../02_block_diagram/README.md) (BD-1 to BD-5) and [03_schematics/README.md](../03_schematics/README.md) (SC-1 to SC-4) and are not repeated here, except BD-1 to BD-3 (D-91) and SC-1 (D-92). BD-1 to BD-3 and SC-2 were fixed in commit 0477235; BD-4, BD-5, SC-1, SC-3 and SC-4 are open (SC-4 now covers only the unrecorded PDK version of the library CDL; the CDL itself is in the package since 2026-10-06, inside [6_final_concat.cdl.gz](../07_verification/additional_evidence/flow/6_final_concat.cdl.gz)). "src/" below = [04_digital_design/source/](../04_digital_design/source/).
 
 ### 4.1 Documentation vs RTL
 
