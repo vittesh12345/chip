@@ -1,0 +1,151 @@
+/* ==========================================================================
+   Vantage design tokens  ·  editorial light/dark system
+   --------------------------------------------------------------------------
+   A tone-aware palette: neutral semantic names resolve to a LIGHT set on
+   :root and flip to a DARK set under .tone-dark. Every marketing section
+   paints itself from --bg / --fg, so the page can alternate full-light and
+   full-dark bands by class alone. Type is Geist (prose + display) and Geist
+   Mono (figures, hashes, machine readouts). Status colors carry one meaning
+   each and are given a darker variant for light surfaces so a verdict stays
+   legible on white as well as on charcoal.
+   ========================================================================== */
+
+:root {
+
+  /* --- Tone: LIGHT (default) -----------------------------------------------
+     Palantir's warm off-white, near-black ink, and quiet hairlines. --bg is
+     the section ground; --bg-2 the warm inset; --bg-3 a deeper card fill.    */
+  --bg:          #ffffff;
+  --bg-2:        #f2f1ee;   /* warm grey band / inset                          */
+  --bg-3:        #e8e7e2;   /* deeper inset, code wells                        */
+  --panel:       #ffffff;   /* raised card on a --bg-2 band                    */
+  --fg:          #16181c;   /* ink: headings, key figures                     */
+  --fg-muted:    #565a62;   /* body, descriptions                             */
+  --fg-faint:    #83878f;   /* labels, timestamps, fine print                 */
+  --rule:        #e4e3df;   /* hairline: divides inside a container            */
+  --rule-strong: #c7c6c1;   /* edge: object perimeters, section boundaries    */
+
+  /* Status on a LIGHT surface: darkened so each clears text contrast on white.
+     These flip to their bright forms under .tone-dark below.                 */
+  --status-nominal: #1f9d57;
+  --status-watch:   #9a7400;
+  --status-threat:  #cf3d2c;
+
+  /* On-ink helpers: a fixed near-black and paper, for the solid button and
+     the ink CTA block regardless of the surrounding tone.                    */
+  --ink:   #16181c;
+  --paper: #ffffff;
+
+  /* --- Type ----------------------------------------------------------------
+     Geist is a neo-grotesque with a Helvetica lineage: the register this
+     redesign wants (Palantir Sans is the same family of shape). It replaces
+     Space Grotesk, which had become the default display face of scaffolded
+     product pages. Geist Mono carries everything the engine reports.         */
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+
+  /* Fluid scale. The display tier is the editorial moment: the giant
+     capability names and the argument statement. Hierarchy comes from scale
+     and tracking, not weight.                                                */
+  --text-micro:    11px;   /* mono tags, indices                              */
+  --text-caption:  12.5px; /* eyebrows, badges, fine print                    */
+  --text-body-sm:  14px;
+  --text-body-md:  16px;
+  --text-body-lg:  19px;   /* lede, mission copy                              */
+  --text-lede:     clamp(19px, 1.6vw, 23px);
+  --text-h3:       clamp(21px, 2.2vw, 28px);
+  --text-h2:       clamp(28px, 3.4vw, 46px);
+  --text-h1:       clamp(38px, 5.4vw, 74px);   /* hero headline               */
+  --text-statement:clamp(30px, 4.4vw, 60px);   /* the argument line           */
+  --text-display:  clamp(40px, 7vw, 104px);    /* giant capability names      */
+
+  --tracking-display: -0.03em;
+  --tracking-tight:   -0.02em;
+  --tracking-label:    0.16em;  /* uppercase Geist eyebrows                    */
+
+  /* --- Space --------------------------------------------------------------- */
+  --spacing-4:   4px;
+  --spacing-8:   8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-28: 28px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-64: 64px;
+  --spacing-80: 80px;
+  --spacing-96: 96px;
+  --spacing-128: 128px;
+  --spacing-144: 144px;
+
+  /* --- Layout -------------------------------------------------------------- */
+  --page-max-width: 1240px;
+  --header-height:  60px;
+  --header-inset:   14px;    /* the floating pill's gap from the top          */
+  --anchor-offset:  104px;   /* scroll-margin: header + inset + clearance      */
+  --card-padding:   var(--spacing-32);
+
+  --section-pad:       var(--spacing-96);
+  --section-pad-tight: var(--spacing-64);
+  --section-pad-lg:    var(--spacing-128);
+
+  /* --- Shape ---------------------------------------------------------------
+     Sharp by default (the big CTA blocks are square), one soft radius for
+     controls, one nav radius for the floating bar, and a pill for socials.   */
+  --radius-sm:   4px;
+  --radius-nav: 16px;
+  --radius-pill: 999px;
+
+  /* --- Motion -------------------------------------------------------------- */
+  --motion-fast:     160ms;
+  --motion-mid:      320ms;
+  --motion-reveal:   680ms;
+  --motion-ease-out: cubic-bezier(0.16, 0.84, 0.3, 1);
+
+  /* ======================================================================
+     Back-compat aliases — DO NOT use on the marketing pages.
+     The demo console and the 3D orbit map reference the original dark-only
+     token names heavily. They are pinned here to fixed dark values so those
+     two apps keep their instrument look untouched while the marketing shell
+     runs on the tone-aware names above. If a demo/viz color drifts, this is
+     the first block to check.
+     ====================================================================== */
+  --surface-canvas: #000000;
+  --surface-band:   #0c0f14;
+  --surface-panel:  #151a22;
+  --surface-chrome: #1e242e;
+  --rule-hairline:  #3d4552;
+  --rule-edge:      #525a66;
+  --text-primary:   #ffffff;
+  --text-body:      #e8eaec;
+  --text-muted:     #a1a4a5;
+  --text-faint:     #878c95;
+  --radius-xs: 2px;
+}
+
+/* --- Tone: DARK -----------------------------------------------------------
+   Charcoal, not pure black: it matches the reference's dark panels and lets a
+   hairline read without going to a fourth grey. Applied to a <section> (or to
+   <body>/<html> on the demo and viz shells) to flip the whole token set.     */
+.tone-dark,
+[data-tone="dark"] {
+  --bg:          #0e0f12;
+  --bg-2:        #16181c;
+  --bg-3:        #1e2128;
+  --panel:       #16181c;
+  --fg:          #f4f4f2;
+  --fg-muted:    #a7abb2;
+  --fg-faint:    #787d86;
+  --rule:        #2a2d33;
+  --rule-strong: #3c414a;
+
+  --status-nominal: #3ad389;
+  --status-watch:   #ffca16;
+  --status-threat:  #ff6b5f;
+}

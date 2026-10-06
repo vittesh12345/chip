@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-label="One-sidedness discriminator · benign formation" font-family="'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"><rect width="960" height="560" fill="#0e0f12"/>
+<text x="48" y="62" font-size="17" fill="#f4f4f2" text-anchor="start" letter-spacing="2.4" font-weight="600">ONE-SIDEDNESS DISCRIMINATOR · BENIGN FORMATION</text>
+<rect x="798" y="44" width="114" height="26" rx="3" fill="none" stroke="#3ad389" stroke-width="1"/>
+<text x="855" y="61" font-size="11" fill="#3ad389" text-anchor="middle" letter-spacing="1.6">INCIDENTAL</text>
+<text x="48" y="90" font-size="13" fill="#a7abb2" text-anchor="start">GRACE-FO 1 · NORAD 43476  with  GRACE-FO 2 · NORAD 43477</text>
+<line x1="48" x2="912" y1="108" y2="108" stroke="#2a2d33" stroke-width="1"/>
+<text x="48" y="132" font-size="10.5" fill="#787d86" text-anchor="start" letter-spacing="1.8">RELATIVE RANGE OVER THE ASSESSMENT WINDOW</text>
+<line x1="48" x2="912" y1="318.8" y2="318.8" stroke="#ffca16" stroke-opacity="0.45" stroke-dasharray="5 4" stroke-width="1"/>
+<text x="912" y="312.8015593985287" font-size="10" fill="#ffca16" text-anchor="end">50 km proximity radius</text>
+<line x1="48" x2="48" y1="142" y2="386" stroke="#2a2d33" stroke-width="1"/>
+<line x1="48" x2="912" y1="386" y2="386" stroke="#2a2d33" stroke-width="1"/>
+<path d="M48.0,150.9 L57.0,150.6 L66.0,150.6 L75.0,150.8 L84.0,151.4 L93.0,151.6 L102.0,151.0 L111.0,150.6 L120.0,150.6 L129.0,150.7 L138.0,151.3 L147.0,151.6 L156.0,151.2 L165.0,150.6 L174.0,150.5 L183.0,150.6 L192.0,151.1 L201.0,151.6 L210.0,151.3 L219.0,150.7 L228.0,150.5 L237.0,150.5 L246.0,150.9 L255.0,151.5 L264.0,151.4 L273.0,150.8 L282.0,150.5 L291.0,150.4 L300.0,150.7 L309.0,151.3 L318.0,151.4 L327.0,150.9 L336.0,150.5 L345.0,150.4 L354.0,150.5 L363.0,151.1 L372.0,151.4 L381.0,151.0 L390.0,150.5 L399.0,150.4 L408.0,150.4 L417.0,150.9 L426.0,151.4 L435.0,151.1 L444.0,150.5 L453.0,150.3 L462.0,150.3 L471.0,150.7 L480.0,151.3 L489.0,151.2 L498.0,150.6 L507.0,150.3 L516.0,150.3 L525.0,150.6 L534.0,151.2 L543.0,151.3 L552.0,150.7 L561.0,150.3 L570.0,150.2 L579.0,150.4 L588.0,151.0 L597.0,151.3 L606.0,150.8 L615.0,150.3 L624.0,150.2 L633.0,150.3 L642.0,150.8 L651.0,151.3 L660.0,150.9 L669.0,150.3 L678.0,150.2 L687.0,150.2 L696.0,150.6 L705.0,151.2 L714.0,151.0 L723.0,150.4 L732.0,150.1 L741.0,150.1 L750.0,150.4 L759.0,151.0 L768.0,151.1 L777.0,150.5 L786.0,150.1 L795.0,150.1 L804.0,150.3 L813.0,150.9 L822.0,151.1 L831.0,150.6 L840.0,150.1 L849.0,150.0 L858.0,150.1 L867.0,150.7 L876.0,151.1 L885.0,150.7 L894.0,150.1 L903.0,150.0 L912.0,150.0" fill="none" stroke="#f4f4f2" stroke-width="1.8"/>
+<circle cx="147.0" cy="151.6" r="3.5" fill="#3ad389"/>
+<text x="147" y="142.6128258870832" font-size="11" fill="#3ad389" text-anchor="middle">174.4 km</text>
+<text x="42" y="148" font-size="10" fill="#787d86" text-anchor="end">176 km</text>
+<text x="48" y="404" font-size="10" fill="#787d86" text-anchor="start">2026-09-16 22:21Z</text>
+<text x="480" y="404" font-size="10" fill="#a7abb2" text-anchor="middle">median range 175.1 km</text>
+<text x="912" y="404" font-size="10" fill="#787d86" text-anchor="end">2026-09-17 22:21Z</text>
+<line x1="48" x2="912" y1="418" y2="418" stroke="#2a2d33" stroke-width="1"/>
+<text x="48" y="440" font-size="10" fill="#787d86" text-anchor="start" letter-spacing="1.8">OBJECT A</text>
+<text x="132" y="440" font-size="12" fill="#f4f4f2" text-anchor="start">GRACE-FO 1</text>
+<text x="912" y="440" font-size="11.5" fill="#a7abb2" text-anchor="end">passive · 0 burns in lookback</text>
+<text x="48" y="464" font-size="10" fill="#787d86" text-anchor="start" letter-spacing="1.8">OBJECT B</text>
+<text x="132" y="464" font-size="12" fill="#f4f4f2" text-anchor="start">GRACE-FO 2</text>
+<text x="912" y="464" font-size="11.5" fill="#a7abb2" text-anchor="end">passive · 0 burns in lookback</text>
+<text x="48" y="488" font-size="11" fill="#3ad389" text-anchor="start">TWO-SIDED OR PASSIVE · no one-sided pursuit in the maneuver record</text>
+<text x="48" y="526" font-size="10" fill="#787d86" text-anchor="start">PRODUCT OUTPUT · VANTAGE RPO ENGINE v0.1.0 · REAL PUBLIC ELEMENT SETS · score 0.19 · confidence MODERATE</text>
+<text x="48" y="542" font-size="10" fill="#787d86" text-anchor="start">GRACE-FO 1/2 · CelesTrak GP (gp.php?CATNR=...) · fetched 2026-09-17 · epochs 2026-09-16</text>
+</svg>

@@ -1,0 +1,465 @@
+/* ==========================================================================
+   Vantage site shell  ·  editorial light/dark
+   Everything shared by every marketing page: reset, layout, the section tone
+   system, the floating pill header, buttons, the editorial capability list,
+   the blueprint helpers, the footer, and the scroll reveal. Page-specific
+   composition lives in each page's own <style> block.
+   ========================================================================== */
+
+/* --- Reset & base -------------------------------------------------------- */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--font-sans);
+  font-size:var(--text-body-md);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+svg{display:block}
+a{color:inherit;text-decoration:none}
+a,button{outline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--fg)}
+[hidden]{display:none !important}
+::selection{background:var(--fg);color:var(--bg)}
+
+.skip-link{position:fixed;top:var(--spacing-12);left:var(--spacing-12);z-index:100;padding:var(--spacing-8) var(--spacing-12);background:var(--fg);color:var(--bg);border-radius:var(--radius-sm);transform:translateY(-180%)}
+.skip-link:focus{transform:none}
+
+.wrap{max-width:var(--page-max-width);margin:0 auto;padding:0 clamp(20px,4vw,40px)}
+
+/* --- Tone bands ----------------------------------------------------------
+   .tone-dark flips the token set (see tokens.css); each band simply paints
+   from --bg / --fg. Boundaries are carried by the change of tone; where two
+   same-tone bands meet, add .divider for a hairline.                        */
+.tone-light,.tone-dark{background:var(--bg);color:var(--fg)}
+section{position:relative;scroll-margin-top:var(--anchor-offset)}
+.sec{padding:var(--section-pad) 0}
+.sec-tight{padding:var(--section-pad-tight) 0}
+.sec-wide{padding:var(--section-pad-lg) 0}
+.divider{border-top:1px solid var(--rule)}
+
+/* --- Shared type utilities ----------------------------------------------- */
+.eyebrow{
+  display:inline-flex;align-items:center;gap:var(--spacing-12);
+  font-family:var(--font-sans);font-weight:600;font-size:var(--text-caption);
+  letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--fg-faint);
+}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--rule-strong);flex:0 0 auto}
+.mono{font-family:var(--font-mono)}
+.display{font-weight:600;font-size:var(--text-display);letter-spacing:var(--tracking-display);line-height:.98}
+
+.sec-head{max-width:62ch}
+.sec-head h2{font-weight:600;color:var(--fg);font-size:var(--text-h2);line-height:1.03;letter-spacing:var(--tracking-display);margin:var(--spacing-20) 0 var(--spacing-20)}
+.sec-head p{color:var(--fg-muted);font-size:var(--text-lede);max-width:56ch}
+
+/* --- Floating pill header ------------------------------------------------
+   The header spans the width but only the pill catches pointer events, so the
+   empty flanks never block the hero. Default state is a frosted LIGHT pill
+   (works over any section). On the landing page only, the un-scrolled state
+   goes transparent with white content over the dark hero; the first scroll
+   drops back to the light pill. Everything inside inherits currentColor, so
+   the whole lockup inverts with one property.                                */
+header{position:fixed;top:var(--header-inset);left:0;right:0;z-index:50;pointer-events:none}
+.nav-pill{
+  pointer-events:auto;
+  display:flex;align-items:center;gap:var(--spacing-16);height:var(--header-height);
+  padding:0 var(--spacing-12) 0 var(--spacing-20);
+  border-radius:var(--radius-nav);
+  border:1px solid var(--rule);
+  background:color-mix(in srgb, var(--paper) 82%, transparent);
+  -webkit-backdrop-filter:blur(20px) saturate(1.5);
+  backdrop-filter:blur(20px) saturate(1.5);
+  color:var(--ink);
+  box-shadow:0 1px 2px rgba(16,18,20,.04);
+  transition:background var(--motion-mid) var(--motion-ease-out),
+             color var(--motion-mid) var(--motion-ease-out),
+             border-color var(--motion-mid) var(--motion-ease-out),
+             box-shadow var(--motion-mid) var(--motion-ease-out);
+}
+/* Landing hero: transparent, white content, until the first scroll. */
+.has-dark-hero #hdr:not(.scrolled) .nav-pill{
+  background:transparent;-webkit-backdrop-filter:none;backdrop-filter:none;
+  border-color:rgba(255,255,255,.22);color:#fff;box-shadow:none;
+}
+#hdr.scrolled .nav-pill{box-shadow:0 6px 24px rgba(16,18,20,.10)}
+
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:17px;letter-spacing:.01em;color:inherit;white-space:nowrap}
+.brand .mark{width:22px;height:22px;flex:0 0 auto}
+.brand .mark svg{width:100%;height:100%;fill:currentColor}
+
+.navlinks{display:flex;align-items:center;gap:var(--spacing-24);margin-left:var(--spacing-28)}
+.navlinks a{display:inline-flex;align-items:center;height:var(--header-height);font-size:14px;font-weight:500;color:inherit;opacity:.62;white-space:nowrap;transition:opacity var(--motion-fast) var(--motion-ease-out)}
+.navlinks a:hover,.navlinks a[aria-current]{opacity:1}
+/* Extra destinations that only surface in the collapsed menu. */
+.navlinks a.nav-extra{display:none}
+
+.nav-right{display:flex;align-items:center;gap:var(--spacing-8);margin-left:auto}
+.nav-cta{
+  display:inline-flex;align-items:center;height:40px;padding:0 var(--spacing-16);
+  border:1px solid currentColor;border-radius:var(--radius-sm);
+  font-size:13.5px;font-weight:500;color:inherit;white-space:nowrap;
+  transition:background var(--motion-fast) var(--motion-ease-out),color var(--motion-fast) var(--motion-ease-out);
+}
+.nav-cta:hover{background:currentColor}
+.nav-cta:hover span{color:var(--bg)}
+.nav-toggle{display:none;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid transparent;border-radius:var(--radius-sm);color:inherit;background:none;cursor:pointer}
+.nav-toggle:hover{border-color:currentColor}
+.nav-toggle svg{width:20px;height:20px;stroke:currentColor;fill:none}
+
+/* --- Buttons -------------------------------------------------------------
+   Bordered by default and it inverts on hover; the solid variant starts
+   filled. Both read from --fg/--bg, so they adapt to the band they sit in.  */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-8);
+  min-height:48px;padding:0 var(--spacing-24);
+  border:1px solid var(--fg);border-radius:var(--radius-sm);
+  font-family:var(--font-sans);font-size:14.5px;font-weight:500;letter-spacing:.005em;
+  color:var(--fg);background:transparent;cursor:pointer;white-space:nowrap;
+  transition:background var(--motion-fast) var(--motion-ease-out),color var(--motion-fast) var(--motion-ease-out),border-color var(--motion-fast) var(--motion-ease-out);
+}
+.btn:hover{background:var(--fg);color:var(--bg)}
+.btn-solid{background:var(--fg);color:var(--bg)}
+.btn-solid:hover{background:transparent;color:var(--fg)}
+.btn[disabled]{opacity:.5;cursor:progress}
+.btn[disabled]:hover{background:transparent;color:var(--fg)}
+.cta-row{display:flex;gap:var(--spacing-12);flex-wrap:wrap;align-items:center}
+
+/* --- Two-tone CTA blocks -------------------------------------------------
+   One warm-grey block, one ink block, always, regardless of the band tone,
+   so the pairing reads the way the reference does. Square corners.          */
+.cta-blocks{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-16)}
+.cta-block{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-24);
+  min-height:168px;padding:clamp(24px,4vw,44px);
+  font-size:var(--text-h3);font-weight:500;letter-spacing:var(--tracking-tight);
+  transition:transform var(--motion-fast) var(--motion-ease-out);
+}
+.cta-block .arrow{font-size:1.5em;transition:transform var(--motion-mid) var(--motion-ease-out)}
+.cta-block:hover .arrow{transform:translateX(10px)}
+.cta-block--grey{background:#ecebe7;color:#16181c}
+.cta-block--ink{background:#16181c;color:#ffffff}
+
+/* --- Editorial capability list -------------------------------------------
+   The section's centrepiece: a scannable stack of big names on a shared rule,
+   each collapsing its detail behind a <details>. Resting state is a list of
+   names and figures at uniform height; the mechanism opens on demand.       */
+.cap-list{list-style:none;border-top:1px solid var(--rule)}
+.cap{border-bottom:1px solid var(--rule)}
+.cap summary{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;
+  gap:var(--spacing-20) var(--spacing-24);padding:var(--spacing-28) 0;
+  cursor:pointer;list-style:none;
+}
+.cap summary::-webkit-details-marker{display:none}
+.cap summary:focus-visible{outline:2px solid var(--fg);outline-offset:6px}
+.cap-idx{font-family:var(--font-mono);font-size:14px;color:var(--fg-faint);padding-top:.35em;align-self:start}
+.cap-name{font-weight:600;color:var(--fg);font-size:clamp(26px,3.8vw,52px);line-height:1;letter-spacing:var(--tracking-tight);transition:opacity var(--motion-fast) var(--motion-ease-out)}
+.cap summary:hover .cap-name{opacity:.6}
+.cap-metric{text-align:right;font-family:var(--font-mono);font-size:13px;line-height:1.5;color:var(--fg-muted);white-space:nowrap}
+.cap-metric .big{display:block;font-size:22px;color:var(--fg);letter-spacing:-.01em}
+.cap-plus{justify-self:end;font-family:var(--font-mono);font-size:24px;color:var(--fg-faint);line-height:1;transition:color var(--motion-fast) var(--motion-ease-out)}
+.cap summary:hover .cap-plus{color:var(--fg)}
+.cap-plus::after{content:"+"}
+.cap details[open] .cap-plus::after{content:"\2212"}
+.cap-body{padding:0 0 var(--spacing-32);max-width:74ch}
+.cap-body p{color:var(--fg-muted);font-size:var(--text-body-md);grid-column:2}
+.cap-body a{color:var(--fg);border-bottom:1px solid var(--rule-strong);transition:border-color var(--motion-fast)}
+.cap-body a:hover{border-bottom-color:var(--fg)}
+
+/* --- Blueprint helpers ---------------------------------------------------
+   Line-art on a band, strokes drawn in currentColor so a figure inverts with
+   its tone. Labels sit on leader rules in the reference's diagram style.     */
+.bp-fig{stroke:currentColor;fill:none}
+.bp-list{list-style:none;display:flex;flex-direction:column}
+.bp-list li{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:var(--spacing-20);padding:var(--spacing-20) 0;border-top:1px solid var(--rule)}
+.bp-list li:last-child{border-bottom:1px solid var(--rule)}
+.bp-list .bp-label{font-size:var(--text-h3);font-weight:500;letter-spacing:var(--tracking-tight);color:var(--fg)}
+.bp-list .bp-kicker{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-faint)}
+
+/* --- Framed figure (browser chrome for the console) ---------------------- */
+.frame{background:var(--panel);border:1px solid var(--rule-strong);border-radius:var(--radius-sm);overflow:hidden}
+.frame-bar{display:flex;align-items:center;gap:var(--spacing-8);padding:var(--spacing-12) var(--spacing-16);border-bottom:1px solid var(--rule);background:var(--bg-2);font-family:var(--font-mono);font-size:var(--text-caption);color:var(--fg-faint)}
+.frame-bar .grow{margin-left:auto}
+.frame-dots{display:inline-flex;gap:6px}
+.frame-dots i{width:9px;height:9px;border-radius:50%;background:var(--rule-strong)}
+
+/* --- Shared across the landing page and the two product pages -------------
+   Everything below used to live in index.html's inline <style>. It moved here
+   the moment /orbwatch/ and /guardian/ needed the same components; anything
+   still used by exactly one page stays inline on that page.               */
+
+/* Product chapters: a named product over its slice of the eight-model ledger.
+   The chapter rule replaces the list's own border-top so the head is the
+   divider. Used by both product pages. */
+.chapter{margin-top:var(--spacing-48)}
+.chapter + .chapter{margin-top:var(--spacing-64)}
+.chap-head{display:flex;align-items:baseline;gap:var(--spacing-24);flex-wrap:wrap;border-top:1px solid var(--rule-strong);padding-top:var(--spacing-24)}
+.chap-designator{font-family:var(--font-mono);font-size:13px;letter-spacing:var(--tracking-label);color:var(--fg)}
+.chap-role{font-weight:600;color:var(--fg);font-size:var(--text-h3);letter-spacing:var(--tracking-tight);line-height:1.15;margin:0}
+.chap-count{margin-left:auto;font-family:var(--font-mono);font-size:12px;color:var(--fg-faint)}
+.chap-lede{color:var(--fg-muted);font-size:14px;max-width:72ch;margin-top:var(--spacing-12)}
+.chapter .cap-list{border-top:0;margin-top:var(--spacing-24)}
+
+/* Metric rail: the page's real-world findings on one rule. It opened in the
+   hero; it now sits under the two product boxes, where it is the Products
+   section's own evidence. Same markup, same three cells. */
+.rail{max-width:1120px;margin:var(--spacing-48) auto 0;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--rule)}
+.rail .cell{padding:var(--spacing-24) var(--spacing-24) 0 0}
+.rail .cell + .cell{border-left:1px solid var(--rule);padding-left:var(--spacing-24)}
+.rail .num{font-family:var(--font-mono);font-size:clamp(23px,2.3vw,31px);font-weight:500;color:var(--fg);line-height:1.1}
+.rail .lbl{font-size:14px;color:var(--fg-muted);margin-top:var(--spacing-8);max-width:32ch}
+.rail-note{max-width:1120px;margin:var(--spacing-20) auto 0;font-family:var(--font-mono);font-size:12px;color:var(--fg-faint);line-height:1.6}
+
+/* Product-output figures: the discriminator pair. Landing Evidence band and
+   the ORBWATCH page, which is where the proximity model's own proof belongs. */
+.disc-figure{margin:var(--spacing-48) 0 var(--spacing-64)}
+.disc-lead{display:inline-flex;align-items:center;gap:var(--spacing-8);font-family:var(--font-mono);font-size:12px;letter-spacing:var(--tracking-label);text-transform:uppercase;color:var(--fg-faint);margin-bottom:var(--spacing-24)}
+.disc{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-24)}
+.disc-case{background:var(--panel);border:1px solid var(--rule-strong);border-radius:var(--radius-sm);padding:var(--spacing-24)}
+.disc-case svg,.disc-case img{width:100%;height:auto;margin:var(--spacing-20) 0}
+.disc-case p{color:var(--fg-muted);font-size:14px}
+.disc-note{margin-top:var(--spacing-20);font-family:var(--font-mono);font-size:12px;color:var(--fg-faint);line-height:1.6;max-width:78ch}
+
+/* Closing CTA head: every page ends with the same ask. */
+.cta-head{max-width:60ch;margin-bottom:var(--spacing-40)}
+.cta-head h2{font-weight:600;color:var(--fg);font-size:var(--text-h2);letter-spacing:var(--tracking-display);line-height:1.05;margin:var(--spacing-20) 0 var(--spacing-16)}
+.cta-head p{color:var(--fg-muted);font-size:var(--text-lede);max-width:52ch}
+
+/* --- Product boxes (the Products section's whole body) --------------------
+   Two cards, each the entire link to its product page, in the same panel
+   language as .disc-case and .assure. Deliberately not the two-tone CTA
+   blocks: those are pinned to their literal colors and square corners.     */
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-24);margin-top:var(--spacing-40)}
+.prod{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--rule-strong);border-radius:var(--radius-sm);padding:var(--spacing-32);transition:border-color var(--motion-fast) var(--motion-ease-out)}
+.prod:hover{border-color:var(--fg-faint)}
+.prod-top{display:flex;align-items:baseline;gap:var(--spacing-16);flex-wrap:wrap}
+.prod-designator{font-family:var(--font-mono);font-size:13px;letter-spacing:var(--tracking-label);color:var(--fg)}
+.prod-count{margin-left:auto;font-family:var(--font-mono);font-size:12px;color:var(--fg-faint)}
+.prod h3{font-weight:600;color:var(--fg);font-size:var(--text-h3);letter-spacing:var(--tracking-tight);line-height:1.15;margin:var(--spacing-16) 0 var(--spacing-12)}
+.prod p{color:var(--fg-muted);font-size:14px;max-width:46ch}
+.prod-models{list-style:none;margin:var(--spacing-24) 0 var(--spacing-32);border-top:1px solid var(--rule)}
+.prod-models li{display:flex;align-items:center;gap:var(--spacing-12);padding:var(--spacing-12) 0;border-bottom:1px solid var(--rule);font-size:14px;color:var(--fg-muted)}
+.prod-models .i{font-family:var(--font-mono);font-size:12px;color:var(--fg-faint);flex:0 0 auto}
+.prod-more{display:inline-flex;align-items:center;gap:var(--spacing-8);margin-top:auto;min-height:44px;font-family:var(--font-mono);font-size:13px;letter-spacing:.04em;color:var(--fg)}
+.prod-more .arrow{transition:transform var(--motion-fast) var(--motion-ease-out)}
+.prod:hover .prod-more .arrow{transform:translateX(4px)}
+
+/* --- Product page head ----------------------------------------------------
+   The opening dark band on /orbwatch/ and /guardian/. The landing hero keeps
+   its own rules; this one carries no backdrop and no entry flight.         */
+.page-head{padding:calc(var(--header-inset) + var(--header-height) + clamp(48px,8vw,96px)) 0 var(--section-pad)}
+.page-head .eyebrow{margin-bottom:var(--spacing-20)}
+.page-head h1{font-weight:600;color:var(--fg);font-size:var(--text-h2);line-height:1.03;letter-spacing:var(--tracking-display);max-width:20ch;margin-bottom:var(--spacing-20)}
+.page-head .lede{font-size:var(--text-lede);color:var(--fg-muted);max-width:60ch}
+.page-meta{display:flex;gap:var(--spacing-24);flex-wrap:wrap;margin-top:var(--spacing-32);padding-top:var(--spacing-20);border-top:1px solid var(--rule);font-family:var(--font-mono);font-size:12px;color:var(--fg-faint)}
+.page-back{display:inline-flex;align-items:center;min-height:44px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--fg-faint);transition:color var(--motion-fast) var(--motion-ease-out)}
+.page-back:hover{color:var(--fg)}
+
+/* Graded-against block: GUARDIAN's evidence is text, because the figure
+   exporter emits only the discriminator pair and a chart that does not exist
+   must not be drawn. */
+.floors{list-style:none;border-top:1px solid var(--rule);margin-top:var(--spacing-32)}
+.floors li{display:grid;grid-template-columns:minmax(0,22ch) 1fr;gap:var(--spacing-24);padding:var(--spacing-20) 0;border-bottom:1px solid var(--rule)}
+.floors .k{font-family:var(--font-mono);font-size:13px;color:var(--fg)}
+.floors .v{color:var(--fg-muted);font-size:14px}
+
+@media(max-width:900px){
+  .prod-grid{grid-template-columns:1fr}
+}
+@media(max-width:820px){
+  .disc{grid-template-columns:1fr}
+  .rail{grid-template-columns:1fr}
+  .rail .cell + .cell{border-left:0;border-top:1px solid var(--rule);padding-left:0;margin-top:var(--spacing-16);padding-top:var(--spacing-16)}
+  .floors li{grid-template-columns:1fr;gap:var(--spacing-8)}
+}
+
+/* --- Status chips --------------------------------------------------------- */
+.chip{display:inline-flex;align-items:center;gap:var(--spacing-8);font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.1em;text-transform:uppercase;padding:5px var(--spacing-8);border-radius:var(--radius-sm);border:1px solid currentColor;color:var(--fg-faint)}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip-nominal{color:var(--status-nominal)}
+.chip-threat{color:var(--status-threat)}
+.chip-watch{color:var(--status-watch)}
+
+/* --- Footer --------------------------------------------------------------- */
+footer{background:var(--bg-2);color:var(--fg);border-top:1px solid var(--rule);padding:var(--spacing-80) 0 var(--spacing-40)}
+.foot-top{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:var(--spacing-40);margin-bottom:var(--spacing-48)}
+.foot-brand .brand{color:var(--fg);font-size:19px}
+.foot-brand p{color:var(--fg-muted);font-size:var(--text-body-sm);max-width:38ch;margin-top:var(--spacing-16)}
+.social-row{display:flex;gap:var(--spacing-8);flex-wrap:wrap;margin-top:var(--spacing-24)}
+.social{display:inline-flex;align-items:center;height:38px;padding:0 var(--spacing-16);border:1px solid var(--rule-strong);border-radius:var(--radius-pill);font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-muted);transition:border-color var(--motion-fast),color var(--motion-fast)}
+.social:hover{border-color:var(--fg);color:var(--fg)}
+.foot-col h5{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:var(--spacing-12);font-weight:600}
+.foot-col a,.foot-col .plain{display:flex;align-items:center;min-height:40px;color:var(--fg-muted);font-size:14px;transition:color var(--motion-fast) var(--motion-ease-out)}
+.foot-col a:hover{color:var(--fg)}
+.foot-col .plain{font-family:var(--font-mono);color:var(--fg-faint);user-select:all}
+.foot-bot{display:flex;justify-content:space-between;align-items:center;gap:var(--spacing-16);padding-top:var(--spacing-24);border-top:1px solid var(--rule);flex-wrap:wrap}
+.foot-bot p{font-size:13px;color:var(--fg-faint)}
+.foot-bot .region{display:flex;gap:var(--spacing-16);font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--fg-faint)}
+
+/* --- Reveal --------------------------------------------------------------- */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity var(--motion-reveal) var(--motion-ease-out),transform var(--motion-reveal) var(--motion-ease-out)}
+.reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none;transition:none}
+  .chap-head::before,.stages::after,.stage::before{transform:none;transition:none}
+  .disc-figure img,.photo-figure img{clip-path:none;transition:none}
+  /* The backdrop still mounts and still renders one real frame; it just
+     arrives instead of fading in, and the flight never runs at all. */
+  .approach-stage,.approach-ui,.approach-note .rest,.approach-note .open,.approach-cap,.approach-skip,.hero .wrap,#hdr{transition:none}
+}
+
+/* --- Scroll-driven enhancement (2026-09) ----------------------------------
+   Progressive on three levels: CSS scroll-driven animations behind @supports,
+   the IntersectionObserver reveal as the universal fallback, and everything
+   except the clock (which is information, not motion) dead under reduced
+   motion. New held-back states are released in each page's <noscript>. */
+
+/* UTC clock in the pill: real system time, the only time on the page. */
+.nav-clock{display:none;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:var(--fg-faint);font-variant-numeric:tabular-nums}
+@media(min-width:1040.02px){.nav-clock:not(:empty){display:inline}}
+
+/* Scrollspy rail: S/0x designators in the left margin, wide viewports only.
+   Presentational (the nav announces position); JS marks it aria-hidden and
+   flips .on-dark from the current section's tone so it never vanishes into
+   a band. Fixed hexes on purpose: the rail floats over both tones. */
+.rail-spy{display:none}
+@media(min-width:1440px){
+  .rail-spy{display:flex;flex-direction:column;gap:10px;position:fixed;left:28px;top:50%;transform:translateY(-50%);z-index:5;font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;pointer-events:none}
+  .rail-spy span{color:#83878f;opacity:.55;transition:opacity var(--motion-fast) var(--motion-ease-out),color var(--motion-fast) var(--motion-ease-out)}
+  .rail-spy span.cur{opacity:1;color:#16181c}
+  .rail-spy.on-dark span{color:#787d86}
+  .rail-spy.on-dark span.cur{color:#f4f4f2}
+}
+
+/* Rule-draw: a chapter's top hairline draws itself in with the reveal. */
+.chap-head{position:relative;border-top:0}
+.chap-head::before{content:"";position:absolute;top:0;left:0;width:100%;height:1px;background:var(--rule-strong);transform:scaleX(0);transform-origin:0 50%;transition:transform 560ms linear}
+.chap-head.in::before{transform:scaleX(1)}
+
+/* Tracking-readout chapters: the head holds under the pill while its models
+   scroll past. Wide viewports only; below that it reads as clutter. */
+@media(min-width:1240px){
+  .chapter .chap-head{position:sticky;top:calc(var(--header-inset) + var(--header-height) + 10px);z-index:2;background:var(--bg);padding-bottom:var(--spacing-8)}
+}
+
+/* Wipe-reveal: real photographs and product-output figures arrive as a
+   left-to-right declassifying sweep, riding the figure's own .in. */
+.disc-figure img,.photo-figure img{clip-path:inset(0 100% 0 0);transition:clip-path 900ms var(--motion-ease-out) 120ms}
+.disc-figure.in img,.photo-figure.in img{clip-path:inset(0 0 0 0)}
+
+/* Terminator crossings: each band boundary carries a 1px rule that brightens
+   as it crosses the entry band of the viewport and fades as it leaves. CSS
+   scroll-driven only; browsers without it simply have no terminator. */
+@supports (animation-timeline: view()){
+  @media (prefers-reduced-motion: no-preference){
+    main > .sec{position:relative}
+    main > .sec::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:currentColor;opacity:0;pointer-events:none;animation:terminator linear both;animation-timeline:view();animation-range:entry 0% cover 30%}
+  }
+}
+@keyframes terminator{0%{opacity:0}55%{opacity:.4}100%{opacity:0}}
+
+/* --- Entry stage and hero backdrop (scripts/entry-approach.js) -------------
+   One fixed canvas, mounted once. It attaches at z-index 400, which is the
+   black screen the entry flight plays on, and drops to z-index 0 when the
+   flight settles. That single change is the whole handoff: from then on every
+   band paints over it and only the hero, made transparent by .bg-live, lets
+   it through. Colors are fixed dark values: this is the orbit map's own night
+   regardless of band tones.
+
+   The bands need to be positioned for z-index 0 to mean "behind the page".
+   1 is free: the pill is 50, the skip link 100, the scrollspy rail 5, the
+   sticky chapter heads 2. Scoped to .bg-live, which is set at the same
+   moment the stage drops behind, so a visitor who never gets a backdrop
+   never gets the restacking either. */
+body.bg-live main > section,body.bg-live footer{position:relative;z-index:1}
+body.bg-live .hero{background:transparent}
+
+.approach-stage{position:fixed;inset:0;z-index:400;background:#05070b;opacity:0;transition:opacity 200ms ease-out;pointer-events:none}
+.approach-stage.show{opacity:1}
+.approach-stage.settled{z-index:0;transition:none}
+.approach-stage canvas{position:absolute;inset:0;width:100%;height:100%}
+.approach-cap{position:absolute;left:24px;bottom:20px;font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;color:#f4f4f2;transition:opacity 250ms ease-out}
+.approach-cap .sub{margin-top:4px;font-size:11px;color:#787d86}
+.approach-skip{position:absolute;right:24px;bottom:20px;font-family:var(--font-mono);font-size:11px;color:#787d86;transition:opacity 250ms ease-out}
+.approach-cap.gone,.approach-skip.gone{opacity:0}
+.approach-dtg{position:absolute;right:24px;top:20px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:#878c95}
+.approach-defense::after{content:"";position:absolute;inset:16px;border:1px solid #3d4552;pointer-events:none}
+/* The parked globe is a door, and its affordance is its own layer ABOVE the
+   page rather than part of the stage. The canvas has to stay behind the hero's
+   content, and anything under `.hero .wrap` can never be clicked or hovered:
+   the wrap is a full-width block and wins hit-testing over the globe even
+   where it is entirely transparent. So the canvas sits at 0 and this sits at
+   2, over the hero and under the pill.
+
+   Live only at the top of the page: scrolled, the hero's content slides under
+   the pinned globe and would cut the label in half, and this layer would take
+   the clicks that belong to the console frame beneath it. */
+.approach-ui{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 240ms ease-out}
+.approach-ui.live{opacity:1;transition:opacity 500ms var(--motion-ease-out) 200ms}
+.approach-ui.live .approach-hit,.approach-ui.live .approach-note{pointer-events:auto}
+
+/* The circle is the disc's own hit area, sized in JS from the same numbers
+   that place the globe; border-radius keeps the corners of empty sky
+   unclickable so a stray click never navigates. */
+.approach-hit{position:absolute;border-radius:50%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+/* The map's standing caveat, placed under the parked globe by the same
+   constants that place the globe, and turning into the invitation on hover.
+   The two spans are stacked, not swapped, so the line never reflows. */
+.approach-note{position:absolute;right:0;top:0;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:#787d86;white-space:nowrap;cursor:pointer}
+.approach-note .rest,.approach-note .open{display:block;transition:opacity var(--motion-fast) var(--motion-ease-out)}
+.approach-note .open{position:absolute;right:0;top:0;opacity:0;color:#f4f4f2}
+/* Hovering either the disc or the label swaps the text. */
+.approach-hit:hover ~ .approach-note .rest,.approach-note:hover .rest{opacity:0}
+.approach-hit:hover ~ .approach-note .open,.approach-note:hover .open{opacity:1}
+
+/* The one held-back state that is not a scroll reveal: the hero's content is
+   hidden while the opaque stage covers it, so that it can come on as the
+   globe retreats instead of snapping in when the stage drops behind. It is
+   applied only once the stage is fully opaque and released on every exit
+   path, including the 4s backstop. */
+.hero .wrap,#hdr{transition:opacity 640ms var(--motion-ease-out)}
+body.approach-veiled .hero .wrap,body.approach-veiled #hdr{opacity:0}
+
+/* --- Responsive shell ----------------------------------------------------- */
+@media(max-width:1040px){
+  .nav-toggle{display:inline-flex}
+  .navlinks{
+    display:none;position:absolute;top:calc(var(--header-height) + 8px);left:0;right:0;
+    flex-direction:column;align-items:stretch;gap:0;
+    padding:var(--spacing-8) var(--spacing-20) var(--spacing-16);
+    background:color-mix(in srgb, var(--paper) 96%, transparent);
+    -webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);
+    border:1px solid var(--rule);border-radius:var(--radius-nav);
+    box-shadow:0 12px 32px rgba(16,18,20,.14);
+  }
+  /* The dropdown is always light, so its links are ink regardless of the
+     pill's current (possibly white-on-hero) state. */
+  .navlinks a{height:auto;min-height:50px;color:var(--ink);opacity:.7;border-top:1px solid var(--rule)}
+  .navlinks a:first-child{border-top:0}
+  .navlinks a.nav-extra{display:flex}
+  header.menu-open .navlinks{display:flex}
+  /* Menu open forces the solid light pill even over the dark hero. */
+  .has-dark-hero #hdr.menu-open .nav-pill{
+    background:color-mix(in srgb, var(--paper) 92%, transparent);color:var(--ink);border-color:var(--rule);
+  }
+}
+@media(max-width:820px){
+  .cta-blocks{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr 1fr;gap:var(--spacing-32)}
+  .cap summary{grid-template-columns:auto minmax(0,1fr) auto;gap:var(--spacing-12) var(--spacing-20)}
+  .cap-metric{display:none}
+  .cap-body p{grid-column:1}
+}
+@media(max-width:560px){
+  .sec,.sec-wide{padding:var(--section-pad-tight) 0}
+  .navlinks{left:0;right:0}
+  .foot-top{grid-template-columns:1fr}
+  .cap summary{grid-template-columns:auto minmax(0,1fr) auto}
+}

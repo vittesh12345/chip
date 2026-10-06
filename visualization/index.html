@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Orbit map · Vantage</title>
+<meta name="description" content="An interactive 3D map of the low Earth orbit population: payloads, rocket bodies and debris propagated live over a Blue Marble earth, with radar beam volumes, view modes and filters." />
+<meta name="theme-color" content="#ffffff" />
+<link rel="canonical" href="https://vantage.industries/visualization/" />
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Vantage" />
+<meta property="og:title" content="Orbit map · Vantage" />
+<meta property="og:description" content="An interactive 3D map of the low Earth orbit population, with radar beam volumes, view modes and filters." />
+<meta property="og:url" content="https://vantage.industries/visualization/" />
+<meta property="og:image" content="https://vantage.industries/assets/og-card.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="stylesheet" href="../styles/site.css">
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+<style>
+  .viz-head{padding:calc(var(--header-inset) + var(--header-height) + var(--spacing-96)) 0 var(--spacing-32)}
+  .viz-head h1{font-weight:600;color:var(--fg);font-size:var(--text-h1);line-height:1.02;letter-spacing:var(--tracking-display);margin:var(--spacing-20) 0 var(--spacing-16);max-width:16ch}
+  .viz-head p{color:var(--fg-muted);font-size:var(--text-lede);max-width:62ch}
+  .viz-actions{display:flex;gap:var(--spacing-12);flex-wrap:wrap;margin-top:var(--spacing-32)}
+
+  .viz-frame{margin-bottom:var(--spacing-24)}
+  .viz-stage{position:relative;aspect-ratio:1790/1100;background:#05070b}
+  .viz-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+
+  .viz-note{
+    padding-bottom:var(--section-pad);
+    font-family:var(--font-mono);font-size:var(--text-caption);
+    color:var(--fg-muted);line-height:1.7;max-width:78ch;
+  }
+  .viz-note a{color:var(--fg);border-bottom:1px solid var(--rule-strong)}
+  .viz-note a:hover{border-bottom-color:var(--fg)}
+
+  @media(max-width:900px){
+    .viz-head{padding-top:calc(var(--header-inset) + var(--header-height) + var(--spacing-64))}
+    .viz-stage{aspect-ratio:4/5}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+<header id="hdr">
+  <div class="wrap">
+    <nav class="nav-pill">
+      <a class="brand" href="../index.html">
+        <span class="mark">
+          <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
+            <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
+            <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
+            <circle cx="50" cy="49.8" r="6.3"/>
+          </svg>
+        </span>
+        VANTAGE
+      </a>
+      <div class="navlinks" id="primary-nav">
+        <a href="../index.html#capabilities">Products</a>
+        <a href="../orbit-ai/index.html">ORBIT-AI</a>
+        <a href="../index.html#platform">Platform</a>
+        <a href="../index.html#assurance">Evidence</a>
+        <a href="../index.html#segments">Who it's for</a>
+        <a class="nav-extra" href="./" aria-current="page">Orbit map</a>
+        <a class="nav-extra" href="../contact/index.html">Request a briefing</a>
+      </div>
+      <div class="nav-right">
+        <a href="../contact/index.html" class="nav-cta"><span>Request a briefing</span></a>
+        <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
+          <svg viewBox="0 0 24 24" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <div class="viz-head">
+      <span class="eyebrow reveal">Orbit map</span>
+      <h1 class="reveal">Everything up there, at once.</h1>
+      <p class="reveal">The tracked low Earth orbit population, propagated live: payloads, rocket bodies and debris, with sensor beam volumes and per-object catalog detail. This is the picture Vantage reads behavior out of.</p>
+      <div class="viz-actions reveal">
+        <a href="full.html" id="fullwin" class="btn btn-solid">Open full window →</a>
+        <a href="../demo/index.html" class="btn">Open the Command Center →</a>
+      </div>
+    </div>
+
+    <div class="frame viz-frame reveal">
+      <div class="frame-bar">
+        <span class="frame-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>vantage.industries/visualization</span>
+        <span class="grow">Synthetic catalog · assessments simulated</span>
+      </div>
+      <div class="viz-stage">
+        <iframe id="frame" src="full.html" title="Orbit map" allow="fullscreen" loading="eager"></iframe>
+      </div>
+    </div>
+
+    <p class="viz-note reveal">
+      Earth imagery: NASA Blue Marble · Basemap data: Natural Earth.
+      Deep links select a catalog object, for example <a href="#25544">#25544</a>.
+    </p>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="../index.html">
+          <span class="mark">
+            <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+              <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
+              <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
+              <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
+              <circle cx="50" cy="49.8" r="6.3"/>
+            </svg>
+          </span>
+          VANTAGE
+        </a>
+        <p>Watch the sky, guard the fleet: ORBWATCH reads what a satellite is doing from public orbital data, GUARDIAN answers it, with sealed evidence behind every call.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <a href="../orbwatch/index.html">ORBWATCH</a>
+        <a href="../guardian/index.html">GUARDIAN</a>
+        <a href="../index.html#platform">Platform</a>
+        <a href="../index.html#capabilities">Products</a>
+        <a href="../index.html#assurance">Evidence</a>
+        <a href="../demo/index.html">The Command Center</a>
+        <a href="./">Orbit map</a>
+      </div>
+      <div class="foot-col">
+        <h5>Who it's for</h5>
+        <a href="../index.html#defense">Defense &amp; intelligence</a>
+        <a href="../index.html#operators">Satellite operators</a>
+        <a href="../index.html#orbital-compute">Orbital compute</a>
+      </div>
+      <div class="foot-col">
+        <h5>Contact</h5>
+        <a href="../contact/index.html">Request a briefing</a>
+        <span class="plain">contact@vantage.industries</span>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <p>© 2026 Vantage · Assured Space Intelligence</p>
+      <span class="region"><span>SEALED EVIDENCE</span><span>HUMAN-ON-THE-LOOP</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="../scripts/site.js" defer></script>
+<script>
+  /* Deep links land on this page; pass the object hash through to the app, and
+     keep the full-window link carrying it too. */
+  (function () {
+    var frame = document.getElementById('frame');
+    var fullwin = document.getElementById('fullwin');
+    function sync() {
+      var h = location.hash || '';
+      frame.src = 'full.html' + h;
+      fullwin.href = 'full.html' + h;
+    }
+    if (location.hash) sync();
+    addEventListener('hashchange', sync);
+  })();
+</script>
+
+</body>
+</html>

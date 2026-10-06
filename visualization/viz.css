@@ -1,0 +1,317 @@
+/* Vantage orbit map — HUD skinned to the site's design system:
+   layered dark surfaces, hairline rules, IBM Plex Mono labels, and the
+   three status colors (nominal / watch / threat) that each mean exactly
+   one thing. Same element contract as before; only the skin changed. */
+
+/* The tokens come from styles/tokens.css, which full.html links ahead of this
+   file. They used to be redeclared here, and the copy had already drifted in
+   two places: --text-body was #d5d7d9 against the system's #e8eaec, and
+   --font-sans was Helvetica Neue rather than Space Grotesk, so the instrument
+   set its prose in a face the rest of the site does not use. That is the
+   failure mode a duplicated palette always has, and it had already happened,
+   so there is one source of truth now. */
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--surface-canvas);
+  color:var(--text-body);
+  font-family:var(--font-sans);
+  font-size:14px;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+#globe{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#flags{position:fixed;inset:0;pointer-events:none;z-index:3}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:4}
+#hud > *{pointer-events:auto}
+
+/* mono uppercase label, shared by panel heads and eyebrows */
+.mono-label{
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-faint);
+}
+
+/* ---------- left menu ---------- */
+.menu{
+  position:absolute;top:14px;left:14px;width:296px;
+  display:flex;flex-direction:column;
+  background:rgba(21,26,34,.92);backdrop-filter:blur(6px);
+  border:1px solid var(--rule-hairline);border-radius:3px;overflow:hidden;
+}
+.mrow{
+  display:flex;align-items:center;gap:10px;
+  min-height:38px;padding:0 12px;
+  border-bottom:1px solid rgba(61,69,82,.55);
+}
+.mrow::before{content:none}
+.mlabel{
+  flex:0 0 auto;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--text-muted);
+}
+.mrow.check{cursor:pointer;justify-content:space-between}
+.mrow input[type=checkbox]{width:14px;height:14px;accent-color:var(--status-nominal);cursor:pointer}
+.mrow input[type=search]{
+  flex:1;min-width:0;background:var(--surface-chrome);border:1px solid var(--rule-hairline);
+  color:var(--text-body);font-size:12.5px;padding:5px 8px;border-radius:2px;outline:none;
+}
+.mrow input[type=search]:focus{border-color:var(--rule-edge)}
+.mrow input[type=search]::placeholder{color:var(--text-faint)}
+.mrow input[type=range]{flex:1;accent-color:var(--status-nominal);height:3px}
+.mval{
+  flex:0 0 38px;text-align:right;background:var(--surface-chrome);border:1px solid var(--rule-hairline);
+  font-family:var(--font-mono);font-size:11.5px;color:var(--text-body);padding:3px 6px;border-radius:2px;
+}
+.search-results{
+  background:var(--surface-panel);max-height:220px;overflow-y:auto;
+  border-bottom:1px solid var(--rule-hairline);
+}
+.search-results div{
+  padding:7px 12px;font-family:var(--font-mono);font-size:11.5px;color:var(--text-muted);
+  cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.search-results div:hover{background:var(--surface-chrome);color:var(--text-primary)}
+
+.msection{display:flex;flex-direction:column}
+.mhead{
+  background:var(--surface-chrome);
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  text-align:left;padding:8px 12px;color:var(--text-faint);
+  border-top:1px solid var(--rule-hairline);border-bottom:1px solid rgba(61,69,82,.55);
+}
+.vrow{
+  padding:8px 14px;font-size:13px;color:var(--text-muted);cursor:pointer;
+  border-bottom:1px solid rgba(61,69,82,.35);
+}
+.vrow:hover{background:var(--surface-chrome);color:var(--text-body)}
+.vrow.sel{
+  background:var(--surface-chrome);color:var(--text-primary);
+  box-shadow:inset 2px 0 0 var(--status-nominal);
+}
+.frow-filter{padding:8px 12px;border-bottom:1px solid rgba(61,69,82,.35)}
+.frow-filter select{
+  width:100%;background:var(--surface-chrome);border:1px solid var(--rule-hairline);
+  color:var(--text-body);font-size:12.5px;padding:5px 6px;border-radius:2px;outline:none;
+}
+.frow-filter.minmax{display:flex;gap:8px}
+.frow-filter.minmax input{
+  width:50%;background:var(--surface-chrome);border:1px solid var(--rule-hairline);
+  color:var(--text-body);font-family:var(--font-mono);font-size:12px;
+  padding:5px 8px;border-radius:2px;outline:none;
+}
+.frow-filter.minmax input::placeholder{color:var(--text-faint)}
+.hide-btn{cursor:pointer;width:100%;border-bottom:none}
+.hide-btn:hover{color:var(--text-body)}
+.show-btn{
+  position:absolute;top:14px;left:14px;
+  background:rgba(21,26,34,.92);border:1px solid var(--rule-hairline);border-radius:3px;
+  padding:8px 14px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-muted);
+}
+.show-btn:hover{color:var(--text-primary);border-color:var(--rule-edge)}
+
+.menu-notes{position:absolute;left:14px;display:flex;flex-direction:column;gap:7px;align-items:flex-start}
+.note{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--text-faint);
+  text-shadow:0 1px 3px rgba(0,0,0,.9);
+}
+.note.linky{cursor:pointer}
+.note.linky:hover{color:var(--text-body);text-decoration:underline}
+
+/* ---------- right column: legend + selected object card ---------- */
+.rightcol{
+  position:absolute;top:14px;right:14px;width:210px;
+  display:flex;flex-direction:column;gap:10px;z-index:7;
+}
+.legend{
+  background:rgba(21,26,34,.92);backdrop-filter:blur(6px);
+  border:1px solid var(--rule-hairline);border-radius:3px;overflow:hidden;
+}
+.legend-head{
+  background:var(--surface-chrome);
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  padding:8px 12px;color:var(--text-faint);border-bottom:1px solid var(--rule-hairline);
+}
+.legend-body{padding:9px 12px;display:flex;flex-direction:column;gap:7px}
+.legend-row{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--text-body)}
+.legend-row .sw{width:11px;height:11px;flex:0 0 auto;border-radius:1px}
+
+/* ---------- selected object card ---------- */
+.selcard{
+  background:rgba(21,26,34,.95);backdrop-filter:blur(6px);
+  border:1px solid var(--rule-hairline);border-radius:3px;overflow:hidden;
+}
+.selcard-head{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface-chrome);padding:8px 12px;
+  border-bottom:1px solid var(--rule-hairline);
+}
+.selcard-title{
+  font-family:var(--font-mono);font-size:11.5px;color:var(--text-primary);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.assess{
+  flex:0 0 auto;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;
+  padding:2px 7px;border-radius:2px;border:1px solid;
+}
+.assess-nominal{color:var(--status-nominal);border-color:rgba(58,211,137,.45);background:rgba(58,211,137,.08)}
+.assess-watch{color:var(--status-watch);border-color:rgba(255,202,22,.5);background:rgba(255,202,22,.08)}
+.assess-threat{color:var(--status-threat);border-color:rgba(255,107,95,.5);background:rgba(255,107,95,.1)}
+.selcard-body{display:flex;flex-direction:column;gap:4px;padding:10px 12px}
+.selcard-body div{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--text-faint)}
+.selcard-body b{
+  color:var(--text-body);font-weight:400;font-family:var(--font-mono);font-size:11.5px;
+  text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px;
+}
+.selcard-note{
+  margin:0 12px;padding:6px 0 8px;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.03em;color:var(--status-watch);
+  border-top:1px solid rgba(61,69,82,.55);
+}
+.selcard-note.threat{color:var(--status-threat)}
+.selcard-cta{
+  display:block;margin:0 12px 10px;padding:6px 0;text-align:center;
+  border:1px solid var(--rule-edge);border-radius:2px;
+  font-size:12px;color:var(--text-muted);
+}
+.selcard-cta:hover{border-color:var(--text-primary);color:var(--text-primary)}
+
+/* ---------- selection halo: pulsing concentric double ring ---------- */
+.halo{position:fixed;z-index:5;pointer-events:none;width:0;height:0}
+.halo span{position:absolute;border-radius:50%;transform:translate(-50%,-50%)}
+.halo-ping{
+  width:34px;height:34px;border:2px solid rgba(255,255,255,.75);
+  animation:haloping 1.5s cubic-bezier(0,0,.2,1) infinite;
+}
+.halo-mid{width:24px;height:24px;border:2px solid rgba(255,255,255,.5)}
+.halo-core{
+  width:15px;height:15px;border:2px solid #fff;
+  box-shadow:0 0 12px 3px rgba(255,255,255,.55);
+}
+@keyframes haloping{
+  0%{transform:translate(-50%,-50%) scale(.7);opacity:1}
+  80%,100%{transform:translate(-50%,-50%) scale(1.9);opacity:0}
+}
+
+/* ---------- assessment flags: watch/threat rings + reason chips ---------- */
+.flag{position:absolute;width:0;height:0}
+.flag-ring{
+  position:absolute;width:26px;height:26px;border-radius:50%;
+  transform:translate(-50%,-50%);border:1.6px solid;
+  animation:flagping 1.8s cubic-bezier(0,0,.2,1) infinite;
+}
+.flag-dot{
+  position:absolute;width:12px;height:12px;border-radius:50%;
+  transform:translate(-50%,-50%);border:1.6px solid;
+}
+.flag-chip{
+  position:absolute;left:12px;top:-7px;white-space:nowrap;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;
+  padding:1.5px 6px;border-radius:2px;border:1px solid;
+  background:rgba(12,15,20,.88);
+}
+.flag-watch .flag-ring,.flag-watch .flag-dot{border-color:var(--status-watch)}
+.flag-watch .flag-chip{color:var(--status-watch);border-color:rgba(255,202,22,.5)}
+.flag-threat .flag-ring,.flag-threat .flag-dot{border-color:var(--status-threat)}
+.flag-threat .flag-chip{color:var(--status-threat);border-color:rgba(255,107,95,.55)}
+@keyframes flagping{
+  0%{transform:translate(-50%,-50%) scale(.55);opacity:.95}
+  75%,100%{transform:translate(-50%,-50%) scale(1.8);opacity:0}
+}
+
+/* protected-asset markers */
+.pmark{position:absolute;width:0;height:0}
+.pmark-d{
+  position:absolute;width:9px;height:9px;transform:translate(-50%,-50%) rotate(45deg);
+  border:1.6px solid var(--text-primary);background:rgba(255,255,255,.12);
+}
+.pmark-l{
+  position:absolute;left:11px;top:-6px;white-space:nowrap;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;color:var(--text-muted);
+  text-shadow:0 1px 3px rgba(0,0,0,.95);
+}
+
+/* ---------- brand + credits ---------- */
+.brandbox{position:absolute;left:18px;bottom:16px;display:flex;flex-direction:column;gap:5px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700;font-size:21px;letter-spacing:.06em;color:var(--text-primary)}
+.brand .mark{width:28px;height:28px}
+.brand .mark svg{display:block;width:28px;height:28px}
+.vtag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--text-faint);
+}
+.vtag::before{content:"";width:26px;height:1px;background:var(--rule-edge)}
+.credits{font-size:11px;color:var(--text-faint);text-shadow:0 1px 3px rgba(0,0,0,.9)}
+
+/* ---------- clock ---------- */
+.clockbox{position:absolute;right:20px;bottom:20px;text-align:right}
+.bigclock{
+  font-family:var(--font-mono);font-weight:300;font-size:36px;line-height:1.15;
+  color:var(--text-primary);letter-spacing:.02em;
+  font-variant-numeric:tabular-nums;text-shadow:0 1px 4px rgba(0,0,0,.9);
+}
+.objcount{
+  font-family:var(--font-mono);font-size:12.5px;line-height:1.4;color:var(--text-muted);
+  margin-top:3px;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.9);
+}
+.statusline{
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;line-height:1.5;
+  text-transform:uppercase;color:var(--text-faint);margin-top:2px;padding-bottom:2px;
+  white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.9);
+}
+.statusline .s-nom{color:var(--status-nominal)}
+.statusline .s-watch{color:var(--status-watch)}
+.statusline .s-threat{color:var(--status-threat)}
+
+/* ---------- hover chips: reticle + single-line stacked labels ---------- */
+.hoverwrap{
+  position:fixed;z-index:5;pointer-events:none;
+  opacity:1;transition:opacity 1.3s ease;
+}
+.hoverwrap.fading{opacity:0}
+.hover-ring{position:absolute;left:-19px;top:-19px}
+.hover-chips{position:absolute;left:14px;top:10px;display:flex;flex-direction:column;gap:3px}
+.hover-chips .chip{
+  white-space:nowrap;border-radius:2px;padding:2.5px 8px;
+  background:rgba(30,36,46,.92);border:1px solid rgba(61,69,82,.6);
+  color:var(--text-primary);font-family:var(--font-mono);font-size:11px;
+  max-width:280px;overflow:hidden;text-overflow:ellipsis;
+}
+.hover-chips .chip.b{font-weight:600;font-size:11.5px}
+.hover-chips .chip.dim{color:var(--text-faint);background:rgba(30,36,46,.6);font-size:10px}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:20;
+  background:var(--surface-panel);border:1px solid var(--rule-edge);border-radius:3px;
+  color:var(--text-body);font-size:13px;padding:9px 16px;
+  opacity:0;transition:opacity .25s;pointer-events:none;
+}
+.toast.on{opacity:1}
+
+/* ---------- boot splash ---------- */
+.boot{position:fixed;inset:0;z-index:30;background:#000;display:flex;align-items:center;justify-content:center;
+  transition:opacity .6s ease-out}
+.boot.gone{opacity:0;pointer-events:none}
+.boot-inner{display:flex;flex-direction:column;align-items:center;gap:10px}
+.boot-tag{font-family:var(--font-mono);font-size:11px;letter-spacing:.25em;color:var(--text-faint)}
+.boot-line{font-family:var(--font-mono);font-size:12px;color:var(--text-muted)}
+
+/* ---------- responsive ---------- */
+@media(max-width:900px){
+  .menu{width:min(270px, 78vw)}
+  .bigclock{font-size:24px}
+  .objcount{font-size:11px}
+  .statusline{font-size:9px}
+  .brand{font-size:17px}
+  .rightcol{width:172px}
+  .menu-notes .note{font-size:10px}
+}
+
+.search-results::-webkit-scrollbar{width:8px}
+.search-results::-webkit-scrollbar-thumb{background:var(--rule-hairline);border-radius:4px}

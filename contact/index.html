@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Request a briefing · Vantage</title>
+<meta name="description" content="Book a technical briefing with the Vantage team. We'll walk your mission set and run a live detection-to-evidence loop end-to-end, from maneuver detection through the sealed assurance gate." />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="canonical" href="https://vantage.industries/contact/" />
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Vantage" />
+<meta property="og:title" content="Request a briefing · Vantage" />
+<meta property="og:description" content="Book a technical briefing with the Vantage team. We'll walk your mission set and run a live detection-to-evidence loop end-to-end." />
+<meta property="og:url" content="https://vantage.industries/contact/" />
+<meta property="og:image" content="https://vantage.industries/assets/demo-console.png" />
+<meta property="og:image:width" content="1584" />
+<meta property="og:image:height" content="928" />
+<meta property="og:image:alt" content="The Vantage Command Center: a live LEO feed flagging a foreign inspector that maneuvered to shadow an orbital AI data center, with the evidence panel open beside it." />
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Request a briefing · Vantage" />
+<meta name="twitter:description" content="Book a technical briefing with the Vantage team. We'll walk your mission set and run a live detection-to-evidence loop end-to-end." />
+<meta name="twitter:image" content="https://vantage.industries/assets/demo-console.png" />
+<meta name="twitter:image:alt" content="The Vantage Command Center: a live LEO feed flagging a foreign inspector that maneuvered to shadow an orbital AI data center, with the evidence panel open beside it." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="stylesheet" href="../styles/site.css">
+<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
+<style>
+  .contact-head{padding:0 0 var(--spacing-48)}
+  .contact-head h1{font-weight:600;color:var(--fg);font-size:var(--text-h2);line-height:1.05;letter-spacing:var(--tracking-display);margin:var(--spacing-20) 0 var(--spacing-16);max-width:20ch}
+  .contact-head p{color:var(--fg-muted);font-size:var(--text-lede);max-width:58ch}
+
+  .contact-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:var(--spacing-64);align-items:start;padding:calc(var(--header-inset) + var(--header-height) + var(--spacing-96)) 0 var(--section-pad)}
+
+  /* --- Form ---------------------------------------------------------------- */
+  .field{margin-bottom:var(--spacing-24)}
+  .field label{display:block;font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:var(--spacing-8)}
+  .field .opt{text-transform:none;letter-spacing:0}
+  .field input,.field select,.field textarea{
+    width:100%;min-height:50px;padding:var(--spacing-12) var(--spacing-16);
+    background:var(--bg);border:1px solid var(--rule-strong);border-radius:var(--radius-sm);
+    color:var(--fg);font-family:var(--font-sans);font-size:var(--text-body-md);line-height:1.5;
+    transition:border-color var(--motion-fast) var(--motion-ease-out);
+  }
+  .field textarea{min-height:132px;resize:vertical}
+  .field select{appearance:none;cursor:pointer;padding-right:var(--spacing-40);
+    background-image:linear-gradient(45deg,transparent 50%,#565a62 50%),linear-gradient(135deg,#565a62 50%,transparent 50%);
+    background-position:calc(100% - 20px) 23px,calc(100% - 14px) 23px;background-size:6px 6px;background-repeat:no-repeat}
+  .field input:hover,.field select:hover,.field textarea:hover{border-color:var(--fg-muted)}
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--fg)}
+  .field input::placeholder,.field textarea::placeholder{color:var(--fg-faint)}
+  .field [aria-invalid="true"]{border-color:var(--status-threat)}
+  .field-err{display:none;margin-top:var(--spacing-8);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--status-threat)}
+  .field-err::before{content:"! "}
+  .field-err.show{display:block}
+  .field-hint{margin-top:var(--spacing-8);font-size:13px;color:var(--fg-faint)}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:var(--spacing-20)}
+
+  .hp{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+  .form-foot{display:flex;align-items:center;gap:var(--spacing-16);flex-wrap:wrap;margin-top:var(--spacing-32);padding-top:var(--spacing-24);border-top:1px solid var(--rule)}
+  .form-note{font-size:13px;color:var(--fg-faint);max-width:44ch}
+
+  .notice{padding:var(--spacing-16) var(--spacing-20);border:1px solid var(--rule-strong);border-radius:var(--radius-sm);background:var(--bg-2);font-size:var(--text-body-sm);margin-bottom:var(--spacing-24)}
+  .notice-error{border-color:var(--status-threat);color:var(--fg)}
+  .notice-error b{color:var(--status-threat);font-weight:600}
+  .notice-error:empty{display:none}
+
+  .done{background:var(--bg-2);border:1px solid var(--rule-strong);border-radius:var(--radius-sm);padding:var(--spacing-48) var(--spacing-32)}
+  .done h2{font-weight:600;color:var(--fg);font-size:26px;letter-spacing:var(--tracking-tight);margin:var(--spacing-16) 0 var(--spacing-12)}
+  .done p{color:var(--fg-muted);font-size:var(--text-body-sm);max-width:52ch}
+
+  /* --- Direct-address fallback (default state, works with no scripting) ----- */
+  .fallback{background:var(--bg-2);border:1px solid var(--rule-strong);border-radius:var(--radius-sm);overflow:hidden}
+  .fallback-bar{padding:var(--spacing-12) var(--spacing-24);background:var(--bg-3);border-bottom:1px solid var(--rule);font-family:var(--font-mono);font-size:var(--text-caption);letter-spacing:.12em;text-transform:uppercase;color:var(--fg-faint)}
+  .fallback-body{padding:var(--spacing-32) var(--spacing-24)}
+  .fallback-body > p{color:var(--fg-muted);font-size:var(--text-body-sm);max-width:56ch}
+  .addr{
+    display:block;margin:var(--spacing-24) 0 var(--spacing-16);padding:var(--spacing-16) var(--spacing-20);
+    background:var(--bg);border:1px solid var(--rule-strong);border-radius:var(--radius-sm);
+    font-family:var(--font-mono);font-size:var(--text-body-md);color:var(--fg);
+    user-select:all;word-break:break-all;
+  }
+  .addr-actions{display:flex;gap:var(--spacing-12);flex-wrap:wrap;align-items:center}
+  .copied{font-family:var(--font-mono);font-size:var(--text-micro);color:var(--status-nominal)}
+  .mission-note{margin-top:var(--spacing-20);font-family:var(--font-mono);font-size:var(--text-micro);color:var(--fg-faint)}
+
+  /* --- Side column ---------------------------------------------------------- */
+  .aside-block{border-top:1px solid var(--rule-strong);padding-top:var(--spacing-24);margin-bottom:var(--spacing-40)}
+  .aside-block h2{font-family:var(--font-mono);font-size:var(--text-micro);letter-spacing:.16em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:var(--spacing-16)}
+  .aside-list{list-style:none;display:flex;flex-direction:column;gap:var(--spacing-16)}
+  .aside-list li{display:grid;grid-template-columns:var(--spacing-24) minmax(0,1fr);gap:var(--spacing-12);font-size:var(--text-body-sm);color:var(--fg-muted)}
+  .aside-list .n{font-family:var(--font-mono);color:var(--fg-faint)}
+  .aside-list b{display:block;color:var(--fg);font-weight:600}
+
+  @media(max-width:900px){
+    .contact-grid{grid-template-columns:1fr;gap:var(--spacing-48)}
+  }
+  @media(max-width:560px){
+    .contact-grid{padding-top:calc(var(--header-inset) + var(--header-height) + var(--spacing-64))}
+    .contact-head{padding:0 0 var(--spacing-32)}
+    .row2{grid-template-columns:1fr;gap:0}
+    .fallback-body,.done{padding-left:var(--spacing-20);padding-right:var(--spacing-20)}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+<header id="hdr">
+  <div class="wrap">
+    <nav class="nav-pill">
+      <a class="brand" href="../index.html">
+        <span class="mark">
+          <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+            <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
+            <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
+            <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
+            <circle cx="50" cy="49.8" r="6.3"/>
+          </svg>
+        </span>
+        VANTAGE
+      </a>
+      <div class="navlinks" id="primary-nav">
+        <a href="../index.html#capabilities">Products</a>
+        <a href="../orbit-ai/index.html">ORBIT-AI</a>
+        <a href="../index.html#platform">Platform</a>
+        <a href="../index.html#assurance">Evidence</a>
+        <a href="../index.html#segments">Who it's for</a>
+        <a class="nav-extra" href="../visualization/index.html">Orbit map</a>
+        <a class="nav-extra" href="./" aria-current="page">Request a briefing</a>
+      </div>
+      <div class="nav-right">
+        <a href="../demo/index.html" class="nav-cta"><span>Open the Command Center</span></a>
+        <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-nav">
+          <svg viewBox="0 0 24 24" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <div class="contact-grid">
+      <div>
+
+        <div class="contact-head">
+          <span class="eyebrow reveal">Request a briefing</span>
+          <h1 class="reveal">Bring us a mission set. We'll bring the evidence.</h1>
+          <p class="reveal">Tell us what you need to be able to prove, and we will walk a live detection-to-evidence loop end-to-end against it: maneuver, intent, proximity threat, and the sealed assurance gate behind each call.</p>
+        </div>
+
+        <div class="fallback reveal" id="fallback">
+          <div class="fallback-bar">Direct contact</div>
+          <div class="fallback-body">
+            <div class="notice notice-error" id="form-error" role="alert"></div>
+            <p id="fallback-lede">Briefings are arranged directly by email. Write to the team and we will come back with times.</p>
+            <span class="addr" id="contact-address">contact@vantage.industries</span>
+            <div class="addr-actions">
+              <button type="button" class="btn" id="copy-address" hidden>Copy address</button>
+              <a class="btn" href="mailto:contact@vantage.industries?subject=Briefing%20request" id="mailto-link">Open in mail client →</a>
+              <span class="copied" id="copy-status" role="status" aria-live="polite"></span>
+            </div>
+            <p class="mission-note" id="mission-note" hidden></p>
+          </div>
+        </div>
+
+        <form id="briefing-form" data-endpoint="" method="post" novalidate hidden>
+          <div class="row2">
+            <div class="field">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" autocomplete="name" />
+            </div>
+            <div class="field">
+              <label for="email">Work email <span class="opt">(required)</span></label>
+              <input type="email" id="email" name="email" autocomplete="email" required aria-describedby="email-err" />
+              <p class="field-err" id="email-err"></p>
+            </div>
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <label for="organization">Organization</label>
+              <input type="text" id="organization" name="organization" autocomplete="organization" />
+            </div>
+            <div class="field">
+              <label for="role">Role</label>
+              <input type="text" id="role" name="role" autocomplete="organization-title" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="mission">Mission area</label>
+            <select id="mission" name="mission">
+              <option value="" selected>Select a mission area</option>
+              <option value="defense">Defense &amp; intelligence</option>
+              <option value="operators">Satellite operators</option>
+              <option value="orbital">Orbital compute &amp; AI infrastructure</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="message">What would you like us to walk through?</label>
+            <textarea id="message" name="message" placeholder="The mission set, the call you need to be able to defend, and anything you want run against the engine."></textarea>
+            <p class="field-hint">Please keep this unclassified.</p>
+          </div>
+
+          <div class="hp" aria-hidden="true">
+            <label for="company-website">Company website</label>
+            <input type="text" id="company-website" name="company_website" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="form-foot">
+            <button type="submit" class="btn btn-solid" id="submit-btn">Request a briefing →</button>
+            <span id="form-status" role="status" aria-live="polite"></span>
+            <p class="form-note">We reply from a monitored role address. We do not add you to a mailing list.</p>
+          </div>
+        </form>
+
+        <div class="done" id="form-success" role="status" tabindex="-1" hidden>
+          <span class="chip chip-nominal">Received</span>
+          <h2>Request received.</h2>
+          <p>Thanks. We will come back to you at the address you gave us with times for a technical briefing. If you would rather move faster, the Command Center demo runs the same detection-to-evidence loop in your browser right now.</p>
+        </div>
+
+      </div>
+
+      <aside class="reveal">
+        <div class="aside-block">
+          <h2>What a briefing covers</h2>
+          <ol class="aside-list">
+            <li><span class="n">01</span><span><b>Your mission set</b>What you have to call, and what you have to defend that call against.</span></li>
+            <li><span class="n">02</span><span><b>A live loop</b>A public catalog in, an assessed event out, with the written rationale attached.</span></li>
+            <li><span class="n">03</span><span><b>The assurance gate</b>The acceptance floors, the sealed bundle, and the parts we disclose rather than pass.</span></li>
+            <li><span class="n">04</span><span><b>Deployment</b>Where it runs, including fully offline on your own hardware.</span></li>
+          </ol>
+        </div>
+        <div class="aside-block">
+          <h2>Before you write</h2>
+          <p style="color:var(--fg-muted);font-size:var(--text-body-sm)">The Command Center demo replays real engine output from a seeded orbital-compute scenario, end to end. It answers most of the first-call questions on its own.</p>
+          <div class="cta-row" style="margin-top:var(--spacing-20)">
+            <a href="../demo/index.html" class="btn">Open the Command Center →</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a class="brand" href="../index.html">
+          <span class="mark">
+            <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+              <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
+              <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
+              <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
+              <circle cx="50" cy="49.8" r="6.3"/>
+            </svg>
+          </span>
+          VANTAGE
+        </a>
+        <p>Watch the sky, guard the fleet: ORBWATCH reads what a satellite is doing from public orbital data, GUARDIAN answers it, with sealed evidence behind every call. Runs on your own servers, even offline.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <a href="../orbwatch/index.html">ORBWATCH</a>
+        <a href="../guardian/index.html">GUARDIAN</a>
+        <a href="../index.html#platform">Platform</a>
+        <a href="../index.html#capabilities">Products</a>
+        <a href="../index.html#assurance">Evidence</a>
+        <a href="../demo/index.html">The Command Center</a>
+        <a href="../visualization/index.html">Orbit map</a>
+      </div>
+      <div class="foot-col">
+        <h5>Who it's for</h5>
+        <a href="../index.html#defense">Defense &amp; intelligence</a>
+        <a href="../index.html#operators">Satellite operators</a>
+        <a href="../index.html#orbital-compute">Orbital compute</a>
+      </div>
+      <div class="foot-col">
+        <h5>Contact</h5>
+        <a href="./" aria-current="page">Request a briefing</a>
+        <span class="plain">contact@vantage.industries</span>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <p>© 2026 Vantage · Assured Space Intelligence</p>
+      <span class="region"><span>SEALED EVIDENCE</span><span>HUMAN-ON-THE-LOOP</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="../scripts/site.js" defer></script>
+<script src="contact.js" defer></script>
+</body>
+</html>

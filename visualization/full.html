@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vantage · Orbit map</title>
+<meta name="description" content="An interactive 3D map of the low Earth orbit population: payloads, rocket bodies and debris propagated live over a Blue Marble earth, with radar beam volumes, view modes and filters." />
+<meta name="theme-color" content="#000000" />
+<link rel="canonical" href="https://vantage.industries/visualization/full.html" />
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Vantage" />
+<meta property="og:title" content="Vantage · Orbit map" />
+<meta property="og:description" content="An interactive 3D map of the low Earth orbit population, with radar beam volumes, view modes and filters." />
+<meta property="og:url" content="https://vantage.industries/visualization/" />
+<meta property="og:image" content="https://vantage.industries/assets/og-card.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<!-- The instrument declared --font-mono as IBM Plex Mono but never loaded it,
+     so every mono label here was falling back to whatever the OS supplies.
+     tokens.css is linked ahead of viz.css because viz.css now consumes those
+     tokens rather than redeclaring them. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/tokens.css">
+<link rel="stylesheet" href="viz.css">
+</head>
+<body>
+
+<canvas id="globe" aria-label="3D visualization of the low Earth orbit population"></canvas>
+
+<!-- assessment flags + protected-asset markers ride over the canvas -->
+<div id="flags" aria-hidden="true"></div>
+
+<div id="hoverwrap" class="hoverwrap" hidden>
+  <svg class="hover-ring" width="38" height="38" aria-hidden="true">
+    <circle cx="19" cy="19" r="9" fill="none" stroke="#ffffff" stroke-width="1.6"/>
+    <circle cx="19" cy="19" r="15" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.45"/>
+  </svg>
+  <div class="hover-chips" id="hover-chips"></div>
+</div>
+<div id="halo" class="halo" hidden>
+  <span class="halo-ping"></span>
+  <span class="halo-mid"></span>
+  <span class="halo-core"></span>
+</div>
+
+<div id="hud">
+
+  <!-- ======================= left menu ======================= -->
+  <div class="menu" id="menu">
+    <div class="mrow a-green">
+      <span class="mlabel">Search</span>
+      <input type="search" id="search" placeholder="Enter a satellite name..." autocomplete="off" spellcheck="false" aria-label="Search the catalog" />
+    </div>
+    <div class="search-results" id="search-results" hidden></div>
+    <div class="mrow a-blue">
+      <span class="mlabel">Speed</span>
+      <input type="range" id="speed" min="0" max="100" step="1" value="25" aria-label="Playback speed" />
+      <span class="mval" id="speed-val">25</span>
+    </div>
+    <label class="mrow a-gray check">
+      <span class="mlabel">Debris</span>
+      <input type="checkbox" id="t-debris" aria-label="Show analyst debris" />
+    </label>
+    <label class="mrow a-blue check">
+      <span class="mlabel">Beams</span>
+      <input type="checkbox" id="t-beams" checked aria-label="Show radar beams" />
+    </label>
+    <label class="mrow a-purple check">
+      <span class="mlabel">Instruments</span>
+      <input type="checkbox" id="t-instruments" checked aria-label="Show instruments" />
+    </label>
+    <label class="mrow a-teal check">
+      <span class="mlabel">Follow Earth</span>
+      <input type="checkbox" id="t-follow" checked aria-label="Follow Earth rotation" />
+    </label>
+    <label class="mrow a-purple check">
+      <span class="mlabel">Auto Refresh</span>
+      <input type="checkbox" id="t-refresh" checked aria-label="Auto refresh ephemerides" />
+    </label>
+
+    <div class="msection">
+      <div class="mhead">Views</div>
+      <div class="vrow sel" data-view="type">Object Type</div>
+      <div class="vrow" data-view="assessment">Assessment</div>
+      <div class="vrow" data-view="perigee">Perigee</div>
+      <div class="vrow" data-view="period">Period</div>
+      <div class="vrow" data-view="inclination">Inclination</div>
+      <div class="vrow" data-view="country">Country of Origin</div>
+    </div>
+
+    <div class="msection">
+      <div class="mhead">Filters</div>
+      <div class="frow-filter">
+        <select id="filter-param" aria-label="Filter parameter">
+          <option value="perigee">Perigee</option>
+          <option value="apogee">Apogee</option>
+          <option value="period">Period</option>
+          <option value="inclination">Inclination</option>
+          <option value="year">Launch Year</option>
+        </select>
+      </div>
+      <div class="frow-filter minmax">
+        <input type="number" id="filter-min" placeholder="min" aria-label="Filter minimum" />
+        <input type="number" id="filter-max" placeholder="max" aria-label="Filter maximum" />
+      </div>
+    </div>
+
+    <button class="mhead hide-btn" id="hide-menu" type="button">Hide Menu</button>
+  </div>
+  <button class="show-btn" id="show-menu" type="button" hidden>Show Menu</button>
+
+  <div class="menu-notes" id="menu-notes">
+    <div class="note">⚠ Synthetic catalog · assessments simulated</div>
+    <button class="note linky" id="copy-link" type="button">🔗 Copy link to share</button>
+  </div>
+
+  <!-- ============ right column: legend + selected object card ============ -->
+  <div class="rightcol">
+    <div class="legend" id="legend">
+      <div class="legend-head" id="legend-head">Object Type</div>
+      <div class="legend-body" id="legend-body"></div>
+    </div>
+
+    <!-- fixed Selected Object card, directly under the legend. The header
+         carries Vantage's call on the object; the rows stay catalog facts. -->
+    <div class="selcard" id="selcard" hidden>
+      <div class="selcard-head">
+        <span class="assess assess-nominal" id="p-assess">NOMINAL</span>
+        <span class="selcard-title" id="p-headname">—</span>
+      </div>
+      <div class="selcard-body">
+        <div><span>Name</span><b id="p-name">—</b></div>
+        <div><span>Catalog number</span><b id="p-catnum">—</b></div>
+        <div><span>NORAD ID</span><b id="p-id">—</b></div>
+        <div><span>Type</span><b id="p-type">—</b></div>
+        <div><span>Inclination</span><b id="p-inc">—</b></div>
+        <div><span>Perigee</span><b id="p-per">—</b></div>
+        <div><span>Apogee</span><b id="p-apo">—</b></div>
+        <div><span>Period</span><b id="p-period">—</b></div>
+      </div>
+      <div class="selcard-note" id="p-reason" hidden>—</div>
+      <a class="selcard-cta" href="../demo/index.html">Open in the Command Center →</a>
+    </div>
+  </div>
+
+  <!-- ======================= brand + credits ======================= -->
+  <div class="brandbox">
+    <a class="brand" href="../index.html">
+      <span class="mark">
+        <svg width="30" height="30" viewBox="0 0 100 100" fill="#fff" aria-hidden="true" focusable="false">
+          <polygon points="45.6,19.1 2.6,48.1 19.0,58.8 34.9,53.8 18.8,46.6 45.6,26.3"/>
+          <polygon points="54.4,19.1 97.4,48.1 81.0,58.8 65.1,53.8 81.2,46.6 54.4,26.3"/>
+          <polygon points="29.0,66.9 50.0,80.9 71.0,67.1 57.0,68.9 50.0,73.5 43.0,68.9"/>
+          <circle cx="50" cy="49.8" r="6.3"/>
+        </svg>
+      </span>
+      VANTAGE
+    </a>
+    <div class="vtag">Orbit map · synthetic live feed</div>
+    <div class="credits">© 2026 Vantage · Orbit map</div>
+    <div class="credits">Earth imagery: NASA Blue Marble · Basemap data: Natural Earth</div>
+  </div>
+
+  <!-- ======================= clock ======================= -->
+  <div class="clockbox">
+    <div class="bigclock" id="clock">—</div>
+    <div class="objcount" id="objcount">— objects displayed</div>
+    <div class="statusline" id="statusline">—</div>
+  </div>
+
+</div>
+
+<div id="boot" class="boot">
+  <div class="boot-inner">
+    <span class="boot-tag">VANTAGE · ORBIT MAP</span>
+    <span class="boot-line" id="boot-line">Initializing catalog…</span>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
