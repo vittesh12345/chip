@@ -6,30 +6,31 @@ Package section 05_simulation of `orbit_demo_design_review`, written 2026-10-06.
 
 Package revision table, verbatim from the package revision record:
 
-
 | Item | Revision / identifier | Note |
 |---|---|---|
 | Design | orbit_demo (ORBIT-AI 4-lane INT8 digital demonstrator) | top module `orbit_demo`, LANES=4 |
-| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26566f0 (2026-09-29 18:54 UTC); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256) |
+| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26566f0 (2026-09-29 18:54 UTC); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256 at the package root) |
 | Specification | docs/SPEC.md at 26566f0 (never revised) | sha256 aef5d9fb… |
 | Concept brief | docs/orbit-ai-design-brief.pdf, "ORBIT-AI v0.1, 29 September 2026" (never revised; describes an earlier project state, see discrepancy register) | sha256 9d5f33d3… |
 | Reviewed layout | ORFS sky130hd, variant `sep` (copy-separation fences), run 2026-09-29 21:56–22:12 UTC, outputs build/pd_sep/results/sky130hd/orbit_demo/sep/ | 6_final.gds sha256 cd19afa9…; 6_final.def f5c544f3…; 6_final.v 68093c41…; 6_final.spef 014e655a… |
-| Layout configuration | pd/sky130hd_sep/{config.mk, constraint.sdc, regions.tcl} at c10c59b | The run used the ed553f8 versions; with comments stripped they are identical to c10c59b (comment-only changes) |
-| Flow / tools | ORFS docker image openroad/orfs@sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC); OpenROAD prints version "unknown"; KLayout 0.30.12 (DRC/LVS); Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
+| Layout configuration | pd/sky130hd_sep/config.mk and regions.tcl at c10c59b; constraint.sdc at 21917cf (`set clk_period 7.2`) | The run (21:56 UTC) used config.mk/regions.tcl as in ed553f8, identical to c10c59b once comments are stripped. It used the working-tree constraint.sdc with period 7.2 ns, which was committed in 21917cf at 22:00 UTC and is byte-identical to the flow copy build/pd_sep/sdc/sky130hd/sep.sdc. ed553f8's constraint.sdc has a 7.0 ns period, so a rebuild must not use it |
+| Flow / tools | ORFS docker image tag openroad/orfs:latest; the only local image is sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC, before the run). Linking the run to this digest is an ASSUMPTION: the run logged no digest. OpenROAD prints version "unknown". KLayout 0.30.12 (DRC/LVS). Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
 | Process / library | SkyWater SKY130, sky130_fd_sc_hd, liberty sky130_fd_sc_hd__tt_025C_1v80 (the single corner ORFS optimised at) | — |
-| Package assembled | 2026-10-06 from repo commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Re-runs made for this package are dated 2026-10-06 |
+| Package assembled | 2026-10-06; design inputs copied from the repository tree at commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Every later commit on the branch changes only review/ or is empty (git diff --name-only 0495cfa..HEAD outside review/ is empty). Re-runs made for this package are dated 2026-10-06 |
 
 Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
+
+Note on the table (checked 2026-10-06): `MANIFEST.sha256` is not in the package (MISSING; discrepancy register D-53). The full sha256 of the four RTL files are listed in [04_digital_design/README.md](../04_digital_design/README.md), notes on the revision table.
 
 ### 1.1 Simulation inputs and tools
 
 | Item | Value | Source | Status |
 |---|---|---|---|
-| RTL simulated | `$(RTL)` = rtl/orbit_keep_reg.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_demo.v. rtl/ecc/ is not part of orbit_demo and is not simulated in this section | [make_sim-directed.log](rerun_logs_2026-10-06/make_sim-directed.log) line 1; [mk/sim.mk](../04_digital_design/source/mk/sim.mk) | VERIFIED |
+| RTL simulated | `$(RTL)` = rtl/orbit_keep_reg.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_demo.v. rtl/ecc/ is not part of orbit_demo and is not simulated in this section | [make_sim-directed.log](rerun_logs_2026-10-06/make_sim-directed.log) line 1; `RTL` defined in [Makefile](../04_digital_design/source/Makefile) lines 15-17 | VERIFIED |
 | RTL at the waveform run | md5 dc59d4a5… (orbit_keep_reg.v), b34f737f… (orbit_mac_lane.v), b2877bc2… (orbit_thermal_tmr.v), 998888fd… (orbit_demo.v), repo HEAD 0495cfa6; equal to the current rtl/ (sha256 as in the revision table, checked 2026-10-06) | [waveforms/run_info.txt](waveforms/run_info.txt) | REPRODUCED 2026-10-06 |
 | Directed bench | tb/tb_orbit_demo.v, sha256 2d7a33f4830039a7…, last changed in commit f057f38 (2026-09-30 00:31 UTC), the same commit that last changed `reports/sim/` | [tb_orbit_demo.v](../04_digital_design/source/tb/tb_orbit_demo.v); `git log -- tb/tb_orbit_demo.v reports/sim` | VERIFIED |
 | Published logs | [published_logs/](published_logs/) are byte-identical copies of `reports/sim/*` (cmp, 2026-10-06), "Generated by `make sim-report` on 2026-09-30" (summary.md line 3), file times 2026-09-30 00:25 UTC. They carry no commit id, RTL hash or date | [summary.md](published_logs/summary.md) | VERIFIED |
-| Re-run logs | [rerun_logs_2026-10-06/](rerun_logs_2026-10-06/): the same make targets at repo commit 0495cfa, 2026-10-06. rtl/ (26566f0), tb/ (f057f38) and mk/sim.mk (663160b, 2026-09-29 21:01 UTC) are unchanged since the published run | make_*.log in that folder | REPRODUCED 2026-10-06 |
+| Re-run logs | [rerun_logs_2026-10-06/](rerun_logs_2026-10-06/): the same make targets at repo commit 0495cfa, 2026-10-06. The four RTL files of `$(RTL)` (26566f0), tb/tb_orbit_demo.v, tb/cocotb/, tb/sim_mutants.py and tb/sim_report.py (f057f38), and mk/sim.mk (3196533, 2026-09-29 20:56 UTC) are unchanged since the published run (rtl/ecc/ and tb/ecc/ changed later in e80a7b2 but are not used by the sim targets) | make_*.log in that folder | REPRODUCED 2026-10-06 |
 | Icarus Verilog, re-runs | 14.0 (devel) (s20260301-500-g2e81fcccb-dirty) | [run_info.txt](waveforms/run_info.txt) line 3; [requirements-tools.txt](../04_digital_design/source/requirements-tools.txt) line 8 | VERIFIED |
 | Icarus Verilog, 2026-09-30 runs | same build as the re-runs (same /opt/eda/oss-cad-suite install); the published directed and GLS logs do not print the Icarus version | — | ASSUMPTION |
 | Verilator | 5.053 devel rev v5.052-233-gf5f9ddef9 (mod) | [directed_verilator.log](published_logs/directed_verilator.log) line 29; [make_lint.log](rerun_logs_2026-10-06/make_lint.log) line 2 | VERIFIED |
@@ -56,7 +57,7 @@ Table 2a: tests, stimulus and tools.
 | S8 | Directed bench on routed sky130hd **SEP** netlist (reviewed layout; new) | S1 bench on netlist N2 (reviewed sep layout); summary must equal S1 | as S1 | Icarus 14.0 (devel); cell models C1 (identical to C2); zero delay, no SDF; compile.log empty |
 | S9 | GLS fault campaign on the SEP netlist (`make pd-sep-gls`) | `pd/gls/tb_gls.v`: RTL and netlist N2 in lockstep, all outputs compared every cycle; one redundant bit flipped in both models every 32 cycles at the falling edge; duplicated-copy flip must give out_valid = in_ready = 0 that cycle and fault = 1 after the next edge; thermal-copy flip must give therm_repair = 1 with the voted state unchanged, then 0 | 30000 cycles, seed 1, run 2026-09-29 22:12-22:14 UTC; 936 flips (702 duplicated-copy + 234 thermal-copy) over 518 redundant bits (512 + 6) | Icarus (`iverilog -g2005`, version not logged); cell models C2; 10 ns clock (tb_gls.v line 161); zero delay |
 | S10 | Sim negative control (`make sim-mutants`, `tb/sim_mutants.py`) | each of 26 single-bug RTL copies must fail both benches | 26 mutants; directed `+maxerr=1`; random 1 seed x 20000 cycles | Icarus; cocotb as S3 |
-| S11 | Mutation campaign (`make mutation`, `scripts/mutation_test.py`) | 40 single-point RTL mutants run through lint, sim, formal-quick, fault-quick, synth | m01-m40 + baseline m00, 2026-09-30 01:22-02:27 UTC | all area tools |
+| S11 | Mutation campaign (`make mutation`, `scripts/mutation_test.py`) | 40 single-point RTL mutants run through lint, sim, formal-quick, fault-quick, synth | m01-m40 + baseline m00, 2026-09-30 01:22-02:27 UTC; MUTATION_JOBS=2, MUTATION_TIMEOUT=3600 s ([mk/mutation.mk](../04_digital_design/source/mk/mutation.mk) lines 29-32) | per the m00 baseline logs (`build/mutation/m00/logs/`): Verilator 5.053 devel (lint, sim), cocotb 2.1.0.dev0+41564633 / Python 3.11.6 (sim), Yosys 0.69+154 (synth); Icarus (sim, fault-quick) and SymbiYosys (formal-quick) versions not logged |
 | S12 | Waveform scenarios (new, `waveforms/tb_orbit_wave.v`) | 5 self-checking scenarios with VCD dump (section 4) | 11 / 21 / 19 / 97 / 24 cycles; 29 / 35 / 42 / 383 / 50 checks | Icarus 14.0 (devel) s20260301-500-g2e81fcccb-dirty; RTL; zero delay |
 | S13 | Waveform negative control (`waveforms/run_negctl.sh`) | each scenario must FAIL on an RTL copy with its targeted bug (section 6) | 6 mutants x 5 scenarios | as S12 |
 | S14 | Lint (`make lint`; static, listed because its log is in this folder) | Verilator `--lint-only -Wall` on the 4 RTL files, top orbit_demo | — | Verilator 5.053 devel rev v5.052-233-gf5f9ddef9 (mod) |
@@ -73,9 +74,9 @@ Table 2b: pass criteria, results, status and logs (same row numbers).
 | S6 | PASS and summary identical | PASS; "sim-gls: summary identical to the RTL run" | REPRODUCED 2026-10-06 | [published](published_logs/gls_yosys.log); [re-run](rerun_logs_2026-10-06/gls_yosys.log); [Yosys log](rerun_logs_2026-10-06/gls_yosys_yosys.log) lines 1406-1418 |
 | S7 | PASS and summary identical | PASS | VERIFIED | [gls_sky130hd.log](published_logs/gls_sky130hd.log); netlist named in [summary.md](published_logs/summary.md) lines 16, 59 and in the file table of `build/sim/gls/sky130hd/tb.vvp` |
 | S8 | PASS and summary identical | PASS; "sim-gls: summary identical to the RTL run"; new run, no committed counterpart | REPRODUCED 2026-10-06 | [gls_sky130hd_sep_directed.log](rerun_logs_2026-10-06/gls_sky130hd_sep_directed.log); [make log](rerun_logs_2026-10-06/make_sim-gls_sky130hd_sep.log) |
-| S9 | 0 mismatches and all stop/repair checks → `GLS PASS` | `GLS PASS: 30000 cycles, 0 mismatches`; 702 stopped, 234 repaired, 518 of 518 bits hit | VERIFIED | [07_verification/gls/gls.log](../07_verification/gls/gls.log) (= `reports/pdsep/gls.log` = `build/pd_sep/gls/sep/gls.log`) |
+| S9 | 0 mismatches and all stop/repair checks → `GLS PASS` | `GLS PASS: 30000 cycles, 0 mismatches`; 702 stopped, 234 repaired, 518 of 518 bits hit | REPRODUCED 2026-10-06 | published [07_verification/gls/gls.log](../07_verification/gls/gls.log) (= `reports/pdsep/gls.log` = `build/pd_sep/gls/sep/gls.log`); [re-run](../07_verification/rerun_2026-10-06/pd_sep/gls_rerun.log) |
 | S10 | kill = `TB_ORBIT_DEMO FAIL` (directed), >= 1 model mismatch (random); all 26 killed by each bench | "directed bench killed 26/26, random bench killed 26/26" | VERIFIED | [mutants.md](published_logs/mutants.md) line 34; [summary.md](published_logs/summary.md) line 17 |
-| S11 | mutant killed if a target fails; baseline passes all | 35/40 killed (87.5 %); survivors m07, m20, m21, m22, m27; sim target kills 26 | VERIFIED | not in the package: `reports/mutation/summary.md`; see discrepancy register (09_review_notes) |
+| S11 | mutant killed if a target fails; baseline passes all | 35/40 killed (87.5 %); survivors m07, m20, m21, m22, m27; sim target kills 26 | VERIFIED | [summary.md](../07_verification/mutation/summary.md), [results.json](../07_verification/mutation/results.json) (byte-identical copies of `reports/mutation/`); see discrepancy register (09_review_notes) |
 | S12 | `WAVE_<name> PASS` (0 failed checks) | 5 of 5 PASS | REPRODUCED 2026-10-06 | [run_scen1.log](waveforms/run_scen1.log), [run_scen2.log](waveforms/run_scen2.log), [run_scen3.log](waveforms/run_scen3.log), [run_scen4.log](waveforms/run_scen4.log), [run_scen5.log](waveforms/run_scen5.log) |
 | S13 | target scenario FAIL | 6 of 6 caught | REPRODUCED 2026-10-06 | [negctl_summary.txt](waveforms/negctl_summary.txt) |
 | S14 | no `%Warning` or `%Error` line | none printed; "Built from 0.091 MB sources in 6 modules" | REPRODUCED 2026-10-06 | [make_lint.log](rerun_logs_2026-10-06/make_lint.log) |
@@ -95,13 +96,13 @@ Notes:
 
 - S7 vs S8: the published routed-netlist GLS (S7) used the BASE layout netlist. The bench output does not name the netlist; S7, S8, S6 and S1 logs are byte-identical (md5 05a30e4e…). The generator `tb/sim_report.py` hardcodes the base path in summary.md; see discrepancy register (09_review_notes). S8 was run for this package on 2026-10-06 19:35:58-19:37:55 UTC (build file times) and is the only directed-bench GLS of the reviewed netlist in the package.
 - S9 compares the RTL with the netlist under the same injection; it has no golden-result scoreboard. The claim that no wrong result is released rests on the stop checks plus the formal property `D_out_fire_matches_ref` (07_verification). Thermal code 3 is never reached (`code3 0`).
-- `make synth` also runs the directed bench on its own `-noexpr` Yosys netlist (`reports/synth/gls_result.txt`, not in the package); it is not reviewed here.
+- `make synth` also runs the directed bench on its own `-noexpr` Yosys netlist (`reports/synth/gls_result.txt` = [07_verification/synth/gls_result.txt](../07_verification/synth/gls_result.txt)); it is not reviewed here.
 
 ## 3 Result details
 
 ### 3.1 Directed bench (S1, S2, S6, S7, S8)
 
-Summary block printed identically by all five runs ([directed_icarus.log](published_logs/directed_icarus.log) lines 16-28):
+Summary block printed identically by all five runs ([directed_icarus.log](published_logs/directed_icarus.log) lines 16-27):
 
 ```
 tb_orbit_demo summary (seed 1)
@@ -137,7 +138,7 @@ Source: [random_icarus.md](published_logs/random_icarus.md) lines 5-12 and cover
 
 ### 3.3 GLS fault campaign (S9)
 
-[07_verification/gls/gls.log](../07_verification/gls/gls.log), lines 1-6, VERIFIED:
+[07_verification/gls/gls.log](../07_verification/gls/gls.log), lines 1-6, VERIFIED; lines 1-6 of the 2026-10-06 re-run [gls_rerun.log](../07_verification/rerun_2026-10-06/pd_sep/gls_rerun.log) are identical (REPRODUCED 2026-10-06):
 
 ```
 GLS: 30000 cycles, seed 1, 518 redundant bits, injection every 32 cycles
@@ -156,7 +157,7 @@ All 26 mutants killed by both benches ([mutants.md](published_logs/mutants.md)).
 
 ### 3.5 Mutation campaign (S11)
 
-`reports/mutation/summary.md` (not in the package): score 35/40 (87.5 %), 35/39 (89.7 %) excluding m21 argued equivalent; kills per target lint 5, sim 26, formal-quick 29, fault-quick 21, synth 29. Survivors m07 `result_from_b`, m20 `out_valid_no_fault`, m22 `fault_not_sticky`, m27 `shutdown_only_stop` are called real test gaps; m21 `out_fire_unmasked` an equivalent mutant. Status: VERIFIED for the report content; the logged run ended with unanalysed survivors and the summary was regenerated by a run with no log, see discrepancy register (09_review_notes). This campaign and S10 both report "26" sim kills with different mutant sets.
+[summary.md](../07_verification/mutation/summary.md) (= `reports/mutation/summary.md`): score 35/40 (87.5 %), 35/39 (89.7 %) excluding m21 argued equivalent; kills per target lint 5, sim 26, formal-quick 29, fault-quick 21, synth 29. Survivors m07 `result_from_b`, m20 `out_valid_no_fault`, m22 `fault_not_sticky`, m27 `shutdown_only_stop` are called real test gaps; m21 `out_fire_unmasked` an equivalent mutant. Status: VERIFIED for the report content; the logged run ended with unanalysed survivors and the summary was regenerated by a run with no log, see discrepancy register (09_review_notes). This campaign and S10 both report "26" sim kills with different mutant sets.
 
 ## 4 Waveforms
 
@@ -191,7 +192,7 @@ All waveforms come from the wrapper [tb_orbit_wave.v](waveforms/tb_orbit_wave.v)
 | Item | Status | Detail |
 |---|---|---|
 | PVT corners for RTL simulation (S1-S5, S12) | N/A | Functional simulation has no process, voltage or temperature. `temp_c` is a digital input of the thermal FSM, not a simulation temperature. |
-| PVT corners for zero-delay GLS (S6-S9) | N/A | Cell models are the Boolean functions of the sky130_fd_sc_hd__tt_025C_1v80 liberty (Yosys `read_liberty ... write_verilog`, [mk/pdsep.mk](../04_digital_design/source/mk/pdsep.mk) lines 68-70 and 130-131); no delay is used, so no corner applies. |
+| PVT corners for zero-delay GLS (S6-S9) | N/A | S7-S9: cell models are the Boolean functions of the sky130_fd_sc_hd__tt_025C_1v80 liberty (Yosys `read_liberty ... write_verilog`, [mk/pdsep.mk](../04_digital_design/source/mk/pdsep.mk) lines 68-70 and 130-131). S6: Yosys generic gates (`$_AND_`, `$_SDFFE_PN0P_` ...), no library ([mk/sim.mk](../04_digital_design/source/mk/sim.mk) lines 104-108). No delay is used, so no corner applies. |
 | SDF-annotated (timing) gate-level simulation, any corner | MISSING | No `.sdf` exists under `build/` (searched 2026-10-06) and no script in mk/, pd/ or scripts/ calls `write_sdf`. Needed: OpenSTA `write_sdf` per corner from 6_final.odb and [6_final.spef.gz](../06_physical_design/layout_db/6_final.spef.gz), sky130_fd_sc_hd Verilog models with specify blocks, an SDF-capable simulator flow, and the bench clock set to 7.2 ns. |
 | Multi-corner timing | REPRODUCED 2026-10-06 | Reported in 07_verification: multi-corner STA of the sep layout at 7.2 ns, [sta_corners_sep.txt](../07_verification/sta_corners_sep_2026-10-06/sta_corners_sep.txt) (TT, ss_100C_1v60, ff_n40C_1v95). ss_100C_1v60 fails setup there (WNS -6.131 ns). No simulation in this section covers or contradicts that result. |
 | Simulation switching activity for power | MISSING | Power in 07_verification uses OpenSTA default activity ([power_default_activity.txt](../07_verification/published_reports/power_default_activity.txt)). No SAIF/VCD from a gate-level workload exists; the waveform VCDs are short RTL scenarios and are not usable as power activity. Needed: a SAIF/VCD dump from a representative gate-level run of the sep netlist, annotated in `report_power`. |
@@ -209,9 +210,9 @@ All waveforms come from the wrapper [tb_orbit_wave.v](waveforms/tb_orbit_wave.v)
 | throttle_every_cycle | orbit_thermal_tmr.v: admit `(voted == S_THROTTLE)` without `& ~phase` | 4 d_thermal | FAIL, 12 of 383 | all others PASS |
 | copy1_no_repair | orbit_thermal_tmr.v: `u_copy1` `.d(nxt)` → `.d(c1)` (copy1 never rewritten) | 4 d_thermal | FAIL, 92 of 383 | a FAIL 1/29, others PASS |
 
-`fault_not_sticky` behaves like mutation-campaign survivor m22 (`fault_q <= mismatch;` in `build/mutation/m22/rtl/orbit_demo.v`), which passes sim, formal-quick, fault-quick, synth and the full formal set (`reports/mutation/summary.md`). Scenario c2 kills it, but c2 is not part of any make target (open item 4).
+`fault_not_sticky` behaves like mutation-campaign survivor m22 (`fault_q <= mismatch;` in `build/mutation/m22/rtl/orbit_demo.v`), which passes sim, formal-quick, fault-quick, synth and the full formal set ([summary.md](../07_verification/mutation/summary.md)). Scenario c2 kills it, but c2 is not part of any make target (open item 4).
 
-Other negative controls for this section: S10 (26 sim mutants, 26/26 per bench, VERIFIED) and S11 (mutation campaign). For the S9 harness a netlist mutant (instance `_4098_` sky130_fd_sc_hd__and2_1 → or2_1, 3000 cycles, first MISMATCH at cycle 7) exists only for the BASE netlist (`reports/pd/sky130hd/gls_mutant.log`, not in the package); no such control on the sep netlist is in the package (MISSING).
+Other negative controls for this section: S10 (26 sim mutants, 26/26 per bench, VERIFIED) and S11 (mutation campaign). For the S9 harness, a netlist mutant (instance `_4098_` sky130_fd_sc_hd__and2_1 → or2_1, 3000 cycles, seed 1, first MISMATCH at cycle 7, "GLS FAIL: 1148 errors") exists for the BASE netlist (`reports/pd/sky130hd/gls_mutant.log`, "#0 of 189"; the published file is cut at 8 lines and omits the verdict, which is in the full log `build/pd/gls/sky130hd/mutant/gls_mutant.log`, register D-49) and for the sep netlist ([gls_mutant.log](../07_verification/rerun_2026-10-06/pd_sep/gls_mutant.log), "#0 of 184", REPRODUCED 2026-10-06). The logs do not name their netlist; apart from that count they are identical.
 
 ## 7 Re-run comparison (committed 2026-09-30 vs re-run 2026-10-06)
 
@@ -225,9 +226,9 @@ Other negative controls for this section: S10 (26 sim mutants, 26/26 per bench, 
 | Yosys generic GLS | [gls_yosys.log](published_logs/gls_yosys.log) | [gls_yosys.log](rerun_logs_2026-10-06/gls_yosys.log) | none; 4899 cells / 521 flip-flop cells as summary.md line 58 |
 | Routed-netlist GLS | [gls_sky130hd.log](published_logs/gls_sky130hd.log) (BASE netlist) | [gls_sky130hd_sep_directed.log](rerun_logs_2026-10-06/gls_sky130hd_sep_directed.log) (SEP netlist) | byte-identical logs from different netlists; the bench output does not depend on the netlist when the function matches. Not a re-run of the same input |
 | Sim mutants (S10) | [mutants.md](published_logs/mutants.md) | not in the package | scratch re-run on 2026-10-06 byte-identical; log not copied |
-| GLS fault campaign (S9) | [gls.log](../07_verification/gls/gls.log) | not in the package | scratch re-run reported identical; log not copied |
+| GLS fault campaign (S9) | [gls.log](../07_verification/gls/gls.log) | [gls_rerun.log](../07_verification/rerun_2026-10-06/pd_sep/gls_rerun.log) | none: lines 1-6 identical; real 2m17.734s |
 
-Re-run wall times (`real`, from the make_*.log files; no committed timings exist): lint 0.123 s, sim-model 0.045 s, sim-directed 6.527 s, sim-verilator 8.782 s cached / 28.536 s clean, sim-random 42.417 s, sim-random-verilator 46.156 s (includes the Icarus step), sim-gls Yosys 46.567 s, directed GLS on the sep netlist 2 min 3.381 s. The vacuity re-run log [make_formal-vacuity.log](rerun_logs_2026-10-06/make_formal-vacuity.log) in this folder belongs to 07_verification. Every functional output of every re-run equals the committed one; the differences are limited to wall time, CPU time and memory fields.
+Re-run wall times (`real`, from the make_*.log files; no committed timings exist): lint 0.123 s, sim-model 0.045 s, sim-directed 6.527 s, sim-verilator 8.782 s cached / 28.536 s clean, sim-random 42.417 s, sim-random-verilator 46.156 s (includes the Icarus step), sim-gls Yosys 46.567 s, directed GLS on the sep netlist 2 min 3.381 s. The vacuity re-run log [make_formal-vacuity.log](rerun_logs_2026-10-06/make_formal-vacuity.log) in this folder belongs to 07_verification. Every functional output of the simulation re-runs with a committed counterpart (S1-S6, S9) equals the committed one; the differences are limited to wall time, CPU time and memory fields. S8 and the lint run (S14) have no committed counterpart. In make_formal-vacuity.log all 19 mutants are CAUGHT, as in the committed [vacuity.md](../07_verification/formal/vacuity.md), but `zext_product_pdr` reports a different failing property and step (P8_fresh_sum_from_zero_lane2, step 6; committed P1_out_valid_data_lane1 P8_fresh_sum_from_zero_lane1, step 4) and `clear_keeps_acc_pdr` a different step (8; committed 5): abc pdr run-to-run variation, register D-43.
 
 ## 8 Open items
 
@@ -235,15 +236,15 @@ Re-run wall times (`real`, from the make_*.log files; no committed timings exist
 |---|---|---|---|
 | 1 | Directed-bench GLS of the reviewed sep netlist exists only as this package's re-run (S8); the repo publishes the base netlist (S7) and `tb/sim_report.py` hardcodes the base path | MISSING | commit the S8 log; take the netlist path from `SIM_GLS_SRCS`. See discrepancy register (09_review_notes) |
 | 2 | Timing (SDF) gate-level simulation at any corner | MISSING | see section 5 |
-| 3 | Fault path in the regression suite: the sim benches never inject upsets (`fault`, `therm_repair` checked = 0 only); thermal code 3 unreachable; mutation survivors m07, m20, m22, m27 | MISSING | add the checks of `reports/mutation/tb_mutation_gaps.v` (not in the package) to a make target |
+| 3 | Fault path in the regression suite: the sim benches never inject upsets (`fault`, `therm_repair` checked = 0 only); thermal code 3 unreachable; mutation survivors m07, m20, m22, m27 | MISSING | add the checks of [tb_mutation_gaps.v](../07_verification/mutation/tb_mutation_gaps.v) to a make target |
 | 4 | Waveform scenarios c, c2 and d are not in any make target. c2 kills a non-sticky fault latch (section 6), which the regression suite misses (m22) | MISSING | add `waveforms/tb_orbit_wave.v` +scen=1..5 to `make sim` or move its checks into tb/ |
 | 5 | cocotb random test on a gate-level netlist | MISSING | run `tb/cocotb/run_random.py --sources <sep 6_final.v> <cells.v>` |
 | 6 | Mid-run reset coverage in the random test (seed 2 has none; not a required point) | MISSING | add reset coverage points (during out_fire, in THROTTLE, in STOP) to `REQUIRED` |
 | 7 | Code / toggle coverage | MISSING | e.g. Verilator `--coverage` on S1 and S3 with a merged report |
 | 8 | Switching activity for power | MISSING | see section 5 |
 | 9 | Provenance in the sim logs (commit, RTL/TB hash, tool versions; summary.md says "unknown") | MISSING | have `tb/sim_report.py` write `git rev-parse HEAD`, sha256 of `$(RTL)` and the bench, and tool versions. See discrepancy register (09_review_notes) |
-| 10 | Re-run evidence not copied into the package: sim-mutants re-run, S9 re-run, sep-netlist GLS mutant control | MISSING | copy the logs into this folder or re-run |
+| 10 | Re-run evidence not copied into the package: sim-mutants re-run (S10) | MISSING | copy the log into this folder or re-run |
 | 11 | From-scratch build of the cocotb Verilator model | MISSING | re-run `make sim-random-verilator` with an empty BUILD |
-| 12 | cocotb and the model's python3 version not pinned or logged (requirements-tools.txt lists yosys, iverilog, verilator only) | MISSING | add both to requirements-tools.txt and to the logs |
+| 12 | cocotb is not listed in [requirements-tools.txt](../04_digital_design/source/requirements-tools.txt) (pinned only indirectly through `oss-cad-suite==2026-09-28`, line 6); Python is pinned only as `python==3.11` (line 16), and the python3 used by `make sim-model` is not logged. Line 15 says the scripts use the standard library only, although the cocotb bench needs cocotb (register D-15) | MISSING | add cocotb to requirements-tools.txt; print `python3 --version` in the model log |
 | 13 | No demonstrator clock requirement: docs/SPEC.md states no frequency; all simulations use 10 ns, the layout 7.2 ns | MISSING | state the target clock and PVT range in SPEC |
-| 14 | Waveform log labels: run_scen4.log uses "cyc" for the bench cycle counter in event lines (e.g. `cyc=37`) and for the ramp step in the final line (`first THROTTLE cyc 24`) | N/A | labelling only, no result affected. Fix: rename the final-line field to "step" in tb_orbit_wave.v |
+| 14 | Waveform bench labels: run_scen4.log uses "cyc" for the bench cycle counter in event lines (e.g. `cyc=37`) and for the ramp step in the final line (`first THROTTLE cyc 24`); the usage comment in [tb_orbit_wave.v](waveforms/tb_orbit_wave.v) line 34 reads "+scen=1 (2, 3, 4)", omitting scenario 5 (c2_fault_sticky) that the header (lines 10-23) and run_waves.sh run | MISSING (labelling fix not applied; no result affected) | rename the final-line field to "step"; change the usage comment to "+scen=1 (2, 3, 4, 5)" |

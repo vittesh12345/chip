@@ -7,29 +7,31 @@ The two diagrams in this folder describe the built digital demonstrator `orbit_d
 | Item | Revision / identifier | Note |
 |---|---|---|
 | Design | orbit_demo (ORBIT-AI 4-lane INT8 digital demonstrator) | top module `orbit_demo`, LANES=4 |
-| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26566f0 (2026-09-29 18:54 UTC); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256) |
+| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26566f0 (2026-09-29 18:54 UTC); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256 at the package root) |
 | Specification | docs/SPEC.md at 26566f0 (never revised) | sha256 aef5d9fb… |
 | Concept brief | docs/orbit-ai-design-brief.pdf, "ORBIT-AI v0.1, 29 September 2026" (never revised; describes an earlier project state, see discrepancy register) | sha256 9d5f33d3… |
 | Reviewed layout | ORFS sky130hd, variant `sep` (copy-separation fences), run 2026-09-29 21:56–22:12 UTC, outputs build/pd_sep/results/sky130hd/orbit_demo/sep/ | 6_final.gds sha256 cd19afa9…; 6_final.def f5c544f3…; 6_final.v 68093c41…; 6_final.spef 014e655a… |
-| Layout configuration | pd/sky130hd_sep/{config.mk, constraint.sdc, regions.tcl} at c10c59b | The run used the ed553f8 versions; with comments stripped they are identical to c10c59b (comment-only changes) |
-| Flow / tools | ORFS docker image openroad/orfs@sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC); OpenROAD prints version "unknown"; KLayout 0.30.12 (DRC/LVS); Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
+| Layout configuration | pd/sky130hd_sep/config.mk and regions.tcl at c10c59b; constraint.sdc at 21917cf (`set clk_period 7.2`) | The run (21:56 UTC) used config.mk/regions.tcl as in ed553f8, identical to c10c59b once comments are stripped. It used the working-tree constraint.sdc with period 7.2 ns, which was committed in 21917cf at 22:00 UTC and is byte-identical to the flow copy build/pd_sep/sdc/sky130hd/sep.sdc. ed553f8's constraint.sdc has a 7.0 ns period, so a rebuild must not use it |
+| Flow / tools | ORFS docker image tag openroad/orfs:latest; the only local image is sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC, before the run). Linking the run to this digest is an ASSUMPTION: the run logged no digest. OpenROAD prints version "unknown". KLayout 0.30.12 (DRC/LVS). Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
 | Process / library | SkyWater SKY130, sky130_fd_sc_hd, liberty sky130_fd_sc_hd__tt_025C_1v80 (the single corner ORFS optimised at) | — |
-| Package assembled | 2026-10-06 from repo commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Re-runs made for this package are dated 2026-10-06 |
+| Package assembled | 2026-10-06; design inputs copied from the repository tree at commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Every later commit on the branch changes only review/ or is empty (git diff --name-only 0495cfa..HEAD outside review/ is empty). Re-runs made for this package are dated 2026-10-06 |
 
 Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
+
+`MANIFEST.sha256`, named in the RTL row, is not at the package root (checked 2026-10-06): MISSING, register D-53. The full hashes are in [../04_digital_design/README.md](../04_digital_design/README.md) section 1.
 
 ## Files
 
 | File | Content | Size (bytes) | Pages | Produced by |
 |---|---|---|---|---|
-| [orbit_demo_top_level.dot](orbit_demo_top_level.dot) | Editable source, top-level view | 2,033 | — | Hand-written Graphviz |
-| [orbit_demo_top_level.svg](orbit_demo_top_level.svg) | Render of the .dot | 10,589 | 1 | `dot -Tsvg`, Graphviz 2.43.0 |
-| [orbit_demo_top_level.pdf](orbit_demo_top_level.pdf) | Render of the .dot, 1563 x 429 pt | 17,843 | 1 | `dot -Tpdf`, cairo 1.18.0 |
-| [orbit_demo_block_diagram.dot](orbit_demo_block_diagram.dot) | Editable source, detailed view | 5,775 | — | Hand-written Graphviz |
-| [orbit_demo_block_diagram.svg](orbit_demo_block_diagram.svg) | Render of the .dot | 41,554 | 1 | `dot -Tsvg`, Graphviz 2.43.0 |
-| [orbit_demo_block_diagram.pdf](orbit_demo_block_diagram.pdf) | Render of the .dot, 3640 x 1067 pt (50.6 x 14.8 in) | 27,634 | 1 | `dot -Tpdf`, cairo 1.18.0 |
+| [orbit_demo_top_level.dot](orbit_demo_top_level.dot) | Editable source, top-level view | 2,117 | — | Hand-written Graphviz |
+| [orbit_demo_top_level.svg](orbit_demo_top_level.svg) | Render of the .dot | 11,439 | 1 | `dot -Tsvg`, Graphviz 2.43.0 |
+| [orbit_demo_top_level.pdf](orbit_demo_top_level.pdf) | Render of the .dot, 1641 x 417 pt | 18,030 | 1 | `dot -Tpdf`, cairo 1.18.0 |
+| [orbit_demo_block_diagram.dot](orbit_demo_block_diagram.dot) | Editable source, detailed view | 5,988 | — | Hand-written Graphviz |
+| [orbit_demo_block_diagram.svg](orbit_demo_block_diagram.svg) | Render of the .dot | 43,452 | 1 | `dot -Tsvg`, Graphviz 2.43.0 |
+| [orbit_demo_block_diagram.pdf](orbit_demo_block_diagram.pdf) | Render of the .dot, 3640 x 1194 pt (50.6 x 16.6 in) | 28,301 | 1 | `dot -Tpdf`, cairo 1.18.0 |
 
-Both diagrams were drawn by hand in Graphviz from `rtl/*.v` at commit 26566f0. They are not generated from a netlist. The `.dot` files are the editable sources. The SVG and PDF files are renders of them and should not be edited.
+Both diagrams were drawn by hand in Graphviz from `rtl/*.v` at commit 26566f0. They are not generated from a netlist. The `.dot` files are the editable sources. The SVG and PDF files are renders of them and should not be edited. The `.dot` files were corrected and all four renders regenerated on 2026-10-06 at 21:26 UTC (commit 0477235) to fix BD-1 to BD-3 (see [Discrepancies](#discrepancies-and-drawing-limitations)). Sizes and page sizes above are for these files.
 
 The RTL has not changed since 26566f0: `git diff 26566f0 HEAD -- rtl/orbit_demo.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_keep_reg.v` is empty. The package copies in [../04_digital_design/source/rtl/](../04_digital_design/source/rtl/) are byte-identical to the repo files. Status: REPRODUCED 2026-10-06. RTL line references below (e.g. orbit_demo.v:73) apply to both `rtl/` and these copies.
 
@@ -44,7 +46,7 @@ dot -Tpdf orbit_demo_block_diagram.dot -o orbit_demo_block_diagram.pdf
 dot -Tsvg orbit_demo_block_diagram.dot -o orbit_demo_block_diagram.svg
 ```
 
-Checked on 2026-10-06 with `/usr/bin/dot` (Graphviz 2.43.0):
+Checked on 2026-10-06 with `/usr/bin/dot` (Graphviz 2.43.0), repeated on the corrected `.dot` files of commit 0477235:
 
 - Both SVGs regenerate byte-identically.
 - Both PDFs regenerate with the same page size and extracted text. The bytes differ only in the PDF metadata.
@@ -61,7 +63,7 @@ Graph title: "clock domain: clk (single) | reset: rst_n, synchronous, active low
 | Block in diagram | RTL instance / module | Content shown |
 |---|---|---|
 | `g_lane[0..3].u_lane : orbit_mac_lane (x4)` | `g_lane[i].u_lane`, generate loop, rtl/orbit_demo.v:77-90 | INT8 x INT8 -> INT32 accumulate. Duplicated `u_acc_a`/`u_acc_b` and `u_res_a`/`u_res_b`, 4 x 32 flip-flops per lane. Output `lane_mismatch[i]`. |
-| `orbit_demo glue` | top-level logic, rtl/orbit_demo.v:54-125 | `in_fire`, `in_ready`, `out_valid`, `out_fire`, <code>mismatch = &#124;lane_mismatch</code>, sticky `fault_q`, `out_valid_q` |
+| `orbit_demo glue` | top-level logic, rtl/orbit_demo.v:54-125 | `in_fire`, `in_ready`, `out_valid`, `out_fire`, <code>mismatch = &#124;lane_mismatch</code>, sticky `fault_q`, `out_valid_q`, `shutdown_req = therm_state[1]` |
 | `u_thermal : orbit_thermal_tmr` | `u_thermal`, rtl/orbit_demo.v:93-105 | `u_copy0/1/2` (3 x 2 flip-flops), majority vote, feedback repair, `phase` flip-flop, `admit` |
 
 The plaintext nodes are the port groups: the input stream, the output stream, `out_ready`, `temp_valid`/`temp_c`, `clear_fault`, the status outputs and `in_ready`. Edges carry the RTL net names.
@@ -150,7 +152,7 @@ Yosys confirms that the resets are synchronous. Running `proc; opt -purge` (Yosy
 
 There are no asynchronous-reset cells. Status: REPRODUCED 2026-10-06 (the JSON regenerates byte-identically; see [../03_schematics/README.md](../03_schematics/README.md)).
 
-In the sky130hd netlist the reset is logic in the D path. `sky130_fd_sc_hd__dfxtp_1` has no reset pin; the reset is a `nor2b_1` (reset to 0) or `nand2_1` (reset to 1) after the `mux2i_1` enable mux. See [../03_schematics/README.md](../03_schematics/README.md).
+In the sky130hd netlist the reset is logic in the D path, because `sky130_fd_sc_hd__dfxtp_1` has no reset pin. For the 518 bits inside the kept `orbit_keep_reg` instances, the reset is a `nor2b_1` (reset to 0) or `nand2_1` (reset to 1) after the `mux2i_1` enable mux (see [../03_schematics/README.md](../03_schematics/README.md)). For `fault_q`, `out_valid_q` and `u_thermal.phase` there is no `mux2i_1`; the reset is merged into the D logic: `nor2_1`, `a21oi_2` and `nor4bb_1` (`D_N = rst_n`) respectively ([../03_schematics/netlists/1_2_yosys.v.gz](../03_schematics/netlists/1_2_yosys.v.gz), D-pin drivers traced 2026-10-06). Status: REPRODUCED 2026-10-06.
 
 The RTL contains no reset synchroniser. In the reviewed layout `rst_n` is timed as an ordinary synchronous input: `set_input_delay 1.4400 -clock [get_clocks {clk}] -add_delay [get_ports {rst_n}]` ([../06_physical_design/layout_db/6_final.sdc](../06_physical_design/layout_db/6_final.sdc):79). Status: VERIFIED. The 1.44 ns value is a fixed 20 % IO budget for "the (unknown) outside world", set by `set clk_io_pct 0.2` ([../04_digital_design/source/pd/sky130hd_sep/constraint.sdc](../04_digital_design/source/pd/sky130hd_sep/constraint.sdc):5-7, :20). Status: ASSUMPTION. SPEC.md does not state the reset source or its assertion and de-assertion requirements: MISSING. The specification would need a statement that `rst_n` is driven synchronously to `clk`, or else a reset synchroniser would have to be added.
 
@@ -167,25 +169,26 @@ The diagrams show no power-switch, isolation or level-shifter blocks, because th
 
 ## Name check against the RTL
 
-Every identifier in the node and edge labels of both `.dot` files was compared with `rtl/*.v` at 26566f0 (script-assisted token comparison plus a manual read, 2026-10-06). Status: REPRODUCED 2026-10-06.
+Every identifier in the node and edge labels of both `.dot` files was compared with `rtl/*.v` at 26566f0 (script-assisted token comparison plus a manual read, 2026-10-06; repeated on the corrected `.dot` files of commit 0477235). Status: REPRODUCED 2026-10-06.
 
 - **Ports.** All 18 ports and their widths match: `in_a [31:0]`, `in_b [31:0]`, `out_data [127:0]`, `temp_c [7:0]`, `therm_state [1:0]`, and the 1-bit ports.
 - **Instances.** These match: `g_lane[0..3].u_lane`, `u_acc_a`, `u_acc_b`, `u_res_a`, `u_res_b`, `u_thermal`, `u_copy0`, `u_copy1`, `u_copy2`.
+- **Lane ports.** These match: `a`, `b`, `first`, `last`, `clr`, `mac_en`, `result` (orbit_mac_lane).
 - **Nets.** These match: `lane_mismatch[3:0]`, `mismatch`, `fault_q`, `out_valid_q`, `in_fire`, `out_fire`, `admit`, `prod [15:0]`, `prod32`, `acc_a_sum`, `acc_b_sum`, `acc_en`, `res_en`, `acc_a`, `acc_b`, `res_a`, `res_b`, `nxt`, `voted`, `c0`, `c1`, `c2`, `phase`, `t`, `state`, `repair`.
 - **Parameters.** These match: `LANES`, `T_THROTTLE`, `T_STOP`, `T_RECOVER`, `W`, `RESET_VAL`, `S_STOP`, `S_NORMAL`/`S_THROTTLE` (written as NORMAL/THROTTLE).
 - **Tokens that are not RTL names.** `sext32` is SPEC section 3 notation; the RTL writes `{{16{prod[15]}}, prod}` at orbit_mac_lane.v:26. `VDD`/`VSS` come from the DEF. The rest are English words or Graphviz record-port tags (`cf`, `od`, `tv`, ...), which are not displayed.
 
-No name mismatches were found. Nothing in the `.dot` files was edited. The drawing deviations are listed below.
+No name mismatches were found. The drawing deviations are listed below.
 
 ## Discrepancies and drawing limitations
 
-See discrepancy register (09_review_notes) in [../09_review_notes/](../09_review_notes/) for the package-wide list. The items below are specific to these diagrams. All are low severity: they omit connections or misplace a label, and no names are wrong.
+See discrepancy register (09_review_notes) in [../09_review_notes/](../09_review_notes/) for the package-wide list. The items below are specific to these diagrams. All are low severity: they omit connections or misplace a label, and no names are wrong. BD-1 to BD-3 were fixed in the `.dot` files in commit 0477235 (2026-10-06 21:26 UTC); BD-4 and BD-5 are open.
 
 | ID | Diagram | Observation | Evidence |
 |---|---|---|---|
-| BD-1 | top level | `shutdown_req` is drawn as an output of `u_thermal`. `orbit_thermal_tmr` has no `shutdown_req` port; `shutdown_req = therm_state[1]` is assigned in `orbit_demo`. The detailed diagram places it correctly in the glue cluster. | orbit_thermal_tmr.v:30-32 (ports `state`, `admit`, `repair`); orbit_demo.v:125 |
-| BD-2 | top level | The edge `glue -> lanes` is labelled `clr = clear_fault`, but `clr` comes straight from the `clear_fault` port and not from glue logic. A separate `clear_fault -> lanes [clr]` edge is also drawn. | orbit_demo.v:81 |
-| BD-3 | detailed | Drawn edges for `clr` go only to `u_acc_a`, and for `mac_en` / `mac_en & last` only to `u_acc_a` / `u_res_a`. The other copies show their enables as node text only (`en = acc_en`, `en = res_en`). In the RTL, `clr` and `mac_en` drive all four copies. | orbit_mac_lane.v:36-57 |
+| BD-1 | top level | Fixed in 0477235. Before: `shutdown_req` was drawn as an output of `u_thermal`, which has no such port. Now: `glue -> st` carries `fault, shutdown_req = therm_state[1]`, and `u_thermal` drives `state -> therm_state, repair -> therm_repair`. | orbit_thermal_tmr.v:30-32 (ports `state`, `admit`, `repair`); orbit_demo.v:125; `git diff 54745f7 0477235 -- 02_block_diagram/*.dot` |
+| BD-2 | top level | Fixed in 0477235. Before: the edge `glue -> lanes` was labelled `mac_en = in_fire, clr = clear_fault`, although `clr` comes straight from the `clear_fault` port. Now it reads `mac_en = in_fire`; `clr` is drawn only as `clear_fault -> lanes`. | orbit_demo.v:81 |
+| BD-3 | detailed | Fixed in 0477235. Before: `clr` edges went only to `u_acc_a`, and `mac_en` / `mac_en & last` only to `u_acc_a` / `u_res_a`. Now `clr` goes to all four copies, `mac_en` to `u_acc_a`/`u_acc_b`, `mac_en & last` and `last` to `u_res_a`/`u_res_b`, and `first` to both adders, as in the RTL. | orbit_mac_lane.v:33-57 |
 | BD-4 | detailed | The `clk`/`rst_n` distribution is one dotted edge to `fault_q` labelled "clk, rst_n to all FFs", and the `rst_n` field of the input record has no edge. The graph title also states that every flip-flop is clocked and reset. | orbit_demo_block_diagram.dot, last edge |
 | BD-5 | both | The diagrams do not show priorities: `rst_n` over `clear_fault`, and `clear_fault` over the `mismatch` set of `fault_q` and the `in_fire & in_last` set of `out_valid_q`. | orbit_demo.v:107-121 |
 
@@ -193,7 +196,7 @@ See discrepancy register (09_review_notes) in [../09_review_notes/](../09_review
 
 | Item | Status | Reason |
 |---|---|---|
-| ECC extension (`rtl/ecc/orbit_secded72.v`, `orbit_ecc_bank.v`) | N/A | Standalone block. `orbit_demo` does not instantiate it, and no synthesis or layout run includes it ([../04_digital_design/source/rtl/ecc/README.md](../04_digital_design/source/rtl/ecc/README.md)). |
+| ECC extension (`rtl/ecc/orbit_secded72.v`, `orbit_ecc_bank.v`) | N/A | Standalone block. `orbit_demo` does not instantiate it, and neither the `orbit_demo` synthesis nor any layout run includes it ([../04_digital_design/source/rtl/ecc/README.md](../04_digital_design/source/rtl/ecc/README.md)). It has only a standalone Yosys generic synthesis ([../07_verification/ecc/results.txt](../07_verification/ecc/results.txt):25-27). |
 | Concept-brief blocks: 16 INT8 tensor tiles, ECC/scrub + DMA, external memory interface, protected supervisor, 200-800 MHz clock, 40 W per chip | TARGET | Concept targets for a different, unbuilt chip ([brief](../04_digital_design/source/docs/orbit-ai-design-brief.pdf) p.1-2; the brief calls the 40 W a sizing assumption, not an estimate). They are not part of `orbit_demo`. |
 | Physical placement of the blocks and copy-separation fences | — | See [../06_physical_design/](../06_physical_design/) |
 | Gate-level structure | — | See [../03_schematics/](../03_schematics/) |
