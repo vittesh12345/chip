@@ -1,0 +1,20 @@
+Equivalence: synthesized netlist vs RTL (synth/run_equiv.py)
+
+method: register-correspondence combinational equivalence; every flip-flop cut
+        into Q input / D output by name (synth/equiv_cut.ys), outputs proven
+        equal per partition by SymbiYosys smtbmc + bitwuzla (synth/equiv.sby)
+netlist: build/synth/orbit_demo_synth.v
+
+register ports cut (incl. alias names): 47, identical names in RTL and netlist
+tasks (2 in parallel, 40 s wall):
+  task lane0  PASS
+  task lane1  PASS
+  task lane2  PASS
+  task lane3  PASS
+  task ctrl   PASS
+
+negative controls (must FAIL):
+  mut_throttle  T_THROTTLE 80 -> 81 (orbit_demo.v)                         task ctrl  FAIL (detected, as required)
+  mut_zext      product zero- instead of sign-extended (orbit_mac_lane.v)  task lane0 FAIL (detected, as required)
+
+EQUIV PASS: netlist equivalent to RTL; both mutants detected

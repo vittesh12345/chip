@@ -1,0 +1,22 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+STA_NOW setup_wns 0.031008085865539332 hold_wns 0.4359588924370384
+tns max 0.00
+wns max 0.00
+worst slack max 0.03
+worst slack min 0.44
+clk period_min = 5.85 fmax = 170.82
+clk period_min = 7.17 fmax = 139.49
+Group                  Internal  Switching    Leakage      Total
+                          Power      Power      Power      Power (Watts)
+----------------------------------------------------------------
+Sequential             3.69e-03   2.27e-03   4.25e-09   5.96e-03  11.4%
+Combinational          2.10e-02   2.22e-02   2.28e-08   4.32e-02  83.0%
+Clock                  1.67e-03   1.23e-03   8.79e-10   2.90e-03   5.6%
+Macro                  0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+Pad                    0.00e+00   0.00e+00   0.00e+00   0.00e+00   0.0%
+----------------------------------------------------------------
+Total                  2.64e-02   2.57e-02   2.79e-08   5.21e-02 100.0%
+                          50.6%      49.4%       0.0%

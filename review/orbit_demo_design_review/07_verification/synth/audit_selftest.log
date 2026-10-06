@@ -1,0 +1,14 @@
+baseline (unmodified)            PASS as expected
+thermal copies merged            detected
+accumulator pair bit merged      detected
+copy bit is a constant           detected
+constant D input                 detected
+D tied to own Q                  detected
+pair next-state logic merged     detected
+bits of one copy share D         detected
+copy net missing                 detected
+copy bit driven by a gate        detected
+copy flop on wrong clock         detected
+extra unprotected flop           detected
+latch present                    detected
+AUDIT_SELFTEST PASS: 12 defect classes, 0 problems

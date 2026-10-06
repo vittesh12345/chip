@@ -1,0 +1,1 @@
+gen_hsiao72: PASS: rtl/ecc/orbit_secded72.v holds the Hsiao (72,64) matrix: 72 distinct odd-weight columns (56 x w3, 8 x w5, 8 x w1), data row weights 26

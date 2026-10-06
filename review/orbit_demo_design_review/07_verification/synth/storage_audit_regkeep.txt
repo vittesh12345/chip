@@ -1,0 +1,33 @@
+ORBIT-AI storage audit (scripts/storage_audit.py)
+netlist        build/synth/regkeep/orbit_demo_synth.json
+creator        Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)
+top            orbit_demo (flat)
+
+group                  copies  bits  ok/expect  D inputs across copies                 result
+acc pair lane 0             2    32   64/64     distinct per copy                      PASS
+acc pair lane 1             2    32   64/64     distinct per copy                      PASS
+acc pair lane 2             2    32   64/64     distinct per copy                      PASS
+acc pair lane 3             2    32   64/64     distinct per copy                      PASS
+result pair lane 0          2    32   64/64     distinct per copy                      PASS
+result pair lane 1          2    32   64/64     distinct per copy                      PASS
+result pair lane 2          2    32   64/64     distinct per copy                      PASS
+result pair lane 3          2    32   64/64     distinct per copy                      PASS
+thermal triple              3     2    2/6      not checkable (0/2 bits have flops)    FAIL
+
+audited redundant flip-flop bits  514 distinct of 518 expected
+total flip-flop bits              517 (expected 521)
+flip-flop cell types              $_SDFFE_PN0P_ x512, $_SDFFE_PP0P_ x2, $_SDFF_PN0_ x1, $_SDFF_PP0_ x1, $_SDFF_PP1_ x1
+latches                           0
+unprotected flip-flop bits        3
+    fault = fault_q              $_SDFFE_PP0P_    $auto$ff.cc:337:slice$1091
+    out_valid_q                  $_SDFFE_PP0P_    $auto$ff.cc:337:slice$1090
+    u_thermal.phase              $_SDFF_PN0_      $auto$ff.cc:337:slice$1083
+
+ERRORS (5):
+  thermal triple: u_thermal.u_copy1.q[0] shares flip-flop $auto$ff.cc:337:slice$9597 with u_thermal.u_copy0.q[0] (copies merged)
+  thermal triple: u_thermal.u_copy1.q[1] shares flip-flop $auto$ff.cc:337:slice$1087 with u_thermal.u_copy0.q[1] (copies merged)
+  thermal triple: u_thermal.u_copy2.q[0] shares flip-flop $auto$ff.cc:337:slice$9597 with u_thermal.u_copy0.q[0] (copies merged)
+  thermal triple: u_thermal.u_copy2.q[1] shares flip-flop $auto$ff.cc:337:slice$1087 with u_thermal.u_copy0.q[1] (copies merged)
+  total flip-flop bits 517, expected 521
+
+STORAGE_AUDIT FAIL: 8/9 groups pass, 517 flip-flop bits, 3 unprotected

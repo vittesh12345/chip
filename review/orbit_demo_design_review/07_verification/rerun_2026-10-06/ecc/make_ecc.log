@@ -1,0 +1,92 @@
+OK  lint Verilator -Wall and Icarus -Wall clean
+OK  hsiao  H matrix = Hsiao construction (72 distinct odd-weight columns; 26 ones per data row)
+gen_hsiao72: PASS: rtl/ecc/orbit_secded72.v holds the Hsiao (72,64) matrix: 72 distinct odd-weight columns (56 x w3, 8 x w5, 8 x w1), data row weights 26
+OK  sim_codec  every single and double error position over random words (log sim/codec_seed1.log)
+tb_orbit_secded72 summary
+  seed                         1
+  no-error words               20003
+  single-bit errors corrected  21600 (300 words x 72 positions)
+  double-bit errors detected   30672 (12 words x 2556 pairs)
+  triple-bit errors            19189: 8417 flagged UE, 10772 miscorrected (CE, wrong data), 0 CE with right data
+  errors                       0
+TB_ORBIT_SECDED72 PASS
+iverilog -g2005 -Wall -Wno-timescale -o /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/ecc/build/ecc/sim/tb_bank.vvp tb/ecc/tb_orbit_ecc_bank.v rtl/ecc/orbit_secded72.v rtl/ecc/orbit_ecc_bank.v
+OK  sim_bank_seed1  15000 random cycles with upsets (log sim/bank_seed1.log)
+tb_orbit_ecc_bank summary
+  seed / cycles                1 / 15098
+  writes / reads               3462 / 4971
+  reads with CE / UE           270 / 14
+  same-cycle read+write        354
+  upsets: single / adjacent 2-bit / second-in-codeword  598 / 337 / 12
+  scrubber repairs             1075
+  log_clear pulses             87
+  cycles with CNT_W=3 counter saturated  8678
+  errors                       0
+TB_ORBIT_ECC_BANK PASS
+OK  sim_bank_seed2  15000 random cycles with upsets (log sim/bank_seed2.log)
+tb_orbit_ecc_bank summary
+  seed / cycles                2 / 15098
+  writes / reads               3449 / 4920
+  reads with CE / UE           267 / 32
+  same-cycle read+write        318
+  upsets: single / adjacent 2-bit / second-in-codeword  610 / 318 / 14
+  scrubber repairs             1060
+  log_clear pulses             76
+  cycles with CNT_W=3 counter saturated  9420
+  errors                       0
+TB_ORBIT_ECC_BANK PASS
+OK  simneg_codec_even_col  killed (codec bench fail=1; bank bench fail=1; first: ERROR column 0: rtl 00000110 ref 00000111)
+OK  simneg_bank_no_writeback  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 66: array contents differ from model)
+OK  simneg_bank_no_interleave  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 2: array contents differ from model)
+OK  simneg_bank_cnt_wrap  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 69: ce_count (CNT_W=3))
+OK  simneg_bank_log_prio  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 252: last_err)
+OK  simneg_bank_scrub_on_read  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 82: scrub_row)
+OK  simneg_bank_read_way_swap  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 34: read data)
+OK  formal_codec status=PASS expected=PASS 38s
+OK  formal_bank_clean status=PASS expected=PASS 52s
+OK  formal_bank_sec status=PASS expected=PASS 154s
+OK  formal_bank_ded status=PASS expected=PASS 109s
+OK  formal_bank_cover status=PASS expected=PASS 77s
+OK  formal_bank_cover_ded status=PASS expected=PASS 432s
+OK  formal_bank_e2e_clean status=PASS expected=PASS 71s
+OK  formal_bank_e2e_upset status=PASS expected=PASS 60s
+OK  formal_neg_il1_neg status=FAIL expected=FAIL 9s
+OK  formal_neg_codec_even_col status=FAIL expected=FAIL 4s
+OK  formal_neg_bank_no_writeback status=FAIL expected=FAIL 85s
+OK  formal_neg_bank_read_way_swap status=FAIL expected=FAIL 17s
+OK  synth_orbit_secded72_enc cells=154 flip-flops=0 (expected 0) logic depth=6
+OK  synth_orbit_secded72_dec cells=431 flip-flops=0 (expected 0) logic depth=18
+OK  synth_orbit_ecc_bank cells=10690 flip-flops=2414 (expected 2414) logic depth=48
+OK  formal_bank_clean status=PASS expected=PASS 52s
+OK  formal_bank_cover status=PASS expected=PASS 77s
+OK  formal_bank_cover_ded status=PASS expected=PASS 432s
+OK  formal_bank_ded status=PASS expected=PASS 109s
+OK  formal_bank_e2e_clean status=PASS expected=PASS 71s
+OK  formal_bank_e2e_upset status=PASS expected=PASS 60s
+OK  formal_bank_sec status=PASS expected=PASS 154s
+OK  formal_codec status=PASS expected=PASS 38s
+OK  formal_neg_bank_no_writeback status=FAIL expected=FAIL 85s
+OK  formal_neg_bank_read_way_swap status=FAIL expected=FAIL 17s
+OK  formal_neg_codec_even_col status=FAIL expected=FAIL 4s
+OK  formal_neg_il1_neg status=FAIL expected=FAIL 9s
+OK  hsiao  H matrix = Hsiao construction (72 distinct odd-weight columns; 26 ones per data row)
+OK  lint Verilator -Wall and Icarus -Wall clean
+OK  sim_bank_seed1  15000 random cycles with upsets (log sim/bank_seed1.log)
+OK  sim_bank_seed2  15000 random cycles with upsets (log sim/bank_seed2.log)
+OK  sim_codec  every single and double error position over random words (log sim/codec_seed1.log)
+OK  simneg_bank_cnt_wrap  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 69: ce_count (CNT_W=3))
+OK  simneg_bank_log_prio  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 252: last_err)
+OK  simneg_bank_no_interleave  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 2: array contents differ from model)
+OK  simneg_bank_no_writeback  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 66: array contents differ from model)
+OK  simneg_bank_read_way_swap  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 34: read data)
+OK  simneg_bank_scrub_on_read  killed (codec bench fail=0; bank bench fail=1; first: ERROR cycle 82: scrub_row)
+OK  simneg_codec_even_col  killed (codec bench fail=1; bank bench fail=1; first: ERROR column 0: rtl 00000110 ref 00000111)
+OK  synth_orbit_ecc_bank cells=10690 flip-flops=2414 (expected 2414) logic depth=48
+OK  synth_orbit_secded72_dec cells=431 flip-flops=0 (expected 0) logic depth=18
+OK  synth_orbit_secded72_enc cells=154 flip-flops=0 (expected 0) logic depth=6
+ECC: PASS
+
+real	20m40.726s
+user	20m27.866s
+sys	0m38.422s
+exit=0

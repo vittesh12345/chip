@@ -1,0 +1,123 @@
+yosys -s synth/synth_generic.ys rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v  (log: /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/synth.log)
+cells (whole hierarchy)       4899
+  generic logic cells         4373
+  flip-flop cells (1 bit)     521
+  $scopeinfo (no logic)       5
+kept orbit_keep_reg instances 19
+cell types                    $_ANDNOT_ 310, $_AND_ 1005, $_MUX_ 24, $_NAND_ 1343, $_NOR_ 456, $_NOT_ 2, $_ORNOT_ 106, $_OR_ 94, $_SDFFE_PN0P_ 515, $_SDFFE_PN1P_ 3, $_SDFFE_PP0P_ 2, $_SDFF_PN0_ 1, $_XNOR_ 369, $_XOR_ 664, $scopeinfo 5
+logic depth (ltp -noff)       60 generic gates, \in_b [28] -> \g_lane[3].u_lane.u_res_a.q [31]
+SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings
+python3 scripts/storage_audit.py /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/orbit_demo_synth.json --report /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/storage_audit.txt
+ORBIT-AI storage audit (scripts/storage_audit.py)
+netlist        /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/orbit_demo_synth.json
+creator        Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)
+top            orbit_demo (hierarchical: $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10, $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000)
+
+group                  copies  bits  ok/expect  D inputs across copies                 result
+acc pair lane 0             2    32   64/64     distinct per copy                      PASS
+acc pair lane 1             2    32   64/64     distinct per copy                      PASS
+acc pair lane 2             2    32   64/64     distinct per copy                      PASS
+acc pair lane 3             2    32   64/64     distinct per copy                      PASS
+result pair lane 0          2    32   64/64     distinct per copy                      PASS
+result pair lane 1          2    32   64/64     distinct per copy                      PASS
+result pair lane 2          2    32   64/64     distinct per copy                      PASS
+result pair lane 3          2    32   64/64     distinct per copy                      PASS
+thermal triple              3     2    6/6      shared by design (voted next state)    PASS
+
+audited redundant flip-flop bits  518 distinct of 518 expected
+total flip-flop bits              521 (expected 521)
+flip-flop cell types              $_SDFFE_PN0P_ x515, $_SDFFE_PN1P_ x3, $_SDFFE_PP0P_ x2, $_SDFF_PN0_ x1
+latches                           0
+unprotected flip-flop bits        3
+    fault = fault_q              $_SDFFE_PP0P_    $auto$ff.cc:337:slice$537
+    out_valid_q                  $_SDFFE_PP0P_    $auto$ff.cc:337:slice$536
+    u_thermal.phase              $_SDFF_PN0_      $auto$ff.cc:337:slice$533
+
+STORAGE_AUDIT PASS: 9/9 groups pass, 521 flip-flop bits, 3 unprotected
+synth-audit: flat view: STORAGE_AUDIT PASS: 9/9 groups pass, 521 flip-flop bits, 3 unprotected
+set -o pipefail; python3 synth/audit_selftest.py /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/orbit_demo_synth_flat.json /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/audit_selftest \
+    | tee /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/audit_selftest.tmp
+baseline (unmodified)            PASS as expected
+thermal copies merged            detected
+accumulator pair bit merged      detected
+copy bit is a constant           detected
+constant D input                 detected
+D tied to own Q                  detected
+pair next-state logic merged     detected
+bits of one copy share D         detected
+copy net missing                 detected
+copy bit driven by a gate        detected
+copy flop on wrong clock         detected
+extra unprotected flop           detected
+latch present                    detected
+AUDIT_SELFTEST PASS: 12 defect classes, 0 problems
+python3 synth/negative_control.py --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth --script synth/synth_generic.ys \
+    --baseline /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/synth_stat.json --yosys yosys rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v
+Storage-retention negative control (synth/negative_control.py)
+
+baseline (production RTL, keep_hierarchy): 521 flip-flop bits, 4899 cells
+
+variant   FF bits   cells thermal copies   audit       groups
+nokeep        517    4865 MERGED           FAIL        8/9 pass
+regkeep       517    4865 MERGED           FAIL        8/9 pass
+
+nokeep change to orbit_keep_reg.v:
+    -(* keep_hierarchy *)
+regkeep change to orbit_keep_reg.v:
+    -(* keep_hierarchy *)
+    -    output reg  [W-1:0] q
+    +    (* keep *) output reg  [W-1:0] q
+
+nokeep:  keep_hierarchy removed -> thermal copies merged, 521 -> 517 flip-flop bits, audit FAIL (expected)
+regkeep: (* keep *) on the register alone does NOT prevent the merge (517 flip-flop bits, audit FAIL)
+
+NEGATIVE_CONTROL PASS
+python3 synth/run_equiv.py --netlist /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/orbit_demo_synth.v --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth --jobs 2 \
+    --yosys yosys --sby sby rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v
+Equivalence: synthesized netlist vs RTL (synth/run_equiv.py)
+
+method: register-correspondence combinational equivalence; every flip-flop cut
+        into Q input / D output by name (synth/equiv_cut.ys), outputs proven
+        equal per partition by SymbiYosys smtbmc + bitwuzla (synth/equiv.sby)
+netlist: /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/orbit_demo_synth.v
+
+register ports cut (incl. alias names): 47, identical names in RTL and netlist
+tasks (2 in parallel, 44 s wall):
+  task lane0  PASS
+  task lane1  PASS
+  task lane2  PASS
+  task lane3  PASS
+  task ctrl   PASS
+
+negative controls (must FAIL):
+  mut_throttle  T_THROTTLE 80 -> 81 (orbit_demo.v)                         task ctrl  FAIL (detected, as required)
+  mut_zext      product zero- instead of sign-extended (orbit_mac_lane.v)  task lane0 FAIL (detected, as required)
+
+EQUIV PASS: netlist equivalent to RTL; both mutants detected
+iverilog -g2005 -Wall -Wno-timescale -o /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/gls/rtl.vvp tb/tb_orbit_demo.v rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v
+vvp -n /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/gls/rtl.vvp +seed=1 > /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/gls/rtl.log 2>&1 \
+    || { tail -20 /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/gls/rtl.log; echo "synth-gls: RTL reference run FAILED"; exit 1; }
+datdir=$(yosys-config --datdir) && \
+    iverilog -g2005 -Wall -Wno-timescale -o /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/gls/gls.vvp tb/tb_orbit_demo.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/orbit_demo_synth.v \
+    $datdir/simcells.v $datdir/simlib.v > /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/gls/compile.log 2>&1 \
+    || { cat /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/gls/compile.log; exit 1; }
+vvp gls.vvp +seed=1  (gate-level, about a minute; log: /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/synth/build/synth/gls/gls.log)
+tb_orbit_demo summary (seed 1)
+  scenarios            14
+  cycles               133601
+  model cycle checks   133600 (mismatches 0)
+  scenario checks      107 (failed 0)
+  beats accepted       133209
+  results transferred  401 (all compared with the scoreboard)
+  literal lane checks  152
+  back-to-back results 220
+  results dropped by clear_fault/reset 2
+  errors               0
+TB_ORBIT_DEMO PASS
+SYNTH_GLS PASS: TB_ORBIT_DEMO PASS on the netlist, summary identical to the RTL run
+SYNTH PASS: generic synthesis + checks, storage audit (+ self-test), keep_hierarchy negative control, equivalence to RTL, gate-level simulation
+
+real	2m0.224s
+user	2m38.238s
+sys	0m1.882s
+rc=0

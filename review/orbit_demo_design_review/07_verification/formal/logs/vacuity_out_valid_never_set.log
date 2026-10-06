@@ -1,0 +1,31 @@
+--- rtl/orbit_demo.v	2026-09-29 18:50:44.562939717 +0000
++++ build/formal/vacuity/out_valid_never_set/rtl/orbit_demo.v	2026-09-30 00:13:28.177939450 +0000
+@@ -115,7 +115,7 @@
+             if (mismatch)
+                 fault_q <= 1'b1;
+             if (in_fire && in_last)
+-                out_valid_q <= 1'b1;
++                out_valid_q <= 1'b0;
+             else if (out_fire)
+                 out_valid_q <= 1'b0;
+         end
+
+[formal] live           FAIL    (expected FAIL, 2s)
+
+SBY  0:13:28 [live] Removing directory '/home/user/chip/build/formal/vacuity/out_valid_never_set/run/orbit_demo_live'.
+SBY  0:13:28 [live] engine_0: aiger suprove
+SBY  0:13:28 [live] base: starting process "cd build/formal/vacuity/out_valid_never_set/run/orbit_demo_live/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY  0:13:28 [live] base: finished (returncode=0)
+SBY  0:13:28 [live] prep: starting process "cd build/formal/vacuity/out_valid_never_set/run/orbit_demo_live/model; yosys -ql design_prep.log design_prep.ys"
+SBY  0:13:28 [live] prep: finished (returncode=0)
+SBY  0:13:28 [live] aig: starting process "cd build/formal/vacuity/out_valid_never_set/run/orbit_demo_live/model; yosys -ql design_aiger.log design_aiger.ys"
+SBY  0:13:29 [live] aig: Warning: Treating a total of 80 undriven bits in orbit_demo_fv like $anyseq.
+SBY  0:13:29 [live] aig: finished (returncode=0)
+SBY  0:13:29 [live] engine_0: starting process "cd build/formal/vacuity/out_valid_never_set/run/orbit_demo_live; suprove +simple_liveness model/design_aiger.aig"
+SBY  0:13:30 [live] engine_0: finished (returncode=0)
+SBY  0:13:30 [live] engine_0: Status returned by engine: FAIL
+SBY  0:13:30 [live] summary: Elapsed clock time [H:MM:SS (secs)]: 0:00:02 (2)
+SBY  0:13:30 [live] summary: Elapsed process time [H:MM:SS (secs)]: 0:00:01 (1)
+SBY  0:13:30 [live] summary: engine_0 (aiger suprove) returned FAIL
+SBY  0:13:30 [live] summary: engine_0 did not produce any traces
+SBY  0:13:30 [live] DONE (FAIL, rc=2)

@@ -1,0 +1,273 @@
+# trimmed from synth.log: 272 of 1635 lines (pass headings, checks, statistics)
+ Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)
+1. Executing Verilog-2005 frontend: /home/user/chip/rtl/orbit_keep_reg.v
+2. Executing Verilog-2005 frontend: /home/user/chip/rtl/orbit_mac_lane.v
+3. Executing Verilog-2005 frontend: /home/user/chip/rtl/orbit_thermal_tmr.v
+4. Executing Verilog-2005 frontend: /home/user/chip/rtl/orbit_demo.v
+5. Executing HIERARCHY pass (managing design hierarchy).
+6. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_demo'.
+6.2. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_mac_lane'.
+6.3. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_thermal_tmr'.
+6.5. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_keep_reg'.
+6.6. Executing AST frontend in derive mode using pre-parsed AST for module `\orbit_keep_reg'.
+Removed 4 unused modules.
+7. Executing SYNTH pass.
+7.1. Executing HIERARCHY pass (managing design hierarchy).
+Removed 0 unused modules.
+7.2. Executing PROC pass (convert processes to netlists).
+7.3. Executing CHECK pass (checking for obvious problems).
+Checking module orbit_demo...
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10...
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000...
+Checking module $paramod$babbef2f0fba3bb6fc9689f827a2cfc9dafd9a45\orbit_thermal_tmr...
+Checking module orbit_mac_lane...
+Found and reported 0 problems.
+7.4. Executing FLATTEN pass (flatten design).
+7.5. Executing OPT_EXPR pass (perform const folding).
+7.6. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000...
+Checking module orbit_demo...
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10...
+Found and reported 0 problems.
+7.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Removed 4 unused cells and 59 unused wires.
+7.8. Executing OPT pass (performing simple optimizations).
+Removed 0 unused cells and 19 unused wires.
+7.9. Executing FSM pass (extract and optimize FSM).
+7.10. Executing OPT pass (performing simple optimizations).
+Removed 11 unused cells and 11 unused wires.
+Removed 0 unused cells and 2 unused wires.
+7.11. Executing WREDUCE pass (reducing word size of cells).
+7.12. Executing PEEPOPT pass (run peephole optimizers).
+7.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Removed 0 unused cells and 2 unused wires.
+7.14. Executing ALUMACC pass (create $alu and $macc cells).
+7.15. Executing SHARE pass (SAT-based resource sharing).
+7.16. Executing OPT pass (performing simple optimizations).
+Removed 0 unused cells and 3 unused wires.
+7.17. Executing MEMORY pass.
+7.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+7.19. Executing OPT pass (performing simple optimizations).
+Removed 0 unused cells and 8 unused wires.
+7.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+7.21. Executing OPT pass (performing simple optimizations).
+Removed 0 unused cells and 1 unused wires.
+7.22. Executing TECHMAP pass (map to technology primitives).
+7.23. Executing OPT pass (performing simple optimizations).
+Removed 347 unused cells and 1132 unused wires.
+7.24. Executing ABC pass (technology mapping using ABC).
+7.25. Executing OPT pass (performing simple optimizations).
+Removed 0 unused cells and 1869 unused wires.
+7.26. Executing HIERARCHY pass (managing design hierarchy).
+Removed 0 unused modules.
+7.27. Printing statistics.
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+       67 wire bits
+        5 public wires
+       67 public wire bits
+        5 ports
+       67 port bits
+       32 cells
+       32   $_SDFFE_PN0P_
+
+=== orbit_demo ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     4457 wires
+     5350 wire bits
+       95 public wires
+      988 public wire bits
+       18 ports
+      215 port bits
+     4381 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+        7 wire bits
+        5 public wires
+        7 public wire bits
+        5 ports
+        7 port bits
+        2 cells
+        1   $_SDFFE_PN0P_
+        1   $_SDFFE_PN1P_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     4899 orbit_demo
+        2 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       32 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+        +----------Count including submodules.
+        | 
+     4552 wires
+     6443 wire bits
+      190 public wires
+     2081 public wire bits
+      113 ports
+     1308 port bits
+        - memories
+        - memory bits
+        - processes
+     4899 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+      515   $_SDFFE_PN0P_
+        3   $_SDFFE_PN1P_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+7.28. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000...
+Checking module orbit_demo...
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10...
+Found and reported 0 problems.
+8. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000...
+Checking module orbit_demo...
+Checking module $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10...
+Found and reported 0 problems.
+9. Printing statistics.
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+       67 wire bits
+        5 public wires
+       67 public wire bits
+        5 ports
+       67 port bits
+       32 cells
+       32   $_SDFFE_PN0P_
+
+=== orbit_demo ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     4457 wires
+     5350 wire bits
+       95 public wires
+      988 public wire bits
+       18 ports
+      215 port bits
+     4381 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+=== $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        5 wires
+        7 wire bits
+        5 public wires
+        7 public wire bits
+        5 ports
+        7 port bits
+        2 cells
+        1   $_SDFFE_PN0P_
+        1   $_SDFFE_PN1P_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     4899 orbit_demo
+        2 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       32 $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+        +----------Count including submodules.
+        | 
+     4552 wires
+     6443 wire bits
+      190 public wires
+     2081 public wire bits
+      113 ports
+     1308 port bits
+        - memories
+        - memory bits
+        - processes
+     4899 cells
+      310   $_ANDNOT_
+     1005   $_AND_
+       24   $_MUX_
+     1343   $_NAND_
+      456   $_NOR_
+        2   $_NOT_
+      106   $_ORNOT_
+       94   $_OR_
+      515   $_SDFFE_PN0P_
+        3   $_SDFFE_PN1P_
+        2   $_SDFFE_PP0P_
+        1   $_SDFF_PN0_
+      369   $_XNOR_
+      664   $_XOR_
+        5   $scopeinfo
+       19 submodules
+        3   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000000010\RESET_VAL=2'10
+       16   $paramod\orbit_keep_reg\W=s32'00000000000000000000000000100000
+
+10. Executing JSON backend.
+11. Executing Verilog backend.
+12. Executing FLATTEN pass (flatten design).
+13. Executing JSON backend.
+14. Executing LTP pass (find longest path).
+Longest topological path in orbit_demo (length=60):
+End of script. Logfile hash: af5ef3ab88, time: 1.21s, user: 0.48s, system: 0.07s, MEM: 40.57 MB peak
+Yosys 0.69+154 (git sha1 30d62572e-dirty, Release, Clang /usr/bin/clang++ 21.1.8)
+Time spent: 64% 1x abc (0 sec), 7% 24x opt_clean (0 sec), ...

@@ -1,0 +1,12 @@
+tb_orbit_ecc_bank summary
+  seed / cycles                7 / 3098
+  writes / reads               726 / 986
+  reads with CE / UE           61 / 12
+  same-cycle read+write        65
+  upsets: single / adjacent 2-bit / second-in-codeword  159 / 83 / 2
+  scrubber repairs             270
+  log_clear pulses             17
+  cycles with CNT_W=3 counter saturated  1831
+  errors                       0
+TB_ORBIT_ECC_BANK PASS
+tb/ecc/tb_orbit_ecc_bank.v:393: $finish called at 30986 (1s)

@@ -1,0 +1,8 @@
+cells (whole hierarchy)       4899
+  generic logic cells         4373
+  flip-flop cells (1 bit)     521
+  $scopeinfo (no logic)       5
+kept orbit_keep_reg instances 19
+cell types                    $_ANDNOT_ 310, $_AND_ 1005, $_MUX_ 24, $_NAND_ 1343, $_NOR_ 456, $_NOT_ 2, $_ORNOT_ 106, $_OR_ 94, $_SDFFE_PN0P_ 515, $_SDFFE_PN1P_ 3, $_SDFFE_PP0P_ 2, $_SDFF_PN0_ 1, $_XNOR_ 369, $_XOR_ 664, $scopeinfo 5
+logic depth (ltp -noff)       60 generic gates, \in_b [28] -> \g_lane[3].u_lane.u_res_a.q [31]
+SYNTH_GENERIC PASS: check -assert, no latches, generic cells only, no warnings

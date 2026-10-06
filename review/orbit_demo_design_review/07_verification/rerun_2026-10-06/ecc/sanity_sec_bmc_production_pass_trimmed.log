@@ -1,0 +1,39 @@
+SBY 18:29:54 [orbit_ecc_bank_sec_bmc] Removing directory 'orbit_ecc_bank_sec_bmc'.
+SBY 18:29:54 [orbit_ecc_bank_sec_bmc] engine_0: smtbmc bitwuzla
+SBY 18:29:54 [orbit_ecc_bank_sec_bmc] base: starting process "cd orbit_ecc_bank_sec_bmc/src; yosys -ql ../model/design.log ../model/design.ys"
+SBY 18:30:01 [orbit_ecc_bank_sec_bmc] base: finished (returncode=0)
+SBY 18:30:01 [orbit_ecc_bank_sec_bmc] prep: starting process "cd orbit_ecc_bank_sec_bmc/model; yosys -ql design_prep.log design_prep.ys"
+SBY 18:30:02 [orbit_ecc_bank_sec_bmc] prep: finished (returncode=0)
+SBY 18:30:02 [orbit_ecc_bank_sec_bmc] smt2: starting process "cd orbit_ecc_bank_sec_bmc/model; yosys -ql design_smt2.log design_smt2.ys"
+SBY 18:30:02 [orbit_ecc_bank_sec_bmc] smt2: finished (returncode=0)
+SBY 18:30:02 [orbit_ecc_bank_sec_bmc] engine_0: starting process "cd orbit_ecc_bank_sec_bmc; yosys-smtbmc -s bitwuzla --presat --unroll --noprogress -t 6  --append 0 --dump-vcd engine_0/trace.vcd --dump-yw engine_0/trace.yw --dump-vlogtb engine_0/trace_tb.v --dump-smtc engine_0/trace.smtc model/design_smt2.smt2"
+SBY 18:30:02 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:00  Solver: bitwuzla
+SBY 18:30:03 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:00  Checking assumptions in step 0..
+SBY 18:30:03 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:01  Checking assertions in step 0..
+SBY 18:30:04 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:02  Checking assumptions in step 1..
+SBY 18:30:04 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:02  Checking assertions in step 1..
+SBY 18:30:05 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:03  Checking assumptions in step 2..
+SBY 18:30:08 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:06  Checking assertions in step 2..
+SBY 18:30:37 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:35  Checking assumptions in step 3..
+SBY 18:30:38 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:00:36  Checking assertions in step 3..
+SBY 18:31:38 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:01:36  waiting for solver (1 minute)
+SBY 18:35:38 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:05:36  waiting for solver (5 minutes)
+SBY 18:39:29 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:09:27  Checking assumptions in step 4..
+SBY 18:39:31 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:09:29  Checking assertions in step 4..
+SBY 18:40:31 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:10:29  waiting for solver (1 minute)
+SBY 18:44:31 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:14:29  waiting for solver (5 minutes)
+SBY 18:49:31 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:19:29  waiting for solver (10 minutes)
+SBY 18:54:31 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:24:29  waiting for solver (15 minutes)
+SBY 19:03:25 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:33:23  Checking assumptions in step 5..
+SBY 19:03:27 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:33:25  Checking assertions in step 5..
+SBY 19:04:28 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:34:25  waiting for solver (1 minute)
+SBY 19:08:28 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:38:25  waiting for solver (5 minutes)
+SBY 19:13:28 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:43:25  waiting for solver (10 minutes)
+SBY 19:14:26 [orbit_ecc_bank_sec_bmc] engine_0: ##   0:44:24  Status: passed
+SBY 19:14:26 [orbit_ecc_bank_sec_bmc] engine_0: finished (returncode=0)
+SBY 19:14:26 [orbit_ecc_bank_sec_bmc] engine_0: Status returned by engine: pass
+SBY 19:14:26 [orbit_ecc_bank_sec_bmc] summary: Elapsed clock time [H:MM:SS (secs)]: 0:44:32 (2672)
+SBY 19:14:26 [orbit_ecc_bank_sec_bmc] summary: Elapsed process time [H:MM:SS (secs)]: 0:43:57 (2637)
+SBY 19:14:26 [orbit_ecc_bank_sec_bmc] summary: engine_0 (smtbmc bitwuzla) returned pass
+SBY 19:14:26 [orbit_ecc_bank_sec_bmc] summary: engine_0 did not produce any traces
+SBY 19:14:26 [orbit_ecc_bank_sec_bmc] DONE (PASS, rc=0)
