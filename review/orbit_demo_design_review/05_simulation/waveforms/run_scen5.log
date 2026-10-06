@@ -1,0 +1,9 @@
+VCD info: dumpfile wave_c2_fault_sticky.vcd opened for output.
+WAVE scenario 5: c2_fault_sticky (clk period 10 ns)
+  t=50.0 ns cyc=4: reset released, therm_state NORMAL
+  t=80.0 ns cyc=7: upset: g_lane[1].u_lane.u_acc_b.q[3] flipped at the falling edge
+  t=90.0 ns cyc=8: fault latched
+  t=140.0 ns cyc=13: second flip: g_lane[1].u_lane.u_acc_b.q[3] restored, copies agree again
+  t=200.0 ns cyc=19: clear_fault done
+WAVE_c2_fault_sticky PASS (50 checks, 24 cycles)
+tb_orbit_wave.v:501: $finish called at 250000 (1ps)

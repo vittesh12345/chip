@@ -1,0 +1,6 @@
+VCD info: dumpfile wave_a_mac3.vcd opened for output.
+WAVE scenario 1: a_mac3 (clk period 10 ns)
+  t=50.0 ns cyc=4: reset released, therm_state NORMAL
+  t=90.0 ns cyc=8: 3-beat result transferred
+WAVE_a_mac3 PASS (29 checks, 11 cycles)
+tb_orbit_wave.v:501: $finish called at 120000 (1ps)

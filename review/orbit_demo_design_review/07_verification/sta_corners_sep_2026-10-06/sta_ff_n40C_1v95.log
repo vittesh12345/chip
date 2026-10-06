@@ -1,0 +1,111 @@
+OpenROAD unknown 
+Features included (+) or not (-): -GPU +GUI -Python
+This program is licensed under the BSD-3 license. See the LICENSE file for details.
+Components of this program may be licensed under more restrictive licenses which must be honored.
+[INFO ORD-0030] Using 1 thread(s).
+CORNER ff_n40C_1v95 liberty sky130_fd_sc_hd__ff_n40C_1v95.lib
+worst slack max 2.276
+tns max 0.000
+worst slack min 0.281
+tns min 0.000
+clk period_min = 4.92 fmax = 203.07
+=== worst setup path ===
+Startpoint: in_b[30] (input port clocked by clk)
+Endpoint: g_lane[3].u_lane.u_res_a/q[29]$_SDFFE_PN0P_
+          (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: max
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock network delay (propagated)
+   1.440    1.440 v input external delay
+   0.000    1.440 v in_b[30] (in)
+   0.099    1.539 v input63/X (sky130_fd_sc_hd__buf_2)
+   0.112    1.651 v _4406_/X (sky130_fd_sc_hd__and2_4)
+   0.340    1.990 ^ _6906_/SUM (sky130_fd_sc_hd__fa_1)
+   0.270    2.260 v _6895_/SUM (sky130_fd_sc_hd__fa_2)
+   0.369    2.629 ^ _6885_/SUM (sky130_fd_sc_hd__fa_2)
+   0.258    2.887 v _6873_/SUM (sky130_fd_sc_hd__fa_2)
+   0.200    3.087 ^ _7220_/SUM (sky130_fd_sc_hd__ha_4)
+   0.036    3.123 v _4339_/Y (sky130_fd_sc_hd__a21oi_4)
+   0.124    3.247 ^ _4340_/Y (sky130_fd_sc_hd__o21bai_1)
+   0.047    3.294 v _4341_/Y (sky130_fd_sc_hd__a21oi_2)
+   0.147    3.441 ^ _4342_/Y (sky130_fd_sc_hd__o21bai_1)
+   0.055    3.496 v _4343_/Y (sky130_fd_sc_hd__a21oi_2)
+   0.127    3.623 ^ _4345_/Y (sky130_fd_sc_hd__o21ai_2)
+   0.051    3.674 v _4346_/Y (sky130_fd_sc_hd__a21oi_2)
+   0.129    3.803 v _4347_/Y (sky130_fd_sc_hd__xnor2_2)
+   0.209    4.012 ^ _7212_/SUM (sky130_fd_sc_hd__ha_4)
+   0.063    4.075 ^ rebuffer2058/X (sky130_fd_sc_hd__buf_6)
+   0.047    4.122 v _4570_/Y (sky130_fd_sc_hd__nand3_4)
+   0.248    4.370 v _4576_/X (sky130_fd_sc_hd__or3_4)
+   0.047    4.417 ^ _4577_/Y (sky130_fd_sc_hd__o41ai_4)
+   0.063    4.480 v _4582_/Y (sky130_fd_sc_hd__o31ai_2)
+   0.196    4.676 v _4584_/X (sky130_fd_sc_hd__a31o_2)
+   0.188    4.864 v _4591_/X (sky130_fd_sc_hd__o211a_4)
+   0.137    5.001 ^ _4595_/Y (sky130_fd_sc_hd__o31ai_4)
+   0.057    5.058 v _4596_/Y (sky130_fd_sc_hd__xnor2_1)
+   0.139    5.197 ^ _4597_/Y (sky130_fd_sc_hd__nor2_1)
+   0.050    5.247 v g_lane[3].u_lane.u_res_a/_140_/Y (sky130_fd_sc_hd__mux2i_1)
+   0.083    5.330 ^ g_lane[3].u_lane.u_res_a/_141_/Y (sky130_fd_sc_hd__nor2b_1)
+   0.000    5.330 ^ g_lane[3].u_lane.u_res_a/q[29]$_SDFFE_PN0P_/D (sky130_fd_sc_hd__dfxtp_1)
+            5.330   data arrival time
+
+   7.200    7.200   clock clk (rise edge)
+   0.000    7.200   clock source latency
+   0.000    7.200 ^ clk (in)
+   0.128    7.328 ^ clkbuf_0_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.179    7.507 ^ clkbuf_2_0__f_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.128    7.635 ^ clkbuf_leaf_3_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.001    7.636 ^ g_lane[3].u_lane.u_res_a/q[29]$_SDFFE_PN0P_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   0.000    7.636   clock reconvergence pessimism
+  -0.031    7.605   library setup time
+            7.605   data required time
+-----------------------------------------------------------
+            7.605   data required time
+           -5.330   data arrival time
+-----------------------------------------------------------
+            2.276   slack (MET)
+
+
+=== worst hold path ===
+Startpoint: u_thermal.phase$_SDFF_PN0_
+            (rising edge-triggered flip-flop clocked by clk)
+Endpoint: u_thermal.phase$_SDFF_PN0_
+          (rising edge-triggered flip-flop clocked by clk)
+Path Group: clk
+Path Type: min
+
+   Delay     Time   Description
+-----------------------------------------------------------
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock source latency
+   0.000    0.000 ^ clk (in)
+   0.128    0.128 ^ clkbuf_0_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.184    0.312 ^ clkbuf_2_1__f_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.138    0.450 ^ clkbuf_leaf_9_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.001    0.451 ^ u_thermal.phase$_SDFF_PN0_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   0.213    0.664 ^ u_thermal.phase$_SDFF_PN0_/Q (sky130_fd_sc_hd__dfxtp_1)
+   0.032    0.696 v _6754_/Y (sky130_fd_sc_hd__nor4bb_1)
+   0.000    0.696 v u_thermal.phase$_SDFF_PN0_/D (sky130_fd_sc_hd__dfxtp_1)
+            0.696   data arrival time
+
+   0.000    0.000   clock clk (rise edge)
+   0.000    0.000   clock source latency
+   0.000    0.000 ^ clk (in)
+   0.128    0.128 ^ clkbuf_0_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.184    0.312 ^ clkbuf_2_1__f_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.138    0.450 ^ clkbuf_leaf_9_clk/X (sky130_fd_sc_hd__clkbuf_16)
+   0.001    0.451 ^ u_thermal.phase$_SDFF_PN0_/CLK (sky130_fd_sc_hd__dfxtp_1)
+   0.000    0.451   clock reconvergence pessimism
+  -0.036    0.415   library hold time
+            0.415   data required time
+-----------------------------------------------------------
+            0.415   data required time
+           -0.696   data arrival time
+-----------------------------------------------------------
+            0.281   slack (MET)
+
+

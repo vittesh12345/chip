@@ -1,0 +1,6 @@
+set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee build/sim/model.log
+orbit_ref self-test PASS (38 checks)
+
+real	0m0.045s
+user	0m0.036s
+sys	0m0.011s
