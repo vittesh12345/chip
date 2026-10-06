@@ -1,6 +1,7 @@
 orbit_demo review waveforms (written for the review package, not part of the repo)
 
-Revision: rtl/*.v at repo HEAD 3dfffbb6 (unchanged since 26d71a8); md5 in run_info.txt.
+Revision: rtl/*.v at repo HEAD 3dfffbb6 (unchanged since 26d71a8); md5 in run_info.txt, which
+records this HEAD under its packaging-time identifier (mapped in ../../COMMIT_MAP.tsv).
 Simulator: Icarus Verilog 14.0 (devel) (s20260301-500-g2e81fcccb-dirty), iverilog -g2005 -Wall.
 Clock 10 ns (HALF = 5 ns). This is an RTL zero-delay simulation: there is no process,
 voltage or temperature corner, and no timing. "temp_c" is a digital sensor input,

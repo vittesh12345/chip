@@ -114,7 +114,7 @@ Documents: [08_pinout_packaging/pinout_packaging.pdf](08_pinout_packaging/pinout
 
 Documents: README revision table; [09_review_notes/review_notes.pdf](09_review_notes/review_notes.pdf) section 4.3.
 
-- [ ] The OpenROAD version is "unknown", no PDK commit is logged, and linking the run to the ORFS image digest is an ASSUMPTION. The SDC with the 7.2 ns period was committed after the run started (K-09, D-52; question 12). Decide whether the run must be repeated from a pinned image and a clean commit.
+- [ ] The OpenROAD version is "unknown", no PDK commit is logged, and linking the run to the ORFS image digest is an ASSUMPTION. The SDC with the 7.2 ns period was originally committed after the run started (K-09, D-52; question 12). Decide whether the run must be repeated from a pinned image and a clean commit.
 
 ## Step 4. Revision and consistency check (15 min)
 

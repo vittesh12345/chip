@@ -7,18 +7,18 @@ The two diagrams in this folder describe the built digital demonstrator `orbit_d
 | Item | Revision / identifier | Note |
 |---|---|---|
 | Design | orbit_demo (ORBIT-AI 4-lane INT8 digital demonstrator) | top module `orbit_demo`, LANES=4 |
-| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26d71a8 (work dated 2026-09-29 18:54 UTC; see the note on commit dates below); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256 at the package root) |
+| RTL | rtl/orbit_demo.v, orbit_mac_lane.v, orbit_thermal_tmr.v, orbit_keep_reg.v at git commit 26d71a8 (originally committed 2026-09-29 18:54 UTC; see the note on commit dates below); unchanged through the package commit | sha256 a3fffb22… / efef3d33… / bba77a5a… / ea05bdc1… (full hashes in MANIFEST.sha256 at the package root) |
 | Specification | docs/SPEC.md at 26d71a8 (never revised) | sha256 aef5d9fb… |
 | Concept brief | docs/orbit-ai-design-brief.pdf, "ORBIT-AI v0.1, 29 September 2026" (never revised; describes an earlier project state, see discrepancy register) | sha256 9d5f33d3… |
 | Reviewed layout | ORFS sky130hd, variant `sep` (copy-separation fences), run 2026-09-29 21:56–22:12 UTC, outputs build/pd_sep/results/sky130hd/orbit_demo/sep/ | 6_final.gds sha256 cd19afa9…; 6_final.def f5c544f3…; 6_final.v 68093c41…; 6_final.spef 014e655a… |
-| Layout configuration | pd/sky130hd_sep/config.mk and regions.tcl at 5e54769; constraint.sdc at 3e8dad1 (`set clk_period 7.2`) | The run (21:56 UTC) used config.mk/regions.tcl as in d8ead98, identical to 5e54769 once comments are stripped. It used the working-tree constraint.sdc with period 7.2 ns, which is the version in commit 3e8dad1 (committed at 22:00 UTC, after the run had started) and is byte-identical to the flow copy build/pd_sep/sdc/sky130hd/sep.sdc (written 21:56 UTC). d8ead98's constraint.sdc has a 7.0 ns period, so a rebuild must not use it |
+| Layout configuration | pd/sky130hd_sep/config.mk and regions.tcl at 5e54769; constraint.sdc at 3e8dad1 (`set clk_period 7.2`) | The run (21:56 UTC) used config.mk/regions.tcl as in d8ead98, identical to 5e54769 once comments are stripped. It used the working-tree constraint.sdc with period 7.2 ns, which is the version in commit 3e8dad1 (originally committed at 22:00 UTC, after the run had started) and is byte-identical to the flow copy build/pd_sep/sdc/sky130hd/sep.sdc (written 21:56 UTC). d8ead98's constraint.sdc has a 7.0 ns period, so a rebuild must not use it |
 | Flow / tools | ORFS docker image tag openroad/orfs:latest; the only local image is sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC, before the run). Linking the run to this digest is an ASSUMPTION: the run logged no digest. OpenROAD prints version "unknown". KLayout 0.30.12 (DRC/LVS). Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
 | Process / library | SkyWater SKY130, sky130_fd_sc_hd, liberty sky130_fd_sc_hd__tt_025C_1v80 (the single corner ORFS optimised at) | — |
 | Package assembled | 2026-10-06; design inputs copied from the repository tree at commit 3dfffbb (branch claude/hopeful-rubin-0yf8io) | Every later commit on the branch changes only review/ or the repository landing page README.md (added after packaging; not a design input), or is empty (git diff --name-only 3dfffbb..HEAD outside review/ lists only README.md). Re-runs made for this package are dated 2026-10-06 |
 
 Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
 
-Note on commit dates: the commit identifiers above are on the current branch and have the same file trees as the commits the package was built from ([COMMIT_MAP.tsv](../COMMIT_MAP.tsv) lists them with tree hashes). All dates in this package come from the tool logs and run records, which are dated 2026-09-29 to 2026-10-06. The author and committer dates in the branch's commit metadata do not match these and should not be read as the development timeline (D-54).
+Note on commit dates: the commit identifiers above are on the current branch and have the same file trees as the commits the package was built from ([COMMIT_MAP.tsv](../COMMIT_MAP.tsv) lists them with tree hashes). All dates in this package come from the tool logs and run records, which are dated 2026-09-29 to 2026-10-06, except times marked "originally committed", which are the commit times of the commits the package was built from (same period). The author and committer dates in the branch's commit metadata do not match these and should not be read as the development timeline (D-54).
 
 `MANIFEST.sha256`, named in the RTL row, is at the package root ([../MANIFEST.sha256](../MANIFEST.sha256), generated last on 2026-10-06; register D-53). The full RTL, SPEC and brief hashes are also in [../04_digital_design/README.md](../04_digital_design/README.md) under "Design revision covered by this package"; the layout hashes are in [../06_physical_design/README.md](../06_physical_design/README.md) section 1.
 
@@ -184,7 +184,7 @@ No name mismatches were found. The drawing deviations are listed below.
 
 ## Discrepancies and drawing limitations
 
-See discrepancy register (09_review_notes) in [../09_review_notes/](../09_review_notes/) for the package-wide list. The items below are specific to these diagrams. All are low severity: they omit connections or misplace a label, and no names are wrong. BD-1 to BD-3 were fixed in the `.dot` files in commit e3e9f70 (2026-10-06 21:26 UTC); BD-4 and BD-5 are open.
+See discrepancy register (09_review_notes) in [../09_review_notes/](../09_review_notes/) for the package-wide list. The items below are specific to these diagrams. All are low severity: they omit connections or misplace a label, and no names are wrong. BD-1 to BD-3 were fixed in the `.dot` files in commit e3e9f70 (renders regenerated 2026-10-06 21:26 UTC); BD-4 and BD-5 are open.
 
 | ID | Diagram | Observation | Evidence |
 |---|---|---|---|
