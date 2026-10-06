@@ -13,10 +13,10 @@ digraph top {
   st   [shape=plaintext, label="fault, therm_state [1:0],\ntherm_repair, shutdown_req"];
   irdy [shape=plaintext, label="in_ready (output)"];
   lanes [label="g_lane[0..3].u_lane : orbit_mac_lane  (x4)\nINT8 x INT8 -> INT32 accumulate\nu_acc_a / u_acc_b, u_res_a / u_res_b (duplicated, 4 x 32 FF each)\nlane_mismatch[i] = (acc_a != acc_b) | (res_a != res_b)"];
-  glue  [label="orbit_demo glue\nin_fire, in_ready, out_valid, out_fire\nmismatch = |lane_mismatch\nfault_q (sticky), out_valid_q"];
+  glue  [label="orbit_demo glue\nin_fire, in_ready, out_valid, out_fire\nmismatch = |lane_mismatch\nfault_q (sticky), out_valid_q\nshutdown_req = therm_state[1]"];
   therm [label="u_thermal : orbit_thermal_tmr\nu_copy0/1/2 (3 x 2 FF), majority vote, feedback repair\nphase FF, admit"];
   src -> lanes [label="in_a/in_b[8*i +: 8], in_first, in_last"];
-  glue -> lanes [label="mac_en = in_fire, clr = clear_fault"];
+  glue -> lanes [label="mac_en = in_fire"];
   lanes -> glue [label="lane_mismatch[3:0]"];
   lanes -> snk [label="result = res_a -> out_data[32*i +: 32]"];
   glue -> snk [label="out_valid"];
@@ -24,7 +24,8 @@ digraph top {
   src -> glue [label="in_valid, in_last"];
   sens -> therm;
   therm -> glue [label="admit"];
-  therm -> st [label="therm_state, therm_repair, shutdown_req"];
-  glue -> st [label="fault"];
+  therm -> st [label="state -> therm_state, repair -> therm_repair"];
+  therm -> glue [label="state[1]"];
+  glue -> st [label="fault, shutdown_req = therm_state[1]"];
   glue -> irdy;
 }

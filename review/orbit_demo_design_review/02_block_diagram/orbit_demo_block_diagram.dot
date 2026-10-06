@@ -54,12 +54,12 @@ digraph orbit_demo {
   // ---- connections ----
   p_in:a -> mul [label="a = in_a[8*i +: 8]"];
   p_in:b -> mul [label="b = in_b[8*i +: 8]"];
-  p_in:f -> adda [label="first = in_first"]; p_in:f -> addb;
+  p_in:f -> adda [label="first = in_first"]; p_in:f -> addb [label="first"];
   p_in:v -> infire; inready -> infire [label="in_ready"];
-  infire -> acca [label="mac_en"]; infire -> resa [label="mac_en & last"];
+  infire -> acca [label="mac_en"]; infire -> accb [label="mac_en"]; infire -> resa [label="mac_en & last"]; infire -> resb [label="mac_en & last"];
   infire -> ovq [label="in_fire & in_last"];
-  p_in:l -> resa [label="last = in_last"];
-  p_in:cf -> acca [label="clr = clear_fault (d <= 0)"];
+  p_in:l -> resa [label="last = in_last"]; p_in:l -> resb [label="last"];
+  p_in:cf -> acca [label="clr = clear_fault (d <= 0)"]; p_in:cf -> accb [label="clr"]; p_in:cf -> resa [label="clr"]; p_in:cf -> resb [label="clr"];
   mul -> adda [label="prod32"]; mul -> addb [label="prod32"];
   adda -> acca [label="d"]; adda -> resa [label="d"];
   addb -> accb [label="d"]; addb -> resb [label="d"];
