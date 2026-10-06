@@ -14,7 +14,7 @@ Review package for `orbit_demo`, a standard-cell digital demonstrator: 4 signed 
 | Layout configuration | pd/sky130hd_sep/config.mk and regions.tcl at c10c59b; constraint.sdc at 21917cf (`set clk_period 7.2`) | The run (21:56 UTC) used config.mk/regions.tcl as in ed553f8, identical to c10c59b once comments are stripped. It used the working-tree constraint.sdc with period 7.2 ns, which was committed in 21917cf at 22:00 UTC and is byte-identical to the flow copy build/pd_sep/sdc/sky130hd/sep.sdc. ed553f8's constraint.sdc has a 7.0 ns period, so a rebuild must not use it |
 | Flow / tools | ORFS docker image tag openroad/orfs:latest; the only local image is sha256:2e5bf6fe865e… (created 2026-09-29 02:00 UTC, before the run). Linking the run to this digest is an ASSUMPTION: the run logged no digest. OpenROAD prints version "unknown". KLayout 0.30.12 (DRC/LVS). Yosys 0.69+154 (local sims/schematics) | No PDK commit is recorded in the logs |
 | Process / library | SkyWater SKY130, sky130_fd_sc_hd, liberty sky130_fd_sc_hd__tt_025C_1v80 (the single corner ORFS optimised at) | — |
-| Package assembled | 2026-10-06; design inputs copied from the repository tree at commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Every later commit on the branch changes only review/ or is empty (git diff --name-only 0495cfa..HEAD outside review/ is empty). Re-runs made for this package are dated 2026-10-06 |
+| Package assembled | 2026-10-06; design inputs copied from the repository tree at commit 0495cfa (branch claude/hopeful-rubin-0yf8io) | Every later commit on the branch changes only review/ or the repository landing page README.md (added after packaging; not a design input), or is empty (git diff --name-only 0495cfa..HEAD outside review/ lists only README.md). Re-runs made for this package are dated 2026-10-06 |
 
 Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; IHP SG13G2) are reference runs only and are NOT the reviewed layout.
 
@@ -32,9 +32,11 @@ Other implementations in the repo (sky130hd baseline at 7.0 ns, variant `base`; 
 | [08_pinout_packaging/](08_pinout_packaging/) | 217 DEF pins checked against the 18 RTL ports, pin table and map, external connections, gaps to a packageable die | [pinout_packaging.md](08_pinout_packaging/pinout_packaging.md), [pinout_packaging.pdf](08_pinout_packaging/pinout_packaging.pdf), [pinout.csv](08_pinout_packaging/pinout.csv), [pin_map.png](08_pinout_packaging/pin_map.png) |
 | [09_review_notes/](09_review_notes/) | Known issues K-01..K-16 by severity, trade-offs T-01..T-07, 14 questions for the reviewer, discrepancy register D-01..D-101, gaps G-01..G-38 | [review_notes.md](09_review_notes/review_notes.md), [review_notes.pdf](09_review_notes/review_notes.pdf) |
 | [tools/](tools/) | Markdown-to-PDF renderer used for the section PDFs | [md2pdf.py](tools/md2pdf.py) |
-| package root | This file. `MANIFEST.sha256`: sha256 of every other file in the package, generated last (see Manifest below) | README.md, [MANIFEST.sha256](MANIFEST.sha256) |
+| package root | This file. [REVIEW_GUIDE.md](REVIEW_GUIDE.md) / [REVIEW_GUIDE.pdf](REVIEW_GUIDE.pdf): step-by-step reviewer walkthrough with checklists and a feedback template. `MANIFEST.sha256`: sha256 of every other file in the package, generated last (see Manifest below) | README.md, [MANIFEST.sha256](MANIFEST.sha256) |
 
 ## Where to start
+
+A reviewer new to the design should follow [REVIEW_GUIDE.md](REVIEW_GUIDE.md): it orders the documents below into steps, gives a checklist per area and ends with a feedback template. The reading order it uses:
 
 1. [01_overview/design_overview.md](01_overview/design_overview.md): the review notes assume its scope split (built demonstrator vs concept-chip TARGETs, `sep` vs `base` layout), so read it first.
 2. [09_review_notes/review_notes.md](09_review_notes/review_notes.md): it ranks the issues (five High: SS setup failure, single points of failure, undetected common-mode faults, BEOL-only DRC deck, no pad ring/package) and asks the 14 questions the reviewer has to decide.
