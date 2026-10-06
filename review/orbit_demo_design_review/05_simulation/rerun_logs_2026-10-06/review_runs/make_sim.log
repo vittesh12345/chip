@@ -1,0 +1,233 @@
+set -o pipefail; python3 tb/cocotb/orbit_ref.py | tee /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/model.log
+orbit_ref self-test PASS (38 checks)
+iverilog -g2005 -Wall -Wno-timescale -o /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/directed/tb.vvp tb/tb_orbit_demo.v rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v
+set -o pipefail; vvp -n /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/directed/tb.vvp +seed=1 | tee /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/directed/icarus.log
+[10000] scenario 1: reset_stop
+[260000] scenario 2: signed_edges
+[440000] scenario 3: multi_beat
+[6830000] scenario 4: first_and_last
+[6890000] scenario 5: continue_after_last
+[6960000] scenario 6: backpressure
+[11250000] scenario 7: back_to_back
+[11910000] scenario 8: throttle
+[13610000] scenario 9: stop_and_recover
+[14040000] scenario 10: drain_in_stop
+[14210000] scenario 11: negative_temps
+[14580000] scenario 12: int32_wrap
+[1335650000] scenario 13: clear_fault
+[1335870000] scenario 14: reset_midrun
+
+tb_orbit_demo summary (seed 1)
+  scenarios            14
+  cycles               133601
+  model cycle checks   133600 (mismatches 0)
+  scenario checks      107 (failed 0)
+  beats accepted       133209
+  results transferred  401 (all compared with the scoreboard)
+  literal lane checks  152
+  back-to-back results 220
+  results dropped by clear_fault/reset 2
+  errors               0
+TB_ORBIT_DEMO PASS
+tb/tb_orbit_demo.v:978: $finish called at 1336020000 (1ps)
+verilator --binary --timing ... tb/tb_orbit_demo.v rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v  (log: /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/verilator/build.log)
+set -o pipefail; /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/verilator/obj_dir/Vtb_orbit_demo +seed=1 | tee /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/verilator/verilator.log
+[10000] scenario 1: reset_stop
+[260000] scenario 2: signed_edges
+[440000] scenario 3: multi_beat
+[6830000] scenario 4: first_and_last
+[6890000] scenario 5: continue_after_last
+[6960000] scenario 6: backpressure
+[11250000] scenario 7: back_to_back
+[11910000] scenario 8: throttle
+[13610000] scenario 9: stop_and_recover
+[14040000] scenario 10: drain_in_stop
+[14210000] scenario 11: negative_temps
+[14580000] scenario 12: int32_wrap
+[1335650000] scenario 13: clear_fault
+[1335870000] scenario 14: reset_midrun
+
+tb_orbit_demo summary (seed 1)
+  scenarios            14
+  cycles               133601
+  model cycle checks   133600 (mismatches 0)
+  scenario checks      107 (failed 0)
+  beats accepted       133209
+  results transferred  401 (all compared with the scoreboard)
+  literal lane checks  152
+  back-to-back results 220
+  results dropped by clear_fault/reset 2
+  errors               0
+TB_ORBIT_DEMO PASS
+- tb/tb_orbit_demo.v:978: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.053 devel
+- Verilator: $finish at 1ms; walltime 1.266 s; speed 1.055 ms/s
+- Verilator: cpu 1.249 s on 1 threads; allocated 8 MB
+sim-verilator: summary identical to Icarus
+set -o pipefail; tabbypy3 tb/cocotb/run_random.py --jobs 2 --sources rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v --cycles 20000 --soak-max 400000 --sim icarus --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/random \
+    --seeds 1 2 3 4 5 --soak-seeds 1 2>&1 | tee /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/random/run.log
+# cocotb random test of orbit_demo
+
+cocotb 2.1.0.dev0+41564633, simulator icarus, Python 3.11.6 (/opt/eda/oss-cad-suite/bin/tabbypy3)
+
+| test | seed | cycles | results checked | errors | missing coverage | wall s | result |
+|---|---|---|---|---|---|---|---|
+| random_workload | 1 | 20000 | 866 | 0 | - | 3.8 | PASS |
+| random_workload | 2 | 20000 | 978 | 0 | - | 3.4 | PASS |
+| random_workload | 3 | 20000 | 976 | 0 | - | 3.4 | PASS |
+| random_workload | 4 | 20000 | 825 | 0 | - | 3.3 | PASS |
+| random_workload | 5 | 20000 | 877 | 0 | - | 3.4 | PASS |
+| wrap_soak | 1 | 149226 | 3022 | 0 | - | 24.6 | PASS |
+
+Functional coverage (event counts; * = required > 0 in the test that lists it)
+
+| event | random:1 | random:2 | random:3 | random:4 | random:5 | wrap:1 | total |
+|---|---|---|---|---|---|---|---|
+| back_to_back * | 146 | 174 | 186 | 166 | 184 | 59 | 915 |
+| backpressure_cycles * | 2347 | 3271 | 1441 | 3721 | 2748 | 373 | 13901 |
+| buffer_full_blocks_last * | 375 | 471 | 226 | 486 | 305 | 7 | 1870 |
+| buffer_full_blocks_nonlast * | 1335 | 1923 | 795 | 2264 | 1957 | 358 | 8632 |
+| clear_dropped_result * | 10 | 9 | 8 | 9 | 4 | 0 | 40 |
+| clear_fault_cycles * | 138 | 119 | 132 | 93 | 98 | 0 | 580 |
+| clear_with_transfer | 5 | 1 | 1 | 6 | 2 | 0 | 15 |
+| continue_after_last * | 343 | 390 | 374 | 355 | 336 | 3022 | 4820 |
+| cycles | 20000 | 20000 | 20000 | 20000 | 20000 | 149226 | 249226 |
+| drain_in_stop * | 5 | 10 | 12 | 15 | 7 | 0 | 49 |
+| first_restarts_sum * | 98 | 94 | 105 | 80 | 71 | 1 | 449 |
+| in_fire * | 8468 | 9355 | 9219 | 8160 | 8468 | 147364 | 191034 |
+| invalid_sensor_cycles | 555 | 300 | 150 | 746 | 525 | 0 | 2276 |
+| multi_beat_sums * | 715 | 795 | 790 | 679 | 699 | 3022 | 6700 |
+| negative_temp_cycles * | 587 | 792 | 963 | 720 | 848 | 0 | 3910 |
+| normal_at_71_79 * | 2255 | 2111 | 2214 | 1633 | 1719 | 0 | 9932 |
+| normal_hold_at_79 * | 229 | 223 | 218 | 163 | 165 | 0 | 998 |
+| out_fire * | 866 | 978 | 976 | 825 | 877 | 3022 | 7544 |
+| prod_max_min * | 135 | 137 | 136 | 143 | 148 | 176896 | 177595 |
+| prod_min_min * | 53 | 77 | 80 | 60 | 66 | 88304 | 88640 |
+| recover_at_70_from_stop * | 29 | 11 | 24 | 28 | 35 | 0 | 127 |
+| recover_at_70_from_throttle * | 58 | 52 | 32 | 39 | 27 | 6 | 214 |
+| recover_from_stop * | 72 | 135 | 172 | 126 | 84 | 1 | 590 |
+| recover_from_throttle * | 85 | 102 | 97 | 75 | 42 | 146 | 547 |
+| reset_cycles | 6 | 2 | 4 | 7 | 5 | 2 | 26 |
+| results_checked | 866 | 978 | 976 | 825 | 877 | 3022 | 7544 |
+| single_beat_sums * | 162 | 192 | 194 | 156 | 182 | 0 | 886 |
+| stop_at_95 * | 23 | 10 | 26 | 28 | 35 | 0 | 122 |
+| stop_blocked * | 3366 | 3369 | 3756 | 4519 | 4529 | 1 | 19540 |
+| stop_by_invalid * | 32 | 42 | 37 | 34 | 34 | 0 | 179 |
+| stop_by_temp * | 38 | 93 | 134 | 89 | 48 | 0 | 402 |
+| stop_hold_at_71 * | 58 | 91 | 131 | 50 | 74 | 0 | 404 |
+| stop_hysteresis_hold * | 1910 | 1901 | 2469 | 2732 | 3117 | 0 | 12129 |
+| throttle_admit * | 1729 | 1183 | 1201 | 1647 | 1167 | 1558 | 8485 |
+| throttle_at_80 * | 87 | 72 | 65 | 67 | 61 | 10 | 362 |
+| throttle_entry * | 119 | 128 | 131 | 107 | 82 | 146 | 713 |
+| throttle_hold_at_71 * | 116 | 98 | 94 | 118 | 51 | 0 | 477 |
+| throttle_hold_at_94 * | 98 | 58 | 53 | 76 | 128 | 0 | 413 |
+| throttle_hysteresis_hold * | 1240 | 955 | 971 | 1327 | 554 | 0 | 5047 |
+| throttle_phase_block * | 1871 | 1430 | 1113 | 1703 | 1287 | 1494 | 8898 |
+| wrap_neg * | 0 | 0 | 0 | 0 | 0 | 2 | 2 |
+| wrap_pos * | 0 | 0 | 0 | 0 | 0 | 2 | 2 |
+
+
+SIM_RANDOM PASS: 6 runs, 249226 cycles, 7544 results checked, 0 mismatches
+set -o pipefail; tabbypy3 tb/cocotb/run_random.py --jobs 2 --sources rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v --cycles 20000 --soak-max 400000 --sim verilator --out /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/random_verilator \
+    --seeds 1 2 --soak-seeds --compare-with /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/random \
+    2>&1 | tee /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/random_verilator/run.log
+# cocotb random test of orbit_demo
+
+cocotb 2.1.0.dev0+41564633, simulator verilator, Python 3.11.6 (/opt/eda/oss-cad-suite/bin/tabbypy3)
+
+| test | seed | cycles | results checked | errors | missing coverage | wall s | result |
+|---|---|---|---|---|---|---|---|
+| random_workload | 1 | 20000 | 866 | 0 | - | 2.3 | PASS |
+| random_workload | 2 | 20000 | 978 | 0 | - | 2.1 | PASS |
+
+Functional coverage (event counts; * = required > 0 in the test that lists it)
+
+| event | random:1 | random:2 | total |
+|---|---|---|---|
+| back_to_back * | 146 | 174 | 320 |
+| backpressure_cycles * | 2347 | 3271 | 5618 |
+| buffer_full_blocks_last * | 375 | 471 | 846 |
+| buffer_full_blocks_nonlast * | 1335 | 1923 | 3258 |
+| clear_dropped_result * | 10 | 9 | 19 |
+| clear_fault_cycles * | 138 | 119 | 257 |
+| clear_with_transfer | 5 | 1 | 6 |
+| continue_after_last * | 343 | 390 | 733 |
+| cycles | 20000 | 20000 | 40000 |
+| drain_in_stop * | 5 | 10 | 15 |
+| first_restarts_sum * | 98 | 94 | 192 |
+| in_fire * | 8468 | 9355 | 17823 |
+| invalid_sensor_cycles | 555 | 300 | 855 |
+| multi_beat_sums * | 715 | 795 | 1510 |
+| negative_temp_cycles * | 587 | 792 | 1379 |
+| normal_at_71_79 * | 2255 | 2111 | 4366 |
+| normal_hold_at_79 * | 229 | 223 | 452 |
+| out_fire * | 866 | 978 | 1844 |
+| prod_max_min * | 135 | 137 | 272 |
+| prod_min_min * | 53 | 77 | 130 |
+| recover_at_70_from_stop * | 29 | 11 | 40 |
+| recover_at_70_from_throttle * | 58 | 52 | 110 |
+| recover_from_stop * | 72 | 135 | 207 |
+| recover_from_throttle * | 85 | 102 | 187 |
+| reset_cycles | 6 | 2 | 8 |
+| results_checked | 866 | 978 | 1844 |
+| single_beat_sums * | 162 | 192 | 354 |
+| stop_at_95 * | 23 | 10 | 33 |
+| stop_blocked * | 3366 | 3369 | 6735 |
+| stop_by_invalid * | 32 | 42 | 74 |
+| stop_by_temp * | 38 | 93 | 131 |
+| stop_hold_at_71 * | 58 | 91 | 149 |
+| stop_hysteresis_hold * | 1910 | 1901 | 3811 |
+| throttle_admit * | 1729 | 1183 | 2912 |
+| throttle_at_80 * | 87 | 72 | 159 |
+| throttle_entry * | 119 | 128 | 247 |
+| throttle_hold_at_71 * | 116 | 98 | 214 |
+| throttle_hold_at_94 * | 98 | 58 | 156 |
+| throttle_hysteresis_hold * | 1240 | 955 | 2195 |
+| throttle_phase_block * | 1871 | 1430 | 3301 |
+| wrap_neg * | 0 | 0 | 0 |
+| wrap_pos * | 0 | 0 | 0 |
+
+
+compare: random_workload seed 1 coverage identical to /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/random/random_workload_seed1/coverage.json
+compare: random_workload seed 2 coverage identical to /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/random/random_workload_seed2/coverage.json
+SIM_RANDOM PASS: 2 runs, 40000 cycles, 1844 results checked, 0 mismatches
+yosys: generic gate-level netlist of rtl/orbit_keep_reg.v rtl/orbit_mac_lane.v rtl/orbit_thermal_tmr.v rtl/orbit_demo.v -> /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/gls/yosys/orbit_demo_yosys.v
+iverilog -g2005 -Wall -Wno-timescale  -o /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/gls/yosys/tb.vvp tb/tb_orbit_demo.v /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/gls/yosys/orbit_demo_yosys.v \
+    > /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/gls/yosys/compile.log 2>&1 || { cat /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/gls/yosys/compile.log; exit 1; }
+set -o pipefail; vvp -n /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/gls/yosys/tb.vvp +seed=1 | tee /tmp/claude-0/-home-user-chip/6bdc94fa-7275-51e9-a492-50b01aa47cf0/scratchpad/review_work/sim/build/sim/gls/yosys/gls.log
+[10000] scenario 1: reset_stop
+[260000] scenario 2: signed_edges
+[440000] scenario 3: multi_beat
+[6830000] scenario 4: first_and_last
+[6890000] scenario 5: continue_after_last
+[6960000] scenario 6: backpressure
+[11250000] scenario 7: back_to_back
+[11910000] scenario 8: throttle
+[13610000] scenario 9: stop_and_recover
+[14040000] scenario 10: drain_in_stop
+[14210000] scenario 11: negative_temps
+[14580000] scenario 12: int32_wrap
+[1335650000] scenario 13: clear_fault
+[1335870000] scenario 14: reset_midrun
+
+tb_orbit_demo summary (seed 1)
+  scenarios            14
+  cycles               133601
+  model cycle checks   133600 (mismatches 0)
+  scenario checks      107 (failed 0)
+  beats accepted       133209
+  results transferred  401 (all compared with the scoreboard)
+  literal lane checks  152
+  back-to-back results 220
+  results dropped by clear_fault/reset 2
+  errors               0
+TB_ORBIT_DEMO PASS
+tb/tb_orbit_demo.v:978: $finish called at 1336020000 (1ps)
+sim-gls: summary identical to the RTL run
+SIM PASS: model self-test, directed (Icarus + Verilator), cocotb random (Icarus + Verilator), gate-level (yosys)
+
+real	2m18.776s
+user	2m18.923s
+sys	0m10.705s
+exit=0
+Tue Oct  6 18:10:26 UTC 2026
